@@ -103,7 +103,7 @@ export default function FeedbackPage({ business }: PageProps) {
 
             {wantsContact && (
               <p className="text-gray-600 text-lg mb-6">
-                We'll be in touch with you soon to make things right.
+                We&apos;ll be in touch with you soon to make things right.
               </p>
             )}
 
@@ -137,7 +137,7 @@ export default function FeedbackPage({ business }: PageProps) {
 
           {/* Subtitle */}
           <p className="text-gray-600 text-center mb-8 text-lg">
-            We're sorry to hear about your experience. Please help us understand what happened.
+            We&apos;re sorry to hear about your experience. Please help us understand what happened.
           </p>
 
           {/* Feedback Form */}

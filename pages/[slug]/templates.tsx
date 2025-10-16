@@ -116,7 +116,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
               Thank You for Your 5-Star Rating!
             </h2>
             <p className="text-gray-600 text-lg">
-              We're thrilled you had a great experience! Would you mind sharing it online?
+              We&apos;re thrilled you had a great experience! Would you mind sharing it online?
             </p>
           </div>
         </div>
