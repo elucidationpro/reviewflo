@@ -83,9 +83,6 @@ export default function ReviewPage({ business }: PageProps) {
                 onMouseLeave={() => setHoveredRating(null)}
                 disabled={isSubmitting}
                 className="transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-opacity-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  focusRingColor: business.primary_color + '80'
-                }}
                 aria-label={`Rate ${star} stars`}
               >
                 <svg

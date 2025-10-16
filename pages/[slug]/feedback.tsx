@@ -157,9 +157,6 @@ export default function FeedbackPage({ business }: PageProps) {
                 placeholder="Please describe your experience..."
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:border-transparent resize-none text-gray-900 placeholder-gray-400"
-                style={{
-                  focusRingColor: business.primary_color + '80'
-                }}
                 required
               />
             </div>
@@ -179,9 +176,6 @@ export default function FeedbackPage({ business }: PageProps) {
                 placeholder="What would make this better for you..."
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:border-transparent resize-none text-gray-900 placeholder-gray-400"
-                style={{
-                  focusRingColor: business.primary_color + '80'
-                }}
                 required
               />
             </div>
@@ -221,9 +215,6 @@ export default function FeedbackPage({ business }: PageProps) {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:border-transparent text-gray-900 placeholder-gray-400"
-                    style={{
-                      focusRingColor: business.primary_color + '80'
-                    }}
                   />
                 </div>
 
@@ -241,9 +232,6 @@ export default function FeedbackPage({ business }: PageProps) {
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="(555) 123-4567"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:border-transparent text-gray-900 placeholder-gray-400"
-                    style={{
-                      focusRingColor: business.primary_color + '80'
-                    }}
                   />
                 </div>
 
