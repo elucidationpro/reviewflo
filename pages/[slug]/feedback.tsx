@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next'
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import { supabase } from '../../lib/supabase'
 
 interface Business {
@@ -11,9 +12,11 @@ interface Business {
 
 interface PageProps {
   business: Business
+  rating: number
 }
 
-export default function FeedbackPage({ business }: PageProps) {
+export default function FeedbackPage({ business, rating }: PageProps) {
+  const router = useRouter()
   const [whatHappened, setWhatHappened] = useState('')
   const [howToMakeRight, setHowToMakeRight] = useState('')
   const [wantsContact, setWantsContact] = useState(false)
@@ -42,6 +45,7 @@ export default function FeedbackPage({ business }: PageProps) {
         .from('feedback')
         .insert({
           business_id: business.id,
+          star_rating: rating,
           what_happened: whatHappened.trim(),
           how_to_make_right: howToMakeRight.trim(),
           wants_contact: wantsContact,
@@ -55,6 +59,28 @@ export default function FeedbackPage({ business }: PageProps) {
         alert('There was an error submitting your feedback. Please try again.')
         setIsSubmitting(false)
         return
+      }
+
+      // Send email notification
+      try {
+        await fetch('/api/send-feedback-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            businessId: business.id,
+            starRating: rating,
+            whatHappened: whatHappened.trim(),
+            howToMakeRight: howToMakeRight.trim(),
+            wantsContact,
+            email: wantsContact ? email.trim() || undefined : undefined,
+            phone: wantsContact ? phone.trim() || undefined : undefined,
+          }),
+        })
+      } catch (emailError) {
+        console.error('Error sending email:', emailError)
+        // Don't block the user flow if email fails
       }
 
       setIsSubmitted(true)
@@ -295,6 +321,7 @@ export default function FeedbackPage({ business }: PageProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.params as { slug: string }
+  const rating = parseInt(context.query.rating as string) || 3
 
   // Fetch business data from Supabase
   const { data: business, error } = await supabase
@@ -312,6 +339,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       business,
+      rating,
     },
   }
 }

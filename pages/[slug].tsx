@@ -44,7 +44,7 @@ export default function ReviewPage({ business }: PageProps) {
 
       // Route based on rating
       if (rating >= 1 && rating <= 4) {
-        router.push(`/${business.slug}/feedback`)
+        router.push(`/${business.slug}/feedback?rating=${rating}`)
       } else if (rating === 5) {
         router.push(`/${business.slug}/templates`)
       }
