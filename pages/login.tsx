@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 
 export default function LoginPage() {
@@ -151,16 +152,12 @@ export default function LoginPage() {
 
           {/* Forgot Password Link */}
           <div className="mt-6 text-center">
-            <button
-              type="button"
+            <Link
+              href="/reset-password"
               className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-              onClick={() => {
-                // TODO: Implement forgot password functionality
-                alert('Forgot password functionality coming soon!')
-              }}
             >
               Forgot your password?
-            </button>
+            </Link>
           </div>
         </div>
 

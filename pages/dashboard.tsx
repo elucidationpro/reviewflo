@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 
 interface Business {
@@ -183,12 +184,20 @@ export default function DashboardPage() {
               </h1>
               <p className="text-gray-600">Dashboard Overview</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="mt-4 md:mt-0 bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-            >
-              Logout
-            </button>
+            <div className="flex gap-3 mt-4 md:mt-0">
+              <Link
+                href="/settings"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              >
+                Settings
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
 
