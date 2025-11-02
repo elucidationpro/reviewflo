@@ -312,7 +312,7 @@ export default function SettingsPage() {
                 <input
                   type="url"
                   id="googleUrl"
-                  value={businessData.google_review_url}
+                  value={businessData.google_review_url || ''}
                   onChange={(e) => setBusinessData({ ...businessData, google_review_url: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                   placeholder="https://g.page/your-business/review"
@@ -327,7 +327,7 @@ export default function SettingsPage() {
                 <input
                   type="url"
                   id="facebookUrl"
-                  value={businessData.facebook_review_url}
+                  value={businessData.facebook_review_url || ''}
                   onChange={(e) => setBusinessData({ ...businessData, facebook_review_url: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                   placeholder="https://www.facebook.com/your-page/reviews"
@@ -342,7 +342,7 @@ export default function SettingsPage() {
                 <input
                   type="url"
                   id="yelpUrl"
-                  value={businessData.yelp_review_url}
+                  value={businessData.yelp_review_url || ''}
                   onChange={(e) => setBusinessData({ ...businessData, yelp_review_url: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                   placeholder="https://www.yelp.com/biz/your-business"
@@ -357,7 +357,7 @@ export default function SettingsPage() {
                 <input
                   type="url"
                   id="nextdoorUrl"
-                  value={businessData.nextdoor_review_url}
+                  value={businessData.nextdoor_review_url || ''}
                   onChange={(e) => setBusinessData({ ...businessData, nextdoor_review_url: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                   placeholder="https://nextdoor.com/pages/your-business"
