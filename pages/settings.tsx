@@ -284,7 +284,7 @@ export default function SettingsPage() {
                 <input
                   type="url"
                   id="logoUrl"
-                  value={businessData.logo_url}
+                  value={businessData.logo_url || ''}
                   onChange={(e) => setBusinessData({ ...businessData, logo_url: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                   placeholder="https://example.com/logo.png"
