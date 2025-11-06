@@ -113,15 +113,29 @@ export default async function handler(
       }
     }
 
-    // Create business record
+    // Create business record with all known fields
+    const businessInsertData = {
+      user_id: authData.user.id,
+      business_name: businessName,
+      slug: slug,
+      primary_color: '#3B82F6', // Default blue color
+      logo_url: null,
+      google_review_url: null,
+      facebook_review_url: null,
+      yelp_review_url: null,
+      nextdoor_review_url: null,
+    }
+
+    console.log('=== BUSINESS INSERT DEBUG ===')
+    console.log('About to insert business record with data:', JSON.stringify(businessInsertData, null, 2))
+    console.log('Auth user ID:', authData.user.id)
+    console.log('Business name:', businessName)
+    console.log('Slug:', slug)
+    console.log('============================')
+
     const { data: business, error: businessError } = await supabaseAdmin
       .from('businesses')
-      .insert({
-        user_id: authData.user.id,
-        business_name: businessName,
-        slug: slug,
-        primary_color: '#3B82F6', // Default blue color
-      })
+      .insert(businessInsertData)
       .select()
       .single()
 
