@@ -45,7 +45,7 @@ export default function LoginPage() {
           {/* Logo/Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-              ReviewFlow
+              ReviewFlo
             </h1>
             <p className="text-gray-600">
               Sign in to your account
@@ -163,7 +163,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="text-center text-gray-400 text-sm mt-6">
-          Powered by ReviewFlow
+          Powered by ReviewFlo
         </p>
       </div>
     </div>

@@ -447,7 +447,7 @@ export default function DashboardPage() {
 
         {/* Footer */}
         <p className="text-center text-gray-400 text-sm mt-8">
-          Powered by ReviewFlow
+          Powered by ReviewFlo
         </p>
       </div>
     </div>

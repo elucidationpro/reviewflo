@@ -120,8 +120,8 @@ export default async function handler(
           </div>
 
           <div style="text-align: center; color: #9ca3af; font-size: 14px; padding: 20px;">
-            <p style="margin: 0;">This email was sent from ReviewFlow</p>
-            <p style="margin: 5px 0 0 0;">Log in to your <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard" style="color: #3b82f6;">dashboard</a> to manage feedback</p>
+            <p style="margin: 0;">This email was sent from ReviewFlo</p>
+            <p style="margin: 5px 0 0 0;">Log in to your <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/dashboard" style="color: #3b82f6;">dashboard</a> to manage feedback</p>
           </div>
         </body>
       </html>
@@ -129,7 +129,7 @@ export default async function handler(
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: 'ReviewFlow <onboarding@resend.dev>',
+      from: 'ReviewFlo <noreply@usereviewflo.com>',
       to: ownerEmail,
       subject: `New Feedback from ${business.business_name}`,
       html: emailHtml,

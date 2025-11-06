@@ -123,7 +123,7 @@ export default function ReviewPage({ business }: PageProps) {
 
         {/* Footer */}
         <p className="text-center text-gray-400 text-sm mt-6">
-          Powered by ReviewFlow
+          Powered by ReviewFlo
         </p>
       </div>
     </div>

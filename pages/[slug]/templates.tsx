@@ -272,7 +272,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
 
         {/* Footer */}
         <p className="text-center text-gray-400 text-sm">
-          Powered by ReviewFlow
+          Powered by ReviewFlo
         </p>
       </div>
     </div>
