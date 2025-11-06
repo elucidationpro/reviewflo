@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 
 export default function HomePage() {
+  const router = useRouter()
   const [showWaitlist, setShowWaitlist] = useState(false)
   const [formData, setFormData] = useState({
     businessName: '',
@@ -11,6 +13,19 @@ export default function HomePage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+
+  // Check for password recovery token in URL hash and redirect to update-password page
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1))
+      const type = hashParams.get('type')
+
+      // If this is a password recovery link, redirect to update-password page with the hash
+      if (type === 'recovery') {
+        router.push(`/update-password${window.location.hash}`)
+      }
+    }
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -11,17 +11,53 @@ export default function UpdatePasswordPage() {
   const [isValidSession, setIsValidSession] = useState(false)
 
   useEffect(() => {
-    // Check if user has a valid recovery session
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        setIsValidSession(true)
-      } else {
-        // Redirect to login if no valid session
-        router.push('/login')
+    // Handle the password recovery flow
+    const handleRecovery = async () => {
+      try {
+        // Check if we have a recovery token in the URL hash
+        const hashParams = new URLSearchParams(window.location.hash.substring(1))
+        const access_token = hashParams.get('access_token')
+        const refresh_token = hashParams.get('refresh_token')
+        const type = hashParams.get('type')
+
+        // If we have recovery tokens, set the session
+        if (access_token && type === 'recovery') {
+          const { data, error } = await supabase.auth.setSession({
+            access_token,
+            refresh_token: refresh_token || ''
+          })
+
+          if (error) {
+            console.error('Error setting session:', error)
+            setError('Invalid or expired reset link. Please request a new one.')
+            setTimeout(() => router.push('/reset-password'), 3000)
+            return
+          }
+
+          if (data.session) {
+            setIsValidSession(true)
+            // Clear the hash from URL for security
+            window.history.replaceState(null, '', window.location.pathname)
+          }
+        } else {
+          // Check if user already has a valid session (e.g., from direct access)
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session) {
+            setIsValidSession(true)
+          } else {
+            // No session and no recovery token - redirect to login
+            setError('No active password reset session. Please request a new reset link.')
+            setTimeout(() => router.push('/reset-password'), 3000)
+          }
+        }
+      } catch (err) {
+        console.error('Recovery error:', err)
+        setError('An error occurred. Please try again.')
+        setTimeout(() => router.push('/reset-password'), 3000)
       }
     }
-    checkSession()
+
+    handleRecovery()
   }, [router])
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
