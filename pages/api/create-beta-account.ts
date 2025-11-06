@@ -117,6 +117,7 @@ export default async function handler(
     const businessInsertData = {
       user_id: authData.user.id,
       business_name: businessName,
+      owner_email: email,
       slug: slug,
       primary_color: '#3B82F6', // Default blue color
       logo_url: null,
