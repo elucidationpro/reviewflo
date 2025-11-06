@@ -45,6 +45,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
         .from('feedback')
         .insert({
           business_id: business.id,
+          star_rating: rating,
           what_happened: whatHappened.trim(),
           how_to_make_right: howToMakeRight.trim(),
           wants_contact: wantsContact,
