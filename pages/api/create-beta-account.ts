@@ -121,19 +121,26 @@ export default async function handler(
         business_name: businessName,
         slug: slug,
         primary_color: '#3B82F6', // Default blue color
-        owner_name: ownerName,
-        phone: phone || null,
-        business_type: businessType || null,
-        created_at: new Date().toISOString()
       })
       .select()
       .single()
 
     if (businessError) {
       console.error('Error creating business:', businessError)
+      console.error('Business error details:', JSON.stringify(businessError, null, 2))
+      console.error('Attempted to insert:', {
+        user_id: authData.user.id,
+        business_name: businessName,
+        slug: slug,
+        primary_color: '#3B82F6',
+      })
       // Clean up: delete the auth user if business creation fails
       await supabaseAdmin.auth.admin.deleteUser(authData.user.id)
-      return res.status(500).json({ error: 'Failed to create business record' })
+      return res.status(500).json({
+        error: 'Failed to create business record',
+        details: businessError.message,
+        code: businessError.code
+      })
     }
 
     // Mark invite code as used
