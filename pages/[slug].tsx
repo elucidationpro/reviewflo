@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next'
+import Head from 'next/head'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabase'
@@ -57,16 +58,26 @@ export default function ReviewPage({ business }: PageProps) {
   const displayRating = hoveredRating || selectedRating || 0
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-      <div className="max-w-2xl w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-          {/* Business Name */}
-          <h1
-            className="text-3xl md:text-4xl font-bold text-center mb-3"
-            style={{ color: business.primary_color }}
-          >
-            {business.business_name}
-          </h1>
+    <>
+      <Head>
+        <title>{business.business_name} - Share Your Experience | ReviewFlo</title>
+        <meta name="description" content={`Rate your experience with ${business.business_name}. Your feedback helps us improve our service.`} />
+        <meta property="og:title" content={`${business.business_name} - Share Your Experience`} />
+        <meta property="og:description" content={`Rate your experience with ${business.business_name}. Your feedback helps us improve our service.`} />
+        <meta property="og:url" content={`https://usereviewflo.com/${business.slug}`} />
+        <meta name="twitter:title" content={`${business.business_name} - Share Your Experience`} />
+        <meta name="twitter:description" content={`Rate your experience with ${business.business_name}. Your feedback helps us improve our service.`} />
+      </Head>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
+        <div className="max-w-2xl w-full">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            {/* Business Name */}
+            <h1
+              className="text-3xl md:text-4xl font-bold text-center mb-3"
+              style={{ color: business.primary_color }}
+            >
+              {business.business_name}
+            </h1>
 
           {/* Subtitle */}
           <p className="text-gray-600 text-center mb-8 md:mb-12 text-lg">
@@ -127,6 +138,7 @@ export default function ReviewPage({ business }: PageProps) {
         </p>
       </div>
     </div>
+    </>
   )
 }
 

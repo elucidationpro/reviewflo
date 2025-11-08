@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import Link from 'next/link'
 
 export default function SignupPage() {
@@ -103,18 +104,26 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-          {/* Logo/Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-              ReviewFlo
-            </h1>
-            <p className="text-gray-600">
-              {step === 1 ? 'Join the Beta' : 'Create Your Account'}
-            </p>
-          </div>
+    <>
+      <Head>
+        <title>Join ReviewFlo Beta - Smart Review Management</title>
+        <meta name="description" content="Join the ReviewFlo beta program. Get early access to smart review management for your service business." />
+        <meta property="og:title" content="Join ReviewFlo Beta" />
+        <meta property="og:description" content="Join the ReviewFlo beta program. Get early access to smart review management for your service business." />
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
+        <div className="max-w-md w-full">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            {/* Logo/Header */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                ReviewFlo
+              </h1>
+              <p className="text-gray-600">
+                {step === 1 ? 'Join the Beta' : 'Create Your Account'}
+              </p>
+            </div>
 
           {/* Progress Indicator */}
           <div className="flex items-center justify-center mb-8">
@@ -374,5 +383,6 @@ export default function SignupPage() {
         </p>
       </div>
     </div>
+    </>
   )
 }

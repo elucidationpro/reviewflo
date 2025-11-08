@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 
@@ -47,18 +48,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-          {/* Logo/Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-              ReviewFlo
-            </h1>
-            <p className="text-gray-600">
-              Sign in to your account
-            </p>
-          </div>
+    <>
+      <Head>
+        <title>Log In to ReviewFlo - Review Management Dashboard</title>
+        <meta name="description" content="Sign in to your ReviewFlo account to manage customer reviews and feedback." />
+        <meta property="og:title" content="Log In to ReviewFlo" />
+        <meta property="og:description" content="Sign in to your ReviewFlo account to manage customer reviews and feedback." />
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
+        <div className="max-w-md w-full">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            {/* Logo/Header */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                ReviewFlo
+              </h1>
+              <p className="text-gray-600">
+                Sign in to your account
+              </p>
+            </div>
 
           {/* Success Message */}
           {successMessage && (
@@ -195,5 +204,6 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+    </>
   )
 }
