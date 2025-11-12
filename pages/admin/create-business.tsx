@@ -56,7 +56,7 @@ export default function CreateBusinessPage() {
   const checkAdmin = async () => {
     const adminUser = await checkIsAdmin()
     if (!adminUser) {
-      router.push('/dashboard')
+      router.push('/login')
       return
     }
     setIsLoading(false)

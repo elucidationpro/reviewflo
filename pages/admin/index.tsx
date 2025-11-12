@@ -55,7 +55,7 @@ export default function AdminDashboard() {
       // Check if user is admin
       const adminUser = await checkIsAdmin()
       if (!adminUser) {
-        router.push('/dashboard')
+        router.push('/login')
         return
       }
 

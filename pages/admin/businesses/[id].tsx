@@ -55,7 +55,7 @@ export default function EditBusinessPage() {
     try {
       const adminUser = await checkIsAdmin()
       if (!adminUser) {
-        router.push('/dashboard')
+        router.push('/login')
         return
       }
 

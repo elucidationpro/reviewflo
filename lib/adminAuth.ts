@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 
-const ADMIN_EMAIL = 'elucidation.production@gmail.com'
+const ADMIN_EMAIL = 'jeremy.elucidation@gmail.com'
 
 /**
  * Check if the current logged-in user is an admin
