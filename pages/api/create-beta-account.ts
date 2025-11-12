@@ -40,9 +40,7 @@ export default async function handler(
       businessName,
       ownerName,
       email,
-      phone,
       password,
-      businessType
     } = req.body as CreateBetaAccountRequest
 
     // Validate required fields
@@ -134,7 +132,7 @@ export default async function handler(
     console.log('Slug:', slug)
     console.log('============================')
 
-    const { data: business, error: businessError } = await supabaseAdmin
+    const { error: businessError } = await supabaseAdmin
       .from('businesses')
       .insert(businessInsertData)
       .select()

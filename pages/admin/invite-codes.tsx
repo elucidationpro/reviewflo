@@ -25,6 +25,7 @@ export default function InviteCodesPage() {
 
   useEffect(() => {
     checkAdminAndFetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const checkAdminAndFetchData = async () => {
@@ -97,8 +98,9 @@ export default function InviteCodesPage() {
       setCustomCode('')
       await fetchInviteCodes()
       setIsGenerating(false)
-    } catch (err: any) {
-      setError(err.message || 'Failed to generate invite code')
+    } catch (err) {
+      const error = err as Error
+      setError(error.message || 'Failed to generate invite code')
       setIsGenerating(false)
     }
   }
@@ -132,8 +134,9 @@ export default function InviteCodesPage() {
 
       setSuccess('Invite code deleted successfully')
       await fetchInviteCodes()
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete invite code')
+    } catch (err) {
+      const error = err as Error
+      setError(error.message || 'Failed to delete invite code')
     }
   }
 

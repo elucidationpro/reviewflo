@@ -62,7 +62,7 @@ export default async function handler(
     const newPassword = generatePassword()
 
     // Update user password
-    const { data: userData, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       userId,
       { password: newPassword }
     )

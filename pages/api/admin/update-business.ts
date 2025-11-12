@@ -66,7 +66,7 @@ export default async function handler(
     }
 
     // Build update object with only provided fields
-    const updateData: any = {}
+    const updateData: Record<string, string | null> = {}
     if (businessName !== undefined) updateData.business_name = businessName
     if (ownerEmail !== undefined) updateData.owner_email = ownerEmail
     if (primaryColor !== undefined) updateData.primary_color = primaryColor

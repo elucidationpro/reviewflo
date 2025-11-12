@@ -44,6 +44,7 @@ export default function CreateBusinessPage() {
 
   useEffect(() => {
     checkAdmin()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const checkAdmin = async () => {
@@ -115,9 +116,10 @@ export default function CreateBusinessPage() {
       })
 
       setIsSubmitting(false)
-    } catch (err: any) {
-      console.error('Error creating business:', err)
-      setError(err.message || 'Failed to create business')
+    } catch (err) {
+      const error = err as Error
+      console.error('Error creating business:', error)
+      setError(error.message || 'Failed to create business')
       setIsSubmitting(false)
     }
   }

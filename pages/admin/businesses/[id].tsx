@@ -36,6 +36,7 @@ export default function EditBusinessPage() {
     if (id) {
       checkAdminAndFetchBusiness()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   const checkAdminAndFetchBusiness = async () => {
@@ -119,8 +120,9 @@ export default function EditBusinessPage() {
 
       setSuccess('Business updated successfully')
       setIsSaving(false)
-    } catch (err: any) {
-      setError(err.message || 'Failed to update business')
+    } catch (err) {
+      const error = err as Error
+      setError(error.message || 'Failed to update business')
       setIsSaving(false)
     }
   }
@@ -154,8 +156,9 @@ export default function EditBusinessPage() {
 
       setResetPassword(data.password)
       setSuccess('Password reset successfully')
-    } catch (err: any) {
-      setError(err.message || 'Failed to reset password')
+    } catch (err) {
+      const error = err as Error
+      setError(error.message || 'Failed to reset password')
     }
   }
 

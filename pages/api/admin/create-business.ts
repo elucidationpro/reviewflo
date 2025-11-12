@@ -69,8 +69,6 @@ export default async function handler(
       businessName,
       ownerName,
       ownerEmail,
-      phone,
-      businessType,
       primaryColor = '#3B82F6',
       googleReviewUrl,
       facebookReviewUrl,
