@@ -226,7 +226,7 @@ export default function EditBusinessPage() {
               <code className="block bg-white p-3 rounded text-red-600 font-mono text-lg font-bold">
                 {resetPassword}
               </code>
-              <p className="text-yellow-700 text-sm mt-2">Save this password - it won't be shown again!</p>
+              <p className="text-yellow-700 text-sm mt-2">Save this password - it won&apos;t be shown again!</p>
             </div>
           )}
 
