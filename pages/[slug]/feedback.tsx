@@ -1,6 +1,5 @@
 import { GetServerSideProps } from 'next'
 import { useState } from 'react'
-import { useRouter } from 'next/router'
 import { supabase } from '../../lib/supabase'
 
 interface Business {
@@ -16,7 +15,6 @@ interface PageProps {
 }
 
 export default function FeedbackPage({ business, rating }: PageProps) {
-  const router = useRouter()
   const [whatHappened, setWhatHappened] = useState('')
   const [howToMakeRight, setHowToMakeRight] = useState('')
   const [wantsContact, setWantsContact] = useState(false)

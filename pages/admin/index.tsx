@@ -89,12 +89,6 @@ export default function AdminDashboard() {
     }
   }
 
-  const handleLoginAs = async (userId: string) => {
-    // Open business dashboard in new tab
-    // This would require implementing a secure login-as feature
-    alert('Login As feature: Would open dashboard for this user in new tab')
-  }
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
