@@ -123,6 +123,7 @@ export default async function handler(
       facebook_review_url: null,
       yelp_review_url: null,
       nextdoor_review_url: null,
+      terms_accepted_at: new Date().toISOString(),
     }
 
     console.log('=== BUSINESS INSERT DEBUG ===')

@@ -22,6 +22,7 @@ export default function SignupPage() {
     confirmPassword: '',
     businessType: ''
   })
+  const [agreeToTerms, setAgreeToTerms] = useState(false)
 
   const handleValidateInviteCode = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,6 +56,12 @@ export default function SignupPage() {
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    // Validate terms agreement
+    if (!agreeToTerms) {
+      setError('You must agree to the Terms of Service and Privacy Policy to create an account')
+      return
+    }
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
@@ -343,6 +350,30 @@ export default function SignupPage() {
                 />
               </div>
 
+              {/* Terms of Service Agreement */}
+              <div className="border-t border-gray-200 pt-6">
+                <label className="flex items-start cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={agreeToTerms}
+                    onChange={(e) => setAgreeToTerms(e.target.checked)}
+                    className="mt-1 w-5 h-5 rounded cursor-pointer text-blue-600 focus:ring-blue-500 focus:ring-2"
+                    required
+                  />
+                  <span className="ml-3 text-sm text-gray-700">
+                    I agree to the{' '}
+                    <Link
+                      href="/terms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 font-medium underline"
+                    >
+                      Terms of Service and Privacy Policy
+                    </Link>
+                  </span>
+                </label>
+              </div>
+
               {/* Buttons */}
               <div className="flex gap-3">
                 <button
@@ -378,9 +409,18 @@ export default function SignupPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray-400 text-sm mt-6">
-          Powered by ReviewFlo
-        </p>
+        <div className="text-center text-gray-400 text-sm mt-6 space-y-2">
+          <div className="flex items-center justify-center gap-4">
+            <Link href="/terms" className="hover:text-gray-600 transition-colors">
+              Terms of Service
+            </Link>
+            <span>•</span>
+            <Link href="/terms#privacy" className="hover:text-gray-600 transition-colors">
+              Privacy Policy
+            </Link>
+          </div>
+          <p>Powered by ReviewFlo</p>
+        </div>
       </div>
     </div>
     </>

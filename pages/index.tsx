@@ -424,6 +424,12 @@ export default function HomePage() {
                 <Link href="/login" className="block text-gray-400 hover:text-white transition-colors">
                   Business Login
                 </Link>
+                <Link href="/terms" className="block text-gray-400 hover:text-white transition-colors">
+                  Terms of Service
+                </Link>
+                <Link href="/terms#privacy" className="block text-gray-400 hover:text-white transition-colors">
+                  Privacy Policy
+                </Link>
               </div>
             </div>
           </div>

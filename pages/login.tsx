@@ -199,9 +199,18 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray-400 text-sm mt-6">
-          Powered by ReviewFlo
-        </p>
+        <div className="text-center text-gray-400 text-sm mt-6 space-y-2">
+          <div className="flex items-center justify-center gap-4">
+            <Link href="/terms" className="hover:text-gray-600 transition-colors">
+              Terms of Service
+            </Link>
+            <span>•</span>
+            <Link href="/terms#privacy" className="hover:text-gray-600 transition-colors">
+              Privacy Policy
+            </Link>
+          </div>
+          <p>Powered by ReviewFlo</p>
+        </div>
       </div>
     </div>
     </>
