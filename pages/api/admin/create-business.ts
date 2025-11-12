@@ -28,6 +28,9 @@ interface CreateBusinessRequest {
   yelpReviewUrl?: string
   nextdoorReviewUrl?: string
   sendWelcomeEmail?: boolean
+  googleTemplate?: string
+  facebookTemplate?: string
+  yelpTemplate?: string
 }
 
 // Generate a random password
@@ -75,6 +78,9 @@ export default async function handler(
       yelpReviewUrl,
       nextdoorReviewUrl,
       sendWelcomeEmail = false,
+      googleTemplate,
+      facebookTemplate,
+      yelpTemplate,
     } = req.body as CreateBusinessRequest
 
     // Validate required fields
@@ -151,6 +157,46 @@ export default async function handler(
       // Clean up: delete the auth user if business creation fails
       await supabaseAdmin.auth.admin.deleteUser(authData.user.id)
       return res.status(500).json({ error: 'Failed to create business record' })
+    }
+
+    // Create review templates if provided, otherwise create defaults
+    const defaultTemplates = {
+      google: 'I had an excellent experience with ' + businessName + '! They exceeded my expectations. Highly recommend!',
+      facebook: 'Just had a great experience with ' + businessName + '! Professional service and fantastic results. 5 stars! ⭐⭐⭐⭐⭐',
+      yelp: '5 stars for ' + businessName + '! Quality work, professional service, and fair pricing. Will definitely use again.'
+    }
+
+    const templatesToCreate = [
+      {
+        business_id: business.id,
+        platform: 'google',
+        template_text: googleTemplate || defaultTemplates.google,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      },
+      {
+        business_id: business.id,
+        platform: 'facebook',
+        template_text: facebookTemplate || defaultTemplates.facebook,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      },
+      {
+        business_id: business.id,
+        platform: 'yelp',
+        template_text: yelpTemplate || defaultTemplates.yelp,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    ]
+
+    const { error: templatesError } = await supabaseAdmin
+      .from('review_templates')
+      .insert(templatesToCreate)
+
+    if (templatesError) {
+      console.error('Error creating templates:', templatesError)
+      // Don't fail the entire request if templates fail, just log it
     }
 
     // Send welcome email with credentials if requested

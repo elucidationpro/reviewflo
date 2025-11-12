@@ -22,14 +22,26 @@ interface Business {
   feedback_count?: number
 }
 
+interface ReviewTemplate {
+  id: string
+  platform: string
+  template_text: string
+}
+
 export default function EditBusinessPage() {
   const router = useRouter()
   const { id } = router.query
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isSavingTemplates, setIsSavingTemplates] = useState(false)
   const [business, setBusiness] = useState<Business | null>(null)
+  const [templates, setTemplates] = useState<ReviewTemplate[]>([])
+  const [googleTemplate, setGoogleTemplate] = useState('')
+  const [facebookTemplate, setFacebookTemplate] = useState('')
+  const [yelpTemplate, setYelpTemplate] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [templateSuccess, setTemplateSuccess] = useState('')
   const [resetPassword, setResetPassword] = useState('')
 
   useEffect(() => {
@@ -65,6 +77,25 @@ export default function EditBusinessPage() {
         const foundBusiness = data.businesses.find((b: Business) => b.id === id)
         if (foundBusiness) {
           setBusiness(foundBusiness)
+
+          // Fetch templates for this business
+          const { data: templatesData, error: templatesError } = await supabase
+            .from('review_templates')
+            .select('id, platform, template_text')
+            .eq('business_id', id)
+
+          if (!templatesError && templatesData) {
+            setTemplates(templatesData)
+
+            // Set individual template states
+            const googleTpl = templatesData.find((t: ReviewTemplate) => t.platform === 'google')
+            const facebookTpl = templatesData.find((t: ReviewTemplate) => t.platform === 'facebook')
+            const yelpTpl = templatesData.find((t: ReviewTemplate) => t.platform === 'yelp')
+
+            setGoogleTemplate(googleTpl?.template_text || '')
+            setFacebookTemplate(facebookTpl?.template_text || '')
+            setYelpTemplate(yelpTpl?.template_text || '')
+          }
         } else {
           setError('Business not found')
         }
@@ -159,6 +190,50 @@ export default function EditBusinessPage() {
     } catch (err) {
       const error = err as Error
       setError(error.message || 'Failed to reset password')
+    }
+  }
+
+  const handleSaveTemplates = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!business) return
+
+    setTemplateSuccess('')
+    setError('')
+    setIsSavingTemplates(true)
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.push('/login')
+        return
+      }
+
+      const response = await fetch('/api/admin/update-templates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          businessId: business.id,
+          googleTemplate: googleTemplate.trim() || undefined,
+          facebookTemplate: facebookTemplate.trim() || undefined,
+          yelpTemplate: yelpTemplate.trim() || undefined,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update templates')
+      }
+
+      setTemplateSuccess('Templates updated successfully')
+      setIsSavingTemplates(false)
+    } catch (err) {
+      const error = err as Error
+      setError(error.message || 'Failed to update templates')
+      setIsSavingTemplates(false)
     }
   }
 
@@ -388,6 +463,128 @@ export default function EditBusinessPage() {
               >
                 {isSaving ? 'Saving...' : 'Save Changes'}
               </button>
+            </div>
+          </form>
+
+          {/* Review Templates Section */}
+          <form onSubmit={handleSaveTemplates} className="space-y-6 mt-6">
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Review Templates</h2>
+              <p className="text-gray-600 mb-6 text-sm">
+                Customize the review templates that customers will see on the templates page. These help them leave reviews quickly.
+              </p>
+
+              {/* Template Success Message */}
+              {templateSuccess && (
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-green-800 text-sm">{templateSuccess}</p>
+                </div>
+              )}
+
+              <div className="space-y-6">
+                <div>
+                  <label htmlFor="googleTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Google Review Template
+                  </label>
+                  <textarea
+                    id="googleTemplateEdit"
+                    value={googleTemplate}
+                    onChange={(e) => setGoogleTemplate(e.target.value)}
+                    placeholder="I had an excellent experience with [Business Name]! [They/The service] exceeded my expectations. Highly recommend!"
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Customers will be able to copy and paste this template</p>
+                </div>
+
+                <div>
+                  <label htmlFor="facebookTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Facebook Review Template
+                  </label>
+                  <textarea
+                    id="facebookTemplateEdit"
+                    value={facebookTemplate}
+                    onChange={(e) => setFacebookTemplate(e.target.value)}
+                    placeholder="Just had a great experience with [Business Name]! Professional service and fantastic results. 5 stars! ⭐⭐⭐⭐⭐"
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Customers will be able to copy and paste this template</p>
+                </div>
+
+                <div>
+                  <label htmlFor="yelpTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Yelp Review Template
+                  </label>
+                  <textarea
+                    id="yelpTemplateEdit"
+                    value={yelpTemplate}
+                    onChange={(e) => setYelpTemplate(e.target.value)}
+                    placeholder="5 stars for [Business Name]! Quality work, professional service, and fair pricing. Will definitely use again."
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Customers will be able to copy and paste this template</p>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Preview</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  This is how customers will see the templates on{' '}
+                  <Link
+                    href={`/${business.slug}/templates`}
+                    target="_blank"
+                    className="text-blue-600 hover:underline"
+                  >
+                    /{business.slug}/templates
+                  </Link>
+                </p>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-4">
+                  {googleTemplate && (
+                    <div className="bg-white rounded-lg p-4 border border-gray-300">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-gray-900">Google</span>
+                        <span className="text-xs text-gray-500">Copy to paste</span>
+                      </div>
+                      <p className="text-sm text-gray-700">{googleTemplate}</p>
+                    </div>
+                  )}
+                  {facebookTemplate && (
+                    <div className="bg-white rounded-lg p-4 border border-gray-300">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-gray-900">Facebook</span>
+                        <span className="text-xs text-gray-500">Copy to paste</span>
+                      </div>
+                      <p className="text-sm text-gray-700">{facebookTemplate}</p>
+                    </div>
+                  )}
+                  {yelpTemplate && (
+                    <div className="bg-white rounded-lg p-4 border border-gray-300">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-gray-900">Yelp</span>
+                        <span className="text-xs text-gray-500">Copy to paste</span>
+                      </div>
+                      <p className="text-sm text-gray-700">{yelpTemplate}</p>
+                    </div>
+                  )}
+                  {!googleTemplate && !facebookTemplate && !yelpTemplate && (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                      No templates configured. Default templates will be used.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-6">
+                <button
+                  type="submit"
+                  disabled={isSavingTemplates}
+                  className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSavingTemplates ? 'Saving Templates...' : 'Save Templates'}
+                </button>
+              </div>
             </div>
           </form>
         </div>

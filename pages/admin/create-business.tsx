@@ -17,6 +17,9 @@ interface FormData {
   yelpReviewUrl: string
   nextdoorReviewUrl: string
   sendWelcomeEmail: boolean
+  googleTemplate: string
+  facebookTemplate: string
+  yelpTemplate: string
 }
 
 export default function CreateBusinessPage() {
@@ -40,6 +43,9 @@ export default function CreateBusinessPage() {
     yelpReviewUrl: '',
     nextdoorReviewUrl: '',
     sendWelcomeEmail: true,
+    googleTemplate: '',
+    facebookTemplate: '',
+    yelpTemplate: '',
   })
 
   useEffect(() => {
@@ -87,6 +93,9 @@ export default function CreateBusinessPage() {
           yelpReviewUrl: formData.yelpReviewUrl.trim() || undefined,
           nextdoorReviewUrl: formData.nextdoorReviewUrl.trim() || undefined,
           sendWelcomeEmail: formData.sendWelcomeEmail,
+          googleTemplate: formData.googleTemplate.trim() || undefined,
+          facebookTemplate: formData.facebookTemplate.trim() || undefined,
+          yelpTemplate: formData.yelpTemplate.trim() || undefined,
         }),
       })
 
@@ -113,6 +122,9 @@ export default function CreateBusinessPage() {
         yelpReviewUrl: '',
         nextdoorReviewUrl: '',
         sendWelcomeEmail: true,
+        googleTemplate: '',
+        facebookTemplate: '',
+        yelpTemplate: '',
       })
 
       setIsSubmitting(false)
@@ -372,6 +384,61 @@ export default function CreateBusinessPage() {
                     placeholder="https://nextdoor.com/pages/business-name"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   />
+                </div>
+              </div>
+            </div>
+
+            {/* Review Templates */}
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Review Templates (Optional)</h2>
+              <p className="text-gray-600 mb-6 text-sm">
+                Pre-configure custom review templates for customers to copy. Leave blank to use defaults.
+              </p>
+
+              <div className="space-y-6">
+                <div>
+                  <label htmlFor="googleTemplate" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Google Review Template
+                  </label>
+                  <textarea
+                    id="googleTemplate"
+                    value={formData.googleTemplate}
+                    onChange={(e) => setFormData({ ...formData, googleTemplate: e.target.value })}
+                    placeholder="I had an excellent experience with [Business Name]! [They/The service] exceeded my expectations. Highly recommend!"
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Default template will be used if left blank</p>
+                </div>
+
+                <div>
+                  <label htmlFor="facebookTemplate" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Facebook Review Template
+                  </label>
+                  <textarea
+                    id="facebookTemplate"
+                    value={formData.facebookTemplate}
+                    onChange={(e) => setFormData({ ...formData, facebookTemplate: e.target.value })}
+                    placeholder="Just had a great experience with [Business Name]! Professional service and fantastic results. 5 stars! ⭐⭐⭐⭐⭐"
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Default template will be used if left blank</p>
+                </div>
+
+                <div>
+                  <label htmlFor="yelpTemplate" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Yelp Review Template
+                  </label>
+                  <textarea
+                    id="yelpTemplate"
+                    value={formData.yelpTemplate}
+                    onChange={(e) => setFormData({ ...formData, yelpTemplate: e.target.value })}
+                    placeholder="5 stars for [Business Name]! Quality work, professional service, and fair pricing. Will definitely use again."
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Default template will be used if left blank</p>
                 </div>
               </div>
             </div>
