@@ -53,11 +53,13 @@ export default function AdminDashboard() {
   }, [searchQuery, businesses])
 
   const checkAdminAndFetchData = async () => {
+    console.time('[Admin] Total Load Time')
     console.log('[Admin] Starting checkAdminAndFetchData')
     try {
       // Check if user is admin
-      console.log('[Admin] Checking if user is admin...')
+      console.time('[Admin] Auth Check')
       const adminUser = await checkIsAdmin()
+      console.timeEnd('[Admin] Auth Check')
       console.log('[Admin] checkIsAdmin result:', adminUser)
 
       if (!adminUser) {
@@ -67,8 +69,9 @@ export default function AdminDashboard() {
       }
 
       // Get access token
-      console.log('[Admin] Getting session...')
+      console.time('[Admin] Session Fetch')
       const { data: { session } } = await supabase.auth.getSession()
+      console.timeEnd('[Admin] Session Fetch')
       console.log('[Admin] Session result:', session ? 'Session found' : 'No session')
 
       if (!session) {
@@ -78,17 +81,20 @@ export default function AdminDashboard() {
       }
 
       // Fetch businesses data
-      console.log('[Admin] Fetching businesses from API...')
+      console.time('[Admin] API Fetch Businesses')
       const response = await fetch('/api/admin/get-businesses', {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
         },
       })
+      console.timeEnd('[Admin] API Fetch Businesses')
 
       console.log('[Admin] API response status:', response.status, response.ok)
 
       if (!response.ok) {
-        throw new Error('Failed to fetch businesses')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('[Admin] API error response:', errorData)
+        throw new Error(errorData.error || 'Failed to fetch businesses')
       }
 
       const data = await response.json()
@@ -97,17 +103,20 @@ export default function AdminDashboard() {
         stats: data.stats
       })
 
-      setBusinesses(data.businesses)
-      setFilteredBusinesses(data.businesses)
-      setStats(data.stats)
+      setBusinesses(data.businesses || [])
+      setFilteredBusinesses(data.businesses || [])
+      setStats(data.stats || { total: 0, recentSignups: 0 })
 
       console.log('[Admin] Setting isLoading to false - SUCCESS')
       setIsLoading(false)
+      console.timeEnd('[Admin] Total Load Time')
     } catch (err) {
       console.error('[Admin] Caught error in checkAdminAndFetchData:', err)
-      setError('Failed to load admin dashboard')
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load admin dashboard'
+      setError(errorMessage)
       console.log('[Admin] Setting isLoading to false - ERROR')
       setIsLoading(false)
+      console.timeEnd('[Admin] Total Load Time')
     }
   }
 
@@ -118,10 +127,58 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-gray-600 mt-4">Loading admin dashboard...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header Skeleton */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 animate-pulse">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div className="flex-1">
+                <div className="h-10 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+              </div>
+              <div className="flex gap-3 mt-4 md:mt-0">
+                <div className="h-12 bg-gray-200 rounded-lg w-32"></div>
+                <div className="h-12 bg-gray-200 rounded-lg w-40"></div>
+                <div className="h-12 bg-gray-200 rounded-lg w-24"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Cards Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-xl p-6 md:p-8 animate-pulse">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div className="flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+                    <div className="h-8 bg-gray-200 rounded w-16"></div>
+                  </div>
+                  <div className="h-12 w-12 bg-gray-200 rounded-lg"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Search Bar Skeleton */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 animate-pulse">
+            <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+            <div className="h-12 bg-gray-200 rounded"></div>
+          </div>
+
+          {/* Table Skeleton */}
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden animate-pulse">
+            <div className="p-6">
+              <div className="space-y-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="h-12 bg-gray-200 rounded flex-1"></div>
+                    <div className="h-12 bg-gray-200 rounded w-32"></div>
+                    <div className="h-12 bg-gray-200 rounded w-24"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     )

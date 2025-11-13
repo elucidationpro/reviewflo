@@ -51,11 +51,13 @@ export default function DashboardPage() {
   }, [])
 
   const checkAuthAndFetchData = async () => {
+    console.time('[Dashboard] Total Load Time')
     console.log('[Dashboard] Starting checkAuthAndFetchData')
     try {
       // Check if user is authenticated
-      console.log('[Dashboard] Checking auth...')
+      console.time('[Dashboard] Auth Check')
       const { data: { user } } = await supabase.auth.getUser()
+      console.timeEnd('[Dashboard] Auth Check')
       console.log('[Dashboard] User check result:', user)
 
       if (!user) {
@@ -65,42 +67,51 @@ export default function DashboardPage() {
       }
 
       // Fetch business data for the logged-in user
-      console.log('[Dashboard] Fetching business for user_id:', user.id)
+      console.time('[Dashboard] Business Fetch')
       const { data: businessData, error: businessError } = await supabase
         .from('businesses')
         .select('id, business_name, slug, primary_color')
         .eq('user_id', user.id)
         .single()
-
-      console.log('[Dashboard] Business fetch result:', { businessData, businessError })
+      console.timeEnd('[Dashboard] Business Fetch')
 
       if (businessError || !businessData) {
         console.log('[Dashboard] No business found, setting isLoading to false')
         console.error('Error fetching business:', businessError)
         setIsLoading(false)
+        console.timeEnd('[Dashboard] Total Load Time')
         return
       }
 
       console.log('[Dashboard] Business found:', businessData.business_name)
       setBusiness(businessData)
 
-      // Fetch reviews for this month
-      console.log('[Dashboard] Fetching reviews...')
+      // Parallelize reviews and feedback fetching
+      console.time('[Dashboard] Parallel Data Fetch')
       const startOfMonth = new Date()
       startOfMonth.setDate(1)
       startOfMonth.setHours(0, 0, 0, 0)
 
-      const { data: reviews, error: reviewsError } = await supabase
-        .from('reviews')
-        .select('star_rating')
-        .eq('business_id', businessData.id)
-        .gte('created_at', startOfMonth.toISOString())
+      const [reviewsResult, feedbackResult] = await Promise.all([
+        supabase
+          .from('reviews')
+          .select('star_rating')
+          .eq('business_id', businessData.id)
+          .gte('created_at', startOfMonth.toISOString()),
+        supabase
+          .from('feedback')
+          .select('*')
+          .eq('business_id', businessData.id)
+          .order('created_at', { ascending: false })
+          .limit(50) // Limit to last 50 feedback items for better performance
+      ])
+      console.timeEnd('[Dashboard] Parallel Data Fetch')
 
-      console.log('[Dashboard] Reviews result:', { count: reviews?.length, error: reviewsError })
-
-      if (!reviewsError && reviews) {
+      // Process reviews
+      if (!reviewsResult.error && reviewsResult.data) {
+        console.log('[Dashboard] Reviews loaded:', reviewsResult.data.length)
         const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-        reviews.forEach((review) => {
+        reviewsResult.data.forEach((review) => {
           const rating = review.star_rating as 1 | 2 | 3 | 4 | 5
           if (rating >= 1 && rating <= 5) {
             breakdown[rating]++
@@ -108,32 +119,31 @@ export default function DashboardPage() {
         })
 
         setReviewStats({
-          total: reviews.length,
+          total: reviewsResult.data.length,
           breakdown
         })
+      } else if (reviewsResult.error) {
+        console.error('[Dashboard] Reviews fetch error:', reviewsResult.error)
+        // Don't block page load, just show empty stats
       }
 
-      // Fetch recent feedback
-      console.log('[Dashboard] Fetching feedback...')
-      const { data: feedback, error: feedbackError } = await supabase
-        .from('feedback')
-        .select('*')
-        .eq('business_id', businessData.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
-
-      console.log('[Dashboard] Feedback result:', { count: feedback?.length, error: feedbackError })
-
-      if (!feedbackError && feedback) {
-        setFeedbackList(feedback)
+      // Process feedback
+      if (!feedbackResult.error && feedbackResult.data) {
+        console.log('[Dashboard] Feedback loaded:', feedbackResult.data.length)
+        setFeedbackList(feedbackResult.data)
+      } else if (feedbackResult.error) {
+        console.error('[Dashboard] Feedback fetch error:', feedbackResult.error)
+        // Don't block page load, just show empty feedback
       }
 
       console.log('[Dashboard] Setting isLoading to false - SUCCESS')
       setIsLoading(false)
+      console.timeEnd('[Dashboard] Total Load Time')
     } catch (error) {
       console.error('[Dashboard] Caught error in checkAuthAndFetchData:', error)
       console.log('[Dashboard] Setting isLoading to false - ERROR')
       setIsLoading(false)
+      console.timeEnd('[Dashboard] Total Load Time')
     }
   }
 
@@ -161,10 +171,65 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
-          <p className="text-gray-600">Loading dashboard...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header Skeleton */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 animate-pulse">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div className="flex-1">
+                <div className="h-10 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+              </div>
+              <div className="flex gap-3 mt-4 md:mt-0">
+                <div className="h-12 bg-gray-200 rounded-lg w-24"></div>
+                <div className="h-12 bg-gray-200 rounded-lg w-24"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Cards Skeleton */}
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-1/2 mb-6"></div>
+              <div className="text-center mb-6">
+                <div className="h-20 bg-gray-200 rounded w-32 mx-auto mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-24 mx-auto"></div>
+              </div>
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="h-4 bg-gray-200 rounded"></div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-1/2 mb-6"></div>
+              <div className="space-y-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex-1">
+                      <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+                      <div className="h-8 bg-gray-200 rounded w-16"></div>
+                    </div>
+                    <div className="h-12 w-12 bg-gray-200 rounded-lg"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Feedback Skeleton */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 animate-pulse">
+            <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="border border-gray-200 rounded-lg p-6">
+                  <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     )
