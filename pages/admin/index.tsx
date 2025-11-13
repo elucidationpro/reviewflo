@@ -62,7 +62,7 @@ export default function AdminDashboard() {
 
       if (!adminUser) {
         console.log('[Admin] Not admin, redirecting to /login')
-        router.push('/login')
+        router.push('/login?redirect=/admin')
         return
       }
 
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
 
       if (!session) {
         console.log('[Admin] No session, redirecting to /login')
-        router.push('/login')
+        router.push('/login?redirect=/admin')
         return
       }
 
@@ -133,36 +133,36 @@ export default function AdminDashboard() {
         <title>Admin Dashboard - ReviewFlo</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
-                <div className="flex items-center gap-3">
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Admin Dashboard</h1>
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-3xl md:text-4xl font-bold text-red-600">Admin Dashboard</h1>
                   <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                     ADMIN
                   </span>
                 </div>
-                <p className="text-gray-600 mt-2">Manage all ReviewFlo businesses</p>
+                <p className="text-gray-600">Manage all ReviewFlo businesses</p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 mt-4 md:mt-0">
                 <Link
                   href="/admin/invite-codes"
-                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors"
+                  className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
                   Invite Codes
                 </Link>
                 <Link
                   href="/admin/create-business"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
                   Create New Business
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+                  className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
                   Logout
                 </button>
@@ -178,45 +178,45 @@ export default function AdminDashboard() {
           )}
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="flex items-center justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-gray-600 text-sm font-medium">Total Businesses</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">{stats.total}</p>
+                  <p className="text-sm text-gray-600 mb-1">Total Businesses</p>
+                  <p className="text-3xl font-bold text-gray-800">{stats.total}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="flex items-center justify-between">
+            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-gray-600 text-sm font-medium">Recent Signups (7 days)</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">{stats.recentSignups}</p>
+                  <p className="text-sm text-gray-600 mb-1">Recent Signups (7 days)</p>
+                  <p className="text-3xl font-bold text-gray-800">{stats.recentSignups}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                   </svg>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="flex items-center justify-between">
+            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-gray-600 text-sm font-medium">Total Reviews</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">
+                  <p className="text-sm text-gray-600 mb-1">Total Reviews</p>
+                  <p className="text-3xl font-bold text-gray-800">
                     {businesses.reduce((sum, b) => sum + b.reviews_count, 0)}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-8 h-8 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
                 </div>
@@ -225,7 +225,8 @@ export default function AdminDashboard() {
           </div>
 
           {/* Search Bar */}
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Search Businesses</h2>
             <input
               type="text"
               placeholder="Search businesses by name or email..."
@@ -236,7 +237,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Businesses Table */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
@@ -317,6 +318,11 @@ export default function AdminDashboard() {
               </div>
             )}
           </div>
+
+          {/* Footer */}
+          <p className="text-center text-gray-400 text-sm mt-8">
+            Powered by ReviewFlo
+          </p>
         </div>
       </div>
     </>

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
+import { checkIsAdmin } from '../lib/adminAuth'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -37,8 +38,18 @@ export default function LoginPage() {
       }
 
       if (data.user) {
-        // Redirect to dashboard on successful login
-        router.push('/dashboard')
+        // Check if user is admin
+        const adminUser = await checkIsAdmin()
+
+        if (adminUser) {
+          // Admin users go to admin dashboard
+          const redirectPath = router.query.redirect as string || '/admin'
+          router.push(redirectPath)
+        } else {
+          // Regular users go to business dashboard
+          const redirectPath = router.query.redirect as string || '/dashboard'
+          router.push(redirectPath)
+        }
       }
     } catch (err) {
       console.error('Login error:', err)
