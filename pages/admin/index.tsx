@@ -22,6 +22,7 @@ interface Stats {
 }
 
 export default function AdminDashboard() {
+  console.log('[Component] AdminDashboard component loaded and executing')
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [businesses, setBusinesses] = useState<Business[]>([])
@@ -31,6 +32,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    console.log('[Component] AdminDashboard useEffect is running')
     checkAdminAndFetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -51,40 +53,60 @@ export default function AdminDashboard() {
   }, [searchQuery, businesses])
 
   const checkAdminAndFetchData = async () => {
+    console.log('[Admin] Starting checkAdminAndFetchData')
     try {
       // Check if user is admin
+      console.log('[Admin] Checking if user is admin...')
       const adminUser = await checkIsAdmin()
+      console.log('[Admin] checkIsAdmin result:', adminUser)
+
       if (!adminUser) {
+        console.log('[Admin] Not admin, redirecting to /login')
         router.push('/login')
         return
       }
 
       // Get access token
+      console.log('[Admin] Getting session...')
       const { data: { session } } = await supabase.auth.getSession()
+      console.log('[Admin] Session result:', session ? 'Session found' : 'No session')
+
       if (!session) {
+        console.log('[Admin] No session, redirecting to /login')
         router.push('/login')
         return
       }
 
       // Fetch businesses data
+      console.log('[Admin] Fetching businesses from API...')
       const response = await fetch('/api/admin/get-businesses', {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
         },
       })
 
+      console.log('[Admin] API response status:', response.status, response.ok)
+
       if (!response.ok) {
         throw new Error('Failed to fetch businesses')
       }
 
       const data = await response.json()
+      console.log('[Admin] API data received:', {
+        businessCount: data.businesses?.length,
+        stats: data.stats
+      })
+
       setBusinesses(data.businesses)
       setFilteredBusinesses(data.businesses)
       setStats(data.stats)
+
+      console.log('[Admin] Setting isLoading to false - SUCCESS')
       setIsLoading(false)
     } catch (err) {
-      console.error('Error fetching admin data:', err)
+      console.error('[Admin] Caught error in checkAdminAndFetchData:', err)
       setError('Failed to load admin dashboard')
+      console.log('[Admin] Setting isLoading to false - ERROR')
       setIsLoading(false)
     }
   }

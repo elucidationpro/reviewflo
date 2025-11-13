@@ -28,9 +28,9 @@ interface CreateBusinessRequest {
   yelpReviewUrl?: string
   nextdoorReviewUrl?: string
   sendWelcomeEmail?: boolean
-  googleTemplate?: string
-  facebookTemplate?: string
-  yelpTemplate?: string
+  template1?: string
+  template2?: string
+  template3?: string
 }
 
 // Generate a random password
@@ -78,9 +78,9 @@ export default async function handler(
       yelpReviewUrl,
       nextdoorReviewUrl,
       sendWelcomeEmail = false,
-      googleTemplate,
-      facebookTemplate,
-      yelpTemplate,
+      template1,
+      template2,
+      template3,
     } = req.body as CreateBusinessRequest
 
     // Validate required fields
@@ -159,32 +159,32 @@ export default async function handler(
       return res.status(500).json({ error: 'Failed to create business record' })
     }
 
-    // Create review templates if provided, otherwise create defaults
-    const defaultTemplates = {
-      google: 'I had an excellent experience with ' + businessName + '! They exceeded my expectations. Highly recommend!',
-      facebook: 'Just had a great experience with ' + businessName + '! Professional service and fantastic results. 5 stars! ⭐⭐⭐⭐⭐',
-      yelp: '5 stars for ' + businessName + '! Quality work, professional service, and fair pricing. Will definitely use again.'
-    }
+    // Create generic review templates if provided, otherwise create defaults
+    const defaultTemplates = [
+      'I had an excellent experience with ' + businessName + '! The service exceeded my expectations. Highly recommend!',
+      'Just had a great experience with ' + businessName + '! Professional service and fantastic results. 5 stars!',
+      '5 stars for ' + businessName + '! Quality work, professional service, and fair pricing. Will definitely use again.'
+    ]
 
     const templatesToCreate = [
       {
         business_id: business.id,
-        platform: 'google',
-        template_text: googleTemplate || defaultTemplates.google,
+        platform: null,
+        template_text: template1 || defaultTemplates[0],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       },
       {
         business_id: business.id,
-        platform: 'facebook',
-        template_text: facebookTemplate || defaultTemplates.facebook,
+        platform: null,
+        template_text: template2 || defaultTemplates[1],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       },
       {
         business_id: business.id,
-        platform: 'yelp',
-        template_text: yelpTemplate || defaultTemplates.yelp,
+        platform: null,
+        template_text: template3 || defaultTemplates[2],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }

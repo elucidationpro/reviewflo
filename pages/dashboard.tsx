@@ -33,6 +33,7 @@ interface Feedback {
 }
 
 export default function DashboardPage() {
+  console.log('[Component] DashboardPage component loaded and executing')
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
@@ -44,36 +45,47 @@ export default function DashboardPage() {
   const [resolvingId, setResolvingId] = useState<string | null>(null)
 
   useEffect(() => {
+    console.log('[Component] DashboardPage useEffect is running')
     checkAuthAndFetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const checkAuthAndFetchData = async () => {
+    console.log('[Dashboard] Starting checkAuthAndFetchData')
     try {
       // Check if user is authenticated
+      console.log('[Dashboard] Checking auth...')
       const { data: { user } } = await supabase.auth.getUser()
+      console.log('[Dashboard] User check result:', user)
 
       if (!user) {
+        console.log('[Dashboard] No user found, redirecting to /login')
         router.push('/login')
         return
       }
 
       // Fetch business data for the logged-in user
+      console.log('[Dashboard] Fetching business for user_id:', user.id)
       const { data: businessData, error: businessError } = await supabase
         .from('businesses')
         .select('id, business_name, slug, primary_color')
         .eq('user_id', user.id)
         .single()
 
+      console.log('[Dashboard] Business fetch result:', { businessData, businessError })
+
       if (businessError || !businessData) {
+        console.log('[Dashboard] No business found, setting isLoading to false')
         console.error('Error fetching business:', businessError)
         setIsLoading(false)
         return
       }
 
+      console.log('[Dashboard] Business found:', businessData.business_name)
       setBusiness(businessData)
 
       // Fetch reviews for this month
+      console.log('[Dashboard] Fetching reviews...')
       const startOfMonth = new Date()
       startOfMonth.setDate(1)
       startOfMonth.setHours(0, 0, 0, 0)
@@ -83,6 +95,8 @@ export default function DashboardPage() {
         .select('star_rating')
         .eq('business_id', businessData.id)
         .gte('created_at', startOfMonth.toISOString())
+
+      console.log('[Dashboard] Reviews result:', { count: reviews?.length, error: reviewsError })
 
       if (!reviewsError && reviews) {
         const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
@@ -100,6 +114,7 @@ export default function DashboardPage() {
       }
 
       // Fetch recent feedback
+      console.log('[Dashboard] Fetching feedback...')
       const { data: feedback, error: feedbackError } = await supabase
         .from('feedback')
         .select('*')
@@ -107,13 +122,17 @@ export default function DashboardPage() {
         .order('created_at', { ascending: false })
         .limit(10)
 
+      console.log('[Dashboard] Feedback result:', { count: feedback?.length, error: feedbackError })
+
       if (!feedbackError && feedback) {
         setFeedbackList(feedback)
       }
 
+      console.log('[Dashboard] Setting isLoading to false - SUCCESS')
       setIsLoading(false)
     } catch (error) {
-      console.error('Error loading dashboard:', error)
+      console.error('[Dashboard] Caught error in checkAuthAndFetchData:', error)
+      console.log('[Dashboard] Setting isLoading to false - ERROR')
       setIsLoading(false)
     }
   }
