@@ -62,6 +62,11 @@ export default function CreateBusinessPage() {
     setIsLoading(false)
   }
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -166,11 +171,21 @@ export default function CreateBusinessPage() {
               </svg>
               Back to Admin Dashboard
             </Link>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Create New Business</h1>
-              <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">ADMIN</span>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Create New Business</h1>
+                  <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">ADMIN</span>
+                </div>
+                <p className="text-gray-600 mt-2">Pre-create a fully configured business account</p>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+              >
+                Logout
+              </button>
             </div>
-            <p className="text-gray-600 mt-2">Pre-create a fully configured business account</p>
           </div>
 
           {/* Success Message */}
