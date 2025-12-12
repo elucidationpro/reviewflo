@@ -1,445 +1,733 @@
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
+'use client';
 
-export default function HomePage() {
-  const router = useRouter()
-  const [showWaitlist, setShowWaitlist] = useState(false)
-  const [formData, setFormData] = useState({
-    businessName: '',
-    email: '',
-    businessType: '',
-    phone: ''
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+import { useState, useEffect, useRef } from 'react';
+import { Star, CheckCircle, Clock, Users, Shield, Zap } from 'lucide-react';
 
-  // Check for password recovery token in URL hash and redirect to update-password page
+// Hook for fade-in on scroll
+function useFadeInOnScroll() {
+  const ref = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hash) {
-      const hashParams = new URLSearchParams(window.location.hash.substring(1))
-      const type = hashParams.get('type')
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-      // If this is a password recovery link, redirect to update-password page with the hash
-      if (type === 'recovery') {
-        router.push(`/update-password${window.location.hash}`)
-      }
+    if (ref.current) {
+      observer.observe(ref.current);
     }
-  }, [router])
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
+
+  return { ref, isVisible };
+}
+
+export default function LandingPage() {
+  const problemSection = useFadeInOnScroll();
+  const howItWorksSection = useFadeInOnScroll();
+  const betaSection = useFadeInOnScroll();
+  const featuresSection = useFadeInOnScroll();
+  const founderSection = useFadeInOnScroll();
+  const waitlistSection = useFadeInOnScroll();
+
+  return (
+    <>
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.6s ease-out;
+        }
+
+        .animate-slideUp {
+          animation: slideUp 0.8s ease-out 0.2s both;
+        }
+      `}</style>
+      <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-50 animate-fadeIn">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+          <div className="text-center animate-slideUp">
+            {/* Beta Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-8">
+              <Zap className="w-4 h-4" />
+              Launching in 6 weeks • Limited beta spots available
+            </div>
+
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Stop Losing Customers to{' '}
+              <span className="text-blue-600">Bad Reviews</span>
+            </h1>
+
+            {/* Subheadline */}
+            <p className="text-xl sm:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
+              ReviewFlo catches unhappy customers before they leave 1-star reviews—and makes it easy for happy customers to review you.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+              <a
+                href="#beta-signup"
+                className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
+              >
+                Join Beta Testing - Free for Life
+              </a>
+              <a
+                href="#waitlist-signup"
+                className="w-full sm:w-auto px-8 py-4 bg-white text-gray-700 rounded-lg font-semibold text-lg border-2 border-gray-300 hover:border-gray-400 transition-all duration-200 hover:shadow-md hover:scale-105 transform"
+              >
+                Join Waitlist
+              </a>
+            </div>
+
+            {/* Trust Signals */}
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                Beta testers get lifetime free access
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-green-600" />
+                5-minute setup
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5 text-green-600" />
+                No credit card needed
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Urgency Banner */}
+      <section className="bg-blue-600 text-white py-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-lg font-semibold">
+            🚀 Beta Program Now Open • Limited Spots Available
+          </p>
+        </div>
+      </section>
+
+      {/* The Problem Section */}
+      <section
+        ref={problemSection.ref}
+        className={`py-16 sm:py-24 bg-gray-50 transition-all duration-700 ${
+          problemSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 text-center">
+            You know the feeling...
+          </h2>
+          <div className="prose prose-lg mx-auto text-gray-600">
+            <p className="text-xl leading-relaxed">
+              You wake up, check your phone, and there's a new 1-star review on Google. Your stomach drops.
+            </p>
+            <p className="text-xl leading-relaxed">
+              <em>"Why didn't they just tell me? I could have fixed it!"</em>
+            </p>
+            <p className="text-xl leading-relaxed">
+              Now that review is public. Forever. Scaring away customers who would have loved your work.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section
+        ref={howItWorksSection.ref}
+        className={`py-16 sm:py-24 transition-all duration-700 ${
+          howItWorksSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 text-center">
+            How ReviewFlo Works
+          </h2>
+          <p className="text-xl text-gray-600 mb-16 text-center max-w-3xl mx-auto">
+            Three simple steps to turn review anxiety into review success
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Step 1 */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                <span className="text-2xl font-bold text-blue-600">1</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Send Review Requests
+              </h3>
+              <p className="text-gray-600">
+                After every job, customers get a simple text with a link to rate their experience. Quick and easy for them.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                <span className="text-2xl font-bold text-blue-600">2</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Intercept Problems Early
+              </h3>
+              <p className="text-gray-600">
+                Unhappy customers (1-4 stars) are privately asked what went wrong—before they can leave a public review.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                <span className="text-2xl font-bold text-blue-600">3</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Amplify Your Champions
+              </h3>
+              <p className="text-gray-600">
+                Happy customers (5 stars) get a personalized template making it easy to leave glowing reviews on Google.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center">
+            <p className="text-gray-600 italic">
+              Currently in private beta. Join 20 businesses testing ReviewFlo before public launch.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Beta Program Section */}
+      <section
+        id="beta-signup"
+        ref={betaSection.ref}
+        className={`py-16 sm:py-24 bg-gradient-to-br from-blue-600 to-blue-700 text-white transition-all duration-700 ${
+          betaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Be a Founding Member
+            </h2>
+            <p className="text-xl text-blue-100">
+              Join our beta program and help shape ReviewFlo
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl p-8 shadow-2xl">
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                <div>
+                  <div className="font-semibold text-gray-900">Lifetime free access</div>
+                  <div className="text-gray-600 text-sm">Never pay a subscription fee</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                <div>
+                  <div className="font-semibold text-gray-900">Direct line to founder</div>
+                  <div className="text-gray-600 text-sm">Text or email me directly</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                <div>
+                  <div className="font-semibold text-gray-900">Shape the product</div>
+                  <div className="text-gray-600 text-sm">Your feedback drives development</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                <div>
+                  <div className="font-semibold text-gray-900">Early access</div>
+                  <div className="text-gray-600 text-sm">First to see new features</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Beta Signup Form */}
+            <BetaSignupForm />
+
+            <p className="text-center text-gray-600 text-sm mt-6">
+              Not ready to beta test?{' '}
+              <a href="#waitlist-signup" className="text-blue-600 font-semibold hover:underline">
+                Join the waitlist instead →
+              </a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section
+        ref={featuresSection.ref}
+        className={`py-16 sm:py-24 transition-all duration-700 ${
+          featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 text-center">
+            Everything You Need to Manage Your Reputation
+          </h2>
+          <p className="text-xl text-gray-600 mb-16 text-center max-w-3xl mx-auto">
+            All features included in beta program
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Catch Problems Before They Go Public
+                </h3>
+                <p className="text-gray-600">
+                  Route 1-4 star ratings to private feedback where you can make it right
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Star className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Make 5-Star Reviews Effortless
+                </h3>
+                <p className="text-gray-600">
+                  Pre-written templates your happy customers can post with one tap
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Users className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Track What's Working
+                </h3>
+                <p className="text-gray-600">
+                  Dashboard shows response rates, feedback trends, and sentiment over time
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Set It and Forget It
+                </h3>
+                <p className="text-gray-600">
+                  Automated emails after every job. You focus on your work, ReviewFlo handles the rest
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Founder Story Section */}
+      <section
+        ref={founderSection.ref}
+        className={`py-16 sm:py-24 bg-gray-50 transition-all duration-700 ${
+          founderSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-xl p-8 shadow-lg">
+            <div className="flex flex-col md:flex-row gap-8 items-center">
+              <div className="flex-shrink-0">
+                <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white text-4xl font-bold">
+                  J
+                </div>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Hi, I'm Jeremy 👋
+                </h2>
+                <div className="prose prose-lg text-gray-600">
+                  <p>
+                    I built ReviewFlo because I own a mobile detailing business and got tired of customers leaving bad reviews without giving me a chance to fix the problem first.
+                  </p>
+                  <p>
+                    I thought: <em>what if unhappy customers could tell me privately what went wrong before leaving a public review?</em>
+                  </p>
+                  <p>
+                    That's ReviewFlo. I'm building it for business owners like us.
+                  </p>
+                  <p className="font-semibold text-gray-900">
+                    Want to help me make it better? Join the beta program.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Waitlist Section */}
+      <section
+        id="waitlist-signup"
+        ref={waitlistSection.ref}
+        className={`py-16 sm:py-24 bg-gray-900 text-white transition-all duration-700 ${
+          waitlistSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Can't Join Beta? Join the Waitlist
+            </h2>
+            <p className="text-xl text-gray-300">
+              Be first to access ReviewFlo when we launch in 6 weeks
+            </p>
+          </div>
+
+          <div className="bg-gray-800 rounded-xl p-8 shadow-2xl">
+            <WaitlistSignupForm />
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="py-16 sm:py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">
+            Ready to Stop Worrying About Bad Reviews?
+          </h2>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <a
+              href="#beta-signup"
+              className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
+            >
+              Join Beta Testing - Limited Spots
+            </a>
+            <a
+              href="#waitlist-signup"
+              className="w-full sm:w-auto px-8 py-4 bg-white text-gray-700 rounded-lg font-semibold text-lg border-2 border-gray-300 hover:border-gray-400 transition-all duration-200 hover:shadow-md hover:scale-105 transform"
+            >
+              Join Waitlist - Launch in 6 Weeks
+            </a>
+          </div>
+
+          <div className="text-gray-600">
+            <p className="mb-2">Questions? I'd love to hear from you.</p>
+            <p>
+              <strong>Text me:</strong> (385) 522-5040 |{' '}
+              <strong>Email:</strong>{' '}
+              <a href="mailto:jeremy@usereviewflo.com" className="text-blue-600 hover:underline">
+                jeremy@usereviewflo.com
+              </a>
+            </p>
+          </div>
+        </div>
+      </section>
+      </div>
+    </>
+  );
+}
+
+// Beta Signup Form Component
+function BetaSignupForm() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    businessType: '',
+    businessName: '',
+    challenge: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/join-waitlist', {
+      // TODO: Replace with actual API endpoint
+      const response = await fetch('/api/beta-signup', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
 
       if (response.ok) {
-        setIsSubmitted(true)
-        setFormData({ businessName: '', email: '', businessType: '', phone: '' })
-      } else {
-        alert('There was an error. Please try again.')
+        setSubmitted(true);
       }
     } catch (error) {
-      console.error('Error submitting waitlist:', error)
-      alert('There was an error. Please try again.')
+      console.error('Error submitting form:', error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
+  };
+
+  if (submitted) {
+    return (
+      <div className="text-center py-8">
+        <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">You're In! 🎉</h3>
+        <p className="text-gray-600 mb-4">
+          Welcome to ReviewFlo beta. I'll text you within 24 hours to get you set up.
+        </p>
+        <p className="text-gray-600">
+          Check your email for next steps.
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6">
-              Fix it before it goes public
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
-              ReviewFlo helps service businesses catch unhappy customers before they leave 1-star reviews,
-              while making it easy for happy customers to share great reviews.
-            </p>
-            <button
-              onClick={() => setShowWaitlist(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-12 py-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-xl hover:shadow-2xl"
-            >
-              Join the Waitlist
-            </button>
-          </div>
-
-          {/* Visual Flow */}
-          <div className="mt-20 max-w-5xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-              <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-                How It Works
-              </h3>
-              <div className="grid md:grid-cols-3 gap-8">
-                {/* Step 1 */}
-                <div className="text-center">
-                  <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <span className="text-3xl">⭐</span>
-                  </div>
-                  <h4 className="font-bold text-lg mb-2">Customer Rates</h4>
-                  <p className="text-gray-600 text-sm">
-                    They click a link and rate their experience with 1-5 stars
-                  </p>
-                </div>
-
-                {/* Arrow */}
-                <div className="hidden md:flex items-center justify-center">
-                  <svg className="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </div>
-
-                {/* Step 2 */}
-                <div className="text-center">
-                  <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <span className="text-3xl">💬</span>
-                  </div>
-                  <h4 className="font-bold text-lg mb-2">Smart Routing</h4>
-                  <p className="text-gray-600 text-sm">
-                    1-4 stars: Private feedback form
-                    <br />
-                    5 stars: Review templates
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 text-center">
-                <svg className="w-12 h-12 text-blue-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8 mt-4">
-                {/* Outcome 1 */}
-                <div className="bg-yellow-50 rounded-xl p-6 border-2 border-yellow-200">
-                  <h4 className="font-bold text-lg mb-2 text-yellow-900">Unhappy? Keep it Private</h4>
-                  <p className="text-gray-700 text-sm">
-                    Get actionable feedback directly, fix the issue, and prevent public negative reviews
-                  </p>
-                </div>
-
-                {/* Outcome 2 */}
-                <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
-                  <h4 className="font-bold text-lg mb-2 text-green-900">Happy? Share it Publicly</h4>
-                  <p className="text-gray-700 text-sm">
-                    Pre-written review templates make it effortless for satisfied customers to leave 5-star reviews
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Your Name *
+          </label>
+          <input
+            type="text"
+            required
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            placeholder="John Smith"
+          />
         </div>
-      </section>
-
-      {/* Problem/Solution Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
-            Stop Losing Business to Bad Reviews
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-12">
-            {/* Pain Point 1 */}
-            <div className="text-center">
-              <div className="bg-red-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">The Problem</h3>
-              <p className="text-gray-600 mb-4">
-                One bad review can cost you thousands in lost business
-              </p>
-              <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">Our Solution</h4>
-                <p className="text-sm text-gray-700">
-                  Intercept unhappy customers before they post publicly. Get direct feedback and a chance to make it right.
-                </p>
-              </div>
-            </div>
-
-            {/* Pain Point 2 */}
-            <div className="text-center">
-              <div className="bg-red-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">The Problem</h3>
-              <p className="text-gray-600 mb-4">
-                Happy customers often don&apos;t bother leaving reviews
-              </p>
-              <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">Our Solution</h4>
-                <p className="text-sm text-gray-700">
-                  Make it effortless with pre-written review templates they can copy and paste in seconds.
-                </p>
-              </div>
-            </div>
-
-            {/* Pain Point 3 */}
-            <div className="text-center">
-              <div className="bg-red-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">The Problem</h3>
-              <p className="text-gray-600 mb-4">
-                You never know there&apos;s a problem until it&apos;s too late
-              </p>
-              <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">Our Solution</h4>
-                <p className="text-sm text-gray-700">
-                  Get instant email alerts when someone leaves critical feedback, with their contact info to follow up.
-                </p>
-              </div>
-            </div>
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email *
+          </label>
+          <input
+            type="email"
+            required
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            placeholder="john@example.com"
+          />
         </div>
-      </section>
+      </div>
 
-      {/* Social Proof Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-blue-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-blue-800 font-semibold text-lg mb-4">
-              Currently in private beta with select service businesses
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
-              Join Early Adopters Like Obsidian Auto
-            </h2>
-          </div>
-
-          <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="flex items-start mb-6">
-              <div className="flex-shrink-0">
-                <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-2xl">
-                  O
-                </div>
-              </div>
-              <div className="ml-6">
-                <h4 className="font-bold text-xl text-gray-900">Obsidian Auto</h4>
-                <p className="text-gray-600">Mobile Auto Detailing • Phoenix, AZ</p>
-              </div>
-            </div>
-            <div className="flex mb-4">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <svg key={star} className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
-              ))}
-            </div>
-            <p className="text-gray-700 text-lg leading-relaxed italic">
-              &quot;ReviewFlo helped us catch issues before they became 1-star reviews. Now we get more 5-star reviews
-              than ever because it&apos;s so easy for happy customers to share their experience.&quot;
-            </p>
-          </div>
-
-          <div className="text-center mt-12">
-            <p className="text-2xl font-bold text-blue-900">
-              Launching Spring 2025
-            </p>
-          </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Phone Number *
+          </label>
+          <input
+            type="tel"
+            required
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            placeholder="(555) 123-4567"
+          />
         </div>
-      </section>
-
-      {/* Waitlist Form Modal/Section */}
-      {showWaitlist && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-8 md:p-12">
-              <div className="flex justify-between items-start mb-6">
-                <h2 className="text-3xl font-bold text-gray-900">
-                  {isSubmitted ? "You're on the list!" : 'Reserve Your Spot'}
-                </h2>
-                <button
-                  onClick={() => {
-                    setShowWaitlist(false)
-                    setIsSubmitted(false)
-                  }}
-                  className="text-gray-400 hover:text-gray-600 text-3xl leading-none"
-                >
-                  ×
-                </button>
-              </div>
-
-              {isSubmitted ? (
-                <div className="text-center py-8">
-                  <div className="bg-green-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                    <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    Check Your Email!
-                  </h3>
-                  <p className="text-gray-600 text-lg mb-8">
-                    We&apos;ve sent you a confirmation. You&apos;ll be among the first to know when ReviewFlo launches.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setShowWaitlist(false)
-                      setIsSubmitted(false)
-                    }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
-                  >
-                    Close
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="businessName" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Business Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="businessName"
-                      value={formData.businessName}
-                      onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="businessType" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Type of Business *
-                    </label>
-                    <select
-                      id="businessType"
-                      value={formData.businessType}
-                      onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                      required
-                    >
-                      <option value="">Select your industry...</option>
-                      <option value="Auto Detailing">Auto Detailing</option>
-                      <option value="Mobile Mechanic">Mobile Mechanic</option>
-                      <option value="Electrician">Electrician</option>
-                      <option value="Plumber">Plumber</option>
-                      <option value="HVAC">HVAC</option>
-                      <option value="Landscaping">Landscaping</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Phone Number (optional)
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
-                      placeholder="(555) 123-4567"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSubmitting ? 'Reserving Your Spot...' : 'Reserve Your Spot'}
-                  </button>
-
-                  <p className="text-sm text-gray-500 text-center">
-                    We&apos;ll never share your information. Unsubscribe anytime.
-                  </p>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to Protect Your Reputation?
-          </h2>
-          <p className="text-xl text-blue-100 mb-10">
-            Join the waitlist and be among the first to access ReviewFlo when we launch.
-          </p>
-          <button
-            onClick={() => setShowWaitlist(true)}
-            className="bg-white hover:bg-gray-100 text-blue-600 font-bold text-lg px-12 py-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-xl"
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Business Type *
+          </label>
+          <select
+            required
+            value={formData.businessType}
+            onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
           >
-            Join the Waitlist
-          </button>
+            <option value="">Select type...</option>
+            <option value="barber">Barber / Hair Salon</option>
+            <option value="mechanic">Mobile Mechanic</option>
+            <option value="detailing">Auto Detailing</option>
+            <option value="electrician">Electrician</option>
+            <option value="plumber">Plumber</option>
+            <option value="hvac">HVAC</option>
+            <option value="cleaning">Cleaning Service</option>
+            <option value="other">Other</option>
+          </select>
         </div>
-      </section>
+      </div>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h3 className="text-2xl font-bold mb-4">ReviewFlo</h3>
-              <p className="text-gray-400">
-                Protecting your reputation, one review at a time.
-              </p>
-            </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Business Name *
+        </label>
+        <input
+          type="text"
+          required
+          value={formData.businessName}
+          onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+          placeholder="Smith's Mobile Detailing"
+        />
+      </div>
 
-            <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
-              <p className="text-gray-400">
-                Email: hello@reviewflo.com
-              </p>
-            </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Tell me about your biggest review challenge (optional)
+        </label>
+        <textarea
+          value={formData.challenge}
+          onChange={(e) => setFormData({ ...formData, challenge: e.target.value })}
+          rows={3}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+          placeholder="e.g., Customers leave bad reviews without telling me what went wrong..."
+        />
+      </div>
 
-            <div>
-              <h4 className="font-semibold mb-4">Quick Links</h4>
-              <div className="space-y-2">
-                <Link href="/login" className="block text-gray-400 hover:text-white transition-colors">
-                  Business Login
-                </Link>
-                <Link href="/terms" className="block text-gray-400 hover:text-white transition-colors">
-                  Terms of Service
-                </Link>
-                <Link href="/terms#privacy" className="block text-gray-400 hover:text-white transition-colors">
-                  Privacy Policy
-                </Link>
-              </div>
-            </div>
-          </div>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+      >
+        {isSubmitting ? 'Submitting...' : 'Join Beta Testing'}
+      </button>
+    </form>
+  );
+}
 
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>© 2025 ReviewFlo. All rights reserved.</p>
-            <p className="mt-2">Powered by ReviewFlo</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  )
+// Waitlist Signup Form Component
+function WaitlistSignupForm() {
+  const [email, setEmail] = useState('');
+  const [businessType, setBusinessType] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // TODO: Replace with actual API endpoint
+      const response = await fetch('/api/waitlist-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, businessType })
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div className="text-center py-8">
+        <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
+        <h3 className="text-2xl font-bold text-white mb-2">You're on the list!</h3>
+        <p className="text-gray-300 mb-4">
+          You're one of {148} businesses waiting for ReviewFlo.
+        </p>
+        <p className="text-gray-300">
+          We'll email you when we launch in 6 weeks.
+        </p>
+        <a href="#beta-signup" className="inline-block mt-6 text-blue-400 hover:underline font-semibold">
+          Changed your mind? Join beta instead →
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">
+          Email Address *
+        </label>
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="your@email.com"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">
+          Business Type (optional)
+        </label>
+        <select
+          value={businessType}
+          onChange={(e) => setBusinessType(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option value="">Select type...</option>
+          <option value="barber">Barber / Hair Salon</option>
+          <option value="mechanic">Mobile Mechanic</option>
+          <option value="detailing">Auto Detailing</option>
+          <option value="electrician">Electrician</option>
+          <option value="plumber">Plumber</option>
+          <option value="hvac">HVAC</option>
+          <option value="cleaning">Cleaning Service</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+      >
+        {isSubmitting ? 'Joining...' : 'Join Waitlist'}
+      </button>
+
+      <p className="text-center text-gray-400 text-sm">
+        Want beta access instead?{' '}
+        <a href="#beta-signup" className="text-blue-400 hover:underline font-semibold">
+          Join beta program →
+        </a>
+      </p>
+    </form>
+  );
 }
