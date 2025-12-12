@@ -150,10 +150,10 @@ export default function LandingPage() {
           </h2>
           <div className="prose prose-lg mx-auto text-gray-600">
             <p className="text-xl leading-relaxed">
-              You wake up, check your phone, and there's a new 1-star review on Google. Your stomach drops.
+              You wake up, check your phone, and there&apos;s a new 1-star review on Google. Your stomach drops.
             </p>
             <p className="text-xl leading-relaxed">
-              <em>"Why didn't they just tell me? I could have fixed it!"</em>
+              <em>&quot;Why didn&apos;t they just tell me? I could have fixed it!&quot;</em>
             </p>
             <p className="text-xl leading-relaxed">
               Now that review is public. Forever. Scaring away customers who would have loved your work.
@@ -389,7 +389,7 @@ export default function LandingPage() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Hi, I'm Jeremy 👋
+                  Hi, I&apos;m Jeremy 👋
                 </h2>
                 <div className="prose prose-lg text-gray-600">
                   <p>
@@ -399,7 +399,7 @@ export default function LandingPage() {
                     I thought: <em>what if unhappy customers could tell me privately what went wrong before leaving a public review?</em>
                   </p>
                   <p>
-                    That's ReviewFlo. I'm building it for business owners like us.
+                    That&apos;s ReviewFlo. I&apos;m building it for business owners like us.
                   </p>
                   <p className="font-semibold text-gray-900">
                     Want to help me make it better? Join the beta program.
@@ -513,9 +513,9 @@ function BetaSignupForm() {
     return (
       <div className="text-center py-8">
         <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">You're In! 🎉</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re In! 🎉</h3>
         <p className="text-gray-600 mb-4">
-          Welcome to ReviewFlo beta. I'll text you within 24 hours to get you set up.
+          Welcome to ReviewFlo beta. I&apos;ll text you within 24 hours to get you set up.
         </p>
         <p className="text-gray-600">
           Check your email for next steps.
@@ -663,12 +663,12 @@ function WaitlistSignupForm() {
     return (
       <div className="text-center py-8">
         <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-white mb-2">You're on the list!</h3>
+        <h3 className="text-2xl font-bold text-white mb-2">You&apos;re on the list!</h3>
         <p className="text-gray-300 mb-4">
-          You're one of {148} businesses waiting for ReviewFlo.
+          You&apos;re one of {148} businesses waiting for ReviewFlo.
         </p>
         <p className="text-gray-300">
-          We'll email you when we launch in 6 weeks.
+          We&apos;ll email you when we launch in 6 weeks.
         </p>
         <a href="#beta-signup" className="inline-block mt-6 text-blue-400 hover:underline font-semibold">
           Changed your mind? Join beta instead →

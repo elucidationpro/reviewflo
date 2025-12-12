@@ -154,7 +154,7 @@ export async function sendWaitlistConfirmationEmail(data: WaitlistSignupData) {
   }
 }
 
-export async function sendAdminNotification(type: 'beta' | 'waitlist', data: any) {
+export async function sendAdminNotification(type: 'beta' | 'waitlist', data: Record<string, unknown>) {
   try {
     await resend.emails.send({
       from: 'ReviewFlo <notifications@usereviewflo.com>',
