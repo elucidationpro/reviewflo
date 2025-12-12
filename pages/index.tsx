@@ -345,7 +345,7 @@ export default function LandingPage() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Track What's Working
+                  Track What&apos;s Working
                 </h3>
                 <p className="text-gray-600">
                   Dashboard shows response rates, feedback trends, and sentiment over time
@@ -422,7 +422,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Can't Join Beta? Join the Waitlist
+              Can&apos;t Join Beta? Join the Waitlist
             </h2>
             <p className="text-xl text-gray-300">
               Be first to access ReviewFlo when we launch in 6 weeks
@@ -458,7 +458,7 @@ export default function LandingPage() {
           </div>
 
           <div className="text-gray-600">
-            <p className="mb-2">Questions? I'd love to hear from you.</p>
+            <p className="mb-2">Questions? I&apos;d love to hear from you.</p>
             <p>
               <strong>Text me:</strong> (385) 522-5040 |{' '}
               <strong>Email:</strong>{' '}
