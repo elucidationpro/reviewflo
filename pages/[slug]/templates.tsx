@@ -1,6 +1,8 @@
 import { GetServerSideProps } from 'next'
 import { useState } from 'react'
+import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
+import ReviewFloFooter from '../../components/ReviewFloFooter'
 
 interface Business {
   id: string
@@ -271,9 +273,18 @@ export default function TemplatesPage({ business, templates }: PageProps) {
         )}
 
         {/* Footer */}
-        <p className="text-center text-gray-400 text-sm">
-          Powered by ReviewFlo
-        </p>
+        <div className="text-center text-gray-400 text-sm space-y-2">
+          <div className="flex items-center justify-center gap-4">
+            <Link href="/terms" className="hover:text-gray-600 transition-colors">
+              Terms of Service
+            </Link>
+            <span>•</span>
+            <Link href="/terms#privacy" className="hover:text-gray-600 transition-colors">
+              Privacy Policy
+            </Link>
+          </div>
+          <ReviewFloFooter />
+        </div>
       </div>
     </div>
   )

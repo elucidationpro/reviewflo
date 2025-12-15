@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
+import ReviewFloFooter from '../../components/ReviewFloFooter'
 
 interface Business {
   id: string
@@ -141,7 +142,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
 
           {/* Footer */}
           <div className="text-center text-gray-400 text-sm mt-6 space-y-2">
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-4 mb-4">
               <Link href="/terms" className="hover:text-gray-600 transition-colors">
                 Terms of Service
               </Link>
@@ -150,7 +151,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                 Privacy Policy
               </Link>
             </div>
-            <p>Powered by ReviewFlo</p>
+            <ReviewFloFooter />
           </div>
         </div>
       </div>
@@ -329,7 +330,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
               Privacy Policy
             </Link>
           </div>
-          <p>Powered by ReviewFlo</p>
+          <ReviewFloFooter />
         </div>
       </div>
     </div>
