@@ -1,0 +1,19 @@
+<svg width="300" height="75" viewBox="0 0 300 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Star Icon - slightly heavier weight -->
+  <g transform="translate(10, 20)">
+    <path d="M20 3L22.8 12.2C22.9 12.6 23.3 12.9 23.7 12.9L33.2 12.9C33.9 12.9 34.2 13.8 33.7 14.2L26.1 19.8C25.8 20 25.6 20.4 25.7 20.8L28.5 30C28.7 30.7 27.9 31.2 27.4 30.8L19.8 25.2C19.5 25 19.1 25 18.8 25.2L11.2 30.8C10.7 31.2 9.9 30.7 10.1 30L12.9 20.8C13 20.4 12.8 20 12.5 19.8L4.9 14.2C4.4 13.8 4.7 12.9 5.4 12.9L14.9 12.9C15.3 12.9 15.7 12.6 15.8 12.2L18.6 3C18.8 2.3 19.8 2.3 20 3Z" 
+          fill="none" 
+          stroke="#4A3428" 
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+  </g>
+  
+  <!-- ReviewFlo text - adjusted for taller, tighter spacing -->
+  <text x="55" y="50" 
+        font-family="'Baskerville Old Face', 'Libre Baskerville', 'Baskerville', serif" 
+        font-size="42" 
+        font-weight="700" 
+        letter-spacing="-0.5"
+        fill="#4A3428">Review<tspan fill="#C9A961">Flo</tspan></text>
+</svg>

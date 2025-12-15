@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Star, CheckCircle, Clock, Users, Shield, Zap } from 'lucide-react';
+import Image from 'next/image';
 
 // Hook for fade-in on scroll
 function useFadeInOnScroll() {
@@ -72,38 +73,65 @@ export default function LandingPage() {
         }
       `}</style>
       <div className="min-h-screen bg-white">
+      {/* Header/Navbar */}
+      <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            {/* Logo */}
+            <a href="/" className="flex items-center transition-opacity hover:opacity-80">
+              <img
+                src="/images/reviewflo-logo.svg"
+                alt="ReviewFlo"
+                className="h-8 sm:h-10 w-auto"
+              />
+            </a>
+
+            {/* CTA Button */}
+            <a
+              href="#beta-signup"
+              className="px-4 sm:px-6 py-2 sm:py-2.5 bg-[#4A3428] text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              Join Beta
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Spacer for fixed header */}
+      <div className="h-16 sm:h-20"></div>
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-50 animate-fadeIn">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#E8DCC8]/30 via-white to-[#E8DCC8]/30 animate-fadeIn">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center animate-slideUp">
             {/* Beta Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#C9A961]/20 text-[#4A3428] rounded-full text-sm font-medium mb-8 border border-[#C9A961]/30">
               <Zap className="w-4 h-4" />
               Launching in 6 weeks • Limited beta spots available
             </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Stop Losing Customers to{' '}
-              <span className="text-blue-600">Bad Reviews</span>
+              Stop Bad Reviews. Get More Good Ones.{' '}
+              <span className="text-[#4A3428]">Automatically.</span>
             </h1>
 
             {/* Subheadline */}
             <p className="text-xl sm:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-              ReviewFlo catches unhappy customers before they leave 1-star reviews—and makes it easy for happy customers to review you.
+              Intercept negative feedback privately. Turn happy customers into 5-star reviews.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <a
                 href="#beta-signup"
-                className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
+                className="w-full sm:w-auto px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
               >
                 Join Beta Testing - Free for Life
               </a>
               <a
                 href="#waitlist-signup"
-                className="w-full sm:w-auto px-8 py-4 bg-white text-gray-700 rounded-lg font-semibold text-lg border-2 border-gray-300 hover:border-gray-400 transition-all duration-200 hover:shadow-md hover:scale-105 transform"
+                className="w-full sm:w-auto px-8 py-4 bg-white text-[#4A3428] rounded-lg font-semibold text-lg border-2 border-[#C9A961] hover:border-[#4A3428] transition-all duration-200 hover:shadow-md hover:scale-105 transform"
               >
                 Join Waitlist
               </a>
@@ -112,15 +140,15 @@ export default function LandingPage() {
             {/* Trust Signals */}
             <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600" />
+                <CheckCircle className="w-5 h-5 text-[#C9A961]" />
                 Beta testers get lifetime free access
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-green-600" />
+                <Clock className="w-5 h-5 text-[#C9A961]" />
                 5-minute setup
               </div>
               <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-green-600" />
+                <Shield className="w-5 h-5 text-[#C9A961]" />
                 No credit card needed
               </div>
             </div>
@@ -129,7 +157,7 @@ export default function LandingPage() {
       </section>
 
       {/* Urgency Banner */}
-      <section className="bg-blue-600 text-white py-4">
+      <section className="bg-[#4A3428] text-white py-4">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-lg font-semibold">
             🚀 Beta Program Now Open • Limited Spots Available
@@ -162,7 +190,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works Section */}
+      {/* The Promise Section */}
       <section
         ref={howItWorksSection.ref}
         className={`py-16 sm:py-24 transition-all duration-700 ${
@@ -171,49 +199,49 @@ export default function LandingPage() {
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 text-center">
-            How ReviewFlo Works
+            The Promise
           </h2>
           <p className="text-xl text-gray-600 mb-16 text-center max-w-3xl mx-auto">
-            Three simple steps to turn review anxiety into review success
+            Three guarantees that protect your reputation
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                <span className="text-2xl font-bold text-blue-600">1</span>
+            {/* Guarantee 1 */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border border-[#C9A961]/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-[#C9A961]">
+              <div className="w-12 h-12 bg-[#C9A961]/20 rounded-lg flex items-center justify-center mb-6">
+                <CheckCircle className="w-7 h-7 text-[#4A3428]" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Send Review Requests
+                Negative reviews never go public
               </h3>
               <p className="text-gray-600">
-                After every job, customers get a simple text with a link to rate their experience. Quick and easy for them.
+                Route 1-4 star reviews to private feedback. Fix problems before they damage your reputation.
               </p>
             </div>
 
-            {/* Step 2 */}
-            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                <span className="text-2xl font-bold text-blue-600">2</span>
+            {/* Guarantee 2 */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border border-[#C9A961]/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-[#C9A961]">
+              <div className="w-12 h-12 bg-[#C9A961]/20 rounded-lg flex items-center justify-center mb-6">
+                <CheckCircle className="w-7 h-7 text-[#4A3428]" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Intercept Problems Early
+                More 5-star reviews, less effort
               </h3>
               <p className="text-gray-600">
-                Unhappy customers (1-4 stars) are privately asked what went wrong—before they can leave a public review.
+                One link after each job, we handle the rest. Happy customers leave glowing reviews with zero friction.
               </p>
             </div>
 
-            {/* Step 3 */}
-            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                <span className="text-2xl font-bold text-blue-600">3</span>
+            {/* Guarantee 3 */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border border-[#C9A961]/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-[#C9A961]">
+              <div className="w-12 h-12 bg-[#C9A961]/20 rounded-lg flex items-center justify-center mb-6">
+                <CheckCircle className="w-7 h-7 text-[#4A3428]" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Amplify Your Champions
+                Setup in 5 minutes
               </h3>
               <p className="text-gray-600">
-                Happy customers (5 stars) get a personalized template making it easy to leave glowing reviews on Google.
+                No training, no complexity, no ongoing work. Set it once and ReviewFlo runs on autopilot.
               </p>
             </div>
           </div>
@@ -230,7 +258,7 @@ export default function LandingPage() {
       <section
         id="beta-signup"
         ref={betaSection.ref}
-        className={`py-16 sm:py-24 bg-gradient-to-br from-blue-600 to-blue-700 text-white transition-all duration-700 ${
+        className={`py-16 sm:py-24 bg-gradient-to-br from-[#4A3428] to-[#3a2a20] text-white transition-all duration-700 ${
           betaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
@@ -239,7 +267,7 @@ export default function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Be a Founding Member
             </h2>
-            <p className="text-xl text-blue-100">
+            <p className="text-xl text-[#C9A961]/80">
               Join our beta program and help shape ReviewFlo
             </p>
           </div>
@@ -247,28 +275,28 @@ export default function LandingPage() {
           <div className="bg-white rounded-xl p-8 shadow-2xl">
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-[#C9A961] flex-shrink-0 mt-1" />
                 <div>
                   <div className="font-semibold text-gray-900">Lifetime free access</div>
                   <div className="text-gray-600 text-sm">Never pay a subscription fee</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-[#C9A961] flex-shrink-0 mt-1" />
                 <div>
                   <div className="font-semibold text-gray-900">Direct line to founder</div>
                   <div className="text-gray-600 text-sm">Text or email me directly</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-[#C9A961] flex-shrink-0 mt-1" />
                 <div>
                   <div className="font-semibold text-gray-900">Shape the product</div>
                   <div className="text-gray-600 text-sm">Your feedback drives development</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-[#C9A961] flex-shrink-0 mt-1" />
                 <div>
                   <div className="font-semibold text-gray-900">Early access</div>
                   <div className="text-gray-600 text-sm">First to see new features</div>
@@ -281,7 +309,7 @@ export default function LandingPage() {
 
             <p className="text-center text-gray-600 text-sm mt-6">
               Not ready to beta test?{' '}
-              <a href="#waitlist-signup" className="text-blue-600 font-semibold hover:underline">
+              <a href="#waitlist-signup" className="text-[#4A3428] font-semibold hover:underline hover:text-[#C9A961]">
                 Join the waitlist instead →
               </a>
             </p>
@@ -307,8 +335,8 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 gap-8">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-[#C9A961]/20 rounded-lg flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-[#4A3428]" />
                 </div>
               </div>
               <div>
@@ -323,8 +351,8 @@ export default function LandingPage() {
 
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Star className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-[#C9A961]/20 rounded-lg flex items-center justify-center">
+                  <Star className="w-6 h-6 text-[#4A3428]" />
                 </div>
               </div>
               <div>
@@ -339,8 +367,8 @@ export default function LandingPage() {
 
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-[#C9A961]/20 rounded-lg flex items-center justify-center">
+                  <Users className="w-6 h-6 text-[#4A3428]" />
                 </div>
               </div>
               <div>
@@ -355,8 +383,8 @@ export default function LandingPage() {
 
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-[#C9A961]/20 rounded-lg flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-[#4A3428]" />
                 </div>
               </div>
               <div>
@@ -383,8 +411,15 @@ export default function LandingPage() {
           <div className="bg-white rounded-xl p-8 shadow-lg">
             <div className="flex flex-col md:flex-row gap-8 items-center">
               <div className="flex-shrink-0">
-                <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white text-4xl font-bold">
-                  J
+                <div className="relative w-48 h-48 rounded-full overflow-hidden ring-4 ring-[#C9A961]/30 shadow-xl">
+                  <Image
+                    src="/images/jeremy.jpg"
+                    alt="Jeremy - ReviewFlo Founder"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 192px, 192px"
+                    priority
+                  />
                 </div>
               </div>
               <div>
@@ -393,16 +428,16 @@ export default function LandingPage() {
                 </h2>
                 <div className="prose prose-lg text-gray-600">
                   <p>
-                    I built ReviewFlo because I own a mobile detailing business and got tired of customers leaving bad reviews without giving me a chance to fix the problem first.
+                    I&apos;m an entrepreneur running multiple service businesses. From day one, my goal was simple: build strong brand reputation and get as many customers as possible.
                   </p>
                   <p>
-                    I thought: <em>what if unhappy customers could tell me privately what went wrong before leaving a public review?</em>
+                    I saw the same problem everywhere—great businesses losing potential customers because of a few bad reviews. I didn&apos;t want to <em>fix</em> review problems. I wanted to <em>prevent</em> them.
                   </p>
                   <p>
-                    That&apos;s ReviewFlo. I&apos;m building it for business owners like us.
+                    So I built ReviewFlo. Catch issues privately before they hurt your reputation. Make it effortless for happy customers to leave 5-star reviews.
                   </p>
                   <p className="font-semibold text-gray-900">
-                    Want to help me make it better? Join the beta program.
+                    Want to help shape the future of ReviewFlo? Join the beta program.
                   </p>
                 </div>
               </div>
@@ -415,7 +450,7 @@ export default function LandingPage() {
       <section
         id="waitlist-signup"
         ref={waitlistSection.ref}
-        className={`py-16 sm:py-24 bg-gray-900 text-white transition-all duration-700 ${
+        className={`py-16 sm:py-24 bg-[#2A1F1A] text-white transition-all duration-700 ${
           waitlistSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
@@ -429,7 +464,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-8 shadow-2xl">
+          <div className="bg-[#1a1410] rounded-xl p-8 shadow-2xl border border-[#C9A961]/10">
             <WaitlistSignupForm />
           </div>
         </div>
@@ -445,13 +480,13 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <a
               href="#beta-signup"
-              className="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
+              className="w-full sm:w-auto px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
             >
               Join Beta Testing - Limited Spots
             </a>
             <a
               href="#waitlist-signup"
-              className="w-full sm:w-auto px-8 py-4 bg-white text-gray-700 rounded-lg font-semibold text-lg border-2 border-gray-300 hover:border-gray-400 transition-all duration-200 hover:shadow-md hover:scale-105 transform"
+              className="w-full sm:w-auto px-8 py-4 bg-white text-[#4A3428] rounded-lg font-semibold text-lg border-2 border-[#C9A961] hover:border-[#4A3428] transition-all duration-200 hover:shadow-md hover:scale-105 transform"
             >
               Join Waitlist - Launch in 6 Weeks
             </a>
@@ -462,7 +497,7 @@ export default function LandingPage() {
             <p>
               <strong>Text me:</strong> (385) 522-5040 |{' '}
               <strong>Email:</strong>{' '}
-              <a href="mailto:jeremy@usereviewflo.com" className="text-blue-600 hover:underline">
+              <a href="mailto:jeremy@usereviewflo.com" className="text-[#4A3428] hover:underline hover:text-[#C9A961]">
                 jeremy@usereviewflo.com
               </a>
             </p>
@@ -512,7 +547,7 @@ function BetaSignupForm() {
   if (submitted) {
     return (
       <div className="text-center py-8">
-        <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
+        <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
         <h3 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re In! 🎉</h3>
         <p className="text-gray-600 mb-4">
           Welcome to ReviewFlo beta. I&apos;ll text you within 24 hours to get you set up.
@@ -536,7 +571,7 @@ function BetaSignupForm() {
             required
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
             placeholder="John Smith"
           />
         </div>
@@ -549,7 +584,7 @@ function BetaSignupForm() {
             required
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
             placeholder="john@example.com"
           />
         </div>
@@ -565,7 +600,7 @@ function BetaSignupForm() {
             required
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
             placeholder="(555) 123-4567"
           />
         </div>
@@ -577,7 +612,7 @@ function BetaSignupForm() {
             required
             value={formData.businessType}
             onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
           >
             <option value="">Select type...</option>
             <option value="barber">Barber / Hair Salon</option>
@@ -601,7 +636,7 @@ function BetaSignupForm() {
           required
           value={formData.businessName}
           onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
           placeholder="Smith's Mobile Detailing"
         />
       </div>
@@ -614,7 +649,7 @@ function BetaSignupForm() {
           value={formData.challenge}
           onChange={(e) => setFormData({ ...formData, challenge: e.target.value })}
           rows={3}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
           placeholder="e.g., Customers leave bad reviews without telling me what went wrong..."
         />
       </div>
@@ -622,7 +657,7 @@ function BetaSignupForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="w-full px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
         {isSubmitting ? 'Submitting...' : 'Join Beta Testing'}
       </button>
@@ -662,7 +697,7 @@ function WaitlistSignupForm() {
   if (submitted) {
     return (
       <div className="text-center py-8">
-        <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
+        <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
         <h3 className="text-2xl font-bold text-white mb-2">You&apos;re on the list!</h3>
         <p className="text-gray-300 mb-4">
           You&apos;re one of {148} businesses waiting for ReviewFlo.
@@ -670,7 +705,7 @@ function WaitlistSignupForm() {
         <p className="text-gray-300">
           We&apos;ll email you when we launch in 6 weeks.
         </p>
-        <a href="#beta-signup" className="inline-block mt-6 text-blue-400 hover:underline font-semibold">
+        <a href="#beta-signup" className="inline-block mt-6 text-[#C9A961] hover:underline font-semibold hover:text-white">
           Changed your mind? Join beta instead →
         </a>
       </div>
@@ -688,7 +723,7 @@ function WaitlistSignupForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
           placeholder="your@email.com"
         />
       </div>
@@ -700,7 +735,7 @@ function WaitlistSignupForm() {
         <select
           value={businessType}
           onChange={(e) => setBusinessType(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
         >
           <option value="">Select type...</option>
           <option value="barber">Barber / Hair Salon</option>
@@ -717,14 +752,14 @@ function WaitlistSignupForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="w-full px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
         {isSubmitting ? 'Joining...' : 'Join Waitlist'}
       </button>
 
       <p className="text-center text-gray-400 text-sm">
         Want beta access instead?{' '}
-        <a href="#beta-signup" className="text-blue-400 hover:underline font-semibold">
+        <a href="#beta-signup" className="text-[#C9A961] hover:underline font-semibold hover:text-white">
           Join beta program →
         </a>
       </p>
