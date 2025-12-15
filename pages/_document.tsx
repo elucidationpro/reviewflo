@@ -21,17 +21,17 @@ export default function Document() {
         <meta property="og:title" content="ReviewFlo - Stop Bad Reviews, Get More Good Ones" />
         <meta property="og:description" content="Intercept negative reviews before they go public. Make getting 5-star reviews effortless." />
         <meta property="og:site_name" content="ReviewFlo" />
-        <meta property="og:image" content="https://usereviewflo.com/images/reviewflo-logo.svg" />
-        <meta property="og:image:width" content="300" />
-        <meta property="og:image:height" content="75" />
-        <meta property="og:image:type" content="image/svg+xml" />
+        <meta property="og:image" content="https://usereviewflo.com/images/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://usereviewflo.com" />
         <meta name="twitter:title" content="ReviewFlo - Stop Bad Reviews, Get More Good Ones" />
         <meta name="twitter:description" content="Intercept negative reviews before they go public. Make getting 5-star reviews effortless." />
-        <meta name="twitter:image" content="https://usereviewflo.com/images/reviewflo-logo.svg" />
+        <meta name="twitter:image" content="https://usereviewflo.com/images/og-image.png" />
 
         {/* Additional Meta Tags */}
         <meta name="theme-color" content="#4A3428" />
