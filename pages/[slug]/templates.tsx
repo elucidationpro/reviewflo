@@ -18,6 +18,7 @@ interface Business {
 interface ReviewTemplate {
   id: string
   template_text: string
+  platform: 'google' | 'facebook' | 'yelp'
 }
 
 interface PageProps {
@@ -175,64 +176,71 @@ export default function TemplatesPage({ business, templates }: PageProps) {
           </h3>
           {templates.length > 0 ? (
             <div className="space-y-4">
-              {templates.map((template, index) => (
-                <div
-                  key={template.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <h4 className="font-semibold text-gray-700">
-                      Template {index + 1}
-                    </h4>
-                    <button
-                      onClick={() => handleCopy(template.id, template.template_text)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:shadow-md"
-                      style={{
-                        backgroundColor: copiedId === template.id ? '#10B981' : business.primary_color
-                      }}
-                    >
-                      {copiedId === template.id ? (
-                        <>
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          Copied!
-                        </>
-                      ) : (
-                        <>
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                            />
-                          </svg>
-                          Copy
-                        </>
-                      )}
-                    </button>
+              {templates.map((template, index) => {
+                const platformLabels: Record<string, string> = {
+                  google: 'Google',
+                  facebook: 'Facebook',
+                  yelp: 'Yelp'
+                }
+                return (
+                  <div
+                    key={template.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="font-semibold text-gray-700">
+                        {platformLabels[template.platform] || 'Template ' + (index + 1)}
+                      </h4>
+                      <button
+                        onClick={() => handleCopy(template.id, template.template_text)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:shadow-md"
+                        style={{
+                          backgroundColor: copiedId === template.id ? '#10B981' : business.primary_color
+                        }}
+                      >
+                        {copiedId === template.id ? (
+                          <>
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            Copied!
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
+                            </svg>
+                            Copy
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+                      {template.template_text}
+                    </p>
                   </div>
-                  <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                    {template.template_text}
-                  </p>
-                </div>
-              ))}
+                )
+              })}
             </div>
           ) : (
             <p className="text-gray-500 text-center py-8">
@@ -309,9 +317,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // Fetch review templates for this business
   const { data: templates } = await supabase
     .from('review_templates')
-    .select('id, template_text')
+    .select('id, template_text, platform')
     .eq('business_id', business.id)
-    .order('created_at', { ascending: true })
+    .order('platform', { ascending: true })
 
   return {
     props: {

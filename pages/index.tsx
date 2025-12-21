@@ -571,7 +571,7 @@ function BetaSignupForm() {
             required
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
             placeholder="John Smith"
           />
         </div>
@@ -584,7 +584,7 @@ function BetaSignupForm() {
             required
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
             placeholder="john@example.com"
           />
         </div>
@@ -600,7 +600,7 @@ function BetaSignupForm() {
             required
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
             placeholder="(555) 123-4567"
           />
         </div>
@@ -612,7 +612,7 @@ function BetaSignupForm() {
             required
             value={formData.businessType}
             onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
           >
             <option value="">Select type...</option>
             <option value="barber">Barber / Hair Salon</option>
@@ -636,7 +636,7 @@ function BetaSignupForm() {
           required
           value={formData.businessName}
           onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
           placeholder="Smith's Mobile Detailing"
         />
       </div>
@@ -649,7 +649,7 @@ function BetaSignupForm() {
           value={formData.challenge}
           onChange={(e) => setFormData({ ...formData, challenge: e.target.value })}
           rows={3}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
           placeholder="e.g., Customers leave bad reviews without telling me what went wrong..."
         />
       </div>
@@ -723,7 +723,7 @@ function WaitlistSignupForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent placeholder-gray-400"
           placeholder="your@email.com"
         />
       </div>
@@ -735,7 +735,7 @@ function WaitlistSignupForm() {
         <select
           value={businessType}
           onChange={(e) => setBusinessType(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent placeholder-gray-400"
         >
           <option value="">Select type...</option>
           <option value="barber">Barber / Hair Salon</option>

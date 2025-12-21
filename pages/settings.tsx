@@ -17,6 +17,7 @@ interface Business {
 interface ReviewTemplate {
   id: string
   template_text: string
+  platform: 'google' | 'facebook' | 'yelp'
 }
 
 export default function SettingsPage() {
@@ -38,11 +39,11 @@ export default function SettingsPage() {
     nextdoor_review_url: '',
   })
 
-  // Review templates state
+  // Review templates state - one for each platform
   const [templates, setTemplates] = useState<ReviewTemplate[]>([
-    { id: '', template_text: '' },
-    { id: '', template_text: '' },
-    { id: '', template_text: '' },
+    { id: '', template_text: '', platform: 'google' },
+    { id: '', template_text: '', platform: 'facebook' },
+    { id: '', template_text: '', platform: 'yelp' },
   ])
 
   useEffect(() => {
@@ -83,14 +84,23 @@ export default function SettingsPage() {
         // Fetch review templates
         const { data: templatesData, error: templatesError } = await supabase
           .from('review_templates')
-          .select('id, template_text')
+          .select('id, template_text, platform')
           .eq('business_id', business.id)
-          .order('created_at', { ascending: true })
+          .order('platform', { ascending: true })
 
         if (templatesError) {
           console.error('Error fetching templates:', templatesError)
         } else if (templatesData && templatesData.length > 0) {
-          setTemplates(templatesData.slice(0, 3))
+          // Map templates by platform
+          const googleTemplate = templatesData.find(t => t.platform === 'google')
+          const facebookTemplate = templatesData.find(t => t.platform === 'facebook')
+          const yelpTemplate = templatesData.find(t => t.platform === 'yelp')
+
+          setTemplates([
+            googleTemplate || { id: '', template_text: '', platform: 'google' },
+            facebookTemplate || { id: '', template_text: '', platform: 'facebook' },
+            yelpTemplate || { id: '', template_text: '', platform: 'yelp' },
+          ])
         }
 
         setIsLoading(false)
@@ -132,9 +142,10 @@ export default function SettingsPage() {
         return
       }
 
-      // Update review templates
+      // Update review templates (upsert for each platform)
       for (const template of templates) {
         if (template.id) {
+          // Update existing template
           const { error: templateError } = await supabase
             .from('review_templates')
             .update({ template_text: template.template_text })
@@ -142,6 +153,19 @@ export default function SettingsPage() {
 
           if (templateError) {
             console.error('Error updating template:', templateError)
+          }
+        } else if (template.template_text) {
+          // Create new template if it doesn't exist
+          const { error: templateError } = await supabase
+            .from('review_templates')
+            .insert({
+              business_id: businessData.id,
+              platform: template.platform,
+              template_text: template.template_text
+            })
+
+          if (templateError) {
+            console.error('Error creating template:', templateError)
           }
         }
       }
@@ -370,32 +394,35 @@ export default function SettingsPage() {
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Review Templates</h2>
             <p className="text-gray-600 mb-6">
-              Create templates that happy customers can copy and paste into their reviews
+              Create platform-specific templates that happy customers can copy and paste into their reviews
             </p>
 
             <div className="space-y-6">
-              {templates.map((template, index) => (
-                <div key={template.id || index}>
-                  <label
-                    htmlFor={`template${index + 1}`}
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Template {index + 1}
-                  </label>
-                  <textarea
-                    id={`template${index + 1}`}
-                    value={template.template_text}
-                    onChange={(e) => {
-                      const newTemplates = [...templates]
-                      newTemplates[index] = { ...newTemplates[index], template_text: e.target.value }
-                      setTemplates(newTemplates)
-                    }}
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
-                    placeholder="Enter a review template that customers can use..."
-                  />
-                </div>
-              ))}
+              {templates.map((template, index) => {
+                const platformNames = ['Google', 'Facebook', 'Yelp']
+                return (
+                  <div key={template.platform}>
+                    <label
+                      htmlFor={`template-${template.platform}`}
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      {platformNames[index]} Template
+                    </label>
+                    <textarea
+                      id={`template-${template.platform}`}
+                      value={template.template_text}
+                      onChange={(e) => {
+                        const newTemplates = [...templates]
+                        newTemplates[index] = { ...newTemplates[index], template_text: e.target.value }
+                        setTemplates(newTemplates)
+                      }}
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                      placeholder={`Enter a review template for ${platformNames[index]}...`}
+                    />
+                  </div>
+                )
+              })}
             </div>
           </div>
 

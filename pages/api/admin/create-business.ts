@@ -159,32 +159,32 @@ export default async function handler(
       return res.status(500).json({ error: 'Failed to create business record' })
     }
 
-    // Create generic review templates if provided, otherwise create defaults
-    const defaultTemplates = [
-      'I had an excellent experience with ' + businessName + '! The service exceeded my expectations. Highly recommend!',
-      'Just had a great experience with ' + businessName + '! Professional service and fantastic results. 5 stars!',
-      '5 stars for ' + businessName + '! Quality work, professional service, and fair pricing. Will definitely use again.'
-    ]
+    // Create platform-specific review templates
+    // If custom templates are provided, use them for all platforms
+    // Otherwise, use platform-specific defaults
+    const defaultGoogleTemplate = template1 || 'I had an excellent experience with ' + businessName + '! They exceeded my expectations. Highly recommend!'
+    const defaultFacebookTemplate = template2 || 'Just had a great experience with ' + businessName + '! Professional service and fantastic results. 5 stars! ⭐⭐⭐⭐⭐'
+    const defaultYelpTemplate = template3 || '5 stars for ' + businessName + '! Quality work, professional service, and fair pricing. Will definitely use again.'
 
     const templatesToCreate = [
       {
         business_id: business.id,
-        platform: null,
-        template_text: template1 || defaultTemplates[0],
+        platform: 'google',
+        template_text: defaultGoogleTemplate,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       },
       {
         business_id: business.id,
-        platform: null,
-        template_text: template2 || defaultTemplates[1],
+        platform: 'facebook',
+        template_text: defaultFacebookTemplate,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       },
       {
         business_id: business.id,
-        platform: null,
-        template_text: template3 || defaultTemplates[2],
+        platform: 'yelp',
+        template_text: defaultYelpTemplate,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }
