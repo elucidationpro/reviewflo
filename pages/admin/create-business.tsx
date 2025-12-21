@@ -53,6 +53,22 @@ export default function CreateBusinessPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Pre-fill form from query params (for beta signups)
+  useEffect(() => {
+    const { name, email, phone, businessName, businessType } = router.query
+
+    if (name || email || businessName) {
+      setFormData(prev => ({
+        ...prev,
+        ownerName: (name as string) || prev.ownerName,
+        ownerEmail: (email as string) || prev.ownerEmail,
+        phone: (phone as string) || prev.phone,
+        businessName: (businessName as string) || prev.businessName,
+        businessType: (businessType as string) || prev.businessType,
+      }))
+    }
+  }, [router.query])
+
   const checkAdmin = async () => {
     const adminUser = await checkIsAdmin()
     if (!adminUser) {

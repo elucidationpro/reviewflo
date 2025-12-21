@@ -16,6 +16,17 @@ interface Business {
   user_id: string
 }
 
+interface BetaSignup {
+  id: string
+  name: string
+  email: string
+  phone: string
+  business_name: string
+  business_type: string
+  challenge: string | null
+  created_at: string
+}
+
 interface Stats {
   total: number
   recentSignups: number
@@ -27,6 +38,7 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [businesses, setBusinesses] = useState<Business[]>([])
   const [filteredBusinesses, setFilteredBusinesses] = useState<Business[]>([])
+  const [betaSignups, setBetaSignups] = useState<BetaSignup[]>([])
   const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0 })
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState('')
@@ -106,6 +118,21 @@ export default function AdminDashboard() {
       setBusinesses(data.businesses || [])
       setFilteredBusinesses(data.businesses || [])
       setStats(data.stats || { total: 0, recentSignups: 0 })
+
+      // Fetch beta signups
+      console.time('[Admin] Fetch Beta Signups')
+      const { data: betaData, error: betaError } = await supabase
+        .from('beta_signups')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10)
+
+      console.timeEnd('[Admin] Fetch Beta Signups')
+      console.log('[Admin] Beta signups received:', betaData?.length || 0)
+
+      if (!betaError && betaData) {
+        setBetaSignups(betaData)
+      }
 
       console.log('[Admin] Setting isLoading to false - SUCCESS')
       setIsLoading(false)
@@ -280,6 +307,93 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+
+          {/* Beta Signups Section */}
+          {betaSignups.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                Beta Signups ({betaSignups.length})
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Business
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Contact
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {betaSignups.map((signup) => (
+                      <tr key={signup.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-4">
+                          <div>
+                            <p className="font-semibold text-gray-900">{signup.name}</p>
+                            {signup.challenge && (
+                              <p className="text-xs text-gray-500 mt-1 truncate max-w-xs" title={signup.challenge}>
+                                Challenge: {signup.challenge}
+                              </p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4">
+                          <p className="font-medium text-gray-900">{signup.business_name}</p>
+                        </td>
+                        <td className="px-4 py-4">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {signup.business_type}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="text-sm">
+                            <p className="text-gray-900">{signup.email}</p>
+                            <p className="text-gray-500">{signup.phone}</p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-700">
+                          {new Date(signup.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex justify-end">
+                            <Link
+                              href={{
+                                pathname: '/admin/create-business',
+                                query: {
+                                  name: signup.name,
+                                  email: signup.email,
+                                  phone: signup.phone,
+                                  businessName: signup.business_name,
+                                  businessType: signup.business_type
+                                }
+                              }}
+                              className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors"
+                            >
+                              Create Account
+                            </Link>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           {/* Search Bar */}
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">

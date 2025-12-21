@@ -156,8 +156,8 @@ export async function sendWaitlistConfirmationEmail(data: WaitlistSignupData) {
 
 export async function sendAdminNotification(type: 'beta' | 'waitlist', data: Record<string, unknown>) {
   try {
-    await resend.emails.send({
-      from: 'ReviewFlo <notifications@usereviewflo.com>',
+    const result = await resend.emails.send({
+      from: 'ReviewFlo <jeremy@usereviewflo.com>',
       to: 'elucidation.production@gmail.com',
       subject: `New ${type === 'beta' ? 'Beta' : 'Waitlist'} Signup`,
       html: `
@@ -172,6 +172,7 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist', data: Rec
       `
     });
 
+    console.log('Admin notification sent:', result);
     return { success: true };
   } catch (error) {
     console.error('Error sending admin notification:', error);
