@@ -27,6 +27,14 @@ interface BetaSignup {
   created_at: string
 }
 
+interface WaitlistSignup {
+  id: string
+  email: string
+  business_name: string
+  business_type: string
+  created_at: string
+}
+
 interface Stats {
   total: number
   recentSignups: number
@@ -39,6 +47,7 @@ export default function AdminDashboard() {
   const [businesses, setBusinesses] = useState<Business[]>([])
   const [filteredBusinesses, setFilteredBusinesses] = useState<Business[]>([])
   const [betaSignups, setBetaSignups] = useState<BetaSignup[]>([])
+  const [waitlistSignups, setWaitlistSignups] = useState<WaitlistSignup[]>([])
   const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0 })
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState('')
@@ -134,6 +143,23 @@ export default function AdminDashboard() {
         setBetaSignups(betaData.betaSignups || [])
       } else {
         console.error('[Admin] Failed to fetch beta signups:', betaResponse.status)
+      }
+
+      // Fetch waitlist signups via API (uses service role)
+      console.time('[Admin] API Fetch Waitlist Signups')
+      const waitlistResponse = await fetch('/api/admin/get-waitlist-signups', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      })
+      console.timeEnd('[Admin] API Fetch Waitlist Signups')
+
+      if (waitlistResponse.ok) {
+        const waitlistData = await waitlistResponse.json()
+        console.log('[Admin] Waitlist signups received:', waitlistData.waitlistSignups?.length || 0)
+        setWaitlistSignups(waitlistData.waitlistSignups || [])
+      } else {
+        console.error('[Admin] Failed to fetch waitlist signups:', waitlistResponse.status)
       }
 
       console.log('[Admin] Setting isLoading to false - SUCCESS')
@@ -388,6 +414,76 @@ export default function AdminDashboard() {
                             >
                               Create Account
                             </Link>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Waitlist Signups Section */}
+          {waitlistSignups.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                Waitlist Signups ({waitlistSignups.length})
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Business Name
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {waitlistSignups.map((signup) => (
+                      <tr key={signup.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-4">
+                          <a href={`mailto:${signup.email}`} className="text-blue-600 hover:underline">
+                            {signup.email}
+                          </a>
+                        </td>
+                        <td className="px-4 py-4">
+                          <p className="font-medium text-gray-900">{signup.business_name}</p>
+                        </td>
+                        <td className="px-4 py-4">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            {signup.business_type}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-700">
+                          {new Date(signup.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex justify-end gap-2">
+                            <a
+                              href={`mailto:${signup.email}?subject=ReviewFlo%20Beta%20Invitation&body=Hi!%0A%0AI'd%20love%20to%20invite%20you%20to%20join%20the%20ReviewFlo%20beta%20program...`}
+                              className="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors"
+                            >
+                              Invite to Beta
+                            </a>
+                            <a
+                              href={`mailto:${signup.email}`}
+                              className="inline-flex items-center px-3 py-1.5 text-sm bg-gray-600 hover:bg-gray-700 text-white font-medium rounded transition-colors"
+                            >
+                              Email
+                            </a>
                           </div>
                         </td>
                       </tr>

@@ -394,35 +394,32 @@ export default function SettingsPage() {
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Review Templates</h2>
             <p className="text-gray-600 mb-6">
-              Create platform-specific templates that happy customers can copy and paste into their reviews
+              Create generic review templates that customers can copy and paste when leaving reviews
             </p>
 
             <div className="space-y-6">
-              {templates.map((template, index) => {
-                const platformNames = ['Google', 'Facebook', 'Yelp']
-                return (
-                  <div key={template.platform}>
-                    <label
-                      htmlFor={`template-${template.platform}`}
-                      className="block text-sm font-semibold text-gray-700 mb-2"
-                    >
-                      {platformNames[index]} Template
-                    </label>
-                    <textarea
-                      id={`template-${template.platform}`}
-                      value={template.template_text}
-                      onChange={(e) => {
-                        const newTemplates = [...templates]
-                        newTemplates[index] = { ...newTemplates[index], template_text: e.target.value }
-                        setTemplates(newTemplates)
-                      }}
-                      rows={4}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
-                      placeholder={`Enter a review template for ${platformNames[index]}...`}
-                    />
-                  </div>
-                )
-              })}
+              {templates.map((template, index) => (
+                <div key={template.platform}>
+                  <label
+                    htmlFor={`template-${template.platform}`}
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Template {index + 1}
+                  </label>
+                  <textarea
+                    id={`template-${template.platform}`}
+                    value={template.template_text}
+                    onChange={(e) => {
+                      const newTemplates = [...templates]
+                      newTemplates[index] = { ...newTemplates[index], template_text: e.target.value }
+                      setTemplates(newTemplates)
+                    }}
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    placeholder={`Enter review template ${index + 1}...`}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 

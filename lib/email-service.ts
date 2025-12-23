@@ -116,9 +116,9 @@ export async function sendWaitlistConfirmationEmail(data: WaitlistSignupData) {
             <div class="content">
               <p>Hey there,</p>
 
-              <p>Thanks for joining the ReviewFlo waitlist! You're one of <strong>148 businesses</strong> waiting for launch.</p>
+              <p>Thanks for joining the ReviewFlo waitlist!</p>
 
-              <p>I'll email you when we go live in <strong>about 6 weeks</strong>.</p>
+              <p>We'll email you when ReviewFlo launches in the coming weeks.</p>
 
               <div class="highlight">
                 <strong>💡 Want to skip the line?</strong><br>
@@ -228,6 +228,10 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist', data: Rec
                   <tr>
                     <td>Email:</td>
                     <td><a href="mailto:${data.email}" style="color: #2563eb;">${data.email}</a></td>
+                  </tr>
+                  <tr>
+                    <td>Business Name:</td>
+                    <td><strong>${data.businessName || 'N/A'}</strong></td>
                   </tr>
                   ${data.businessType ? `
                     <tr>

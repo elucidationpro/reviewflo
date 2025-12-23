@@ -41,14 +41,14 @@ export default async function handler(
     }
 
     // Insert into waitlist table
-    console.log('[waitlist-signup] Attempting to insert:', { email, business_name: businessName, business_type: businessType || null });
+    console.log('[waitlist-signup] Attempting to insert:', { email, business_name: businessName, business_type: businessType || 'other' });
     const { data, error } = await supabase
       .from('waitlist')
       .insert([
         {
           email,
           business_name: businessName,
-          business_type: businessType || null,
+          business_type: businessType || 'other', // Default to 'other' instead of null
           created_at: new Date().toISOString()
         }
       ])
