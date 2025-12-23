@@ -156,17 +156,98 @@ export async function sendWaitlistConfirmationEmail(data: WaitlistSignupData) {
 
 export async function sendAdminNotification(type: 'beta' | 'waitlist', data: Record<string, unknown>) {
   try {
+    const isBeta = type === 'beta';
+    const subject = isBeta
+      ? `New Beta Signup: ${data.businessName || 'N/A'}`
+      : 'New Waitlist Signup';
+
     const result = await resend.emails.send({
       from: 'ReviewFlo <jeremy@usereviewflo.com>',
-      to: 'elucidation.production@gmail.com',
-      subject: `New ${type === 'beta' ? 'Beta' : 'Waitlist'} Signup`,
+      to: 'jeremy.elucidation@gmail.com',
+      subject,
       html: `
         <!DOCTYPE html>
         <html>
-        <body style="font-family: monospace;">
-          <h2>New ${type === 'beta' ? 'Beta Tester' : 'Waitlist'} Signup</h2>
-          <pre>${JSON.stringify(data, null, 2)}</pre>
-          ${type === 'beta' ? `<p><strong>Action needed:</strong> Text ${data.phone} within 24 hours to set them up.</p>` : ''}
+        <head>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; }
+            .content { background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px; }
+            .info-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+            .info-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
+            .info-table td:first-child { font-weight: 600; color: #374151; width: 140px; }
+            .info-table td:last-child { color: #1f2937; }
+            .cta-button { display: inline-block; background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: 600; }
+            .action-needed { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px; }
+            .footer { text-align: center; color: #6b7280; margin-top: 30px; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : '📋 New Waitlist Signup'}</h1>
+            </div>
+            <div class="content">
+              ${isBeta ? `
+                <table class="info-table">
+                  <tr>
+                    <td>Name:</td>
+                    <td><strong>${data.name || 'N/A'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Email:</td>
+                    <td><a href="mailto:${data.email}" style="color: #2563eb;">${data.email}</a></td>
+                  </tr>
+                  <tr>
+                    <td>Phone:</td>
+                    <td><a href="tel:${data.phone}" style="color: #2563eb;">${data.phone}</a></td>
+                  </tr>
+                  <tr>
+                    <td>Business Name:</td>
+                    <td><strong>${data.businessName || 'N/A'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Business Type:</td>
+                    <td>${data.businessType || 'N/A'}</td>
+                  </tr>
+                  ${data.challenge ? `
+                    <tr>
+                      <td>Challenge:</td>
+                      <td><em>${data.challenge}</em></td>
+                    </tr>
+                  ` : ''}
+                </table>
+
+                <div class="action-needed">
+                  <strong>⚡ Action Required:</strong><br>
+                  Text <a href="tel:${data.phone}" style="color: #92400e; font-weight: bold;">${data.phone}</a> within 24 hours to set them up.
+                </div>
+              ` : `
+                <table class="info-table">
+                  <tr>
+                    <td>Email:</td>
+                    <td><a href="mailto:${data.email}" style="color: #2563eb;">${data.email}</a></td>
+                  </tr>
+                  ${data.businessType ? `
+                    <tr>
+                      <td>Business Type:</td>
+                      <td>${data.businessType}</td>
+                    </tr>
+                  ` : ''}
+                </table>
+              `}
+
+              <div style="text-align: center;">
+                <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/admin" class="cta-button">
+                  View Admin Dashboard →
+                </a>
+              </div>
+            </div>
+            <div class="footer">
+              <p>ReviewFlo Admin Notification</p>
+            </div>
+          </div>
         </body>
         </html>
       `

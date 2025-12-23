@@ -130,6 +130,25 @@ export default function CreateBusinessPage() {
       setCreatedBusinessSlug(data.slug)
       setShowSuccess(true)
 
+      // Mark beta signup as converted if betaSignupId is present
+      const { betaSignupId } = router.query
+      if (betaSignupId) {
+        try {
+          await fetch('/api/admin/mark-beta-converted', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ betaSignupId }),
+          })
+          console.log('[create-business] Marked beta signup as converted:', betaSignupId)
+        } catch (error) {
+          console.error('[create-business] Failed to mark beta signup as converted:', error)
+          // Don't fail the whole process if this fails
+        }
+      }
+
       // Reset form
       setFormData({
         businessName: '',

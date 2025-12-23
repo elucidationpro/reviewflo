@@ -668,6 +668,7 @@ function BetaSignupForm() {
 // Waitlist Signup Form Component
 function WaitlistSignupForm() {
   const [email, setEmail] = useState('');
+  const [businessName, setBusinessName] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -677,11 +678,10 @@ function WaitlistSignupForm() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Replace with actual API endpoint
       const response = await fetch('/api/waitlist-signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, businessType })
+        body: JSON.stringify({ email, businessName, businessType })
       });
 
       if (response.ok) {
@@ -725,6 +725,20 @@ function WaitlistSignupForm() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent placeholder-gray-400"
           placeholder="your@email.com"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">
+          Business Name *
+        </label>
+        <input
+          type="text"
+          required
+          value={businessName}
+          onChange={(e) => setBusinessName(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent placeholder-gray-400"
+          placeholder="Your Business Name"
         />
       </div>
 

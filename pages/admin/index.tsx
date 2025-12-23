@@ -119,19 +119,21 @@ export default function AdminDashboard() {
       setFilteredBusinesses(data.businesses || [])
       setStats(data.stats || { total: 0, recentSignups: 0 })
 
-      // Fetch beta signups
-      console.time('[Admin] Fetch Beta Signups')
-      const { data: betaData, error: betaError } = await supabase
-        .from('beta_signups')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10)
+      // Fetch beta signups via API (uses service role)
+      console.time('[Admin] API Fetch Beta Signups')
+      const betaResponse = await fetch('/api/admin/get-beta-signups', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      })
+      console.timeEnd('[Admin] API Fetch Beta Signups')
 
-      console.timeEnd('[Admin] Fetch Beta Signups')
-      console.log('[Admin] Beta signups received:', betaData?.length || 0)
-
-      if (!betaError && betaData) {
-        setBetaSignups(betaData)
+      if (betaResponse.ok) {
+        const betaData = await betaResponse.json()
+        console.log('[Admin] Beta signups received:', betaData.betaSignups?.length || 0)
+        setBetaSignups(betaData.betaSignups || [])
+      } else {
+        console.error('[Admin] Failed to fetch beta signups:', betaResponse.status)
       }
 
       console.log('[Admin] Setting isLoading to false - SUCCESS')
@@ -374,6 +376,7 @@ export default function AdminDashboard() {
                               href={{
                                 pathname: '/admin/create-business',
                                 query: {
+                                  betaSignupId: signup.id,
                                   name: signup.name,
                                   email: signup.email,
                                   phone: signup.phone,
