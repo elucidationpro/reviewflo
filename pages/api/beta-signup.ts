@@ -23,9 +23,31 @@ export default async function handler(
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Insert into beta_signups table
+    // Check for duplicate email in leads table
+    const { data: existingLead } = await supabase
+      .from('leads')
+      .select('id, email, status')
+      .eq('email', email)
+      .single();
+
+    if (existingLead) {
+      // Email already exists - return appropriate message based on status
+      const statusMessages: Record<string, string> = {
+        'waitlist': 'This email is already on our waitlist. We\'ll notify you when beta access is available!',
+        'beta_invited': 'You\'ve already been invited to the beta program. Check your email for details!',
+        'beta_active': 'You\'re already part of our beta program!',
+        'converted': 'This email already has an active ReviewFlo account.',
+        'declined': 'This email was previously declined.'
+      };
+
+      return res.status(400).json({
+        error: statusMessages[existingLead.status] || 'This email is already registered.'
+      });
+    }
+
+    // Insert into leads table with status='beta_active'
     const { data, error } = await supabase
-      .from('beta_signups')
+      .from('leads')
       .insert([
         {
           name,
@@ -34,6 +56,8 @@ export default async function handler(
           business_type: businessType,
           business_name: businessName,
           challenge,
+          status: 'beta_active',
+          source: 'beta',
           created_at: new Date().toISOString()
         }
       ])

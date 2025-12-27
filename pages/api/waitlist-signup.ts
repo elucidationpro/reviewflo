@@ -26,29 +26,40 @@ export default async function handler(
       return res.status(400).json({ error: 'Business name is required' });
     }
 
-    // Check if email already exists in waitlist
-    const { data: existing } = await supabase
-      .from('waitlist')
-      .select('email')
+    // Check for duplicate email in leads table
+    const { data: existingLead } = await supabase
+      .from('leads')
+      .select('id, email, status')
       .eq('email', email)
       .single();
 
-    if (existing) {
+    if (existingLead) {
+      // Email already exists - return appropriate message based on status
+      const statusMessages: Record<string, string> = {
+        'waitlist': 'You\'re already on our waitlist! We\'ll notify you when ReviewFlo launches.',
+        'beta_invited': 'Great news! You\'ve been invited to our beta program. Check your email for details!',
+        'beta_active': 'You\'re already part of our beta program!',
+        'converted': 'This email already has an active ReviewFlo account.',
+        'declined': 'This email was previously declined.'
+      };
+
       return res.status(200).json({
         success: true,
-        message: 'Already on waitlist'
+        message: statusMessages[existingLead.status] || 'This email is already registered.'
       });
     }
 
-    // Insert into waitlist table
-    console.log('[waitlist-signup] Attempting to insert:', { email, business_name: businessName, business_type: businessType || 'other' });
+    // Insert into leads table with status='waitlist'
+    console.log('[waitlist-signup] Attempting to insert into leads:', { email, business_name: businessName, business_type: businessType || 'other' });
     const { data, error } = await supabase
-      .from('waitlist')
+      .from('leads')
       .insert([
         {
           email,
           business_name: businessName,
           business_type: businessType || 'other', // Default to 'other' instead of null
+          status: 'waitlist',
+          source: 'waitlist',
           created_at: new Date().toISOString()
         }
       ])
@@ -72,7 +83,7 @@ export default async function handler(
       });
     }
 
-    console.log('[waitlist-signup] Successfully inserted:', data);
+    console.log('[waitlist-signup] Successfully inserted into leads:', data);
 
     // Send confirmation email to user
     console.log('[waitlist-signup] Sending confirmation email to:', email);
@@ -83,7 +94,8 @@ export default async function handler(
     console.log('[waitlist-signup] Sending admin notification');
     const adminResult = await sendAdminNotification('waitlist', {
       email,
-      businessType
+      businessType,
+      businessName
     });
     console.log('[waitlist-signup] Admin notification result:', adminResult);
 

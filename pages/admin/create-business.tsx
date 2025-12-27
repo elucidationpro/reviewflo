@@ -131,7 +131,7 @@ export default function CreateBusinessPage() {
       setShowSuccess(true)
 
       // Mark beta signup as converted if betaSignupId is present
-      const { betaSignupId } = router.query
+      const { betaSignupId, leadId } = router.query
       if (betaSignupId) {
         try {
           await fetch('/api/admin/mark-beta-converted', {
@@ -145,6 +145,28 @@ export default function CreateBusinessPage() {
           console.log('[create-business] Marked beta signup as converted:', betaSignupId)
         } catch (error) {
           console.error('[create-business] Failed to mark beta signup as converted:', error)
+          // Don't fail the whole process if this fails
+        }
+      }
+
+      // Mark lead as converted if leadId is present
+      if (leadId && data.business?.id) {
+        try {
+          await fetch('/api/admin/update-lead-status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({
+              leadId,
+              status: 'converted',
+              businessId: data.business.id
+            }),
+          })
+          console.log('[create-business] Marked lead as converted and linked business:', leadId, data.business.id)
+        } catch (error) {
+          console.error('[create-business] Failed to mark lead as converted:', error)
           // Don't fail the whole process if this fails
         }
       }

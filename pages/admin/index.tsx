@@ -35,6 +35,20 @@ interface WaitlistSignup {
   created_at: string
 }
 
+interface Lead {
+  id: string
+  email: string
+  name: string | null
+  phone: string | null
+  business_name: string
+  business_type: string
+  status: 'waitlist' | 'beta_invited' | 'beta_active' | 'converted' | 'declined'
+  business_id: string | null
+  challenge: string | null
+  source: string
+  created_at: string
+}
+
 interface Stats {
   total: number
   recentSignups: number
@@ -48,6 +62,8 @@ export default function AdminDashboard() {
   const [filteredBusinesses, setFilteredBusinesses] = useState<Business[]>([])
   const [betaSignups, setBetaSignups] = useState<BetaSignup[]>([])
   const [waitlistSignups, setWaitlistSignups] = useState<WaitlistSignup[]>([])
+  const [leads, setLeads] = useState<Lead[]>([])
+  const [statusFilter, setStatusFilter] = useState<string>('all')
   const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0 })
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState('')
@@ -162,6 +178,23 @@ export default function AdminDashboard() {
         console.error('[Admin] Failed to fetch waitlist signups:', waitlistResponse.status)
       }
 
+      // Fetch leads via API (unified pipeline)
+      console.time('[Admin] API Fetch Leads')
+      const leadsResponse = await fetch('/api/admin/get-leads', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      })
+      console.timeEnd('[Admin] API Fetch Leads')
+
+      if (leadsResponse.ok) {
+        const leadsData = await leadsResponse.json()
+        console.log('[Admin] Leads received:', leadsData.leads?.length || 0)
+        setLeads(leadsData.leads || [])
+      } else {
+        console.error('[Admin] Failed to fetch leads:', leadsResponse.status)
+      }
+
       console.log('[Admin] Setting isLoading to false - SUCCESS')
       setIsLoading(false)
       console.timeEnd('[Admin] Total Load Time')
@@ -179,6 +212,96 @@ export default function AdminDashboard() {
     await supabase.auth.signOut()
     router.push('/login')
   }
+
+  const handleUpdateLeadStatus = async (leadId: string, newStatus: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+
+      const response = await fetch('/api/admin/update-lead-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ leadId, status: newStatus }),
+      })
+
+      if (response.ok) {
+        // Refresh leads data
+        checkAdminAndFetchData()
+      } else {
+        console.error('Failed to update lead status')
+      }
+    } catch (error) {
+      console.error('Error updating lead status:', error)
+    }
+  }
+
+  const handleDeleteLead = async (leadId: string) => {
+    if (!confirm('Are you sure you want to delete this lead?')) return
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+
+      const response = await fetch('/api/admin/delete-lead', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ leadId }),
+      })
+
+      if (response.ok) {
+        // Refresh leads data
+        checkAdminAndFetchData()
+      } else {
+        console.error('Failed to delete lead')
+      }
+    } catch (error) {
+      console.error('Error deleting lead:', error)
+    }
+  }
+
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case 'waitlist':
+        return 'bg-blue-100 text-blue-800'
+      case 'beta_invited':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'beta_active':
+        return 'bg-green-100 text-green-800'
+      case 'converted':
+        return 'bg-gray-100 text-gray-800'
+      case 'declined':
+        return 'bg-red-100 text-red-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'waitlist':
+        return 'Waitlist'
+      case 'beta_invited':
+        return 'Beta Invited'
+      case 'beta_active':
+        return 'Beta Active'
+      case 'converted':
+        return 'Converted'
+      case 'declined':
+        return 'Declined'
+      default:
+        return status
+    }
+  }
+
+  const filteredLeads = statusFilter === 'all'
+    ? leads
+    : leads.filter(lead => lead.status === statusFilter)
 
   if (isLoading) {
     return (
@@ -336,12 +459,33 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Beta Signups Section */}
-          {betaSignups.length > 0 && (
-            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                Beta Signups ({betaSignups.length})
+          {/* Leads Pipeline Section */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">
+                Leads Pipeline ({filteredLeads.length})
               </h2>
+              <div className="flex items-center gap-3">
+                <label htmlFor="statusFilter" className="text-sm font-medium text-gray-700">
+                  Filter by Status:
+                </label>
+                <select
+                  id="statusFilter"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="waitlist">Waitlist</option>
+                  <option value="beta_invited">Beta Invited</option>
+                  <option value="beta_active">Beta Active</option>
+                  <option value="converted">Converted</option>
+                  <option value="declined">Declined</option>
+                </select>
+              </div>
+            </div>
+
+            {filteredLeads.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
@@ -350,98 +494,16 @@ export default function AdminDashboard() {
                         Name
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Business
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Type
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Contact
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {betaSignups.map((signup) => (
-                      <tr key={signup.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-4 py-4">
-                          <div>
-                            <p className="font-semibold text-gray-900">{signup.name}</p>
-                            {signup.challenge && (
-                              <p className="text-xs text-gray-500 mt-1 truncate max-w-xs" title={signup.challenge}>
-                                Challenge: {signup.challenge}
-                              </p>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4">
-                          <p className="font-medium text-gray-900">{signup.business_name}</p>
-                        </td>
-                        <td className="px-4 py-4">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {signup.business_type}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="text-sm">
-                            <p className="text-gray-900">{signup.email}</p>
-                            <p className="text-gray-500">{signup.phone}</p>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-sm text-gray-700">
-                          {new Date(signup.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex justify-end">
-                            <Link
-                              href={{
-                                pathname: '/admin/create-business',
-                                query: {
-                                  betaSignupId: signup.id,
-                                  name: signup.name,
-                                  email: signup.email,
-                                  phone: signup.phone,
-                                  businessName: signup.business_name,
-                                  businessType: signup.business_type
-                                }
-                              }}
-                              className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors"
-                            >
-                              Create Account
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* Waitlist Signups Section */}
-          {waitlistSignups.length > 0 && (
-            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                Waitlist Signups ({waitlistSignups.length})
-              </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Email
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Business Name
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Type
+                        Status
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Source
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Date
@@ -452,38 +514,80 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {waitlistSignups.map((signup) => (
-                      <tr key={signup.id} className="hover:bg-gray-50 transition-colors">
+                    {filteredLeads.map((lead) => (
+                      <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-4 py-4">
-                          <a href={`mailto:${signup.email}`} className="text-blue-600 hover:underline">
-                            {signup.email}
+                          <div>
+                            <p className="font-semibold text-gray-900">{lead.name || 'N/A'}</p>
+                            {lead.phone && (
+                              <p className="text-xs text-gray-500 mt-1">{lead.phone}</p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4">
+                          <a href={`mailto:${lead.email}`} className="text-blue-600 hover:underline">
+                            {lead.email}
                           </a>
                         </td>
                         <td className="px-4 py-4">
-                          <p className="font-medium text-gray-900">{signup.business_name}</p>
-                        </td>
-                        <td className="px-4 py-4">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                            {signup.business_type}
+                          <p className="font-medium text-gray-900">{lead.business_name}</p>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700 mt-1">
+                            {lead.business_type}
                           </span>
                         </td>
+                        <td className="px-4 py-4">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(lead.status)}`}>
+                            {getStatusLabel(lead.status)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <span className="text-sm text-gray-700 capitalize">{lead.source}</span>
+                        </td>
                         <td className="px-4 py-4 text-sm text-gray-700">
-                          {new Date(signup.created_at).toLocaleDateString()}
+                          {new Date(lead.created_at).toLocaleDateString()}
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex justify-end gap-2">
-                            <a
-                              href={`mailto:${signup.email}?subject=ReviewFlo%20Beta%20Invitation&body=Hi!%0A%0AI'd%20love%20to%20invite%20you%20to%20join%20the%20ReviewFlo%20beta%20program...`}
-                              className="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors"
+                            {lead.status === 'waitlist' && (
+                              <button
+                                onClick={() => handleUpdateLeadStatus(lead.id, 'beta_invited')}
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors"
+                              >
+                                Invite to Beta
+                              </button>
+                            )}
+                            {lead.status === 'beta_invited' && (
+                              <button
+                                onClick={() => handleUpdateLeadStatus(lead.id, 'beta_active')}
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors"
+                              >
+                                Mark as Active
+                              </button>
+                            )}
+                            {lead.status === 'beta_active' && (
+                              <Link
+                                href={{
+                                  pathname: '/admin/create-business',
+                                  query: {
+                                    leadId: lead.id,
+                                    name: lead.name || '',
+                                    email: lead.email,
+                                    phone: lead.phone || '',
+                                    businessName: lead.business_name,
+                                    businessType: lead.business_type
+                                  }
+                                }}
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors"
+                              >
+                                Create Account
+                              </Link>
+                            )}
+                            <button
+                              onClick={() => handleDeleteLead(lead.id)}
+                              className="inline-flex items-center px-3 py-1.5 text-sm bg-red-600 hover:bg-red-700 text-white font-medium rounded transition-colors"
                             >
-                              Invite to Beta
-                            </a>
-                            <a
-                              href={`mailto:${signup.email}`}
-                              className="inline-flex items-center px-3 py-1.5 text-sm bg-gray-600 hover:bg-gray-700 text-white font-medium rounded transition-colors"
-                            >
-                              Email
-                            </a>
+                              Delete
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -491,8 +595,14 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500">
+                  {statusFilter === 'all' ? 'No leads in the pipeline yet.' : `No ${getStatusLabel(statusFilter).toLowerCase()} leads.`}
+                </p>
+              </div>
+            )}
+          </div>
 
           {/* Search Bar */}
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
