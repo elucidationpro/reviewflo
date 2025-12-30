@@ -88,6 +88,114 @@ export async function sendBetaConfirmationEmail(data: BetaSignupData) {
   }
 }
 
+export async function sendBetaInvitationEmail(data: BetaSignupData) {
+  try {
+    const betaSignupUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}#beta-signup`;
+
+    await resend.emails.send({
+      from: 'ReviewFlo <jeremy@usereviewflo.com>',
+      to: data.email,
+      subject: "🎉 You're Invited to Join ReviewFlo Beta!",
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 40px 30px; border-radius: 8px 8px 0 0; text-align: center; }
+            .content { background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px; }
+            .benefit { display: flex; align-items: start; margin: 15px 0; }
+            .benefit-icon { color: #10b981; margin-right: 10px; font-size: 20px; }
+            .cta { background: #2563eb; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0; font-weight: 600; font-size: 16px; }
+            .highlight-box { background: #fef3c7; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 20px 0; }
+            .what-to-expect { background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
+            .footer { text-align: center; color: #6b7280; margin-top: 30px; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 32px;">🎉 Congratulations!</h1>
+              <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.95;">You've been selected for the ReviewFlo Beta Program</p>
+            </div>
+            <div class="content">
+              <p>Hey ${data.name},</p>
+
+              <p>Great news! You've been moved off the waitlist and invited to join the <strong>ReviewFlo Beta Program</strong>.</p>
+
+              <div class="highlight-box">
+                <p style="margin: 0; color: #92400e; font-size: 16px;"><strong>🎁 Special Beta Offer:</strong></p>
+                <p style="margin: 10px 0 0 0; color: #92400e; font-size: 15px;">Get <strong>lifetime free access</strong> to ReviewFlo by joining the beta program. No credit card required, no subscription fees, ever.</p>
+              </div>
+
+              <h3 style="color: #1f2937; margin-top: 25px;">What You Get as a Beta Tester:</h3>
+
+              <div class="benefit">
+                <span class="benefit-icon">✓</span>
+                <div><strong>Lifetime Free Access</strong> – Never pay a subscription fee</div>
+              </div>
+              <div class="benefit">
+                <span class="benefit-icon">✓</span>
+                <div><strong>Direct Line to the Founder</strong> – Text or email me anytime with feedback</div>
+              </div>
+              <div class="benefit">
+                <span class="benefit-icon">✓</span>
+                <div><strong>Shape the Product</strong> – Your feedback directly influences what we build</div>
+              </div>
+              <div class="benefit">
+                <span class="benefit-icon">✓</span>
+                <div><strong>Early Access to Features</strong> – Be the first to try new capabilities</div>
+              </div>
+              <div class="benefit">
+                <span class="benefit-icon">✓</span>
+                <div><strong>Personalized Setup</strong> – I'll help you get ${data.businessName} up and running</div>
+              </div>
+
+              <div class="what-to-expect">
+                <h3 style="color: #0c4a6e; margin-top: 0;">What to Expect:</h3>
+                <ol style="color: #0c4a6e; margin: 10px 0; padding-left: 20px;">
+                  <li style="margin-bottom: 8px;"><strong>Complete the beta signup form</strong> (takes 2 minutes)</li>
+                  <li style="margin-bottom: 8px;"><strong>I'll text you within 24 hours</strong> to set up your review page</li>
+                  <li style="margin-bottom: 8px;"><strong>Start using ReviewFlo</strong> to manage your reviews</li>
+                  <li style="margin-bottom: 8px;"><strong>Share feedback</strong> as you use the product</li>
+                </ol>
+              </div>
+
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${betaSignupUrl}" class="cta">
+                  Complete Beta Signup →
+                </a>
+              </div>
+
+              <p style="color: #6b7280; font-size: 14px; text-align: center; margin-top: 20px;">
+                This invitation is specifically for ${data.businessName}. The beta program is limited to 20 businesses, so claim your spot soon!
+              </p>
+
+              <p style="margin-top: 30px;">Questions? Just reply to this email – I read every message.</p>
+
+              <p>Looking forward to working with you!</p>
+
+              <p>Jeremy<br>
+              Founder, ReviewFlo<br>
+              <a href="mailto:jeremy@usereviewflo.com">jeremy@usereviewflo.com</a></p>
+            </div>
+            <div class="footer">
+              <p>ReviewFlo • Built for small business owners, by a small business owner</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending beta invitation email:', error);
+    return { success: false, error };
+  }
+}
+
 export async function sendWaitlistConfirmationEmail(data: WaitlistSignupData) {
   try {
     await resend.emails.send({

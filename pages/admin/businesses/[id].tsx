@@ -499,7 +499,7 @@ export default function EditBusinessPage() {
               <div className="space-y-6">
                 <div>
                   <label htmlFor="googleTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Google Review Template
+                    Template 1
                   </label>
                   <textarea
                     id="googleTemplateEdit"
@@ -514,7 +514,7 @@ export default function EditBusinessPage() {
 
                 <div>
                   <label htmlFor="facebookTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Facebook Review Template
+                    Template 2
                   </label>
                   <textarea
                     id="facebookTemplateEdit"
@@ -529,7 +529,7 @@ export default function EditBusinessPage() {
 
                 <div>
                   <label htmlFor="yelpTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Yelp Review Template
+                    Template 3
                   </label>
                   <textarea
                     id="yelpTemplateEdit"

@@ -67,6 +67,8 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0 })
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+  const [invitingLeadId, setInvitingLeadId] = useState<string | null>(null)
 
   useEffect(() => {
     console.log('[Component] AdminDashboard useEffect is running')
@@ -265,6 +267,50 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleInviteToBeta = async (leadId: string) => {
+    setInvitingLeadId(leadId)
+    setError('')
+    setSuccessMessage('')
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setError('Session expired. Please refresh the page.')
+        setInvitingLeadId(null)
+        return
+      }
+
+      const response = await fetch('/api/admin/invite-to-beta', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ leadId }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setSuccessMessage('Beta invitation sent successfully! 🎉')
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => setSuccessMessage(''), 5000)
+        // Refresh leads data to show updated status
+        checkAdminAndFetchData()
+      } else {
+        setError(data.error || 'Failed to send beta invitation')
+        // Auto-hide error message after 5 seconds
+        setTimeout(() => setError(''), 5000)
+      }
+    } catch (error) {
+      console.error('Error inviting to beta:', error)
+      setError('An error occurred while sending the invitation')
+      setTimeout(() => setError(''), 5000)
+    } finally {
+      setInvitingLeadId(null)
+    }
+  }
+
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'waitlist':
@@ -405,10 +451,43 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-start">
+                <svg
+                  className="w-5 h-5 text-green-600 mt-0.5 mr-3"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <p className="text-green-800 text-sm font-medium">{successMessage}</p>
+              </div>
+            </div>
+          )}
+
           {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-800 text-sm">{error}</p>
+              <div className="flex items-start">
+                <svg
+                  className="w-5 h-5 text-red-600 mt-0.5 mr-3"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <p className="text-red-800 text-sm">{error}</p>
+              </div>
             </div>
           )}
 
@@ -550,10 +629,37 @@ export default function AdminDashboard() {
                           <div className="flex justify-end gap-2">
                             {lead.status === 'waitlist' && (
                               <button
-                                onClick={() => handleUpdateLeadStatus(lead.id, 'beta_invited')}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors"
+                                onClick={() => handleInviteToBeta(lead.id)}
+                                disabled={invitingLeadId === lead.id}
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                Invite to Beta
+                                {invitingLeadId === lead.id ? (
+                                  <>
+                                    <svg
+                                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                      />
+                                      <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                      />
+                                    </svg>
+                                    Sending...
+                                  </>
+                                ) : (
+                                  'Invite to Beta'
+                                )}
                               </button>
                             )}
                             {lead.status === 'beta_invited' && (
