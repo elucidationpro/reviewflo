@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Star, CheckCircle, Clock, Users, Shield, Zap } from 'lucide-react';
 import Image from 'next/image';
+import Head from 'next/head';
 
 // Hook for fade-in on scroll
 function useFadeInOnScroll() {
@@ -43,6 +44,39 @@ export default function LandingPage() {
 
   return (
     <>
+      <Head>
+        {/* Basic SEO */}
+        <title>ReviewFlo - Catch Unhappy Customers Before Bad Reviews | $19/month</title>
+        <meta name="description" content="Simple review management for service businesses. Route negative reviews to private feedback, guide happy customers to public reviews. Perfect for barbers, mechanics, detailers. Only $19/month." />
+        <meta name="keywords" content="review management, customer feedback, small business, negative reviews, review software, reputation management, service business, 5-star reviews, online reviews, Google reviews, Facebook reviews, Yelp reviews, barber reviews, mechanic reviews, auto detailing reviews" />
+        <meta name="author" content="ReviewFlo" />
+
+        {/* Canonical URL */}
+        <link rel="canonical" href="https://usereviewflo.com" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://usereviewflo.com" />
+        <meta property="og:title" content="ReviewFlo - Catch Unhappy Customers Before Bad Reviews" />
+        <meta property="og:description" content="Simple review management for service businesses. Route negative reviews to private feedback, guide happy customers to public reviews. Perfect for barbers, mechanics, detailers. Only $19/month." />
+        <meta property="og:image" content="https://usereviewflo.com/images/reviewflo-og-image.png" />
+        <meta property="og:site_name" content="ReviewFlo" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://usereviewflo.com" />
+        <meta name="twitter:title" content="ReviewFlo - Catch Unhappy Customers Before Bad Reviews" />
+        <meta name="twitter:description" content="Simple review management for service businesses. Route negative reviews to private feedback, guide happy customers to public reviews. Perfect for barbers, mechanics, detailers. Only $19/month." />
+        <meta name="twitter:image" content="https://usereviewflo.com/images/reviewflo-twitter-image.png" />
+
+        {/* Viewport and Mobile */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+
+        {/* Additional SEO */}
+        <meta name="robots" content="index, follow" />
+        <meta name="language" content="English" />
+        <meta name="revisit-after" content="7 days" />
+      </Head>
       <style jsx global>{`
         @keyframes fadeIn {
           from {
@@ -86,13 +120,24 @@ export default function LandingPage() {
               />
             </a>
 
-            {/* CTA Button */}
-            <a
-              href="#beta-signup"
-              className="px-4 sm:px-6 py-2 sm:py-2.5 bg-[#4A3428] text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              Join Beta
-            </a>
+            {/* Right side buttons */}
+            <div className="flex items-center gap-3 sm:gap-4">
+              {/* Login Link */}
+              <a
+                href="/login"
+                className="text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors"
+              >
+                Business Login
+              </a>
+
+              {/* CTA Button */}
+              <a
+                href="#beta-signup"
+                className="px-4 sm:px-6 py-2 sm:py-2.5 bg-[#4A3428] text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-md hover:shadow-lg"
+              >
+                Join Beta
+              </a>
+            </div>
           </div>
         </div>
       </header>
