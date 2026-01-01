@@ -559,7 +559,7 @@ export default function EditBusinessPage() {
                   {googleTemplate && (
                     <div className="bg-white rounded-lg p-4 border border-gray-300">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-gray-900">Google</span>
+                        <span className="font-semibold text-gray-900">Template 1</span>
                         <span className="text-xs text-gray-500">Copy to paste</span>
                       </div>
                       <p className="text-sm text-gray-700">{googleTemplate}</p>
@@ -568,7 +568,7 @@ export default function EditBusinessPage() {
                   {facebookTemplate && (
                     <div className="bg-white rounded-lg p-4 border border-gray-300">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-gray-900">Facebook</span>
+                        <span className="font-semibold text-gray-900">Template 2</span>
                         <span className="text-xs text-gray-500">Copy to paste</span>
                       </div>
                       <p className="text-sm text-gray-700">{facebookTemplate}</p>
@@ -577,7 +577,7 @@ export default function EditBusinessPage() {
                   {yelpTemplate && (
                     <div className="bg-white rounded-lg p-4 border border-gray-300">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-gray-900">Yelp</span>
+                        <span className="font-semibold text-gray-900">Template 3</span>
                         <span className="text-xs text-gray-500">Copy to paste</span>
                       </div>
                       <p className="text-sm text-gray-700">{yelpTemplate}</p>

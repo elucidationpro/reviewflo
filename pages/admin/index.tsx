@@ -311,6 +311,50 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleDeleteBusiness = async (businessId: string, businessName: string) => {
+    if (!confirm(`Are you sure you want to delete "${businessName}"? This cannot be undone.`)) {
+      return
+    }
+
+    setError('')
+    setSuccessMessage('')
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setError('Session expired. Please refresh the page.')
+        return
+      }
+
+      const response = await fetch('/api/admin/delete-business', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ businessId }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setSuccessMessage(`"${businessName}" has been deleted successfully`)
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => setSuccessMessage(''), 5000)
+        // Refresh businesses data
+        checkAdminAndFetchData()
+      } else {
+        setError(data.error || 'Failed to delete business')
+        // Auto-hide error message after 5 seconds
+        setTimeout(() => setError(''), 5000)
+      }
+    } catch (error) {
+      console.error('Error deleting business:', error)
+      setError('An error occurred while deleting the business')
+      setTimeout(() => setError(''), 5000)
+    }
+  }
+
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'waitlist':
@@ -788,6 +832,12 @@ export default function AdminDashboard() {
                           >
                             View
                           </Link>
+                          <button
+                            onClick={() => handleDeleteBusiness(business.id, business.business_name)}
+                            className="px-3 py-1 text-sm bg-red-600 hover:bg-red-700 text-white font-medium rounded transition-colors"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </td>
                     </tr>
