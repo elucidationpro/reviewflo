@@ -132,10 +132,10 @@ export default function LandingPage() {
 
               {/* CTA Button */}
               <a
-                href="#beta-signup"
+                href="/qualify"
                 className="px-4 sm:px-6 py-2 sm:py-2.5 bg-[#4A3428] text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-md hover:shadow-lg"
               >
-                Join Beta
+                See If ReviewFlo Is Right For You →
               </a>
             </div>
           </div>
@@ -152,27 +152,27 @@ export default function LandingPage() {
             {/* Beta Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#C9A961]/20 text-[#4A3428] rounded-full text-sm font-medium mb-8 border border-[#C9A961]/30">
               <Zap className="w-4 h-4" />
-              Launching in 6 weeks • Limited beta spots available
+              🎯 Beta Program Now Open • Only 10-15 Spots Available
             </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Stop Bad Reviews. Get More Good Ones.{' '}
+              Get More 5-Star Google Reviews.{' '}
               <span className="text-[#4A3428]">Automatically.</span>
             </h1>
 
             {/* Subheadline */}
             <p className="text-xl sm:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
-              Intercept negative feedback privately. Turn happy customers into 5-star reviews.
+              Turn happy customers into 5-star reviews effortlessly. Plus, catch unhappy customers privately so you can fix issues before they post.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <a
-                href="#beta-signup"
+                href="/qualify"
                 className="w-full sm:w-auto px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
               >
-                Join Beta Testing - Free for Life
+                See If ReviewFlo Is Right For You →
               </a>
               <a
                 href="#waitlist-signup"
@@ -186,7 +186,7 @@ export default function LandingPage() {
             <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-[#C9A961]" />
-                Beta testers get lifetime free access
+                Selected beta testers get 6 months free
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-[#C9A961]" />
@@ -205,7 +205,7 @@ export default function LandingPage() {
       <section className="bg-[#4A3428] text-white py-4">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-lg font-semibold">
-            🚀 Beta Program Now Open • Limited Spots Available
+            🚀 Only 10-15 Beta Spots Available • Apply Now
           </p>
         </div>
       </section>
@@ -257,10 +257,10 @@ export default function LandingPage() {
                 <CheckCircle className="w-7 h-7 text-[#4A3428]" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Negative reviews never go public
+                Catch Problems Before They Go Public
               </h3>
               <p className="text-gray-600">
-                Route 1-4 star reviews to private feedback. Fix problems before they damage your reputation.
+                Route 1-4 star feedback to private forms. Fix issues before they become negative reviews and damage your reputation.
               </p>
             </div>
 
@@ -270,10 +270,10 @@ export default function LandingPage() {
                 <CheckCircle className="w-7 h-7 text-[#4A3428]" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                More 5-star reviews, less effort
+                More 5-Star Reviews, Effortlessly
               </h3>
               <p className="text-gray-600">
-                One link after each job, we handle the rest. Happy customers leave glowing reviews with zero friction.
+                Pre-written templates make it easy for happy customers to leave glowing reviews. One click after each job - ReviewFlo handles the rest.
               </p>
             </div>
 
@@ -524,10 +524,10 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <a
-              href="#beta-signup"
+              href="/qualify"
               className="w-full sm:w-auto px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
             >
-              Join Beta Testing - Limited Spots
+              See If ReviewFlo Is Right For You →
             </a>
             <a
               href="#waitlist-signup"
@@ -704,7 +704,7 @@ function BetaSignupForm() {
         disabled={isSubmitting}
         className="w-full px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
-        {isSubmitting ? 'Submitting...' : 'Join Beta Testing'}
+        {isSubmitting ? 'Submitting...' : 'See If ReviewFlo Is Right For You →'}
       </button>
     </form>
   );

@@ -12,6 +12,11 @@ interface WaitlistSignupData {
   email: string;
 }
 
+interface QualificationData {
+  email: string;
+  businessType: string;
+}
+
 export async function sendBetaConfirmationEmail(data: BetaSignupData) {
   try {
     await resend.emails.send({
@@ -262,11 +267,90 @@ export async function sendWaitlistConfirmationEmail(data: WaitlistSignupData) {
   }
 }
 
-export async function sendAdminNotification(type: 'beta' | 'waitlist', data: Record<string, unknown>) {
+export async function sendQualificationEmail(data: QualificationData) {
+  try {
+    const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSd1jTmwDjEy5XuG80Ox3FXA3AzMq1bPEpUzZ0cXliJb4I8ozg/viewform';
+
+    await resend.emails.send({
+      from: 'Jeremy from ReviewFlo <jeremy@usereviewflo.com>',
+      to: data.email,
+      subject: "ReviewFlo Beta Survey - One More Step (3 minutes)",
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #4A3428 0%, #3a2a20 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; }
+            .content { background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px; }
+            .cta { background: #4A3428; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0; font-weight: 600; font-size: 16px; }
+            .cta:hover { background: #3a2a20; }
+            .highlight-box { background: rgba(201, 169, 97, 0.2); padding: 20px; border-radius: 8px; border-left: 4px solid #C9A961; margin: 20px 0; }
+            .footer { text-align: center; color: #6b7280; margin-top: 30px; font-size: 14px; }
+            ul { padding-left: 20px; }
+            li { margin-bottom: 8px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 28px;">ReviewFlo Beta Survey</h1>
+            </div>
+            <div class="content">
+              <p>Hi there,</p>
+
+              <p>Thanks for your interest in ReviewFlo!</p>
+
+              <p><strong>Quick reminder of what ReviewFlo does:</strong></p>
+              <ul style="color: #4b5563; line-height: 1.8;">
+                <li>Send review requests via a simple link after each job</li>
+                <li>Make it effortless for happy customers to leave 5-star Google reviews</li>
+                <li>Catch unhappy customers privately so you can fix issues before they post</li>
+              </ul>
+
+              <div class="highlight-box">
+                <p style="margin: 0; font-size: 16px;"><strong>Next step:</strong></p>
+                <p style="margin: 10px 0 0 0; font-size: 15px;">Please complete this short survey (3 minutes) so we can select the right beta testers.</p>
+              </div>
+
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${googleFormUrl}" class="cta">
+                  Complete Beta Survey →
+                </a>
+              </div>
+
+              <p style="color: #6b7280; font-size: 14px;">We'll review all responses and contact you within 7 days if you're selected.</p>
+
+              <p style="margin-top: 30px;">Questions? Just reply to this email.</p>
+
+              <p>— Jeremy<br>
+              Founder, ReviewFlo</p>
+            </div>
+            <div class="footer">
+              <p>ReviewFlo • Built for small business owners, by a small business owner</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending qualification email:', error);
+    return { success: false, error };
+  }
+}
+
+export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify', data: Record<string, unknown>) {
   try {
     const isBeta = type === 'beta';
+    const isQualify = type === 'qualify';
     const subject = isBeta
       ? `New Beta Signup: ${data.businessName || 'N/A'}`
+      : isQualify
+      ? `New Qualification: ${data.email}`
       : 'New Waitlist Signup';
 
     const result = await resend.emails.send({
@@ -294,10 +378,38 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist', data: Rec
         <body>
           <div class="container">
             <div class="header">
-              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : '📋 New Waitlist Signup'}</h1>
+              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : isQualify ? '🎯 New Qualification' : '📋 New Waitlist Signup'}</h1>
             </div>
             <div class="content">
-              ${isBeta ? `
+              ${isQualify ? `
+                <table class="info-table">
+                  <tr>
+                    <td>Email:</td>
+                    <td><a href="mailto:${data.email}" style="color: #2563eb;">${data.email}</a></td>
+                  </tr>
+                  <tr>
+                    <td>Business Type:</td>
+                    <td><strong>${data.businessType || 'N/A'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Customers/Month:</td>
+                    <td>${data.customersPerMonth || 'N/A'}</td>
+                  </tr>
+                  <tr>
+                    <td>Review Frequency:</td>
+                    <td>${data.reviewAskingFrequency || 'N/A'}</td>
+                  </tr>
+                  <tr>
+                    <td>Email Status:</td>
+                    <td>${data.emailSent ? '<span style="color: #10b981;">✓ Sent Successfully</span>' : '<span style="color: #ef4444;">✗ Failed to Send</span>'}</td>
+                  </tr>
+                </table>
+
+                <div class="action-needed">
+                  <strong>⚡ Next Step:</strong><br>
+                  ${data.emailSent ? "They've been sent the Google Form link. Watch for their survey response." : "Email failed to send - you may need to manually send them the survey link."}
+                </div>
+              ` : isBeta ? `
                 <table class="info-table">
                   <tr>
                     <td>Name:</td>
