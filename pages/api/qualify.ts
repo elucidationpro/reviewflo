@@ -47,7 +47,7 @@ export default async function handler(
       });
     }
 
-    // Insert into leads table with status='beta-invited'
+    // Insert into leads table with status='beta_invited'
     const { data, error } = await supabase
       .from('leads')
       .insert([
@@ -56,7 +56,7 @@ export default async function handler(
           business_type: businessType,
           customers_per_month: customersPerMonth,
           review_asking_frequency: reviewAskingFrequency,
-          status: 'beta-invited',
+          status: 'beta_invited',
           source: 'qualify',
           created_at: new Date().toISOString(),
           email_sent: false
