@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import Head from 'next/head';
+import { trackEvent } from '@/lib/posthog-provider';
 
 export default function QualifyPage() {
   const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ export default function QualifyPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{
-    type: 'success' | 'waitlist' | null;
+    type: 'success' | null;
     message: string;
   }>({ type: null, message: '' });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -50,54 +51,40 @@ export default function QualifyPage() {
     setIsSubmitting(true);
 
     try {
-      // Check qualification logic
-      const isNotServiceBusiness = formData.businessType === 'not-service';
-      const isLowVolume = ['1-10', '11-25'].includes(formData.customersPerMonth);
-      const asksRarely = formData.reviewAskingFrequency === 'rarely';
-
-      if (isNotServiceBusiness) {
-        setResult({
-          type: 'waitlist',
-          message: "Thanks for your interest! ReviewFlo is designed for service businesses. Join our waitlist to be notified when we expand."
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      if (asksRarely && isLowVolume) {
-        setResult({
-          type: 'waitlist',
-          message: "Thanks for your interest! ReviewFlo might not be the best fit right now based on your current review process. Would you like to join our waitlist instead?"
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Submit to API
+      // Submit to API - everyone passes, we filter manually later
       const response = await fetch('/api/qualify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
+      const data = await response.json();
+
       if (response.ok) {
+        // EVENT 1: Track beta signup completion
+        trackEvent('beta_signup_completed', {
+          businessType: formData.businessType,
+          customersPerMonth: formData.customersPerMonth,
+          reviewAskingFrequency: formData.reviewAskingFrequency,
+          email: formData.email,
+        });
+
         setResult({
           type: 'success',
           message: "Perfect! Check your email for the next step. We just sent you a link to complete the survey."
         });
       } else {
-        throw new Error('Failed to submit');
+        // Show the specific error message from the API
+        const errorMessage = data.error || 'Failed to submit. Please try again.';
+        setErrors({ submit: errorMessage });
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      setErrors({ submit: 'Something went wrong. Please try again.' });
+      setErrors({ submit: 'Network error. Please check your connection and try again.' });
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleWaitlistClick = () => {
-    window.location.href = '/#waitlist-signup';
   };
 
   return (
@@ -143,42 +130,20 @@ export default function QualifyPage() {
               </p>
             </div>
 
-            {/* Show result if qualified or disqualified */}
+            {/* Show result if submitted */}
             {result.type ? (
               <div className="text-center py-8">
-                {result.type === 'success' ? (
-                  <>
-                    <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                      Perfect! 🎉
-                    </h2>
-                    <p className="text-lg text-gray-600 mb-6">
-                      Check your email for the next step. We just sent you a link to complete the survey.
-                    </p>
-                    <div className="bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-lg p-4 text-sm text-gray-700">
-                      <p className="font-semibold mb-1">What's next?</p>
-                      <p>If you don't see it in 5 minutes, check spam or email jeremy@usereviewflo.com</p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-16 h-16 bg-[#C9A961]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <ArrowRight className="w-8 h-8 text-[#4A3428]" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                      Thanks for Your Interest
-                    </h2>
-                    <p className="text-lg text-gray-600 mb-6">
-                      {result.message}
-                    </p>
-                    <button
-                      onClick={handleWaitlistClick}
-                      className="px-8 py-3 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-md hover:shadow-lg"
-                    >
-                      Join Waitlist
-                    </button>
-                  </>
-                )}
+                <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                  Perfect! 🎉
+                </h2>
+                <p className="text-lg text-gray-600 mb-6">
+                  Check your email for the next step. We just sent you a link to complete the survey.
+                </p>
+                <div className="bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-lg p-4 text-sm text-gray-700">
+                  <p className="font-semibold mb-1">What's next?</p>
+                  <p>If you don't see it in 5 minutes, check spam or email jeremy@usereviewflo.com</p>
+                </div>
               </div>
             ) : (
               /* Qualification Form */
@@ -299,15 +264,9 @@ export default function QualifyPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                  className="w-full px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  {isSubmitting ? (
-                    'Submitting...'
-                  ) : (
-                    <>
-                      Continue <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
+                  {isSubmitting ? 'Submitting...' : 'Continue →'}
                 </button>
               </form>
             )}

@@ -34,6 +34,7 @@ export default async function handler(
       // Email already exists - return appropriate message based on status
       const statusMessages: Record<string, string> = {
         'waitlist': 'This email is already on our waitlist. We\'ll notify you when beta access is available!',
+        'beta-invited': 'You\'ve already been invited to the beta program. Check your email for details!',
         'beta_invited': 'You\'ve already been invited to the beta program. Check your email for details!',
         'beta_active': 'You\'re already part of our beta program!',
         'qualified': 'You\'ve already completed the qualification form. Check your email for the next steps!',
@@ -46,7 +47,7 @@ export default async function handler(
       });
     }
 
-    // Insert into leads table with status='qualified'
+    // Insert into leads table with status='beta-invited'
     const { data, error } = await supabase
       .from('leads')
       .insert([
@@ -55,7 +56,7 @@ export default async function handler(
           business_type: businessType,
           customers_per_month: customersPerMonth,
           review_asking_frequency: reviewAskingFrequency,
-          status: 'qualified',
+          status: 'beta-invited',
           source: 'qualify',
           created_at: new Date().toISOString(),
           email_sent: false
@@ -65,8 +66,17 @@ export default async function handler(
       .single();
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(500).json({ error: 'Failed to save qualification' });
+      console.error('Supabase error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        fullError: error
+      });
+      return res.status(500).json({
+        error: error.message || 'Failed to save qualification',
+        details: error.details || 'Please check the server logs for more information'
+      });
     }
 
     // Send confirmation email with Google Form link to user

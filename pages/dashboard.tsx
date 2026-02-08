@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
+import { trackEvent, identifyUser } from '../lib/posthog-provider'
 
 interface Business {
   id: string
@@ -85,6 +86,21 @@ export default function DashboardPage() {
 
       console.log('[Dashboard] Business found:', businessData.business_name)
       setBusiness(businessData)
+
+      // EVENT 2: Track business onboarding (first time dashboard load)
+      // Identify the business owner in PostHog
+      identifyUser(user.id, {
+        businessId: businessData.id,
+        businessName: businessData.business_name,
+        businessSlug: businessData.slug,
+      })
+
+      // Track the dashboard access as a proxy for successful onboarding
+      trackEvent('business_onboarded', {
+        businessId: businessData.id,
+        businessName: businessData.business_name,
+        onboardingDate: new Date().toISOString(),
+      })
 
       // Parallelize reviews and feedback fetching
       console.time('[Dashboard] Parallel Data Fetch')
@@ -343,6 +359,13 @@ export default function DashboardPage() {
           </div>
 
           {/* Quick Stats Card */}
+          {/* TODO: When review request sending is implemented, add EVENT 3 tracking here:
+              trackEvent('review_request_sent', {
+                businessId: business.id,
+                customerId: customer.id,
+                requestMethod: 'sms' | 'email'
+              })
+          */}
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
             <h2 className="text-xl font-bold text-gray-800 mb-6">
               Quick Stats

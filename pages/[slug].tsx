@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabase'
 import ReviewFloFooter from '../components/ReviewFloFooter'
+import { trackEvent } from '../lib/posthog-provider'
 
 interface Business {
   id: string
@@ -29,6 +30,8 @@ export default function ReviewPage({ business }: PageProps) {
     setSelectedRating(rating)
     setIsSubmitting(true)
 
+    const startTime = Date.now()
+
     try {
       // Save the rating to the reviews table
       const { error } = await supabase
@@ -44,6 +47,15 @@ export default function ReviewPage({ business }: PageProps) {
         setIsSubmitting(false)
         return
       }
+
+      // EVENT 4: Track customer response
+      const responseTime = Date.now() - startTime
+      trackEvent('customer_responded', {
+        rating,
+        businessId: business.id,
+        businessName: business.business_name,
+        responseTime, // Time in milliseconds
+      })
 
       // Route based on rating
       if (rating >= 1 && rating <= 4) {

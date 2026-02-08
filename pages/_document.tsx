@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import Script from "next/script";
 
 export default function Document() {
   return (
@@ -41,6 +42,20 @@ export default function Document() {
         {/* Additional Meta Tags */}
         <meta name="theme-color" content="#4A3428" />
         <link rel="canonical" href="https://usereviewflo.com" />
+
+        {/* Google Analytics (GA4) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8DS0XBY8J7"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-8DS0XBY8J7');
+          `}
+        </Script>
       </Head>
       <body className="antialiased">
         <Main />

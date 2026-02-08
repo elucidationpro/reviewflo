@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import ReviewFloFooter from '../../components/ReviewFloFooter'
+import { trackEvent } from '../../lib/posthog-provider'
 
 interface Business {
   id: string
@@ -60,6 +61,15 @@ export default function FeedbackPage({ business, rating }: PageProps) {
         setIsSubmitting(false)
         return
       }
+
+      // EVENT 6: Track private feedback submission
+      trackEvent('private_feedback_submitted', {
+        rating,
+        businessId: business.id,
+        businessName: business.business_name,
+        feedbackLength: whatHappened.length + howToMakeRight.length,
+        wantsContact,
+      })
 
       // Send email notification
       try {

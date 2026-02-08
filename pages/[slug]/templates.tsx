@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import ReviewFloFooter from '../../components/ReviewFloFooter'
+import { trackEvent } from '../../lib/posthog-provider'
 
 interface Business {
   id: string
@@ -255,6 +256,15 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                   href={platform.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    // EVENT 5: Track when 5-star customer clicks through to Google review
+                    if (platform.name === 'Google') {
+                      trackEvent('five_star_to_google', {
+                        businessId: business.id,
+                        businessName: business.business_name,
+                      })
+                    }
+                  }}
                   className="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-lg transition-all duration-200 group"
                   style={{
                     borderColor: 'transparent',
