@@ -46,8 +46,8 @@ export default function LandingPage() {
     <>
       <Head>
         {/* Basic SEO */}
-        <title>ReviewFlo - Catch Unhappy Customers Before Bad Reviews | $19/month</title>
-        <meta name="description" content="Simple review management for service businesses. Route negative reviews to private feedback, guide happy customers to public reviews. Perfect for barbers, mechanics, detailers. Only $19/month." />
+        <title>ReviewFlo - Get More 5-Star Google Reviews Automatically</title>
+        <meta name="description" content="Get more 5-star Google reviews automatically. Catch unhappy customers privately before they post. Simple review management for small service businesses." />
         <meta name="keywords" content="review management, customer feedback, small business, negative reviews, review software, reputation management, service business, 5-star reviews, online reviews, Google reviews, Facebook reviews, Yelp reviews, barber reviews, mechanic reviews, auto detailing reviews" />
         <meta name="author" content="ReviewFlo" />
 
@@ -57,16 +57,16 @@ export default function LandingPage() {
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://usereviewflo.com" />
-        <meta property="og:title" content="ReviewFlo - Catch Unhappy Customers Before Bad Reviews" />
-        <meta property="og:description" content="Simple review management for service businesses. Route negative reviews to private feedback, guide happy customers to public reviews. Perfect for barbers, mechanics, detailers. Only $19/month." />
+        <meta property="og:title" content="ReviewFlo - Get More 5-Star Google Reviews Automatically" />
+        <meta property="og:description" content="Get more 5-star Google reviews automatically. Catch unhappy customers privately before they post. Simple review management for small service businesses." />
         <meta property="og:image" content="https://usereviewflo.com/images/reviewflo-og-image.png" />
         <meta property="og:site_name" content="ReviewFlo" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://usereviewflo.com" />
-        <meta name="twitter:title" content="ReviewFlo - Catch Unhappy Customers Before Bad Reviews" />
-        <meta name="twitter:description" content="Simple review management for service businesses. Route negative reviews to private feedback, guide happy customers to public reviews. Perfect for barbers, mechanics, detailers. Only $19/month." />
+        <meta name="twitter:title" content="ReviewFlo - Get More 5-Star Google Reviews Automatically" />
+        <meta name="twitter:description" content="Get more 5-star Google reviews automatically. Catch unhappy customers privately before they post. Simple review management for small service businesses." />
         <meta name="twitter:image" content="https://usereviewflo.com/images/reviewflo-twitter-image.png" />
 
         {/* Viewport and Mobile */}
@@ -135,7 +135,7 @@ export default function LandingPage() {
                 href="/qualify"
                 className="px-4 sm:px-6 py-2 sm:py-2.5 bg-[#4A3428] text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-md hover:shadow-lg"
               >
-                See If ReviewFlo Is Right For You →
+                Check If You Qualify →
               </a>
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function LandingPage() {
                 href="/qualify"
                 className="w-full sm:w-auto px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
               >
-                See If ReviewFlo Is Right For You →
+                Check If You Qualify →
               </a>
               <a
                 href="#waitlist-signup"
@@ -527,7 +527,7 @@ export default function LandingPage() {
               href="/qualify"
               className="w-full sm:w-auto px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-2xl hover:scale-105 transform"
             >
-              See If ReviewFlo Is Right For You →
+              Check If You Qualify →
             </a>
             <a
               href="#waitlist-signup"
@@ -704,7 +704,7 @@ function BetaSignupForm() {
         disabled={isSubmitting}
         className="w-full px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
-        {isSubmitting ? 'Submitting...' : 'See If ReviewFlo Is Right For You →'}
+        {isSubmitting ? 'Submitting...' : 'Check If You Qualify →'}
       </button>
     </form>
   );
