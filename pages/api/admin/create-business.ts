@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { isAdminEmail } from '../../../lib/adminAuth'
+import { isAdminUser } from '../../../lib/adminAuth'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -33,16 +33,6 @@ interface CreateBusinessRequest {
   template3?: string
 }
 
-// Generate a random password
-function generatePassword(): string {
-  const length = 12
-  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
-  let password = ''
-  for (let i = 0; i < length; i++) {
-    password += charset.charAt(Math.floor(Math.random() * charset.length))
-  }
-  return password
-}
 
 export default async function handler(
   req: NextApiRequest,
@@ -64,7 +54,7 @@ export default async function handler(
     // Verify the token and get user
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
 
-    if (authError || !user || !isAdminEmail(user.email)) {
+    if (authError || !user || !isAdminUser(user)) {
       return res.status(403).json({ error: 'Forbidden - Admin access required' })
     }
 
@@ -88,14 +78,10 @@ export default async function handler(
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
-    // Generate password
-    const password = generatePassword()
-
-    // Create Supabase auth user
+    // Create Supabase auth user without password - they'll set it via invite email
     const { data: authData, error: createAuthError } = await supabaseAdmin.auth.admin.createUser({
       email: ownerEmail,
-      password,
-      email_confirm: true,
+      email_confirm: false, // User will confirm via invite link
       user_metadata: {
         owner_name: ownerName,
         business_name: businessName
@@ -199,79 +185,85 @@ export default async function handler(
       // Don't fail the entire request if templates fail, just log it
     }
 
-    // Send welcome email with credentials if requested
+    // Send invite email with password setup link if requested
     if (sendWelcomeEmail) {
       try {
-        const emailHtml = `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Welcome to ReviewFlo</title>
-            </head>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background: linear-gradient(to right, #3b82f6, #2563eb); padding: 40px 30px; border-radius: 10px 10px 0 0; text-align: center;">
-                <h1 style="color: #ffffff; margin: 0; font-size: 32px;">Welcome to ReviewFlo!</h1>
-              </div>
-
-              <div style="background: #ffffff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px; padding: 30px; margin-bottom: 20px;">
-                <p style="font-size: 18px; color: #1f2937; margin: 0 0 20px 0;">
-                  Hi ${ownerName}!
-                </p>
-
-                <p style="color: #4b5563; margin: 0 0 20px 0;">
-                  Your ReviewFlo account has been created! We're excited to help ${businessName} turn negative reviews into opportunities and make it easier for happy customers to share their experiences.
-                </p>
-
-                <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                  <h2 style="color: #1f2937; font-size: 20px; margin: 0 0 15px 0;">Your Login Credentials</h2>
-                  <p style="color: #4b5563; margin: 5px 0;"><strong>Email:</strong> ${ownerEmail}</p>
-                  <p style="color: #4b5563; margin: 5px 0;"><strong>Password:</strong> ${password}</p>
-                  <p style="color: #4b5563; margin: 5px 0;"><strong>Review Page:</strong> <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${slug}" style="color: #3b82f6;">${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${slug}</a></p>
-                </div>
-
-                <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-                  <p style="color: #92400e; margin: 0; font-size: 14px;">
-                    <strong>Important:</strong> Please change your password after logging in for the first time.
-                  </p>
-                </div>
-
-                <div style="background: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-                  <h3 style="color: #1e40af; font-size: 18px; margin: 0 0 10px 0;">Getting Started</h3>
-                  <ol style="color: #1e40af; margin: 0; padding-left: 20px;">
-                    <li style="margin-bottom: 10px;">Log in to your <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/login" style="color: #2563eb;">dashboard</a></li>
-                    <li style="margin-bottom: 10px;">Customize your business settings and brand colors</li>
-                    <li style="margin-bottom: 10px;">Add your review platform URLs (Google, Yelp, etc.)</li>
-                    <li style="margin-bottom: 10px;">Create custom review templates for your customers</li>
-                    <li style="margin-bottom: 10px;">Share your review page link with customers</li>
-                  </ol>
-                </div>
-
-                <p style="color: #4b5563; margin: 20px 0 0 0;">
-                  If you have any questions or need help getting started, just reply to this email. We're here to help!
-                </p>
-
-                <div style="text-align: center; margin-top: 30px;">
-                  <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/login" style="display: inline-block; background-color: #3b82f6; color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                    Log In to Your Dashboard
-                  </a>
-                </div>
-              </div>
-
-              <div style="text-align: center; color: #9ca3af; font-size: 14px; padding: 20px;">
-                <p style="margin: 0;">ReviewFlo - Fix it before it goes public</p>
-              </div>
-            </body>
-          </html>
-        `
-
-        await resend.emails.send({
-          from: 'ReviewFlo <noreply@usereviewflo.com>',
-          to: ownerEmail,
-          subject: `Welcome to ReviewFlo - ${businessName}`,
-          html: emailHtml,
+        // Generate invite link for user to set their password
+        const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.generateLink({
+          type: 'invite',
+          email: ownerEmail,
         })
+
+        if (inviteError) {
+          console.error('Error generating invite link:', inviteError)
+        } else {
+          const inviteLink = inviteData?.properties?.action_link
+
+          const emailHtml = `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Welcome to ReviewFlo</title>
+              </head>
+              <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(to right, #3b82f6, #2563eb); padding: 40px 30px; border-radius: 10px 10px 0 0; text-align: center;">
+                  <h1 style="color: #ffffff; margin: 0; font-size: 32px;">Welcome to ReviewFlo!</h1>
+                </div>
+
+                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px; padding: 30px; margin-bottom: 20px;">
+                  <p style="font-size: 18px; color: #1f2937; margin: 0 0 20px 0;">
+                    Hi ${ownerName}!
+                  </p>
+
+                  <p style="color: #4b5563; margin: 0 0 20px 0;">
+                    Your ReviewFlo account has been created! We're excited to help ${businessName} turn negative reviews into opportunities and make it easier for happy customers to share their experiences.
+                  </p>
+
+                  <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h2 style="color: #1f2937; font-size: 20px; margin: 0 0 15px 0;">Your Account Details</h2>
+                    <p style="color: #4b5563; margin: 5px 0;"><strong>Email:</strong> ${ownerEmail}</p>
+                    <p style="color: #4b5563; margin: 5px 0;"><strong>Review Page:</strong> <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${slug}" style="color: #3b82f6;">${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${slug}</a></p>
+                  </div>
+
+                  <div style="background: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                    <h3 style="color: #1e40af; font-size: 18px; margin: 0 0 10px 0;">Getting Started</h3>
+                    <ol style="color: #1e40af; margin: 0; padding-left: 20px;">
+                      <li style="margin-bottom: 10px;">Click the button below to set your password and activate your account</li>
+                      <li style="margin-bottom: 10px;">Log in to your dashboard</li>
+                      <li style="margin-bottom: 10px;">Customize your business settings and brand colors</li>
+                      <li style="margin-bottom: 10px;">Add your review platform URLs (Google, Yelp, etc.)</li>
+                      <li style="margin-bottom: 10px;">Create custom review templates for your customers</li>
+                      <li style="margin-bottom: 10px;">Share your review page link with customers</li>
+                    </ol>
+                  </div>
+
+                  <p style="color: #4b5563; margin: 20px 0 0 0;">
+                    If you have any questions or need help getting started, just reply to this email. We're here to help!
+                  </p>
+
+                  <div style="text-align: center; margin-top: 30px;">
+                    <a href="${inviteLink || `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/login`}" style="display: inline-block; background-color: #3b82f6; color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                      Set Password & Activate Account
+                    </a>
+                  </div>
+                </div>
+
+                <div style="text-align: center; color: #9ca3af; font-size: 14px; padding: 20px;">
+                  <p style="margin: 0;">ReviewFlo - Fix it before it goes public</p>
+                </div>
+              </body>
+            </html>
+          `
+
+          await resend.emails.send({
+            from: 'ReviewFlo <noreply@usereviewflo.com>',
+            to: ownerEmail,
+            subject: `Welcome to ReviewFlo - ${businessName}`,
+            html: emailHtml,
+          })
+        }
       } catch (emailError) {
         console.error('Error sending welcome email:', emailError)
         // Don't fail the request if email fails
@@ -282,7 +274,6 @@ export default async function handler(
       success: true,
       message: 'Business created successfully',
       business,
-      password,
       slug,
     })
   } catch (error) {

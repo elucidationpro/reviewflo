@@ -49,8 +49,8 @@ export default async function handler(
     }
 
     // Validate password length
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters long' })
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters long' })
     }
 
     // Validate invite code again
@@ -68,7 +68,8 @@ export default async function handler(
       return res.status(400).json({ error: 'This invite code has already been used' })
     }
 
-    // Create Supabase auth user
+    // Create Supabase auth user with password
+    // Note: This is acceptable here since user is providing their own password during signup
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,

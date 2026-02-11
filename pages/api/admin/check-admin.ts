@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { isAdminEmail } from '../../../lib/adminAuth'
+import { isAdminUser } from '../../../lib/adminAuth'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -37,8 +37,8 @@ export default async function handler(
       return res.status(401).json({ isAdmin: false, error: 'Invalid token' })
     }
 
-    // Check if user is admin
-    const adminStatus = isAdminEmail(user.email)
+    // Check if user is admin (role-based or email-based)
+    const adminStatus = isAdminUser(user)
 
     return res.status(200).json({ isAdmin: adminStatus, email: user.email })
   } catch (error) {

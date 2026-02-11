@@ -4,16 +4,10 @@ import { createClient } from '@supabase/supabase-js'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-// Create Supabase client
+// Use anon key for public endpoint - RLS policies should control access
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qawrdhxyadfmuxdzeslo.supabase.co',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 )
 
 interface WaitlistRequest {
@@ -42,6 +36,26 @@ export default async function handler(
     // Validate required fields
     if (!businessName || !email || !businessType) {
       return res.status(400).json({ error: 'Missing required fields' })
+    }
+
+    // Input validation and sanitization
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' })
+    }
+
+    // Length limits to prevent abuse
+    if (businessName.length > 200) {
+      return res.status(400).json({ error: 'Business name must be 200 characters or less' })
+    }
+    if (email.length > 255) {
+      return res.status(400).json({ error: 'Email must be 255 characters or less' })
+    }
+    if (businessType.length > 100) {
+      return res.status(400).json({ error: 'Business type must be 100 characters or less' })
+    }
+    if (phone && phone.length > 20) {
+      return res.status(400).json({ error: 'Phone must be 20 characters or less' })
     }
 
     // Save to waitlist table

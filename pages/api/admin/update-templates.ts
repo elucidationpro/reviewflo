@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { isAdminEmail } from '../../../lib/adminAuth'
+import { isAdminUser } from '../../../lib/adminAuth'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -40,7 +40,7 @@ export default async function handler(
     // Verify the token and get user
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
 
-    if (authError || !user || !isAdminEmail(user.email)) {
+    if (authError || !user || !isAdminUser(user)) {
       return res.status(403).json({ error: 'Forbidden - Admin access required' })
     }
 

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { isAdminEmail } from '../../../lib/adminAuth'
+import { isAdminUser } from '../../../lib/adminAuth'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -12,17 +12,6 @@ const supabaseAdmin = createClient(
     }
   }
 )
-
-// Generate a random password
-function generatePassword(): string {
-  const length = 12
-  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
-  let password = ''
-  for (let i = 0; i < length; i++) {
-    password += charset.charAt(Math.floor(Math.random() * charset.length))
-  }
-  return password
-}
 
 interface ResetPasswordRequest {
   userId: string
@@ -48,7 +37,7 @@ export default async function handler(
     // Verify the token and get user
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
 
-    if (authError || !user || !isAdminEmail(user.email)) {
+    if (authError || !user || !isAdminUser(user)) {
       return res.status(403).json({ error: 'Forbidden - Admin access required' })
     }
 
@@ -58,24 +47,31 @@ export default async function handler(
       return res.status(400).json({ error: 'User ID is required' })
     }
 
-    // Generate new password
-    const newPassword = generatePassword()
+    // Get user email for password reset
+    const { data: targetUser, error: getUserError } = await supabaseAdmin.auth.admin.getUserById(userId)
 
-    // Update user password
-    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
-      userId,
-      { password: newPassword }
-    )
-
-    if (updateError) {
-      console.error('Error resetting password:', updateError)
-      return res.status(500).json({ error: 'Failed to reset password' })
+    if (getUserError || !targetUser.user?.email) {
+      console.error('Error fetching user:', getUserError)
+      return res.status(404).json({ error: 'User not found' })
     }
 
+    // Send password reset email instead of generating password
+    // This is more secure as the user sets their own password via secure link
+    const { error: resetError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'recovery',
+      email: targetUser.user.email,
+    })
+
+    if (resetError) {
+      console.error('Error generating password reset link:', resetError)
+      return res.status(500).json({ error: 'Failed to send password reset email' })
+    }
+
+    // Note: Supabase generates the link but doesn't return it in the response
+    // The link is sent via email automatically by Supabase
     return res.status(200).json({
       success: true,
-      message: 'Password reset successfully',
-      password: newPassword,
+      message: 'Password reset email sent successfully. The user will receive an email with instructions to reset their password.',
     })
   } catch (error) {
     console.error('Error in reset-password API:', error)

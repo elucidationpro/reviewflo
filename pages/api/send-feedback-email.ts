@@ -4,9 +4,10 @@ import { createClient } from '@supabase/supabase-js'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-// Create admin client with service role key for auth.admin access
+// Note: This endpoint needs service role to access auth.users table
+// Consider adding rate limiting and validation to prevent abuse
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://qawrdhxyadfmuxdzeslo.supabase.co',
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   {
     auth: {
@@ -44,6 +45,37 @@ export default async function handler(
       email,
       phone
     } = req.body as FeedbackEmailRequest
+
+    // Input validation
+    if (!businessId || typeof businessId !== 'string') {
+      return res.status(400).json({ error: 'Valid business ID is required' })
+    }
+
+    if (!starRating || starRating < 1 || starRating > 5) {
+      return res.status(400).json({ error: 'Star rating must be between 1 and 5' })
+    }
+
+    // Length limits to prevent abuse
+    if (whatHappened && whatHappened.length > 2000) {
+      return res.status(400).json({ error: 'What happened must be 2000 characters or less' })
+    }
+    if (howToMakeRight && howToMakeRight.length > 2000) {
+      return res.status(400).json({ error: 'How to make it right must be 2000 characters or less' })
+    }
+    if (email && email.length > 255) {
+      return res.status(400).json({ error: 'Email must be 255 characters or less' })
+    }
+    if (phone && phone.length > 20) {
+      return res.status(400).json({ error: 'Phone must be 20 characters or less' })
+    }
+
+    // Validate email format if provided
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Invalid email format' })
+      }
+    }
 
     // Fetch business and owner information
     const { data: business, error: businessError } = await supabaseAdmin

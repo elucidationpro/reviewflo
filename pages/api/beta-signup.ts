@@ -2,9 +2,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { sendBetaConfirmationEmail, sendAdminNotification } from '@/lib/email-service';
 
+// Use anon key for public endpoint - RLS policies should control access
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 export default async function handler(
@@ -21,6 +22,32 @@ export default async function handler(
     // Validate required fields
     if (!name || !email || !phone || !businessType || !businessName) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Input validation and sanitization
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    // Length limits to prevent abuse
+    if (name.length > 100) {
+      return res.status(400).json({ error: 'Name must be 100 characters or less' });
+    }
+    if (email.length > 255) {
+      return res.status(400).json({ error: 'Email must be 255 characters or less' });
+    }
+    if (phone && phone.length > 20) {
+      return res.status(400).json({ error: 'Phone must be 20 characters or less' });
+    }
+    if (businessName.length > 200) {
+      return res.status(400).json({ error: 'Business name must be 200 characters or less' });
+    }
+    if (businessType.length > 100) {
+      return res.status(400).json({ error: 'Business type must be 100 characters or less' });
+    }
+    if (challenge && challenge.length > 1000) {
+      return res.status(400).json({ error: 'Challenge description must be 1000 characters or less' });
     }
 
     // Check for duplicate email in leads table
