@@ -74,13 +74,29 @@ export default function ReviewPage({ business }: PageProps) {
   return (
     <>
       <Head>
-        <title>{business.business_name} - Share Your Experience | ReviewFlo</title>
-        <meta name="description" content={`Rate your experience with ${business.business_name}. Your feedback helps us improve our service.`} />
-        <meta property="og:title" content={`${business.business_name} - Share Your Experience`} />
-        <meta property="og:description" content={`Rate your experience with ${business.business_name}. Your feedback helps us improve our service.`} />
+        <title>{business.business_name} - Share Your Experience</title>
+        <meta name="description" content={`How was your experience with ${business.business_name}? Let us know!`} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://usereviewflo.com/${business.slug}`} />
+        <meta property="og:title" content={`${business.business_name} - Share Your Experience`} />
+        <meta property="og:description" content={`How was your experience with ${business.business_name}? Let us know!`} />
+        <meta property="og:site_name" content={business.business_name} />
+        <meta property="og:image" content="https://usereviewflo.com/images/neutral-review-card.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={`Share your experience with ${business.business_name}`} />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={`https://usereviewflo.com/${business.slug}`} />
         <meta name="twitter:title" content={`${business.business_name} - Share Your Experience`} />
-        <meta name="twitter:description" content={`Rate your experience with ${business.business_name}. Your feedback helps us improve our service.`} />
+        <meta name="twitter:description" content={`How was your experience with ${business.business_name}? Let us know!`} />
+        <meta name="twitter:image" content="https://usereviewflo.com/images/neutral-review-card.png" />
+
+        {/* Prevent search indexing of individual business review pages */}
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
         <div className="max-w-2xl w-full">
