@@ -10,6 +10,24 @@ export default function handler() {
   const width = 1200
   const height = 630
 
+  const Star = ({ filled }: { filled: boolean }) => (
+    <svg
+      width="44"
+      height="44"
+      viewBox="0 0 24 24"
+      fill={filled ? '#D4AF37' : 'none'}
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ display: 'block' }}
+    >
+      <path
+        d="M12 2.5l2.939 6.174 6.761.582-5.13 4.447 1.54 6.61L12 16.98 5.89 20.313l1.54-6.61-5.13-4.447 6.761-.582L12 2.5z"
+        stroke="#D4AF37"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+
   return new ImageResponse(
     (
       <div
@@ -44,23 +62,21 @@ export default function handler() {
               marginBottom: 32,
             }}
           >
-            {[1, 2, 3, 4, 5].map((star) => (
+            {[1, 2, 3, 4, 5].map((n) => (
               <div
-                // eslint-disable-next-line react/no-array-index-key
-                key={star}
+                key={n}
                 style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: '50%',
-                  border: '2px solid #D4AF37',
+                  width: 56,
+                  height: 56,
+                  borderRadius: 16,
+                  border: '2px solid rgba(212, 175, 55, 0.45)',
+                  background: '#FFFBF0',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#D4AF37',
-                  fontSize: 26,
                 }}
               >
-                ★
+                <Star filled={false} />
               </div>
             ))}
           </div>
@@ -76,7 +92,7 @@ export default function handler() {
               letterSpacing: '-0.04em',
             }}
           >
-            Share Your Feedback
+            How would you rate your experience?
           </h1>
 
           <p
@@ -90,8 +106,7 @@ export default function handler() {
               maxWidth: 640,
             }}
           >
-            How was your recent experience? Your feedback helps this business
-            improve.
+            Tap a star to rate. Your feedback helps this business improve.
           </p>
 
           <p
@@ -104,7 +119,7 @@ export default function handler() {
               color: '#6B7280',
             }}
           >
-            Tap to rate your visit and leave a private or public review.
+            Thank you for taking a moment to share your thoughts.
           </p>
         </div>
       </div>
