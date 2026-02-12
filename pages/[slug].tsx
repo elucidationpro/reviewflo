@@ -81,11 +81,16 @@ export default function ReviewPage({ business }: PageProps) {
         <meta property="og:title" content={`${business.business_name} - Share Your Experience`} />
         <meta property="og:description" content="How was your recent experience? We'd love to hear your feedback." />
         <meta property="og:url" content={`https://usereviewflo.com/${business.slug}`} />
+        <meta property="og:image" content="https://usereviewflo.com/api/og-feedback" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
 
         {/* Twitter Card */}
-        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${business.business_name} - Share Your Experience`} />
         <meta name="twitter:description" content="How was your recent experience? We'd love to hear your feedback." />
+        <meta name="twitter:image" content="https://usereviewflo.com/api/og-feedback" />
 
         {/* Prevent search indexing of individual business review pages */}
         <meta name="robots" content="noindex, nofollow" />

@@ -21,23 +21,7 @@ export default function Document() {
         <meta name="author" content="ReviewFlo" />
         <meta name="robots" content="index, follow" />
 
-        {/* Open Graph / Facebook / iMessage / Slack */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://usereviewflo.com" />
-        <meta property="og:title" content="ReviewFlo - Stop Bad Reviews, Get More Good Ones" />
-        <meta property="og:description" content="Intercept negative reviews before they go public. Make getting 5-star reviews effortless." />
-        <meta property="og:site_name" content="ReviewFlo" />
-        <meta property="og:image" content="https://usereviewflo.com/images/og-image.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:type" content="image/png" />
-
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://usereviewflo.com" />
-        <meta name="twitter:title" content="ReviewFlo - Stop Bad Reviews, Get More Good Ones" />
-        <meta name="twitter:description" content="Intercept negative reviews before they go public. Make getting 5-star reviews effortless." />
-        <meta name="twitter:image" content="https://usereviewflo.com/images/og-image.png" />
+        {/* Open Graph / Twitter are set per-page so business pages can use neutral images */}
 
         {/* Additional Meta Tags */}
         <meta name="theme-color" content="#4A3428" />
