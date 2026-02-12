@@ -1,8 +1,9 @@
 import React from 'react'
 import { ImageResponse } from '@vercel/og'
 
+// Next.js requires a plain, statically-parseable config object here
 export const config = {
-  runtime: 'edge' as const,
+  runtime: 'edge',
 }
 
 export default function handler() {
