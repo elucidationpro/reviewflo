@@ -16,7 +16,10 @@ export default function ConfirmEmailPage() {
     if (!email) return;
     setResendLoading(true);
     setResendMessage(null);
-    const redirectTo = typeof window !== 'undefined' ? `${window.location.origin}/early-access/join` : '';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const redirectTo = origin.includes('usereviewflo.com')
+      ? 'https://www.usereviewflo.com/early-access/join'
+      : `${origin}/early-access/join`;
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
@@ -43,17 +46,17 @@ export default function ConfirmEmailPage() {
           <p className="text-gray-600 mb-6">
             We sent a confirmation link to{email ? <> <strong className="text-gray-900">{email}</strong></> : ' your email'}. Click it to verify your account and continue.
           </p>
-          <div className="bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-lg p-4 text-sm text-gray-700 mb-8 text-left">
+          <div className="bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-lg p-4 text-sm text-gray-700 mb-6 text-left">
             <p className="font-semibold mb-1">What to do next</p>
             <p className="mb-2">1. Open your email and find the message from ReviewFlo.</p>
-            <p className="mb-2">2. Click the confirmation link in that email.</p>
-            <p>3. You’ll be taken back here to finish signing up for early access.</p>
+            <p className="mb-2">2. Click the confirmation link. You’ll be taken to the next step (qualification survey).</p>
+            <p className="mb-0">3. If the link sends you to the homepage by mistake, use the green button below to sign in and continue.</p>
           </div>
           <p className="text-sm text-gray-500 mb-4">
             Didn’t get it? Check spam, or <a href="mailto:jeremy@usereviewflo.com" className="text-[#4A3428] font-medium hover:underline">email Jeremy</a>.
           </p>
           <p className="text-sm text-gray-600 mb-6">
-            Already confirmed this email? Click <strong>Continue</strong> below, then on the next page choose <strong>Already have an account? Sign in</strong> and enter your password.
+            <strong>Already clicked the link?</strong> Sign in below to continue to the survey. Use the same password you just created.
           </p>
           {email && (
             <>
@@ -74,10 +77,10 @@ export default function ConfirmEmailPage() {
             </>
           )}
           <Link
-            href="/early-access/join"
+            href="/early-access/join?signin=1"
             className="inline-block w-full sm:w-auto px-6 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 transition-colors"
           >
-            Already confirmed? Continue →
+            I clicked the link — sign in to continue →
           </Link>
         </div>
         <p className="mt-8 text-sm text-gray-500">

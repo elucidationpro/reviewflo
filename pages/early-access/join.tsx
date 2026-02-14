@@ -54,6 +54,13 @@ export default function EarlyAccessJoinPage() {
     init();
   }, []);
 
+  // From confirm-email: "I clicked the link — sign in to continue" → open sign-in form
+  useEffect(() => {
+    if (router.isReady && router.query.signin === '1') {
+      setShowSignIn(true);
+    }
+  }, [router.isReady, router.query.signin]);
+
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     setAccountError('');
@@ -67,12 +74,17 @@ export default function EarlyAccessJoinPage() {
     }
     setAccountLoading(true);
     try {
+      // Use canonical production URL (must be in Supabase Redirect URLs)
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const canonicalJoin = origin.includes('usereviewflo.com')
+        ? 'https://www.usereviewflo.com/early-access/join'
+        : `${origin}/early-access/join`;
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
           data: { full_name: name.trim() },
-          emailRedirectTo: `${typeof window !== 'undefined' ? window.location.origin : ''}/early-access/join`,
+          emailRedirectTo: canonicalJoin,
         },
       });
       if (error) throw error;
