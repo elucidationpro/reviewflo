@@ -473,13 +473,10 @@ export default function LandingPage() {
                 </h2>
                 <div className="prose prose-lg text-gray-600">
                   <p>
-                    I&apos;m an entrepreneur running multiple service businesses. From day one, my goal was simple: build strong brand reputation and get as many customers as possible.
+                    I&apos;m an entrepreneur who loves running businesses and helping others run and grow theirs.
                   </p>
                   <p>
-                    I saw the same problem everywhere—great businesses losing potential customers because of a few bad reviews. I didn&apos;t want to <em>fix</em> review problems. I wanted to <em>prevent</em> them.
-                  </p>
-                  <p>
-                    So I built ReviewFlo. Catch issues privately before they hurt your reputation. Make it effortless for happy customers to leave 5-star reviews.
+                    I built ReviewFlo to make it <em>easy for your customers to leave reviews</em>—one link, pre-written templates, post to Google or Yelp in a tap. We also catch issues privately before they become bad reviews.
                   </p>
                   <p className="font-semibold text-gray-900">
                     Want to help shape the future of ReviewFlo? Join the beta program.

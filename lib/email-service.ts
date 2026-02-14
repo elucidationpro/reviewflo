@@ -343,19 +343,23 @@ export async function sendQualificationEmail(data: QualificationData) {
   }
 }
 
-export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify', data: Record<string, unknown>) {
+export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify' | 'early_access', data: Record<string, unknown>) {
   try {
     const isBeta = type === 'beta';
     const isQualify = type === 'qualify';
+    const isEarlyAccess = type === 'early_access';
     const subject = isBeta
       ? `New Beta Signup: ${data.businessName || 'N/A'}`
       : isQualify
       ? `New Qualification: ${data.email}`
+      : isEarlyAccess
+      ? `New Early Access Payment: ${data.email}`
       : 'New Waitlist Signup';
 
+    const adminTo = (process.env.ADMIN_EMAIL || 'jeremy.elucidation@gmail.com') as string;
     const result = await resend.emails.send({
       from: 'ReviewFlo <jeremy@usereviewflo.com>',
-      to: 'jeremy.elucidation@gmail.com',
+      to: adminTo,
       subject,
       html: `
         <!DOCTYPE html>
@@ -378,10 +382,30 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
         <body>
           <div class="container">
             <div class="header">
-              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : isQualify ? '🎯 New Qualification' : '📋 New Waitlist Signup'}</h1>
+              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : isQualify ? '🎯 New Qualification' : isEarlyAccess ? '💰 New Early Access Payment' : '📋 New Waitlist Signup'}</h1>
             </div>
             <div class="content">
-              ${isQualify ? `
+              ${isEarlyAccess ? `
+                <table class="info-table">
+                  <tr>
+                    <td>Email:</td>
+                    <td><a href="mailto:${data.email}" style="color: #2563eb;">${data.email}</a></td>
+                  </tr>
+                  <tr>
+                    <td>Name:</td>
+                    <td><strong>${data.fullName || 'N/A'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Amount:</td>
+                    <td><strong>$${typeof data.amountCents === 'number' ? (data.amountCents / 100).toFixed(2) : '10.00'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Business Type:</td>
+                    <td>${data.businessType || 'N/A'}</td>
+                  </tr>
+                </table>
+                <p>Welcome email ${data.customerEmailSent ? 'was sent' : 'may have failed'} to the customer.</p>
+              ` : isQualify ? `
                 <table class="info-table">
                   <tr>
                     <td>Email:</td>
@@ -461,6 +485,7 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
                   ` : ''}
                 </table>
               `}
+
 
               <div style="text-align: center;">
                 <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/admin" class="cta-button">

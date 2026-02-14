@@ -49,6 +49,21 @@ interface Lead {
   created_at: string
 }
 
+interface EarlyAccessSignup {
+  id: string
+  user_id: string
+  email: string
+  full_name: string | null
+  business_type: string | null
+  customers_per_month: string | null
+  review_asking_frequency: string | null
+  stripe_session_id: string | null
+  access_start_date: string | null
+  access_end_date: string | null
+  created_at: string
+  updated_at: string
+}
+
 interface Stats {
   total: number
   recentSignups: number
@@ -63,6 +78,7 @@ export default function AdminDashboard() {
   const [betaSignups, setBetaSignups] = useState<BetaSignup[]>([])
   const [waitlistSignups, setWaitlistSignups] = useState<WaitlistSignup[]>([])
   const [leads, setLeads] = useState<Lead[]>([])
+  const [earlyAccessSignups, setEarlyAccessSignups] = useState<EarlyAccessSignup[]>([])
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0 })
   const [searchQuery, setSearchQuery] = useState('')
@@ -195,6 +211,15 @@ export default function AdminDashboard() {
         setLeads(leadsData.leads || [])
       } else {
         console.error('[Admin] Failed to fetch leads:', leadsResponse.status)
+      }
+
+      // Fetch early access signups
+      const earlyRes = await fetch('/api/admin/get-early-access', {
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
+      })
+      if (earlyRes.ok) {
+        const earlyData = await earlyRes.json()
+        setEarlyAccessSignups(earlyData.earlyAccessSignups || [])
       }
 
       console.log('[Admin] Setting isLoading to false - SUCCESS')
@@ -751,6 +776,49 @@ export default function AdminDashboard() {
                   {statusFilter === 'all' ? 'No leads in the pipeline yet.' : `No ${getStatusLabel(statusFilter).toLowerCase()} leads.`}
                 </p>
               </div>
+            )}
+          </div>
+
+          {/* Early Access Signups */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Early Access ({earlyAccessSignups.length})
+            </h2>
+            {earlyAccessSignups.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Business type</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Paid</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Signed up</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {earlyAccessSignups.map((row) => (
+                      <tr key={row.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3">
+                          <a href={`mailto:${row.email}`} className="text-blue-600 hover:underline">{row.email}</a>
+                        </td>
+                        <td className="px-4 py-3 text-gray-700">{row.full_name || '—'}</td>
+                        <td className="px-4 py-3 text-gray-700">{row.business_type || '—'}</td>
+                        <td className="px-4 py-3">
+                          {row.stripe_session_id ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Yes</span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">No</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">{new Date(row.created_at).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-gray-500">No early access signups yet.</p>
             )}
           </div>
 

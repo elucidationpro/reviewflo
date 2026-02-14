@@ -95,7 +95,7 @@ export default function QualifyPage() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-[#E8DCC8]/30 via-white to-[#E8DCC8]/30">
+      <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC] via-white to-[#F5F5DC]">
         {/* Header */}
         <header className="bg-white/95 backdrop-blur-sm shadow-sm">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
