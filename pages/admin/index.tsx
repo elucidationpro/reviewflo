@@ -58,6 +58,7 @@ interface EarlyAccessSignup {
   customers_per_month: string | null
   review_asking_frequency: string | null
   stripe_session_id: string | null
+  business_id: string | null
   access_start_date: string | null
   access_end_date: string | null
   created_at: string
@@ -794,6 +795,7 @@ export default function AdminDashboard() {
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Business type</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Paid</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Signed up</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -812,6 +814,35 @@ export default function AdminDashboard() {
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-700">{new Date(row.created_at).toLocaleDateString()}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex justify-end gap-2">
+                            {row.business_id ? (
+                              <Link
+                                href={`/admin/businesses/${row.business_id}`}
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-gray-600 hover:bg-gray-700 text-white font-medium rounded transition-colors"
+                              >
+                                View
+                              </Link>
+                            ) : row.stripe_session_id ? (
+                              <Link
+                                href={{
+                                  pathname: '/admin/create-business',
+                                  query: {
+                                    earlyAccessSignupId: row.id,
+                                    name: row.full_name || '',
+                                    email: row.email,
+                                    businessType: row.business_type || '',
+                                  },
+                                }}
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors"
+                              >
+                                Create account
+                              </Link>
+                            ) : (
+                              <span className="text-xs text-gray-400">Paid required</span>
+                            )}
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

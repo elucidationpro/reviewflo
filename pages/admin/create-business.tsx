@@ -53,18 +53,21 @@ export default function CreateBusinessPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Pre-fill form from query params (for beta signups)
+  // Pre-fill form from query params (for leads pipeline or early access)
   useEffect(() => {
-    const { name, email, phone, businessName, businessType } = router.query
+    const { name, email, phone, businessName, businessType, earlyAccessSignupId } = router.query
 
-    if (name || email || businessName) {
+    if (name || email || businessName || earlyAccessSignupId) {
+      const ownerName = (name as string) || ''
       setFormData(prev => ({
         ...prev,
-        ownerName: (name as string) || prev.ownerName,
+        ownerName: ownerName || prev.ownerName,
         ownerEmail: (email as string) || prev.ownerEmail,
         phone: (phone as string) || prev.phone,
-        businessName: (businessName as string) || prev.businessName,
+        businessName: (businessName as string) || (earlyAccessSignupId && ownerName ? ownerName : prev.businessName),
         businessType: (businessType as string) || prev.businessType,
+        // Early access users already have an account; don't send invite email
+        ...(earlyAccessSignupId ? { sendWelcomeEmail: false } : {}),
       }))
     }
   }, [router.query])
@@ -96,6 +99,8 @@ export default function CreateBusinessPage() {
         return
       }
 
+      const earlyAccessSignupId = typeof router.query.earlyAccessSignupId === 'string' ? router.query.earlyAccessSignupId : undefined
+
       const response = await fetch('/api/admin/create-business', {
         method: 'POST',
         headers: {
@@ -117,6 +122,7 @@ export default function CreateBusinessPage() {
           template1: formData.template1.trim() || undefined,
           template2: formData.template2.trim() || undefined,
           template3: formData.template3.trim() || undefined,
+          ...(earlyAccessSignupId ? { earlyAccessSignupId } : {}),
         }),
       })
 
@@ -126,8 +132,8 @@ export default function CreateBusinessPage() {
         throw new Error(data.error || 'Failed to create business')
       }
 
-      setGeneratedPassword(data.password)
-      setCreatedBusinessSlug(data.slug)
+      setGeneratedPassword(data.password ?? '')
+      setCreatedBusinessSlug(data.slug ?? '')
       setShowSuccess(true)
 
       // Mark beta signup as converted if betaSignupId is present
@@ -246,7 +252,7 @@ export default function CreateBusinessPage() {
           </div>
 
           {/* Success Message */}
-          {showSuccess && generatedPassword && (
+          {showSuccess && createdBusinessSlug && (
             <div className="mb-6 bg-green-50 border-2 border-green-200 rounded-lg p-6">
               <div className="flex items-start mb-4">
                 <svg className="w-6 h-6 text-green-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
@@ -254,12 +260,14 @@ export default function CreateBusinessPage() {
                 </svg>
                 <div className="flex-1">
                   <h3 className="text-green-800 font-bold text-lg mb-2">Business Created Successfully!</h3>
-                  <div className="bg-white border border-green-300 rounded-lg p-4 mb-4">
-                    <p className="text-green-800 font-semibold mb-2">Generated Password (save this!):</p>
-                    <code className="block bg-gray-100 p-3 rounded text-red-600 font-mono text-lg font-bold break-all">
-                      {generatedPassword}
-                    </code>
-                  </div>
+                  {generatedPassword && (
+                    <div className="bg-white border border-green-300 rounded-lg p-4 mb-4">
+                      <p className="text-green-800 font-semibold mb-2">Generated Password (save this!):</p>
+                      <code className="block bg-gray-100 p-3 rounded text-red-600 font-mono text-lg font-bold break-all">
+                        {generatedPassword}
+                      </code>
+                    </div>
+                  )}
                   <p className="text-green-700 mb-2">
                     <strong>Review Page:</strong>{' '}
                     <a
@@ -273,6 +281,9 @@ export default function CreateBusinessPage() {
                   </p>
                   {formData.sendWelcomeEmail && (
                     <p className="text-green-700">Welcome email with credentials has been sent to the owner.</p>
+                  )}
+                  {router.query.earlyAccessSignupId && (
+                    <p className="text-green-700">They can sign in with their existing early access password.</p>
                   )}
                 </div>
               </div>

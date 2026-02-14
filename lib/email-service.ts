@@ -356,7 +356,9 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
       ? `New Early Access Payment: ${data.email}`
       : 'New Waitlist Signup';
 
-    const adminTo = (process.env.ADMIN_EMAIL || 'jeremy.elucidation@gmail.com') as string;
+    const primaryAdmin = (process.env.ADMIN_EMAIL || 'jeremy.elucidation@gmail.com') as string;
+    const companyEmail = 'jeremy@usereviewflo.com';
+    const adminTo = [primaryAdmin, companyEmail].filter((e, i, a) => a.indexOf(e) === i);
     const result = await resend.emails.send({
       from: 'ReviewFlo <jeremy@usereviewflo.com>',
       to: adminTo,

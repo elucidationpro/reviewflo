@@ -36,7 +36,7 @@ export default async function handler(
 
     const { data: rows, error } = await supabaseAdmin
       .from('early_access_signups')
-      .select('id, user_id, email, full_name, business_type, customers_per_month, review_asking_frequency, stripe_session_id, access_start_date, access_end_date, created_at, updated_at')
+      .select('id, user_id, email, full_name, business_type, customers_per_month, review_asking_frequency, stripe_session_id, business_id, access_start_date, access_end_date, created_at, updated_at')
       .order('created_at', { ascending: false })
 
     if (error) {

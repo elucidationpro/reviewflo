@@ -31,6 +31,8 @@ interface CreateBusinessRequest {
   template1?: string
   template2?: string
   template3?: string
+  /** When set, use this signup’s user_id and do not create a new auth user (early access flow) */
+  earlyAccessSignupId?: string
 }
 
 
@@ -71,6 +73,7 @@ export default async function handler(
       template1,
       template2,
       template3,
+      earlyAccessSignupId,
     } = req.body as CreateBusinessRequest
 
     // Validate required fields
@@ -78,19 +81,39 @@ export default async function handler(
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
-    // Create Supabase auth user without password - they'll set it via invite email
-    const { data: authData, error: createAuthError } = await supabaseAdmin.auth.admin.createUser({
-      email: ownerEmail,
-      email_confirm: false, // User will confirm via invite link
-      user_metadata: {
-        owner_name: ownerName,
-        business_name: businessName
-      }
-    })
+    let userId: string
 
-    if (createAuthError || !authData.user) {
-      console.error('Error creating auth user:', createAuthError)
-      return res.status(500).json({ error: createAuthError?.message || 'Failed to create account' })
+    if (earlyAccessSignupId) {
+      // Early access: user already exists; create business for their account
+      const { data: signup, error: signupError } = await supabaseAdmin
+        .from('early_access_signups')
+        .select('user_id, email')
+        .eq('id', earlyAccessSignupId)
+        .single()
+
+      if (signupError || !signup) {
+        return res.status(400).json({ error: 'Early access signup not found' })
+      }
+      if (signup.email.toLowerCase() !== ownerEmail.trim().toLowerCase()) {
+        return res.status(400).json({ error: 'Email must match the early access signup' })
+      }
+      userId = signup.user_id
+    } else {
+      // Leads flow: create new auth user without password - they'll set it via invite email
+      const { data: authData, error: createAuthError } = await supabaseAdmin.auth.admin.createUser({
+        email: ownerEmail,
+        email_confirm: false,
+        user_metadata: {
+          owner_name: ownerName,
+          business_name: businessName
+        }
+      })
+
+      if (createAuthError || !authData.user) {
+        console.error('Error creating auth user:', createAuthError)
+        return res.status(500).json({ error: createAuthError?.message || 'Failed to create account' })
+      }
+      userId = authData.user.id
     }
 
     // Generate a unique slug from business name
@@ -124,7 +147,7 @@ export default async function handler(
     const { data: business, error: businessError } = await supabaseAdmin
       .from('businesses')
       .insert({
-        user_id: authData.user.id,
+        user_id: userId,
         business_name: businessName,
         owner_email: ownerEmail,
         slug: slug,
@@ -140,9 +163,17 @@ export default async function handler(
 
     if (businessError) {
       console.error('Error creating business:', businessError)
-      // Clean up: delete the auth user if business creation fails
-      await supabaseAdmin.auth.admin.deleteUser(authData.user.id)
+      if (!earlyAccessSignupId) {
+        await supabaseAdmin.auth.admin.deleteUser(userId)
+      }
       return res.status(500).json({ error: 'Failed to create business record' })
+    }
+
+    if (earlyAccessSignupId) {
+      await supabaseAdmin
+        .from('early_access_signups')
+        .update({ business_id: business.id, updated_at: new Date().toISOString() })
+        .eq('id', earlyAccessSignupId)
     }
 
     // Create platform-specific review templates
@@ -185,8 +216,8 @@ export default async function handler(
       // Don't fail the entire request if templates fail, just log it
     }
 
-    // Send invite email with password setup link if requested
-    if (sendWelcomeEmail) {
+    // Send invite email with password setup link if requested (skip for early access - they already have an account)
+    if (sendWelcomeEmail && !earlyAccessSignupId) {
       try {
         // Generate invite link for user to set their password
         const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.generateLink({
