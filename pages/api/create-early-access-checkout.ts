@@ -32,28 +32,34 @@ export default async function handler(
   if (!secretKey) {
     console.error('STRIPE_SECRET_KEY is not set');
     return res.status(500).json({
-      error: 'Stripe is not configured. Add STRIPE_SECRET_KEY to .env.local for local dev.',
+      error: 'Stripe is not configured. Add STRIPE_SECRET_KEY to your environment.',
     });
   }
 
   try {
     const stripe = new Stripe(secretKey, { apiVersion: '2026-01-28.clover' });
 
+    // Use your Stripe product's Price ID if set; otherwise fall back to inline price
+    const priceId = process.env.STRIPE_EARLY_ACCESS_PRICE_ID;
+    const lineItems = priceId
+      ? [{ price: priceId, quantity: 1 }]
+      : [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: 'ReviewFlo Early Access',
+                description: '2 months of full ReviewFlo access',
+              },
+              unit_amount: 1000,
+            },
+            quantity: 1,
+          },
+        ];
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'ReviewFlo Early Access',
-              description: '2 months of full ReviewFlo access',
-            },
-            unit_amount: 1000,
-          },
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       success_url: `${req.headers.origin}/onboarding?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/early-access`,
       client_reference_id: user.id,
@@ -65,8 +71,10 @@ export default async function handler(
     });
 
     return res.status(200).json({ url: session.url });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating checkout session:', error);
-    return res.status(500).json({ error: 'Failed to create checkout session' });
+    const err = error as { message?: string; type?: string; code?: string };
+    const message = err?.message || (error instanceof Error ? error.message : 'Failed to create checkout session');
+    return res.status(500).json({ error: message });
   }
 }
