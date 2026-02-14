@@ -37,7 +37,7 @@ export default async function handler(
   }
 
   try {
-    const stripe = new Stripe(secretKey, { apiVersion: '2024-12-18.acacia' });
+    const stripe = new Stripe(secretKey, { apiVersion: '2026-01-28.clover' });
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
