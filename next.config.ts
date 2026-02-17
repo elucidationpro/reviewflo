@@ -24,11 +24,11 @@ const nextConfig: NextConfig = {
 
     const cspParts = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://usereviewflo.com https://*.supabase.co https://*.posthog.com",
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://usereviewflo.com https://*.supabase.co https://*.posthog.com https://connect.facebook.net https://www.facebook.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https: blob:",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.supabase.co https://*.posthog.com wss://*.supabase.co",
+      "connect-src 'self' https://*.supabase.co https://*.posthog.com wss://*.supabase.co https://www.facebook.com",
       "frame-src 'self' https://*.supabase.co",
       "object-src 'none'",
       "base-uri 'self'",
