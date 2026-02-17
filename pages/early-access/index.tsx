@@ -3,6 +3,7 @@
 import { CheckCircle, Zap, Shield } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
+import Script from 'next/script';
 
 export default function EarlyAccessPage() {
   return (
@@ -11,21 +12,6 @@ export default function EarlyAccessPage() {
         <title>Early Access - ReviewFlo</title>
         <meta name="description" content="Get 2 months of full ReviewFlo access for just $10. Limited to 50 businesses." />
         <meta name="robots" content="noindex, nofollow" />
-        {/* Meta Pixel Code */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '750284611209309');
-fbq('track', 'PageView');`,
-          }}
-        />
         <noscript>
           <img
             height="1"
@@ -35,8 +21,24 @@ fbq('track', 'PageView');`,
             alt=""
           />
         </noscript>
-        {/* End Meta Pixel Code */}
       </Head>
+      {/* Meta Pixel: use Script so the inline code actually runs (Head + dangerouslySetInnerHTML often doesn't execute) */}
+      <Script
+        id="meta-pixel"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '750284611209309');
+fbq('track', 'PageView');`,
+        }}
+      />
 
       <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC] via-white to-[#F5F5DC]">
         <header className="bg-white/95 backdrop-blur-sm shadow-sm">
