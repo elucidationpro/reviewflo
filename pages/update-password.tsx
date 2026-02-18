@@ -12,7 +12,13 @@ export default function UpdatePasswordPage() {
 
   useEffect(() => {
     // Handle the password recovery flow
+    // Use a ref to prevent multiple executions
+    let hasHandled = false;
+
     const handleRecovery = async () => {
+      if (hasHandled) return;
+      hasHandled = true;
+
       try {
         // Check if we have a recovery token in the URL hash
         const hashParams = new URLSearchParams(window.location.hash.substring(1))
@@ -36,8 +42,10 @@ export default function UpdatePasswordPage() {
 
           if (data.session) {
             setIsValidSession(true)
-            // Clear the hash from URL for security
-            window.history.replaceState(null, '', window.location.pathname)
+            // Clear the hash from URL for security - only once
+            if (window.location.hash) {
+              window.history.replaceState(null, '', window.location.pathname)
+            }
           }
         } else {
           // Check if user already has a valid session (e.g., from direct access)
@@ -58,7 +66,8 @@ export default function UpdatePasswordPage() {
     }
 
     handleRecovery()
-  }, [router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty deps - only run once on mount
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault()

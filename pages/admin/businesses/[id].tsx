@@ -159,7 +159,7 @@ export default function EditBusinessPage() {
   }
 
   const handleResetPassword = async () => {
-    if (!business || !confirm('Are you sure you want to reset this user&apos;s password?')) {
+    if (!business || !confirm("Are you sure you want to reset this user's password?")) {
       return
     }
 
