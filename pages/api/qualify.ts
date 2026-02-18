@@ -17,11 +17,19 @@ export default async function handler(
   }
 
   try {
-    const { businessType, customersPerMonth, reviewAskingFrequency, email } = req.body;
+    const { name, businessName, email, phone, businessType, customersPerMonth, reviewAskingFrequency } = req.body;
 
     // Validate required fields
     if (!businessType || !customersPerMonth || !reviewAskingFrequency || !email) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+    const nameTrim = typeof name === 'string' ? name.trim() : '';
+    const businessNameTrim = typeof businessName === 'string' ? businessName.trim() : '';
+    if (!nameTrim) {
+      return res.status(400).json({ error: 'Please enter your name' });
+    }
+    if (!businessNameTrim) {
+      return res.status(400).json({ error: 'Please enter your business name' });
     }
 
     // Input validation and sanitization
@@ -33,6 +41,16 @@ export default async function handler(
     // Length limits to prevent abuse
     if (email.length > 255) {
       return res.status(400).json({ error: 'Email must be 255 characters or less' });
+    }
+    if (nameTrim.length > 200) {
+      return res.status(400).json({ error: 'Name must be 200 characters or less' });
+    }
+    if (businessNameTrim.length > 200) {
+      return res.status(400).json({ error: 'Business name must be 200 characters or less' });
+    }
+    const phoneTrim = typeof phone === 'string' ? phone.trim() : '';
+    if (phoneTrim.length > 50) {
+      return res.status(400).json({ error: 'Phone must be 50 characters or less' });
     }
     if (businessType.length > 100) {
       return res.status(400).json({ error: 'Business type must be 100 characters or less' });
@@ -74,7 +92,9 @@ export default async function handler(
       .insert([
         {
           email,
-          business_name: businessType || 'Qualification signup',
+          name: nameTrim || null,
+          phone: phoneTrim || null,
+          business_name: businessNameTrim,
           business_type: businessType,
           customers_per_month: customersPerMonth,
           review_asking_frequency: reviewAskingFrequency,
@@ -127,6 +147,9 @@ export default async function handler(
     try {
       await sendAdminNotification('qualify', {
         email,
+        name: nameTrim,
+        businessName: businessNameTrim,
+        phone: phoneTrim || undefined,
         businessType,
         customersPerMonth,
         reviewAskingFrequency,

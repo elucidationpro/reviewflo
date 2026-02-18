@@ -7,10 +7,13 @@ import { trackEvent } from '@/lib/posthog-provider';
 
 export default function QualifyPage() {
   const [formData, setFormData] = useState({
+    name: '',
+    businessName: '',
+    email: '',
+    phone: '',
     businessType: '',
     customersPerMonth: '',
-    reviewAskingFrequency: '',
-    email: ''
+    reviewAskingFrequency: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{
@@ -22,6 +25,17 @@ export default function QualifyPage() {
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
+    if (!formData.name?.trim()) {
+      newErrors.name = 'Please enter your name';
+    }
+    if (!formData.businessName?.trim()) {
+      newErrors.businessName = 'Please enter your business name';
+    }
+    if (!formData.email) {
+      newErrors.email = 'Please enter your email';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
     if (!formData.businessType) {
       newErrors.businessType = 'Please select your business type';
     }
@@ -30,11 +44,6 @@ export default function QualifyPage() {
     }
     if (!formData.reviewAskingFrequency) {
       newErrors.reviewAskingFrequency = 'Please select review frequency';
-    }
-    if (!formData.email) {
-      newErrors.email = 'Please enter your email';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
     }
 
     setErrors(newErrors);
@@ -63,6 +72,8 @@ export default function QualifyPage() {
       if (response.ok) {
         // EVENT 1: Track beta signup completion
         trackEvent('beta_signup_completed', {
+          name: formData.name,
+          businessName: formData.businessName,
           businessType: formData.businessType,
           customersPerMonth: formData.customersPerMonth,
           reviewAskingFrequency: formData.reviewAskingFrequency,
@@ -123,10 +134,10 @@ export default function QualifyPage() {
             {/* Header */}
             <div className="text-center mb-8">
               <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                Check If You Qualify
+                Apply for Beta
               </h1>
               <p className="text-lg text-gray-600">
-                Answer 4 quick questions (2 minutes)
+                Tell us about you and your business, then a few quick questions.
               </p>
             </div>
 
@@ -148,6 +159,93 @@ export default function QualifyPage() {
             ) : (
               /* Qualification Form */
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* About you & your business */}
+                <div className="pb-4 border-b border-gray-200">
+                  <p className="text-sm font-semibold text-[#4A3428] uppercase tracking-wide mb-4">
+                    About you & your business
+                  </p>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-base font-semibold text-gray-900 mb-2">
+                        Your name *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => {
+                          setFormData({ ...formData, name: e.target.value.trim() });
+                          setErrors({ ...errors, name: '' });
+                        }}
+                        className={`w-full px-4 py-3 border ${
+                          errors.name ? 'border-red-500' : 'border-gray-300'
+                        } rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400`}
+                        placeholder="e.g. Jenna Smith"
+                      />
+                      {errors.name && (
+                        <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-base font-semibold text-gray-900 mb-2">
+                        Business name *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.businessName}
+                        onChange={(e) => {
+                          setFormData({ ...formData, businessName: e.target.value.trim() });
+                          setErrors({ ...errors, businessName: '' });
+                        }}
+                        className={`w-full px-4 py-3 border ${
+                          errors.businessName ? 'border-red-500' : 'border-gray-300'
+                        } rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400`}
+                        placeholder="e.g. Smith's Barbershop"
+                      />
+                      {errors.businessName && (
+                        <p className="mt-1 text-sm text-red-600">{errors.businessName}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-base font-semibold text-gray-900 mb-2">
+                        Email address *
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => {
+                          setFormData({ ...formData, email: e.target.value });
+                          setErrors({ ...errors, email: '' });
+                        }}
+                        className={`w-full px-4 py-3 border ${
+                          errors.email ? 'border-red-500' : 'border-gray-300'
+                        } rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400`}
+                        placeholder="your@email.com"
+                      />
+                      <p className="mt-1 text-sm text-gray-600">We'll send you the next step</p>
+                      {errors.email && (
+                        <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-base font-semibold text-gray-900 mb-2">
+                        Phone <span className="font-normal text-gray-500">(optional)</span>
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
+                        placeholder="(555) 123-4567"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick questions */}
+                <p className="text-sm font-semibold text-[#4A3428] uppercase tracking-wide mb-2">
+                  Quick questions
+                </p>
+
                 {/* Question 1: Business Type */}
                 <div>
                   <label className="block text-base font-semibold text-gray-900 mb-2">
@@ -227,29 +325,6 @@ export default function QualifyPage() {
                   </select>
                   {errors.reviewAskingFrequency && (
                     <p className="mt-1 text-sm text-red-600">{errors.reviewAskingFrequency}</p>
-                  )}
-                </div>
-
-                {/* Question 4: Email */}
-                <div>
-                  <label className="block text-base font-semibold text-gray-900 mb-2">
-                    4. Your email address
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value });
-                      setErrors({ ...errors, email: '' });
-                    }}
-                    className={`w-full px-4 py-3 border ${
-                      errors.email ? 'border-red-500' : 'border-gray-300'
-                    } rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400`}
-                    placeholder="your@email.com"
-                  />
-                  <p className="mt-1 text-sm text-gray-600">We'll send you the next step</p>
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
                   )}
                 </div>
 

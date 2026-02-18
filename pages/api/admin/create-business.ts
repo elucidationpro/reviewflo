@@ -216,13 +216,16 @@ export default async function handler(
       // Don't fail the entire request if templates fail, just log it
     }
 
-    // Send invite email with password setup link if requested (skip for early access - they already have an account)
+    // Send welcome email with secure password setup link if requested (skip for early access - they already have an account)
     if (sendWelcomeEmail && !earlyAccessSignupId) {
       try {
-        // Generate invite link for user to set their password
+        // Generate recovery link so user can set their password via /update-password
         const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.generateLink({
-          type: 'invite',
+          type: 'recovery',
           email: ownerEmail,
+          options: {
+            redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/update-password`,
+          },
         })
 
         if (inviteError) {
