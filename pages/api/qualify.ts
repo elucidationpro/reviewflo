@@ -2,10 +2,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { sendQualificationEmail, sendAdminNotification } from '@/lib/email-service';
 
-// Use anon key for public endpoint - RLS policies should control access
+// Use service role so server-side insert bypasses RLS (same as waitlist-signup)
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export default async function handler(
@@ -74,6 +74,7 @@ export default async function handler(
       .insert([
         {
           email,
+          business_name: businessType || 'Qualification signup',
           business_type: businessType,
           customers_per_month: customersPerMonth,
           review_asking_frequency: reviewAskingFrequency,
