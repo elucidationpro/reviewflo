@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { CheckCircle } from 'lucide-react';
 import Head from 'next/head';
+import Script from 'next/script';
 import { trackEvent } from '@/lib/posthog-provider';
 
 export default function QualifyPage() {
@@ -88,6 +89,15 @@ export default function QualifyPage() {
           email: formData.email,
         });
 
+        // Meta Pixel Lead event (after validation, before UI update)
+        if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+          (window as any).fbq('track', 'Lead', {
+            content_name: 'Free Beta Signup',
+            content_category: 'Beta Test',
+            status: 'free_beta',
+          });
+        }
+
         setResult({
           type: 'success',
           message: "Perfect! Check your email for the next step—we just sent you a link to complete the survey. If you don't see it in a few minutes, check your spam folder."
@@ -112,7 +122,32 @@ export default function QualifyPage() {
         <title>Qualify for ReviewFlo Beta | ReviewFlo</title>
         <meta name="description" content="See if ReviewFlo is the right fit for your service business. Answer 4 quick questions to qualify for our beta program." />
         <meta name="robots" content="noindex, nofollow" />
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: 'none' }}
+            src="https://www.facebook.com/tr?id=750284611209309&ev=PageView&noscript=1"
+            alt=""
+          />
+        </noscript>
       </Head>
+      <Script
+        id="meta-pixel-qualify"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '750284611209309');
+fbq('track', 'PageView');`,
+        }}
+      />
 
       <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC] via-white to-[#F5F5DC]">
         {/* Header */}
