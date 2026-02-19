@@ -173,8 +173,9 @@ export default async function handler(
       // Don't fail the request, just log the error
     }
 
-    // Send welcome email
+    // Send welcome email (aligned with early access welcome: survey CTA, brand colors, tone)
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'
       const emailHtml = `
         <!DOCTYPE html>
         <html>
@@ -182,62 +183,75 @@ export default async function handler(
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Welcome to ReviewFlo</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: #4A3428; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+              .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none; }
+              .button { display: inline-block; background: #C9A961; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 10px 0; }
+              .button-secondary { background: #4A3428; }
+              .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+              ul { padding-left: 20px; }
+              li { margin-bottom: 8px; }
+              .box { background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e5e7eb; }
+            </style>
           </head>
-          <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="background: linear-gradient(to right, #3b82f6, #2563eb); padding: 40px 30px; border-radius: 10px 10px 0 0; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 32px;">Welcome to ReviewFlo!</h1>
-            </div>
-
-            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px; padding: 30px; margin-bottom: 20px;">
-              <p style="font-size: 18px; color: #1f2937; margin: 0 0 20px 0;">
-                Hi ${ownerName}!
-              </p>
-
-              <p style="color: #4b5563; margin: 0 0 20px 0;">
-                Thank you for joining the ReviewFlo beta! We're excited to help ${businessName} turn negative reviews into opportunities and make it easier for happy customers to share their experiences.
-              </p>
-
-              <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h2 style="color: #1f2937; font-size: 20px; margin: 0 0 15px 0;">Your Account Details</h2>
-                <p style="color: #4b5563; margin: 5px 0;"><strong>Email:</strong> ${email}</p>
-                <p style="color: #4b5563; margin: 5px 0;"><strong>Business:</strong> ${businessName}</p>
-                <p style="color: #4b5563; margin: 5px 0;"><strong>Review Page:</strong> <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${slug}" style="color: #3b82f6;">${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${slug}</a></p>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1 style="margin: 0; font-size: 28px;">Welcome to ReviewFlo Beta! 🚀</h1>
               </div>
+              <div class="content">
+                <p>Hi ${ownerName}!</p>
 
-              <div style="background: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-                <h3 style="color: #1e40af; font-size: 18px; margin: 0 0 10px 0;">Getting Started</h3>
-                <ol style="color: #1e40af; margin: 0; padding-left: 20px;">
-                  <li style="margin-bottom: 10px;">Log in to your <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/dashboard" style="color: #2563eb;">dashboard</a></li>
-                  <li style="margin-bottom: 10px;">Customize your business settings and brand colors</li>
-                  <li style="margin-bottom: 10px;">Add your review platform URLs (Google, Yelp, etc.)</li>
-                  <li style="margin-bottom: 10px;">Create custom review templates for your customers</li>
-                  <li style="margin-bottom: 10px;">Share your review page link with customers</li>
-                </ol>
+                <p>Thanks for being part of the ReviewFlo beta! We're excited to help <strong>${businessName}</strong> get more 5-star reviews and catch unhappy customers before they post.</p>
+
+                <p><strong>📋 Please complete this quick survey (3 min):</strong><br>
+                <a href="https://usereviewflo.com/survey" class="button">Complete Survey →</a><br>
+                It helps us understand what features you need and how to price ReviewFlo fairly.</p>
+
+                <div class="box">
+                  <h2 style="color: #4A3428; font-size: 18px; margin: 0 0 12px 0;">Your Account Details</h2>
+                  <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
+                  <p style="margin: 5px 0;"><strong>Business:</strong> ${businessName}</p>
+                  <p style="margin: 5px 0;"><strong>Review Page:</strong> <a href="${baseUrl}/${slug}" style="color: #4A3428;">${baseUrl}/${slug}</a></p>
+                </div>
+
+                <p><strong>Getting started:</strong> Log in to your <a href="${baseUrl}/login" style="color: #4A3428;">dashboard</a>, add your review platform URLs, and share your review page with customers.</p>
+
+                <h2 style="color: #4A3428; font-size: 18px; margin: 20px 0 10px 0;">What You Get</h2>
+                <ul>
+                  <li>Stop bad reviews before they go public</li>
+                  <li>Get more 5-star Google reviews automatically</li>
+                  <li>Priority support from the founder (me!)</li>
+                  <li>Help shape new features</li>
+                </ul>
+
+                <p>Questions? Just reply to this email.</p>
+
+                <p>Thanks for being an early supporter!</p>
+
+                <p><strong>- Jeremy</strong><br>
+                ReviewFlo<br>
+                <a href="mailto:jeremy@usereviewflo.com" style="color: #4A3428;">jeremy@usereviewflo.com</a></p>
+
+                <div style="text-align: center; margin-top: 28px;">
+                  <a href="${baseUrl}/login" class="button button-secondary">Log In to Your Dashboard</a>
+                </div>
               </div>
-
-              <p style="color: #4b5563; margin: 20px 0 0 0;">
-                If you have any questions or need help getting started, just reply to this email. We're here to help!
-              </p>
-
-              <div style="text-align: center; margin-top: 30px;">
-                <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/login" style="display: inline-block; background-color: #3b82f6; color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                  Log In to Your Dashboard
-                </a>
+              <div class="footer">
+                <p style="margin: 0;">© ${new Date().getFullYear()} ReviewFlo. All rights reserved.</p>
+                <p style="margin: 5px 0 0 0;">You're receiving this because you joined the ReviewFlo beta.</p>
               </div>
-            </div>
-
-            <div style="text-align: center; color: #9ca3af; font-size: 14px; padding: 20px;">
-              <p style="margin: 0;">ReviewFlo - Fix it before it goes public</p>
-              <p style="margin: 5px 0 0 0;">Beta Program</p>
             </div>
           </body>
         </html>
       `
 
       await resend.emails.send({
-        from: 'ReviewFlo <noreply@usereviewflo.com>',
+        from: 'ReviewFlo <jeremy@usereviewflo.com>',
         to: email,
-        subject: `Welcome to ReviewFlo Beta - ${businessName}`,
+        subject: `Welcome to ReviewFlo Beta! 🚀 - ${businessName}`,
         html: emailHtml,
       })
     } catch (emailError) {

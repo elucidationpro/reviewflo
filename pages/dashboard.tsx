@@ -187,10 +187,10 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header Skeleton */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 animate-pulse">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8 animate-pulse">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="flex-1">
                 <div className="h-10 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -253,15 +253,15 @@ export default function DashboardPage() {
 
   if (!business) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-md text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">No Business Found</h1>
-          <p className="text-gray-600 mb-6">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 px-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 md:p-12 max-w-md text-center">
+          <h1 className="text-2xl font-bold text-slate-800 mb-4">No Business Found</h1>
+          <p className="text-slate-600 mb-6">
             Your account is not associated with any business yet.
           </p>
           <button
             onClick={handleLogout}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+            className="bg-slate-700 hover:bg-slate-800 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
           >
             Logout
           </button>
@@ -271,30 +271,30 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1
                 className="text-3xl md:text-4xl font-bold mb-2"
-                style={{ color: business.primary_color }}
+                style={{ color: business.primary_color || '#1e293b' }}
               >
                 {business.business_name}
               </h1>
-              <p className="text-gray-600">Dashboard Overview</p>
+              <p className="text-slate-600">Dashboard Overview</p>
             </div>
             <div className="flex gap-3 mt-4 md:mt-0">
               <Link
                 href="/settings"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                className="bg-slate-700 hover:bg-slate-800 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
               >
                 Settings
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                className="bg-slate-600 hover:bg-slate-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
               >
                 Logout
               </button>
@@ -305,18 +305,18 @@ export default function DashboardPage() {
         {/* Stats Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Monthly Reviews Card */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+            <h2 className="text-xl font-bold text-slate-800 mb-6">
               Reviews This Month
             </h2>
             <div className="text-center mb-6">
               <div
                 className="text-6xl font-bold mb-2"
-                style={{ color: business.primary_color }}
+                style={{ color: business.primary_color || '#1e293b' }}
               >
                 {reviewStats.total}
               </div>
-              <p className="text-gray-600">Total Reviews</p>
+              <p className="text-slate-600">Total Reviews</p>
             </div>
 
             {/* Star Rating Breakdown */}
@@ -324,32 +324,32 @@ export default function DashboardPage() {
               {[5, 4, 3, 2, 1].map((rating) => (
                 <div key={rating} className="flex items-center">
                   <div className="flex items-center w-20">
-                    <span className="text-sm font-medium text-gray-700 mr-2">
+                    <span className="text-sm font-medium text-slate-800 mr-2">
                       {rating}
                     </span>
                     <svg
                       className="w-4 h-4"
-                      fill={business.primary_color}
+                      fill={business.primary_color || '#6366f1'}
                       viewBox="0 0 24 24"
                     >
                       <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                     </svg>
                   </div>
                   <div className="flex-1 mx-4">
-                    <div className="bg-gray-200 rounded-full h-4 overflow-hidden">
+                    <div className="bg-slate-100 rounded-full h-4 overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-300"
                         style={{
                           width: reviewStats.total > 0
                             ? `${(reviewStats.breakdown[rating as keyof typeof reviewStats.breakdown] / reviewStats.total) * 100}%`
                             : '0%',
-                          backgroundColor: business.primary_color
+                          backgroundColor: business.primary_color || '#6366f1'
                         }}
                       />
                     </div>
                   </div>
                   <div className="w-12 text-right">
-                    <span className="text-sm font-semibold text-gray-700">
+                    <span className="text-sm font-semibold text-slate-800">
                       {reviewStats.breakdown[rating as keyof typeof reviewStats.breakdown]}
                     </span>
                   </div>
@@ -366,15 +366,15 @@ export default function DashboardPage() {
                 requestMethod: 'sms' | 'email'
               })
           */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+            <h2 className="text-xl font-bold text-slate-800 mb-6">
               Quick Stats
             </h2>
             <div className="space-y-6">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Average Rating</p>
-                  <p className="text-2xl font-bold text-gray-800">
+                  <p className="text-sm text-slate-600 mb-1">Average Rating</p>
+                  <p className="text-2xl font-bold text-slate-800">
                     {reviewStats.total > 0
                       ? (
                           (reviewStats.breakdown[5] * 5 +
@@ -396,15 +396,15 @@ export default function DashboardPage() {
                 </svg>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Pending Feedback</p>
-                  <p className="text-2xl font-bold text-gray-800">
+                  <p className="text-sm text-slate-600 mb-1">Pending Feedback</p>
+                  <p className="text-2xl font-bold text-slate-800">
                     {feedbackList.filter(f => !f.is_resolved).length}
                   </p>
                 </div>
                 <svg
-                  className="w-12 h-12 text-orange-500"
+                  className="w-12 h-12 text-indigo-500"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -418,15 +418,15 @@ export default function DashboardPage() {
                 </svg>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Business Slug</p>
-                  <p className="text-lg font-mono text-gray-800">
+                  <p className="text-sm text-slate-600 mb-1">Business Slug</p>
+                  <p className="text-lg font-mono text-slate-800">
                     /{business.slug}
                   </p>
                 </div>
                 <svg
-                  className="w-12 h-12 text-blue-500"
+                  className="w-12 h-12 text-slate-800"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -444,14 +444,14 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Feedback */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+          <h2 className="text-xl font-bold text-slate-800 mb-6">
             Recent Feedback
           </h2>
 
           {feedbackList.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">No feedback received yet.</p>
+              <p className="text-slate-500">No feedback received yet.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -460,7 +460,7 @@ export default function DashboardPage() {
                   key={feedback.id}
                   className={`border rounded-lg p-6 transition-all ${
                     feedback.is_resolved
-                      ? 'border-green-200 bg-green-50'
+                      ? 'border-emerald-200 bg-emerald-50/50'
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
@@ -470,35 +470,35 @@ export default function DashboardPage() {
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold ${
                             feedback.is_resolved
-                              ? 'bg-green-200 text-green-800'
-                              : 'bg-orange-200 text-orange-800'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-amber-100 text-amber-800'
                           }`}
                         >
                           {feedback.is_resolved ? 'Resolved' : 'Pending'}
                         </span>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-slate-500">
                           {new Date(feedback.created_at).toLocaleDateString()}
                         </span>
                       </div>
 
                       <div className="mb-3">
-                        <h3 className="font-semibold text-gray-800 mb-1">
+                        <h3 className="font-semibold text-slate-800 mb-1">
                           What happened:
                         </h3>
-                        <p className="text-gray-700">{feedback.what_happened}</p>
+                        <p className="text-slate-800/90">{feedback.what_happened}</p>
                       </div>
 
                       <div className="mb-3">
-                        <h3 className="font-semibold text-gray-800 mb-1">
+                        <h3 className="font-semibold text-slate-800 mb-1">
                           How to make it right:
                         </h3>
-                        <p className="text-gray-700">{feedback.how_to_make_right}</p>
+                        <p className="text-slate-800/90">{feedback.how_to_make_right}</p>
                       </div>
 
                       {feedback.wants_contact && (
                         <div className="flex flex-wrap gap-3 text-sm">
                           {feedback.email && (
-                            <div className="flex items-center text-gray-600">
+                            <div className="flex items-center text-slate-600">
                               <svg
                                 className="w-4 h-4 mr-1"
                                 fill="none"
@@ -516,7 +516,7 @@ export default function DashboardPage() {
                             </div>
                           )}
                           {feedback.phone && (
-                            <div className="flex items-center text-gray-600">
+                            <div className="flex items-center text-slate-600">
                               <svg
                                 className="w-4 h-4 mr-1"
                                 fill="none"
@@ -541,7 +541,7 @@ export default function DashboardPage() {
                       <button
                         onClick={() => handleResolveFeedback(feedback.id)}
                         disabled={resolvingId === feedback.id}
-                        className="mt-4 md:mt-0 md:ml-4 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="mt-4 md:mt-0 md:ml-4 bg-slate-700 hover:bg-slate-800 text-white font-semibold px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                       >
                         {resolvingId === feedback.id ? 'Resolving...' : 'Mark Resolved'}
                       </button>
@@ -554,7 +554,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray-400 text-sm mt-8">
+        <p className="text-center text-slate-800/60 text-sm mt-8">
           Powered by ReviewFlo
         </p>
       </div>

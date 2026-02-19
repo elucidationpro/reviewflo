@@ -60,11 +60,19 @@ export default function QualifyPage() {
     setIsSubmitting(true);
 
     try {
+      // Trim name and businessName before submitting
+      const trimmedData = {
+        ...formData,
+        name: formData.name.trim(),
+        businessName: formData.businessName.trim(),
+        phone: formData.phone.trim() || '',
+      };
+
       // Submit to API - everyone passes, we filter manually later
       const response = await fetch('/api/qualify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(trimmedData)
       });
 
       const data = await response.json();
@@ -131,34 +139,35 @@ export default function QualifyPage() {
         {/* Main Content */}
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="bg-white rounded-xl shadow-lg p-8 sm:p-12">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                Apply for Beta
-              </h1>
-              <p className="text-lg text-gray-600">
-                Tell us about you and your business, then a few quick questions.
-              </p>
-            </div>
-
             {/* Show result if submitted */}
             {result.type ? (
               <div className="text-center py-8">
                 <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                  Perfect! 🎉
-                </h2>
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+                  Application Received! 🎉
+                </h1>
                 <p className="text-lg text-gray-600 mb-6">
-                  Check your email for the next step. We just sent you a link to complete the survey.
+                  Check your email for the next step. We just sent you a link to complete a quick survey.
                 </p>
                 <div className="bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-lg p-4 text-sm text-gray-700">
                   <p className="font-semibold mb-1">What's next?</p>
-                  <p>If you don't see it in 5 minutes, check spam or email jeremy@usereviewflo.com</p>
+                  <p>If you don't see the email in 5 minutes, check spam or email jeremy@usereviewflo.com</p>
                 </div>
               </div>
             ) : (
-              /* Qualification Form */
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <>
+                {/* Header - only show when form is visible */}
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+                    Apply for Beta
+                  </h1>
+                  <p className="text-lg text-gray-600">
+                    Tell us about you and your business, then a few quick questions.
+                  </p>
+                </div>
+
+                {/* Qualification Form */}
+                <form onSubmit={handleSubmit} className="space-y-6">
                 {/* About you & your business */}
                 <div className="pb-4 border-b border-gray-200">
                   <p className="text-sm font-semibold text-[#4A3428] uppercase tracking-wide mb-4">
@@ -173,8 +182,11 @@ export default function QualifyPage() {
                         type="text"
                         value={formData.name}
                         onChange={(e) => {
-                          setFormData({ ...formData, name: e.target.value.trim() });
+                          setFormData({ ...formData, name: e.target.value });
                           setErrors({ ...errors, name: '' });
+                        }}
+                        onBlur={(e) => {
+                          setFormData({ ...formData, name: e.target.value.trim() });
                         }}
                         className={`w-full px-4 py-3 border ${
                           errors.name ? 'border-red-500' : 'border-gray-300'
@@ -193,8 +205,11 @@ export default function QualifyPage() {
                         type="text"
                         value={formData.businessName}
                         onChange={(e) => {
-                          setFormData({ ...formData, businessName: e.target.value.trim() });
+                          setFormData({ ...formData, businessName: e.target.value });
                           setErrors({ ...errors, businessName: '' });
+                        }}
+                        onBlur={(e) => {
+                          setFormData({ ...formData, businessName: e.target.value.trim() });
                         }}
                         className={`w-full px-4 py-3 border ${
                           errors.businessName ? 'border-red-500' : 'border-gray-300'
@@ -344,10 +359,8 @@ export default function QualifyPage() {
                   {isSubmitting ? 'Submitting...' : 'Continue →'}
                 </button>
               </form>
-            )}
 
-            {/* Footer Note */}
-            {!result.type && (
+              {/* Footer Note */}
               <div className="mt-8 pt-6 border-t border-gray-200 text-center">
                 <p className="text-sm text-gray-600">
                   Questions?{' '}
@@ -359,6 +372,7 @@ export default function QualifyPage() {
                   </a>
                 </p>
               </div>
+              </>
             )}
           </div>
         </div>

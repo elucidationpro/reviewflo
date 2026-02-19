@@ -151,39 +151,34 @@ export default async function handler(
                       <h1>🎉 Welcome to ReviewFlo Early Access!</h1>
                     </div>
                     <div class="content">
-                      <p>Hi there,</p>
+                      <p>Hi there!</p>
 
-                      <p><strong>Thank you for being one of the first 50 businesses to join ReviewFlo!</strong></p>
+                      <p>Thanks for being one of the first 50 businesses to try ReviewFlo!</p>
 
-                      <p>Your early access starts today and runs for <strong>2 full months</strong> (until ${accessEndDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}).</p>
+                      <p>Your early access includes <strong>2 full months</strong> starting today (ending ${accessEndDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}).</p>
 
-                      <h2>What's Next?</h2>
+                      <h2>📋 IMPORTANT – Complete This Quick Survey (3 min):</h2>
+                      <p><a href="https://usereviewflo.com/survey" class="button">Complete Survey →</a></p>
+                      <p>This helps us understand what features you need and how to price ReviewFlo fairly.</p>
 
-                      <p>1. <strong>Complete this quick survey</strong> (2 minutes) so we can set up your account:</p>
-                      <a href="https://docs.google.com/forms/d/e/1FAIpQLSd1jTmwDjEy5XuG80Ox3FXA3AzMq1bPEpUzZ0cXliJb4I8ozg/viewform?usp=header" class="button">Complete Setup Survey →</a>
-
-                      <p>2. <strong>We'll create your account</strong> within 24 hours and send you login credentials</p>
-
-                      <p>3. <strong>Start using ReviewFlo</strong> to get more 5-star reviews and catch unhappy customers before they post!</p>
+                      <p>Once you complete the survey, we'll create your account and email you login details within 24 hours.</p>
 
                       <h2>What You Get:</h2>
                       <ul>
-                        <li>2 months of full ReviewFlo access</li>
-                        <li>Stop bad reviews before they go public</li>
-                        <li>Get more 5-star Google reviews automatically</li>
-                        <li>Priority founder support (that's me, Jeremy!)</li>
-                        <li>Help shape new features through your feedback</li>
+                        <li>✅ 2 months of full access</li>
+                        <li>✅ Stop bad reviews before they go public</li>
+                        <li>✅ Get more 5-star Google reviews automatically</li>
+                        <li>✅ Priority support from founder (me!)</li>
+                        <li>✅ Help shape new features</li>
                       </ul>
 
-                      <h2>Questions?</h2>
-                      <p>Reply to this email or reach out to me directly at <a href="mailto:jeremy@usereviewflo.com">jeremy@usereviewflo.com</a></p>
+                      <p>Questions? Just reply to this email.</p>
 
-                      <p>I'm here to help make this an amazing experience for you!</p>
+                      <p>Thanks for being an early supporter!</p>
 
-                      <p>Thanks again for being an early supporter! 🙏</p>
-
-                      <p><strong>Jeremy</strong><br>
-                      Founder, ReviewFlo</p>
+                      <p><strong>- Jeremy</strong><br>
+                      ReviewFlo<br>
+                      <a href="mailto:jeremy@usereviewflo.com">jeremy@usereviewflo.com</a></p>
                     </div>
                     <div class="footer">
                       <p>© 2026 ReviewFlo. All rights reserved.</p>

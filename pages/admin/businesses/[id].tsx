@@ -43,6 +43,7 @@ export default function EditBusinessPage() {
   const [success, setSuccess] = useState('')
   const [templateSuccess, setTemplateSuccess] = useState('')
   const [resetPassword, setResetPassword] = useState('')
+  const [isClearingReviewsFeedback, setIsClearingReviewsFeedback] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -242,6 +243,48 @@ export default function EditBusinessPage() {
     router.push('/login')
   }
 
+  const handleClearReviewsFeedback = async () => {
+    if (!business || !confirm('Clear ALL reviews and feedback for this business? This cannot be undone.')) {
+      return
+    }
+
+    setIsClearingReviewsFeedback(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.push('/login')
+        return
+      }
+
+      const response = await fetch('/api/admin/clear-business-reviews-feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ businessId: business.id }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setBusiness(prev => prev ? { ...prev, reviews_count: 0, feedback_count: 0 } : null)
+        setSuccess('All reviews and feedback have been cleared.')
+        await checkAdminAndFetchBusiness()
+      } else {
+        setError(data.error || 'Failed to clear reviews and feedback')
+      }
+    } catch (err) {
+      const error = err as Error
+      setError(error.message || 'Failed to clear')
+    } finally {
+      setIsClearingReviewsFeedback(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
@@ -346,12 +389,20 @@ export default function EditBusinessPage() {
                 </p>
               </div>
             </div>
-            <div className="mt-6 flex gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               <button
                 onClick={handleResetPassword}
                 className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-lg transition-colors"
               >
                 Reset Password
+              </button>
+              <button
+                type="button"
+                onClick={handleClearReviewsFeedback}
+                disabled={isClearingReviewsFeedback || ((business.reviews_count || 0) === 0 && (business.feedback_count || 0) === 0)}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+              >
+                {isClearingReviewsFeedback ? 'Clearing…' : 'Clear all reviews & feedback'}
               </button>
               <Link
                 href={`/${business.slug}`}

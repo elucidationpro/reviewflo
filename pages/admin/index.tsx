@@ -86,6 +86,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [invitingLeadId, setInvitingLeadId] = useState<string | null>(null)
+  const [deletingEarlyAccessId, setDeletingEarlyAccessId] = useState<string | null>(null)
 
   useEffect(() => {
     console.log('[Component] AdminDashboard useEffect is running')
@@ -293,6 +294,42 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleDeleteEarlyAccessSignup = async (signupId: string) => {
+    if (!confirm('Remove this early access signup? This cannot be undone.')) return
+
+    setDeletingEarlyAccessId(signupId)
+    setError('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setError('Session expired. Please refresh.')
+        setDeletingEarlyAccessId(null)
+        return
+      }
+
+      const response = await fetch('/api/admin/delete-early-access-signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ id: signupId }),
+      })
+
+      if (response.ok) {
+        setEarlyAccessSignups(prev => prev.filter(s => s.id !== signupId))
+      } else {
+        const data = await response.json()
+        setError(data.error || 'Failed to remove')
+      }
+    } catch (err) {
+      console.error('Error deleting early access signup:', err)
+      setError('Failed to remove')
+    } finally {
+      setDeletingEarlyAccessId(null)
+    }
+  }
+
   const handleInviteToBeta = async (leadId: string) => {
     setInvitingLeadId(leadId)
     setError('')
@@ -415,16 +452,18 @@ export default function AdminDashboard() {
     }
   }
 
+  // Exclude converted leads from pipeline (they appear only in Active Businesses below)
+  const pipelineLeads = leads.filter(lead => lead.status !== 'converted')
   const filteredLeads = statusFilter === 'all'
-    ? leads
-    : leads.filter(lead => lead.status === statusFilter)
+    ? pipelineLeads
+    : pipelineLeads.filter(lead => lead.status === statusFilter)
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header Skeleton */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 animate-pulse">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8 animate-pulse">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="flex-1">
                 <div className="h-10 bg-gray-200 rounded w-1/2 mb-2"></div>
@@ -441,8 +480,8 @@ export default function AdminDashboard() {
           {/* Stats Cards Skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-xl p-6 md:p-8 animate-pulse">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 animate-pulse">
+                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                   <div className="flex-1">
                     <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
                     <div className="h-8 bg-gray-200 rounded w-16"></div>
@@ -454,13 +493,13 @@ export default function AdminDashboard() {
           </div>
 
           {/* Search Bar Skeleton */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 animate-pulse">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8 animate-pulse">
             <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
             <div className="h-12 bg-gray-200 rounded"></div>
           </div>
 
           {/* Table Skeleton */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden animate-pulse">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
             <div className="p-6">
               <div className="space-y-4">
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -484,36 +523,36 @@ export default function AdminDashboard() {
         <title>Admin Dashboard - ReviewFlo</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl md:text-4xl font-bold text-red-600">Admin Dashboard</h1>
-                  <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  <h1 className="text-3xl md:text-4xl font-bold text-slate-800">Admin Dashboard</h1>
+                  <span className="bg-slate-800 text-white text-xs font-bold px-3 py-1 rounded-full">
                     ADMIN
                   </span>
                 </div>
-                <p className="text-gray-600">Manage all ReviewFlo businesses</p>
+                <p className="text-slate-600">Manage all ReviewFlo businesses</p>
               </div>
               <div className="flex gap-3 mt-4 md:mt-0">
                 <Link
                   href="/admin/invite-codes"
-                  className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                  className="bg-slate-700 hover:bg-slate-800 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
                   Invite Codes
                 </Link>
                 <Link
                   href="/admin/create-business"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
                   Create New Business
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                  className="bg-slate-600 hover:bg-slate-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
                   Logout
                 </button>
@@ -563,44 +602,44 @@ export default function AdminDashboard() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Total Businesses</p>
-                  <p className="text-3xl font-bold text-gray-800">{stats.total}</p>
+                  <p className="text-sm text-slate-600 mb-1">Total Businesses</p>
+                  <p className="text-3xl font-bold text-slate-800">{stats.total}</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-8 h-8 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Recent Signups (7 days)</p>
-                  <p className="text-3xl font-bold text-gray-800">{stats.recentSignups}</p>
+                  <p className="text-sm text-slate-600 mb-1">Recent Signups (7 days)</p>
+                  <p className="text-3xl font-bold text-slate-800">{stats.recentSignups}</p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-8 h-8 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                   </svg>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Total Reviews</p>
-                  <p className="text-3xl font-bold text-gray-800">
+                  <p className="text-sm text-slate-600 mb-1">Total Reviews</p>
+                  <p className="text-3xl font-bold text-slate-800">
                     {businesses.reduce((sum, b) => sum + b.reviews_count, 0)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-8 h-8 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-8 h-8 text-slate-800" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
                 </div>
@@ -609,78 +648,78 @@ export default function AdminDashboard() {
           </div>
 
           {/* Leads Pipeline Section */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
+              <h2 className="text-xl font-semibold text-slate-800 tracking-tight">
                 Leads Pipeline ({filteredLeads.length})
               </h2>
               <div className="flex items-center gap-3">
-                <label htmlFor="statusFilter" className="text-sm font-medium text-gray-700">
+                <label htmlFor="statusFilter" className="text-sm font-medium text-slate-600">
                   Filter by Status:
                 </label>
                 <select
                   id="statusFilter"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-slate-800"
                 >
-                  <option value="all">All Statuses</option>
+                  <option value="all">All (not yet converted)</option>
                   <option value="waitlist">Waitlist</option>
                   <option value="beta_invited">Beta Invited</option>
                   <option value="beta_active">Beta Active</option>
-                  <option value="converted">Converted</option>
                   <option value="declined">Declined</option>
                 </select>
               </div>
             </div>
+            <p className="text-sm text-slate-500 mb-4">Converted leads appear only in Active Businesses below.</p>
 
             {filteredLeads.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-slate-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                         Name
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                         Email
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                         Business Name
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                         Source
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                         Date
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-slate-800 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {filteredLeads.map((lead) => (
-                      <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={lead.id} className="hover:bg-slate-50/80 transition-colors">
                         <td className="px-4 py-4">
                           <div>
-                            <p className="font-semibold text-gray-900">{lead.name || 'N/A'}</p>
+                            <p className="font-semibold text-slate-800">{lead.name || 'N/A'}</p>
                             {lead.phone && (
-                              <p className="text-xs text-gray-500 mt-1">{lead.phone}</p>
+                              <p className="text-xs text-slate-500 mt-1">{lead.phone}</p>
                             )}
                           </div>
                         </td>
                         <td className="px-4 py-4">
-                          <a href={`mailto:${lead.email}`} className="text-blue-600 hover:underline">
+                          <a href={`mailto:${lead.email}`} className="text-slate-800 hover:text-indigo-600 hover:underline">
                             {lead.email}
                           </a>
                         </td>
                         <td className="px-4 py-4">
-                          <p className="font-medium text-gray-900">{lead.business_name}</p>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700 mt-1">
+                          <p className="font-medium text-slate-800">{lead.business_name}</p>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 mt-1">
                             {lead.business_type}
                           </span>
                         </td>
@@ -690,9 +729,9 @@ export default function AdminDashboard() {
                           </span>
                         </td>
                         <td className="px-4 py-4">
-                          <span className="text-sm text-gray-700 capitalize">{lead.source}</span>
+                          <span className="text-sm text-slate-600 capitalize">{lead.source}</span>
                         </td>
-                        <td className="px-4 py-4 text-sm text-gray-700">
+                        <td className="px-4 py-4 text-sm text-slate-600">
                           {new Date(lead.created_at).toLocaleDateString()}
                         </td>
                         <td className="px-4 py-4">
@@ -701,7 +740,7 @@ export default function AdminDashboard() {
                               <button
                                 onClick={() => handleInviteToBeta(lead.id)}
                                 disabled={invitingLeadId === lead.id}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 {invitingLeadId === lead.id ? (
                                   <>
@@ -735,7 +774,7 @@ export default function AdminDashboard() {
                             {lead.status === 'beta_invited' && (
                               <button
                                 onClick={() => handleUpdateLeadStatus(lead.id, 'beta_active')}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors"
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
                               >
                                 Mark as Active
                               </button>
@@ -753,7 +792,7 @@ export default function AdminDashboard() {
                                     businessType: lead.business_type
                                   }
                                 }}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors"
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
                               >
                                 Create Account
                               </Link>
@@ -773,7 +812,7 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-500">
+                <p className="text-slate-500">
                   {statusFilter === 'all' ? 'No leads in the pipeline yet.' : `No ${getStatusLabel(statusFilter).toLowerCase()} leads.`}
                 </p>
               </div>
@@ -781,45 +820,45 @@ export default function AdminDashboard() {
           </div>
 
           {/* Early Access Signups */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
+            <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-4">
               Early Access ({earlyAccessSignups.length})
             </h2>
             {earlyAccessSignups.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-slate-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Business type</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Paid</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Signed up</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Email</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Business type</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Paid</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Signed up</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-slate-800 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {earlyAccessSignups.map((row) => (
-                      <tr key={row.id} className="hover:bg-gray-50">
+                      <tr key={row.id} className="hover:bg-slate-50/80">
                         <td className="px-4 py-3">
-                          <a href={`mailto:${row.email}`} className="text-blue-600 hover:underline">{row.email}</a>
+                          <a href={`mailto:${row.email}`} className="text-slate-800 hover:text-indigo-600 hover:underline">{row.email}</a>
                         </td>
-                        <td className="px-4 py-3 text-gray-700">{row.full_name || '—'}</td>
-                        <td className="px-4 py-3 text-gray-700">{row.business_type || '—'}</td>
+                        <td className="px-4 py-3 text-slate-600">{row.full_name || '—'}</td>
+                        <td className="px-4 py-3 text-slate-600">{row.business_type || '—'}</td>
                         <td className="px-4 py-3">
                           {row.stripe_session_id ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Yes</span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">Yes</span>
                           ) : (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">No</span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">No</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-700">{new Date(row.created_at).toLocaleDateString()}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600">{new Date(row.created_at).toLocaleDateString()}</td>
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-2">
                             {row.business_id ? (
                               <Link
                                 href={`/admin/businesses/${row.business_id}`}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-gray-600 hover:bg-gray-700 text-white font-medium rounded transition-colors"
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
                               >
                                 View
                               </Link>
@@ -834,13 +873,21 @@ export default function AdminDashboard() {
                                     businessType: row.business_type || '',
                                   },
                                 }}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors"
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
                               >
                                 Create account
                               </Link>
                             ) : (
                               <span className="text-xs text-gray-400">Paid required</span>
                             )}
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteEarlyAccessSignup(row.id)}
+                              disabled={deletingEarlyAccessId === row.id}
+                              className="inline-flex items-center px-3 py-1.5 text-sm bg-red-600 hover:bg-red-700 text-white font-medium rounded transition-colors disabled:opacity-50"
+                            >
+                              {deletingEarlyAccessId === row.id ? 'Removing…' : 'Remove'}
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -849,70 +896,70 @@ export default function AdminDashboard() {
                 </table>
               </div>
             ) : (
-              <p className="text-gray-500">No early access signups yet.</p>
+              <p className="text-slate-500">No early access signups yet.</p>
             )}
           </div>
 
           {/* Search Bar */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Search Businesses</h2>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
+            <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-4">Search Businesses</h2>
             <input
               type="text"
               placeholder="Search businesses by name or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-slate-800"
             />
           </div>
 
           {/* Businesses Table */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-slate-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                       Business Name
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                       Owner Email
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                       Created
                     </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-slate-800 uppercase tracking-wider">
                       Reviews
                     </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-slate-800 uppercase tracking-wider">
                       Feedback
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-slate-800 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {filteredBusinesses.map((business) => (
-                    <tr key={business.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={business.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-semibold text-gray-900">{business.business_name}</p>
-                          <p className="text-sm text-gray-500">/{business.slug}</p>
+                          <p className="font-semibold text-slate-800">{business.business_name}</p>
+                          <p className="text-sm text-slate-500">/{business.slug}</p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-gray-700">
+                      <td className="px-6 py-4 text-slate-600">
                         {business.owner_email}
                       </td>
-                      <td className="px-6 py-4 text-gray-700">
+                      <td className="px-6 py-4 text-slate-600">
                         {new Date(business.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold">
+                        <span className="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold">
                           {business.reviews_count}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-600 rounded-full text-sm font-semibold">
+                        <span className="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold">
                           {business.feedback_count}
                         </span>
                       </td>
@@ -920,14 +967,14 @@ export default function AdminDashboard() {
                         <div className="flex items-center justify-end gap-2">
                           <Link
                             href={`/admin/businesses/${business.id}`}
-                            className="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors"
+                            className="px-3 py-1 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
                           >
                             Edit
                           </Link>
                           <Link
                             href={`/${business.slug}`}
                             target="_blank"
-                            className="px-3 py-1 text-sm bg-gray-600 hover:bg-gray-700 text-white font-medium rounded transition-colors"
+                            className="px-3 py-1 text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded transition-colors"
                           >
                             View
                           </Link>
@@ -947,7 +994,7 @@ export default function AdminDashboard() {
 
             {filteredBusinesses.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-500">
+                <p className="text-slate-500">
                   {searchQuery ? 'No businesses found matching your search.' : 'No businesses yet.'}
                 </p>
               </div>
@@ -955,7 +1002,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Footer */}
-          <p className="text-center text-gray-400 text-sm mt-8">
+          <p className="text-center text-slate-500 text-sm mt-8">
             Powered by ReviewFlo
           </p>
         </div>
