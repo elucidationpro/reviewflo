@@ -269,7 +269,7 @@ export async function sendWaitlistConfirmationEmail(data: WaitlistSignupData) {
 
 export async function sendQualificationEmail(data: QualificationData) {
   try {
-    const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSd1jTmwDjEy5XuG80Ox3FXA3AzMq1bPEpUzZ0cXliJb4I8ozg/viewform';
+    const surveyPageUrl = 'https://usereviewflo.com/survey';
 
     await resend.emails.send({
       from: 'Jeremy from ReviewFlo <jeremy@usereviewflo.com>',
@@ -315,7 +315,7 @@ export async function sendQualificationEmail(data: QualificationData) {
               </div>
 
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${googleFormUrl}" class="cta">
+                <a href="${surveyPageUrl}" class="cta">
                   Complete Beta Survey →
                 </a>
               </div>

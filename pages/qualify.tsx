@@ -90,7 +90,7 @@ export default function QualifyPage() {
 
         setResult({
           type: 'success',
-          message: "Perfect! Check your email for the next step. We just sent you a link to complete the survey."
+          message: "Perfect! Check your email for the next step—we just sent you a link to complete the survey. If you don't see it in a few minutes, check your spam folder."
         });
       } else {
         // Show the specific error message from the API
