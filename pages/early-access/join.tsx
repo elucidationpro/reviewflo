@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
+import Script from 'next/script';
 import { CheckCircle, Zap, Shield } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { trackEvent } from '@/lib/posthog-provider';
@@ -190,6 +191,15 @@ export default function EarlyAccessJoinPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong');
       if (data?.url) {
+        // Meta Pixel Lead event (after validation & checkout created, before redirect)
+        if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+          (window as any).fbq('track', 'Lead', {
+            content_name: 'Paid Early Access',
+            content_category: 'Early Access',
+            value: 10.00,
+            currency: 'USD',
+          });
+        }
         window.location.href = data.url;
         return;
       }
@@ -206,7 +216,33 @@ export default function EarlyAccessJoinPage() {
       <Head>
         <title>Join Early Access - ReviewFlo</title>
         <meta name="robots" content="noindex, nofollow" />
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: 'none' }}
+            src="https://www.facebook.com/tr?id=750284611209309&ev=PageView&noscript=1"
+            alt=""
+          />
+        </noscript>
       </Head>
+      <Script
+        id="meta-pixel-early-access-join"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '750284611209309');
+fbq('track', 'PageView');`,
+        }}
+      />
+
       <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC] via-white to-[#F5F5DC]">
         <header className="bg-white/95 backdrop-blur-sm shadow-sm">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
