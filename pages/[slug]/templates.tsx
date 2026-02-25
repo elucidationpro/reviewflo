@@ -130,6 +130,10 @@ export default function TemplatesPage({ business, templates }: PageProps) {
           <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
             How to Leave Your Review
           </h3>
+          <p className="text-gray-600 text-sm md:text-base mb-6 text-center max-w-2xl mx-auto">
+            <strong>Copy a template below or write your own</strong> review when you open Google, Facebook, Yelp, or
+            Nextdoor.
+          </p>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="text-center">
               <div
@@ -140,7 +144,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
               </div>
               <h4 className="font-semibold text-gray-800 mb-2">Copy a Template</h4>
               <p className="text-gray-600 text-sm">
-                Choose one of our review templates below and click the copy button
+                Copy one of the templates below, or write your own review in your own words
               </p>
             </div>
             <div className="text-center">
@@ -172,9 +176,12 @@ export default function TemplatesPage({ business, templates }: PageProps) {
 
         {/* Review Templates */}
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
             Review Templates
           </h3>
+          <p className="text-sm text-gray-500 mb-6">
+            Copy a template to get started, or just click a platform below and write your own review.
+          </p>
           {templates.length > 0 ? (
             <div className="space-y-4">
               {templates.map((template, index) => (
