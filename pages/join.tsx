@@ -11,7 +11,7 @@ import { supabase } from '@/lib/supabase';
 
 type Step = 'form' | 'preview' | 'editing' | 'success';
 
-export default function QualifyPage() {
+export default function JoinPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>('form');
   const [formData, setFormData] = useState({
@@ -46,7 +46,7 @@ export default function QualifyPage() {
   useEffect(() => {
     if (!hasTrackedPageView.current) {
       trackEvent('join_page_viewed', {
-        source: 'qualify_page',
+        source: 'join_page',
         timestamp: new Date().toISOString(),
       });
       hasTrackedPageView.current = true;
@@ -289,6 +289,9 @@ export default function QualifyPage() {
   const showEditing = step === 'editing';
   const showSuccess = step === 'success';
 
+  const currentStep = showForm ? 1 : showPreview || showEditing ? 2 : 3;
+  const totalSteps = 3;
+
   return (
     <>
       <Head>
@@ -334,86 +337,150 @@ fbq('track', 'PageView');`,
                   className="h-8 sm:h-10 w-auto"
                 />
               </a>
-              <a
-                href="/"
-                className="text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors"
-              >
-                Back to Home
-              </a>
+              <div className="flex items-center gap-4">
+                <a
+                  href="/login"
+                  className="hidden sm:inline-block text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors"
+                >
+                  Business Login
+                </a>
+                <a
+                  href="/"
+                  className="text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors"
+                >
+                  Back to Home
+                </a>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Main Content */}
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="bg-white rounded-xl shadow-lg p-8 sm:p-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-10 border border-[#C9A961]/15">
+            {/* Step Indicator */}
+            <div className="mb-6 sm:mb-8">
+              <p className="text-xs font-semibold tracking-[0.2em] text-[#4A3428] uppercase mb-3">
+                ReviewFlo Beta Signup
+              </p>
+              <div className="flex items-center justify-between gap-4">
+                {[1, 2, 3].map((stepNumber) => {
+                  const isActive = stepNumber === currentStep;
+                  const isCompleted = stepNumber < currentStep;
+                  const labels = ['Create account', 'Confirm review link', 'You’re in'];
+                  return (
+                    <div key={stepNumber} className="flex-1 flex items-center gap-3">
+                      <div
+                        className={`flex items-center justify-center w-8 h-8 rounded-full border text-xs font-semibold ${
+                          isActive
+                            ? 'bg-[#4A3428] text-white border-[#4A3428]'
+                            : isCompleted
+                            ? 'bg-[#C9A961]/20 text-[#4A3428] border-[#C9A961]'
+                            : 'bg-white text-gray-400 border-gray-300'
+                        }`}
+                      >
+                        {stepNumber}
+                      </div>
+                      <div className="hidden sm:block">
+                        <p
+                          className={`text-xs font-medium ${
+                            isActive ? 'text-gray-900' : isCompleted ? 'text-gray-600' : 'text-gray-400'
+                          }`}
+                        >
+                          {labels[stepNumber - 1]}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-4 text-xs text-gray-500">
+                Step {currentStep} of {totalSteps}
+              </p>
+            </div>
+
             {/* Success: Account created */}
             {showSuccess && (
-              <div className="text-center py-8">
-                <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
+              <div className="text-center py-8 sm:py-10">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#C9A961]/15 mb-4">
+                  <CheckCircle className="w-8 h-8 text-[#C9A961]" />
+                </div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                  You're In! 🎉
+                  You&apos;re in
                 </h1>
-                <p className="text-lg text-gray-600 mb-6">
-                  Your account is ready. Check your email for login details and your review link.
+                <p className="text-base sm:text-lg text-gray-600 mb-6 max-w-md mx-auto">
+                  Your account is ready. Check your email for login details and your review link so you
+                  can start collecting more 5-star reviews.
                 </p>
                 <button
                   onClick={handleGoToDashboard}
-                  className="w-full px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all"
+                  className="w-full sm:w-auto px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all shadow-md hover:shadow-lg"
                 >
-                  Go to Dashboard →
+                  Go to dashboard →
                 </button>
+                <p className="mt-4 text-xs text-gray-500">
+                  Having trouble? Email{' '}
+                  <a
+                    href="mailto:jeremy@usereviewflo.com"
+                    className="font-semibold text-[#4A3428] hover:text-[#C9A961] transition-colors"
+                  >
+                    jeremy@usereviewflo.com
+                  </a>
+                  .
+                </p>
               </div>
             )}
 
             {/* Preview: Show link, Confirm or Edit */}
             {showPreview && !showSuccess && (
               <div className="text-center">
-                <div className="mb-8">
-                  <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
-                    Almost Done, {formData.businessName}!
+                <div className="mb-6 sm:mb-8">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                    Confirm your review link
                   </h1>
-                  <p className="text-lg text-gray-600">
-                    Your customers will visit this link to leave reviews:
+                  <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto">
+                    This is the link you&apos;ll text or email to customers after each job so they can
+                    leave you a review in a few taps.
                   </p>
                 </div>
-                <div className="bg-gray-50 border-2 border-[#C9A961]/30 rounded-xl p-6 mb-6">
-                  <p className="text-xl sm:text-2xl font-mono font-semibold text-[#4A3428] break-all mb-4">
+                <div className="bg-gray-50 border border-[#C9A961]/40 rounded-xl p-5 sm:p-6 mb-6 text-left">
+                  <p className="text-xs font-medium text-gray-500 mb-2">Your customer review link</p>
+                  <p className="text-base sm:text-xl font-mono font-semibold text-[#4A3428] break-all mb-4">
                     {displayHost}/{slug}
                   </p>
                   <button
                     type="button"
                     onClick={handleCopyLink}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors text-sm"
                   >
                     {copied ? (
                       <>
-                        <Check className="w-5 h-5 text-green-600" />
-                        Copied!
+                        <Check className="w-4 h-4 text-green-600" />
+                        Copied
                       </>
                     ) : (
                       <>
-                        <Copy className="w-5 h-5" />
-                        Copy Link
+                        <Copy className="w-4 h-4" />
+                        Copy link
                       </>
                     )}
                   </button>
                 </div>
-                <p className="text-base font-semibold text-gray-700 mb-3">Looks good?</p>
+                <p className="text-sm font-medium text-gray-700 mb-3">Happy with this link?</p>
                 <button
                   type="button"
                   onClick={handleConfirmAndCreate}
                   disabled={isSubmitting}
-                  className="w-full px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+                  className="w-full px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-3"
                 >
-                  {isSubmitting ? 'Creating your account...' : 'Confirm & Create Account'}
+                  {isSubmitting ? 'Creating your account...' : 'Confirm & create account'}
                 </button>
                 <button
                   type="button"
                   onClick={handleEditLink}
-                  className="text-sm text-gray-500 hover:text-[#4A3428] underline"
+                  className="text-xs sm:text-sm text-gray-500 hover:text-[#4A3428] underline"
                 >
-                  Want to change it? Edit Link
+                  Want to change it? Edit link
                 </button>
                 {errors.submit && (
                   <p className="mt-4 text-sm text-red-600">{errors.submit}</p>
@@ -424,8 +491,8 @@ fbq('track', 'PageView');`,
             {/* Editing: Custom slug input */}
             {showEditing && !showSuccess && (
               <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Edit your review link</h2>
-                <p className="text-gray-600 mb-4">
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Edit your review link</h2>
+                <p className="text-sm text-gray-600 mb-4">
                   Use only letters, numbers, and hyphens. 3–30 characters.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 mb-4">
@@ -439,14 +506,14 @@ fbq('track', 'PageView');`,
                         setErrors({ ...errors, slug: '' });
                       }}
                       placeholder="your-business-name"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent font-mono"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent font-mono text-sm"
                     />
                   </div>
                   <button
                     type="button"
                     onClick={handleCheckSlugAvailability}
                     disabled={slugAvailability === 'checking' || !customSlug}
-                    className="px-6 py-3 bg-gray-100 rounded-lg font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+                    className="px-5 py-3 bg-gray-100 rounded-lg font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50 text-sm"
                   >
                     {slugAvailability === 'checking' ? 'Checking...' : 'Check'}
                   </button>
@@ -455,21 +522,21 @@ fbq('track', 'PageView');`,
                   <p className="text-green-600 font-medium mb-2">✓ Available</p>
                 )}
                 {slugAvailability === 'taken' && (
-                  <p className="text-red-600 font-medium mb-2">✗ Already taken, try another</p>
+                  <p className="text-red-600 font-medium mb-2">Already taken, try another</p>
                 )}
                 {errors.slug && <p className="text-red-600 text-sm mb-4">{errors.slug}</p>}
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <button
                     type="button"
                     onClick={handleSaveCustomSlug}
-                    className="px-6 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90"
+                    className="px-6 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 text-sm"
                   >
                     Save & Continue
                   </button>
                   <button
                     type="button"
                     onClick={() => { setStep('preview'); setErrors({}); }}
-                    className="px-6 py-3 text-gray-600 hover:text-gray-900"
+                    className="px-6 py-3 text-gray-600 hover:text-gray-900 text-sm"
                   >
                     Cancel
                   </button>
@@ -482,39 +549,44 @@ fbq('track', 'PageView');`,
               <>
                 {/* Hero Section */}
                 <div className="text-center mb-8">
-                  <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-                    Stop Bad Reviews Before They Go Public
+                  <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+                    Create your free ReviewFlo account
                   </h1>
                   <p className="text-xl sm:text-2xl text-gray-700 mb-6">
-                    Get 10x More 5-Star Google Reviews — Automatically
+                    Stop bad reviews before they go public and get more 5-star Google reviews.
                   </p>
 
                   {/* Main CTA Box - FREE EMPHASIS */}
-                  <div className="bg-gradient-to-br from-[#F5F5DC] to-[#C9A961]/10 border-3 border-[#C9A961] rounded-2xl p-8 mb-6 shadow-lg">
+                  <div className="bg-gradient-to-br from-[#F5F5DC] to-[#C9A961]/10 border-2 border-[#C9A961]/60 rounded-2xl p-6 sm:p-8 mb-6 shadow-md">
                     <div className="mb-4">
-                      <p className="text-3xl sm:text-4xl font-bold text-[#4A3428] mb-2">
-                        🎉 FREE BETA ACCESS
+                      <p className="text-sm font-semibold text-[#4A3428] tracking-[0.2em] uppercase mb-2">
+                        Free beta access
                       </p>
-                      <p className="text-xl font-bold text-gray-900">
-                        NO CREDIT CARD REQUIRED
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                        No credit card. No contracts.
                       </p>
                     </div>
 
                     <div className="bg-white/80 rounded-lg p-6 mb-6">
-                      <p className="text-lg text-gray-800 mb-3 leading-relaxed">
-                        Use ReviewFlo <strong>completely free</strong> while we test and fix bugs.
+                      <p className="text-base sm:text-lg text-gray-800 mb-3 leading-relaxed">
+                        Use ReviewFlo <strong>completely free</strong> while we test and fix bugs and get
+                        feedback from business owners like you.
                       </p>
-                      <p className="text-base text-gray-700 mb-3">
-                        <strong>Official launch:</strong> April 2026
+                      <p className="text-sm sm:text-base text-gray-700 mb-3">
+                        <strong>Official launch:</strong> April 2026.
                       </p>
-                      <p className="text-base text-gray-700">
-                        Beta testers get <strong>50% off first 3 months</strong> when we launch<br />
-                        <span className="text-sm text-gray-600">($9.50 or $24.50/month vs $19-49/month)</span>
+                      <p className="text-sm sm:text-base text-gray-700">
+                        Beta testers get <strong>50% off the first 3 months</strong> when we launch.
+                        <br />
+                        <span className="text-xs sm:text-sm text-gray-600">
+                          ($9.50 or $24.50/month vs $19-49/month)
+                        </span>
                       </p>
                     </div>
 
-                    <div className="inline-block bg-[#4A3428] text-white px-8 py-4 rounded-lg font-bold text-lg shadow-md">
-                      ↓ Join Free Beta - No Credit Card ↓
+                    <div className="inline-flex items-center gap-2 bg-[#4A3428] text-white px-6 py-3 rounded-lg font-semibold text-sm sm:text-base shadow-md">
+                      <span>Join the free beta</span>
+                      <span className="opacity-80">No credit card required</span>
                     </div>
                   </div>
 

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { sendEarlyAccessBetaWelcomeEmail, sendAdminNotification } from '@/lib/email-service';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -71,6 +72,33 @@ export default async function handler(
       return res.status(500).json({
         error: 'Could not save your answers. Please try again.' + hint,
       });
+    }
+
+    // Send welcome email (free beta - no payment)
+    let emailSent = false;
+    try {
+      const emailResult = await sendEarlyAccessBetaWelcomeEmail({
+        email,
+        fullName: fullName || '',
+        businessType,
+      });
+      emailSent = emailResult.success;
+    } catch (emailErr) {
+      console.error('Failed to send early access beta welcome email:', emailErr);
+    }
+
+    // Notify admin
+    try {
+      await sendAdminNotification('early_access_beta', {
+        email,
+        fullName: fullName || undefined,
+        businessType,
+        customersPerMonth,
+        reviewAskingFrequency,
+        emailSent,
+      });
+    } catch (adminErr) {
+      console.error('Failed to send admin notification:', adminErr);
     }
 
     return res.status(200).json({ success: true });

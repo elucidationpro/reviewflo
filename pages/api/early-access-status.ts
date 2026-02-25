@@ -41,12 +41,6 @@ export default async function handler(
     });
   }
 
-  if (signup.stripe_session_id) {
-    return res.status(200).json({ step: 'paid', email: user.email ?? '' });
-  }
-
-  return res.status(200).json({
-    step: 3,
-    email: user.email ?? '',
-  });
+  // Free beta: no payment required. Having a signup record = complete (whether paid or free).
+  return res.status(200).json({ step: 'paid', email: user.email ?? '' });
 }

@@ -44,6 +44,7 @@ export default function DashboardPage() {
   })
   const [feedbackList, setFeedbackList] = useState<Feedback[]>([])
   const [resolvingId, setResolvingId] = useState<string | null>(null)
+  const [linkCopied, setLinkCopied] = useState(false)
 
   useEffect(() => {
     console.log('[Component] DashboardPage useEffect is running')
@@ -185,6 +186,29 @@ export default function DashboardPage() {
     setResolvingId(null)
   }
 
+  const reviewLink = typeof window !== 'undefined'
+    ? `${window.location.origin}/${business?.slug || ''}`
+    : `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${business?.slug || ''}`
+
+  const handleCopyReviewLink = async () => {
+    if (!reviewLink || reviewLink.endsWith('/')) return
+    try {
+      await navigator.clipboard.writeText(reviewLink)
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 2500)
+    } catch {
+      // Fallback for older browsers
+      const input = document.createElement('input')
+      input.value = reviewLink
+      document.body.appendChild(input)
+      input.select()
+      document.execCommand('copy')
+      document.body.removeChild(input)
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 2500)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
@@ -302,6 +326,62 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Your Review Link - Primary CTA for first-time users */}
+        <div
+          className="mb-8 rounded-xl border-2 p-6 md:p-8 shadow-lg"
+          style={{
+            backgroundColor: 'white',
+            borderColor: business.primary_color || '#6366f1',
+            borderLeftWidth: '6px',
+          }}
+        >
+          <h2 className="text-lg font-semibold text-slate-800 mb-1">Your Review Link</h2>
+          <p className="text-slate-600 text-sm mb-4">
+            Send this link to customers after each job. They rate their experience, then get guided to leave a Google review.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1 flex items-center bg-slate-50 rounded-lg px-4 py-3 border border-slate-200">
+              <a
+                href={reviewLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm md:text-base font-mono text-slate-800 truncate hover:underline flex-1 min-w-0"
+              >
+                {reviewLink}
+              </a>
+            </div>
+            <button
+              onClick={handleCopyReviewLink}
+              className="shrink-0 flex items-center justify-center gap-2 font-semibold px-6 py-3 rounded-lg transition-colors"
+              style={{
+                backgroundColor: business.primary_color || '#6366f1',
+                color: 'white',
+              }}
+            >
+              {linkCopied ? (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  Copy Link
+                </>
+              )}
+            </button>
+          </div>
+          {(reviewStats.total === 0 && feedbackList.length === 0) && (
+            <p className="text-sm text-slate-500 mt-4">
+              💡 Try it first: send the link to yourself and rate your own &quot;service&quot; to see how it works.
+            </p>
+          )}
+        </div>
+
         {/* Stats Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Monthly Reviews Card */}
@@ -414,28 +494,6 @@ export default function DashboardPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                  />
-                </svg>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
-                <div>
-                  <p className="text-sm text-slate-600 mb-1">Business Slug</p>
-                  <p className="text-lg font-mono text-slate-800">
-                    /{business.slug}
-                  </p>
-                </div>
-                <svg
-                  className="w-12 h-12 text-slate-800"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
                   />
                 </svg>
               </div>

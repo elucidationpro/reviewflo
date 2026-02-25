@@ -17,6 +17,73 @@ interface QualificationData {
   businessType: string;
 }
 
+interface EarlyAccessBetaWelcomeData {
+  email: string;
+  fullName: string;
+  businessType: string;
+}
+
+export async function sendEarlyAccessBetaWelcomeEmail(data: EarlyAccessBetaWelcomeData) {
+  try {
+    await resend.emails.send({
+      from: 'ReviewFlo <jeremy@usereviewflo.com>',
+      to: data.email,
+      subject: "You're In! ReviewFlo Free Beta 🎉",
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #4A3428; color: white; padding: 30px; border-radius: 8px 8px 0 0; }
+            .content { background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px; }
+            .benefit { margin: 12px 0; }
+            .footer { text-align: center; color: #6b7280; margin-top: 30px; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 28px;">You're in! Welcome to ReviewFlo Free Beta</h1>
+            </div>
+            <div class="content">
+              <p>Hey ${data.fullName || 'there'},</p>
+
+              <p>Thanks for joining the ReviewFlo beta! You're using it <strong>free until April 2026</strong>—no payment, no contracts.</p>
+
+              <p><strong>What happens next:</strong> I'll reach out within 24 hours to get your ${data.businessType || 'business'} set up. The whole process takes about 10 minutes.</p>
+
+              <p>As a beta tester you get:</p>
+              <ul>
+                <li>✓ Free access until April 2026</li>
+                <li>✓ 50% off first 3 months at launch ($9.50 or $24.50/mo)</li>
+                <li>✓ Direct line to me (Jeremy) for support</li>
+                <li>✓ Help shape the product</li>
+              </ul>
+
+              <p>Questions? Just reply to this email.</p>
+
+              <p>Jeremy<br>
+              Founder, ReviewFlo<br>
+              <a href="mailto:jeremy@usereviewflo.com">jeremy@usereviewflo.com</a></p>
+            </div>
+            <div class="footer">
+              <p>ReviewFlo • Stop bad reviews before they go public</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending early access beta welcome email:', error);
+    return { success: false, error };
+  }
+}
+
 export async function sendBetaConfirmationEmail(data: BetaSignupData) {
   try {
     await resend.emails.send({
@@ -343,17 +410,20 @@ export async function sendQualificationEmail(data: QualificationData) {
   }
 }
 
-export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify' | 'early_access', data: Record<string, unknown>) {
+export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify' | 'early_access' | 'early_access_beta', data: Record<string, unknown>) {
   try {
     const isBeta = type === 'beta';
     const isQualify = type === 'qualify';
     const isEarlyAccess = type === 'early_access';
+    const isEarlyAccessBeta = type === 'early_access_beta';
     const subject = isBeta
       ? `New Beta Signup: ${data.businessName || 'N/A'}`
       : isQualify
-      ? `New Qualification: ${data.email}`
+      ? `New ReviewFlo Beta Signup: ${data.businessName || data.email}`
       : isEarlyAccess
       ? `New Early Access Payment: ${data.email}`
+      : isEarlyAccessBeta
+      ? `New Free Beta Signup: ${data.email}`
       : 'New Waitlist Signup';
 
     const primaryAdmin = (process.env.ADMIN_EMAIL || 'jeremy.elucidation@gmail.com') as string;
@@ -384,10 +454,38 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
         <body>
           <div class="container">
             <div class="header">
-              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : isQualify ? '🎯 New Qualification' : isEarlyAccess ? '💰 New Early Access Payment' : '📋 New Waitlist Signup'}</h1>
+              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : isQualify ? '🎯 New Qualification' : isEarlyAccess ? '💰 New Early Access Payment' : isEarlyAccessBeta ? '🆓 New Free Beta Signup' : '📋 New Waitlist Signup'}</h1>
             </div>
             <div class="content">
-              ${isEarlyAccess ? `
+              ${isEarlyAccessBeta ? `
+                <table class="info-table">
+                  <tr>
+                    <td>Email:</td>
+                    <td><a href="mailto:${data.email}" style="color: #2563eb;">${data.email}</a></td>
+                  </tr>
+                  <tr>
+                    <td>Name:</td>
+                    <td><strong>${data.fullName || 'N/A'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Business Type:</td>
+                    <td>${data.businessType || 'N/A'}</td>
+                  </tr>
+                  <tr>
+                    <td>Customers/Month:</td>
+                    <td>${data.customersPerMonth || 'N/A'}</td>
+                  </tr>
+                  <tr>
+                    <td>Review Frequency:</td>
+                    <td>${data.reviewAskingFrequency || 'N/A'}</td>
+                  </tr>
+                  <tr>
+                    <td>Welcome Email:</td>
+                    <td>${data.emailSent ? '<span style="color: #10b981;">✓ Sent</span>' : '<span style="color: #ef4444;">✗ Failed</span>'}</td>
+                  </tr>
+                </table>
+                <p><strong>Next step:</strong> Create their business in Admin → Early Access, then send them login details.</p>
+              ` : isEarlyAccess ? `
                 <table class="info-table">
                   <tr>
                     <td>Email:</td>
@@ -408,32 +506,66 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
                 </table>
                 <p>Welcome email ${data.customerEmailSent ? 'was sent' : 'may have failed'} to the customer.</p>
               ` : isQualify ? `
+                <p style="margin-bottom: 20px; font-size: 16px; color: #1f2937;">
+                  <strong>New beta tester signed up!</strong>
+                </p>
+
+                <h3 style="color: #374151; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">
+                  Business Details
+                </h3>
                 <table class="info-table">
+                  <tr>
+                    <td>Business Name:</td>
+                    <td><strong>${data.businessName || 'N/A'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Business Type:</td>
+                    <td>${data.businessType || 'N/A'}</td>
+                  </tr>
                   <tr>
                     <td>Email:</td>
                     <td><a href="mailto:${data.email}" style="color: #2563eb;">${data.email}</a></td>
                   </tr>
-                  <tr>
-                    <td>Business Type:</td>
-                    <td><strong>${data.businessType || 'N/A'}</strong></td>
-                  </tr>
+                  ${data.slug ? `
+                    <tr>
+                      <td>Review Link:</td>
+                      <td><a href="https://usereviewflo.com/${data.slug}" style="color: #2563eb;">usereviewflo.com/${data.slug}</a></td>
+                    </tr>
+                  ` : ''}
                   <tr>
                     <td>Customers/Month:</td>
                     <td>${data.customersPerMonth || 'N/A'}</td>
                   </tr>
                   <tr>
-                    <td>Review Frequency:</td>
+                    <td>Current Review Asking:</td>
                     <td>${data.reviewAskingFrequency || 'N/A'}</td>
                   </tr>
+                </table>
+
+                <h3 style="color: #374151; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">
+                  Beta Offer
+                </h3>
+                <table class="info-table">
                   <tr>
-                    <td>Email Status:</td>
-                    <td>${data.emailSent ? '<span style="color: #10b981;">✓ Sent Successfully</span>' : '<span style="color: #ef4444;">✗ Failed to Send</span>'}</td>
+                    <td>Free Access:</td>
+                    <td>Until April 2026 launch</td>
+                  </tr>
+                  <tr>
+                    <td>Then:</td>
+                    <td>50% off first 3 months ($9.50 or $24.50/month)</td>
                   </tr>
                 </table>
 
                 <div class="action-needed">
-                  <strong>⚡ Next Step:</strong><br>
-                  ${data.emailSent ? "They've been sent the Google Form link. Watch for their survey response." : "Email failed to send - you may need to manually send them the survey link."}
+                  <strong>✓ Next Steps:</strong><br>
+                  <ol style="margin: 10px 0; padding-left: 20px; color: #92400e;">
+                    <li style="margin-bottom: 8px;">They received welcome email with login credentials</li>
+                    <li style="margin-bottom: 8px;">Check Supabase to verify account created</li>
+                    <li style="margin-bottom: 8px;">Monitor if they send first review request (activation)</li>
+                  </ol>
+                  <p style="margin-top: 12px; font-size: 13px; color: #92400e;">
+                    <strong>Account created:</strong> ${new Date().toLocaleString('en-US', { timeZone: 'America/Denver', dateStyle: 'medium', timeStyle: 'short' })}
+                  </p>
                 </div>
               ` : isBeta ? `
                 <table class="info-table">

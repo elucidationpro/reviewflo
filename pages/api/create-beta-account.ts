@@ -173,9 +173,18 @@ export default async function handler(
       // Don't fail the request, just log the error
     }
 
-    // Send welcome email (aligned with early access welcome: survey CTA, brand colors, tone)
+    // Send welcome email
     try {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'
+      const loginUrl = `${baseUrl}/login`
+      const reviewPageUrl = `${baseUrl}/${slug}`
+
+      // Get beta tester count for personalization
+      const { count: betaCount } = await supabaseAdmin
+        .from('businesses')
+        .select('*', { count: 'exact', head: true })
+      const betaTesterNumber = betaCount ?? 0
+
       const emailHtml = `
         <!DOCTYPE html>
         <html>
@@ -189,54 +198,63 @@ export default async function handler(
               .header { background: #4A3428; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
               .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none; }
               .button { display: inline-block; background: #C9A961; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 10px 0; }
-              .button-secondary { background: #4A3428; }
               .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
-              ul { padding-left: 20px; }
-              li { margin-bottom: 8px; }
               .box { background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e5e7eb; }
+              ol { padding-left: 20px; }
+              li { margin-bottom: 8px; }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h1 style="margin: 0; font-size: 28px;">Welcome to ReviewFlo Beta! 🚀</h1>
+                <h1 style="margin: 0; font-size: 28px;">Welcome to ReviewFlo Beta! 🚀 Your Account is Ready</h1>
               </div>
               <div class="content">
                 <p>Hi ${ownerName}!</p>
 
-                <p>Thanks for being part of the ReviewFlo beta! We're excited to help <strong>${businessName}</strong> get more 5-star reviews and catch unhappy customers before they post.</p>
-
-                <p><strong>📋 Please complete this quick survey (3 min):</strong><br>
-                <a href="https://usereviewflo.com/survey" class="button">Complete Survey →</a><br>
-                It helps us understand what features you need and how to price ReviewFlo fairly.</p>
+                <p>Your ReviewFlo account is set up and ready to use.</p>
 
                 <div class="box">
-                  <h2 style="color: #4A3428; font-size: 18px; margin: 0 0 12px 0;">Your Account Details</h2>
+                  <h2 style="color: #4A3428; font-size: 18px; margin: 0 0 12px 0;">LOGIN DETAILS</h2>
+                  <p style="margin: 5px 0;"><strong>Website:</strong> <a href="${loginUrl}" style="color: #4A3428;">usereviewflo.com/login</a></p>
                   <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
-                  <p style="margin: 5px 0;"><strong>Business:</strong> ${businessName}</p>
-                  <p style="margin: 5px 0;"><strong>Review Page:</strong> <a href="${baseUrl}/${slug}" style="color: #4A3428;">${baseUrl}/${slug}</a></p>
+                  <p style="margin: 5px 0;"><strong>Password:</strong> (the one you just created)</p>
                 </div>
 
-                <p><strong>Getting started:</strong> Log in to your <a href="${baseUrl}/login" style="color: #4A3428;">dashboard</a>, add your review platform URLs, and share your review page with customers.</p>
+                <div class="box">
+                  <h2 style="color: #4A3428; font-size: 18px; margin: 0 0 12px 0;">YOUR UNIQUE REVIEW LINK</h2>
+                  <p style="margin: 5px 0;"><a href="${reviewPageUrl}" style="color: #4A3428;">${reviewPageUrl}</a></p>
+                  <p style="margin: 12px 0 0 0;">Copy this link and send it to customers after you finish each job.</p>
+                </div>
 
-                <h2 style="color: #4A3428; font-size: 18px; margin: 20px 0 10px 0;">What You Get</h2>
-                <ul>
-                  <li>Stop bad reviews before they go public</li>
-                  <li>Get more 5-star Google reviews automatically</li>
-                  <li>Priority support from the founder (me!)</li>
-                  <li>Help shape new features</li>
-                </ul>
+                <h2 style="color: #4A3428; font-size: 18px; margin: 20px 0 10px 0;">WHAT HAPPENS NEXT</h2>
+                <ol>
+                  <li>Your customer opens the link</li>
+                  <li>They rate their experience (1-5 stars)</li>
+                  <li>If 1-4 stars: You get private feedback via email (nothing goes public)</li>
+                  <li>If 5 stars: They see easy templates to post a Google review</li>
+                </ol>
+
+                <h2 style="color: #4A3428; font-size: 18px; margin: 20px 0 10px 0;">TRY IT NOW</h2>
+                <ol>
+                  <li><a href="${loginUrl}" style="color: #4A3428;">Click here to log in</a></li>
+                  <li>Send your review link to yourself (test it)</li>
+                  <li>Rate your own "service" and see how it works</li>
+                  <li>Then send it to your next customer!</li>
+                </ol>
 
                 <p>Questions? Just reply to this email.</p>
 
-                <p>Thanks for being an early supporter!</p>
+                <p>Thanks for being beta tester #${betaTesterNumber}!</p>
 
                 <p><strong>- Jeremy</strong><br>
                 ReviewFlo<br>
                 <a href="mailto:jeremy@usereviewflo.com" style="color: #4A3428;">jeremy@usereviewflo.com</a></p>
 
+                <p style="margin-top: 20px;"><em>P.S. This is beta, so if anything breaks or is confusing, please let me know. Your feedback helps us build exactly what you need.</em></p>
+
                 <div style="text-align: center; margin-top: 28px;">
-                  <a href="${baseUrl}/login" class="button button-secondary">Log In to Your Dashboard</a>
+                  <a href="${loginUrl}" class="button">Log In to Your Dashboard</a>
                 </div>
               </div>
               <div class="footer">
@@ -251,7 +269,7 @@ export default async function handler(
       await resend.emails.send({
         from: 'ReviewFlo <jeremy@usereviewflo.com>',
         to: email,
-        subject: `Welcome to ReviewFlo Beta! 🚀 - ${businessName}`,
+        subject: `Welcome to ReviewFlo Beta! 🚀 Your Account is Ready - ${businessName}`,
         html: emailHtml,
       })
     } catch (emailError) {

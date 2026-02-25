@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle, Zap, Shield } from 'lucide-react';
+import { CheckCircle, Zap, Shield, X } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Script from 'next/script';
@@ -9,8 +9,8 @@ export default function EarlyAccessPage() {
   return (
     <>
       <Head>
-        <title>Early Access - ReviewFlo</title>
-        <meta name="description" content="Get 2 months of full ReviewFlo access for just $10. Limited to 50 businesses." />
+        <title>Stop Bad Reviews Before They Go Public | ReviewFlo Free Beta</title>
+        <meta name="description" content="Use ReviewFlo free until April 2026. No credit card. No contracts. Cancel anytime. Built for Utah plumbers, electricians, detailers & service businesses." />
         <meta name="robots" content="noindex, nofollow" />
         <noscript>
           <img
@@ -22,7 +22,6 @@ export default function EarlyAccessPage() {
           />
         </noscript>
       </Head>
-      {/* Meta Pixel: use Script so the inline code actually runs (Head + dangerouslySetInnerHTML often doesn't execute) */}
       <Script
         id="meta-pixel"
         strategy="afterInteractive"
@@ -54,45 +53,41 @@ fbq('track', 'PageView');`,
           </div>
         </header>
 
-        {/* Landing: Hero */}
+        {/* Hero - Lead with pain (defense) */}
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#C9A961]/20 text-[#4A3428] rounded-full text-sm font-semibold mb-8 border border-[#C9A961]/30">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold mb-8 border border-green-200">
               <Zap className="w-4 h-4" />
-              Limited to 50 Businesses
+              Free Beta Until April 2026
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-              Early Access Launch
+              Stop Bad Reviews Before They Go Public
             </h1>
-            <p className="text-2xl sm:text-3xl font-semibold text-[#4A3428] mb-6">
-              $10 One-Time Payment
+            <p className="text-xl sm:text-2xl text-gray-700 mb-4">
+              Catch unhappy customers privately. Turn problems into opportunities—and into 5-star reviews.
             </p>
-            <p className="text-xl sm:text-2xl text-gray-700 mb-8">
-              Get 2 Months of Full Access
+            <p className="text-lg font-semibold text-[#4A3428] mb-8">
+              Free until April. Pay nothing now. Cancel anytime.
             </p>
-            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
-              ReviewFlo is officially launching soon. Be one of the first 50 businesses to try it.
-            </p>
+            <div className="flex flex-wrap justify-center gap-4 mb-10 text-sm text-gray-600">
+              <span className="flex items-center gap-2"><X className="w-5 h-5 text-red-500" /> No contracts</span>
+              <span className="flex items-center gap-2"><X className="w-5 h-5 text-red-500" /> No credit card required</span>
+              <span className="flex items-center gap-2"><CheckCircle className="w-5 h-5 text-[#C9A961]" /> Dead-simple setup</span>
+              <span className="flex items-center gap-2"><Shield className="w-5 h-5 text-[#C9A961]" /> Cancel anytime</span>
+            </div>
             <Link
               href="/early-access/join"
               className="inline-block px-12 py-5 bg-[#4A3428] text-white rounded-lg font-bold text-xl hover:bg-[#4A3428]/90 transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 transform"
             >
-              Get Early Access - $10 →
+              Join Free Beta →
             </Link>
-            <p className="mt-4">
-              <Link href="/" className="text-sm text-gray-500 hover:text-[#4A3428] transition-colors">
-                Want to learn more first? →
-              </Link>
+            <p className="mt-4 text-sm text-gray-500">
+              Takes 2 minutes. No payment.
             </p>
-            <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm text-gray-600">
-              <span className="flex items-center gap-2"><Shield className="w-5 h-5 text-[#C9A961]" /> No auto-renewal</span>
-              <span className="flex items-center gap-2"><CheckCircle className="w-5 h-5 text-[#C9A961]" /> One-time payment</span>
-              <span className="flex items-center gap-2"><Zap className="w-5 h-5 text-[#C9A961]" /> Instant access</span>
-            </div>
           </div>
         </section>
 
-        {/* Landing: What You Get */}
+        {/* Value: Defense + Offense */}
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12 mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">What You Get</h2>
@@ -100,72 +95,61 @@ fbq('track', 'PageView');`,
               <div className="flex items-start gap-4">
                 <CheckCircle className="w-6 h-6 text-[#C9A961] flex-shrink-0 mt-1" />
                 <div>
-                  <p className="text-lg font-semibold text-gray-900">2 months of full access starting today</p>
-                  <p className="text-gray-600">Complete access to all ReviewFlo features</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <CheckCircle className="w-6 h-6 text-[#C9A961] flex-shrink-0 mt-1" />
-                <div>
                   <p className="text-lg font-semibold text-gray-900">Stop bad reviews before they go public</p>
-                  <p className="text-gray-600">Catch unhappy customers privately</p>
+                  <p className="text-gray-600">Unhappy customers message you first—not Google</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <CheckCircle className="w-6 h-6 text-[#C9A961] flex-shrink-0 mt-1" />
                 <div>
                   <p className="text-lg font-semibold text-gray-900">Get more 5-star Google reviews automatically</p>
-                  <p className="text-gray-600">Make leaving great reviews effortless</p>
+                  <p className="text-gray-600">Make leaving great reviews effortless for happy customers</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <CheckCircle className="w-6 h-6 text-[#C9A961] flex-shrink-0 mt-1" />
                 <div>
-                  <p className="text-lg font-semibold text-gray-900">Help shape new features through feedback</p>
-                  <p className="text-gray-600">Your input directly influences development</p>
+                  <p className="text-lg font-semibold text-gray-900">Use ReviewFlo free until April 2026</p>
+                  <p className="text-gray-600">Help us fix bugs and add features. Beta testers get 50% off first 3 months at launch ($9.50–$24.50/mo vs $19–$49)</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <CheckCircle className="w-6 h-6 text-[#C9A961] flex-shrink-0 mt-1" />
                 <div>
-                  <p className="text-lg font-semibold text-gray-900">Priority founder support</p>
-                  <p className="text-gray-600">Direct line to the founder</p>
+                  <p className="text-lg font-semibold text-gray-900">Way cheaper than Podium</p>
+                  <p className="text-gray-600">Podium starts at $289/month. ReviewFlo: $19–49/month at launch—still a fraction of the cost</p>
                 </div>
               </div>
             </div>
-            <div className="bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-lg p-6 mb-8">
-              <p className="text-gray-700 text-center">
-                <strong>After your 2 months:</strong> You&apos;ll have the option to continue at our standard monthly pricing. No obligation.
+            <div className="bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-lg p-6 text-center">
+              <p className="text-gray-700 font-medium">
+                <strong>Join now. Pay nothing until April. Cancel anytime.</strong>
               </p>
-            </div>
-            <div className="bg-[#4A3428] text-white rounded-lg p-6 text-center">
-              <p className="text-lg font-semibold mb-2">Limited to 50 businesses</p>
-              <p className="text-sm opacity-90">No subscription, no auto-renewal. One-time payment only.</p>
             </div>
           </div>
         </section>
 
-        {/* Landing: FAQ */}
+        {/* FAQ */}
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Questions</h2>
             <div className="space-y-8">
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">What happens after 2 months?</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Is it really free?</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Your access ends and you can choose to subscribe at our standard monthly rate. We&apos;ll notify you 2 weeks before your access ends. No pressure, no automatic charges.
+                  Yes. Use ReviewFlo completely free while we fix bugs and add features. Official launch: April 2026 at $19–49/month. Beta testers get 50% off for the first 3 months.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Will I be auto-charged?</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Do I need a contract?</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  No. This is a one-time $10 payment. No subscription, no surprises. You&apos;re in complete control.
+                  No. No contracts. Cancel anytime. No surprises.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">When do you officially launch?</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">What if it&apos;s not for me?</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  We&apos;re targeting April 2026. Early access members will be notified first and get priority access to the full launch.
+                  Stop using it. No commitment. We built ReviewFlo for Utah service businesses—plumbers, electricians, detailers, barbers, HVAC—who want to stop bad reviews and get more 5-stars. If that&apos;s you, join the beta.
                 </p>
               </div>
             </div>
@@ -175,16 +159,16 @@ fbq('track', 'PageView');`,
         {/* CTA */}
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">Ready to Join?</h2>
-          <p className="text-xl text-gray-600 mb-10">Be one of the first 50 businesses. $10 one-time payment.</p>
+          <p className="text-xl text-gray-600 mb-10">Free until April. No credit card. No contracts.</p>
           <Link
             href="/early-access/join"
             className="inline-block px-12 py-5 bg-[#4A3428] text-white rounded-lg font-bold text-xl hover:bg-[#4A3428]/90 transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 transform"
           >
-            Get Early Access - $10 →
+            Join Free Beta →
           </Link>
           <p className="mt-4">
             <Link href="/" className="text-sm text-gray-500 hover:text-[#4A3428] transition-colors">
-              Not ready yet? Learn more about ReviewFlo →
+              Want to learn more first? →
             </Link>
           </p>
         </section>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import Script from 'next/script';
-import { CheckCircle, Zap, Shield } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { trackEvent } from '@/lib/posthog-provider';
 
@@ -34,9 +34,6 @@ export default function EarlyAccessJoinPage() {
   const [reviewAskingFrequency, setReviewAskingFrequency] = useState('');
   const [surveyError, setSurveyError] = useState('');
   const [surveyLoading, setSurveyLoading] = useState(false);
-
-  const [payError, setPayError] = useState('');
-  const [payLoading, setPayLoading] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -130,8 +127,15 @@ export default function EarlyAccessJoinPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save');
-      setStep(3);
+      setStep('paid');
       trackEvent('early_access_survey_completed', { businessType, customersPerMonth, reviewAskingFrequency });
+      // Meta Pixel Lead (free beta conversion)
+      if (typeof window !== 'undefined' && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === 'function') {
+        (window as unknown as { fbq: (...args: unknown[]) => void }).fbq('track', 'Lead', {
+          content_name: 'Free Beta Signup',
+          content_category: 'Early Access',
+        });
+      }
     } catch (err: unknown) {
       setSurveyError(err instanceof Error ? err.message : 'Could not save. Try again.');
     } finally {
@@ -172,49 +176,10 @@ export default function EarlyAccessJoinPage() {
     router.replace('/early-access/join');
   };
 
-  const handlePay = async () => {
-    setPayError('');
-    if (!sessionToken) {
-      setPayError('Session expired. Please sign in again.');
-      return;
-    }
-    setPayLoading(true);
-    trackEvent('early_access_cta_clicked', { price: 10, source: 'early_access_join' });
-    try {
-      const res = await fetch('/api/create-early-access-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${sessionToken}`,
-        },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Something went wrong');
-      if (data?.url) {
-        // Meta Pixel Lead event (after validation & checkout created, before redirect)
-        if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
-          (window as any).fbq('track', 'Lead', {
-            content_name: 'Paid Early Access',
-            content_category: 'Early Access',
-            value: 10.00,
-            currency: 'USD',
-          });
-        }
-        window.location.href = data.url;
-        return;
-      }
-      throw new Error('Could not start checkout');
-    } catch (err: unknown) {
-      setPayError(err instanceof Error ? err.message : 'Could not start checkout.');
-    } finally {
-      setPayLoading(false);
-    }
-  };
-
   return (
     <>
       <Head>
-        <title>Join Early Access - ReviewFlo</title>
+        <title>Join Free Beta - ReviewFlo</title>
         <meta name="robots" content="noindex, nofollow" />
         <noscript>
           <img
@@ -276,7 +241,7 @@ fbq('track', 'PageView');`,
               <>
                 <div className="text-center mb-8">
                   <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                    {showSignIn ? 'Sign in' : 'Create your account'}
+                    {showSignIn ? 'Sign in' : 'Join the free beta'}
                   </h1>
                   <p className="text-lg text-gray-600">
                     {showSignIn ? 'Sign in to continue your early access signup.' : 'We’ll use this to save your progress and give you access after payment.'}
@@ -396,7 +361,7 @@ fbq('track', 'PageView');`,
             ) : step === 2 ? (
               <>
                 <div className="text-center mb-8">
-                  <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Check If You Qualify</h1>
+                  <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Quick questions</h1>
                   <p className="text-lg text-gray-600">Answer 3 quick questions (about 1 minute)</p>
                 </div>
                 <form onSubmit={handleSurveySubmit} className="space-y-6">
@@ -456,26 +421,25 @@ fbq('track', 'PageView');`,
                   </button>
                 </form>
               </>
-            ) : step === 3 ? (
+            ) : step === 3 || step === 'paid' ? (
               <>
-                <div className="text-center mb-8">
+                <div className="text-center py-8">
                   <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold text-gray-900 mb-3">You’re all set</h2>
-                  <p className="text-lg text-gray-600">Complete your early access with a one-time $10 payment. No auto-renewal.</p>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3">You're in!</h2>
+                  <p className="text-lg text-gray-600">Check your email for next steps. We&apos;ll get you set up within 24 hours.</p>
                 </div>
-                <div className="flex flex-wrap justify-center gap-6 mb-6 text-sm text-gray-600">
-                  <span className="flex items-center gap-2"><Shield className="w-5 h-5 text-[#C9A961]" /> No auto-renewal</span>
-                  <span className="flex items-center gap-2"><CheckCircle className="w-5 h-5 text-[#C9A961]" /> One-time payment</span>
-                  <span className="flex items-center gap-2"><Zap className="w-5 h-5 text-[#C9A961]" /> Instant access</span>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <Link href="/dashboard" className="inline-block px-6 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90">
+                    Go to dashboard
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="text-sm text-gray-500 hover:text-[#4A3428] underline"
+                  >
+                    Use a different account? Sign out
+                  </button>
                 </div>
-                {payError && <p className="mb-4 text-sm text-red-600 text-center">{payError}</p>}
-                <button
-                  onClick={handlePay}
-                  disabled={payLoading}
-                  className="w-full px-8 py-4 bg-[#4A3428] text-white rounded-lg font-bold text-lg hover:bg-[#4A3428]/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {payLoading ? 'Loading...' : 'Get Early Access - $10 →'}
-                </button>
               </>
             ) : (
               <div className="text-center py-8">

@@ -221,7 +221,7 @@ export default function LandingPage() {
               </div>
               <span className="text-gray-500">·</span>
               <a href="/early-access" className="text-[#4A3428] hover:underline font-medium">
-                Want to start now? Early access $10 →
+                Want to start now? Join free beta →
               </a>
             </div>
           </div>
@@ -381,7 +381,7 @@ export default function LandingPage() {
                 Prefer the waitlist? Join here →
               </a>
               <a href="/early-access" className="text-[#4A3428] text-sm font-medium hover:underline">
-                Want to start now? Early access $10 →
+                Want to start now? Join free beta →
               </a>
             </div>
           </div>
@@ -567,7 +567,7 @@ export default function LandingPage() {
             </a>
           </p>
           <p className="text-gray-500 text-sm">
-            <a href="/early-access" className="text-[#4A3428] hover:underline">Early access</a> — $10, start in minutes
+            <a href="/early-access" className="text-[#4A3428] hover:underline">Early access</a> — Free until April, start in minutes
           </p>
         </div>
       </section>
