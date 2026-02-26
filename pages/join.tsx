@@ -591,11 +591,8 @@ fbq('track', 'PageView');`,
                   </div>
 
                   {/* Subtext */}
-                  <p className="text-base text-gray-600 mb-2">
+                  <p className="text-base text-gray-600 mb-6">
                     The simple review management software small business owners asked for.
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Built for plumbers, electricians, detailers, barbers, and service pros.
                   </p>
                 </div>
 
