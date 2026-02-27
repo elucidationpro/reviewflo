@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { CheckCircle, Copy, Check } from 'lucide-react';
+import { CheckCircle, Copy, Check, Send, Star } from 'lucide-react';
 import Head from 'next/head';
 import Script from 'next/script';
 import { trackEvent } from '@/lib/posthog-provider';
@@ -31,9 +31,13 @@ export default function JoinPage() {
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [rotatingText, setRotatingText] = useState('Plumbers');
   const [formStarted, setFormStarted] = useState(false);
   const hasTrackedPageView = useRef(false);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const displayHost =
     process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, '').replace(/\/$/, '') ||
@@ -51,19 +55,6 @@ export default function JoinPage() {
       });
       hasTrackedPageView.current = true;
     }
-  }, []);
-
-  // Rotating text animation
-  useEffect(() => {
-    const industries = ['Plumbers', 'Electricians', 'Detailers', 'Landscapers', 'HVAC Pros', 'Service Operators'];
-    let currentIndex = 0;
-
-    const interval = setInterval(() => {
-      currentIndex = (currentIndex + 1) % industries.length;
-      setRotatingText(industries[currentIndex]);
-    }, 2500);
-
-    return () => clearInterval(interval);
   }, []);
 
   // Track form start on first input interaction
@@ -371,13 +362,147 @@ fbq('track', 'PageView');`,
         </header>
 
         {/* Main Content */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-10 border border-[#C9A961]/15">
-            {/* Step Indicator */}
-            <div className="mb-6 sm:mb-8">
-              <p className="text-xs font-semibold tracking-[0.2em] text-[#4A3428] uppercase mb-3">
-                ReviewFlo Beta Signup
-              </p>
+        {showForm ? (
+          <>
+            {/* Hero Section */}
+            <section className="relative overflow-hidden bg-gradient-to-br from-[#E8DCC8]/30 via-white to-[#E8DCC8]/30">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+                <div className="text-center">
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+                    Stop Bad Reviews Before They Go Public
+                  </h1>
+                  <p className="text-xl sm:text-2xl text-gray-600 mb-10 max-w-2xl mx-auto">
+                    Get 10x More 5-Star Google Reviews — Automatically
+                  </p>
+                  <button
+                    type="button"
+                    onClick={scrollToForm}
+                    className="px-10 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Join Free Beta - No Credit Card
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* How It Works Section */}
+            <section className="py-16 sm:py-24 bg-white">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-12 sm:mb-16">
+                  How It Works (Dead Simple)
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-12">
+                  <div className="bg-white border-2 border-[#C9A961]/20 rounded-xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[#C9A961]/20 mb-4">
+                      <Send className="w-7 h-7 text-[#4A3428]" />
+                    </div>
+                    <h3 className="text-lg font-bold text-[#4A3428] mb-2">Step 1: Send Your Link</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      After you finish a job, text or email your unique ReviewFlo link to your customer. Takes 5 seconds.
+                    </p>
+                  </div>
+                  <div className="bg-white border-2 border-[#C9A961]/20 rounded-xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[#C9A961]/20 mb-4">
+                      <Star className="w-7 h-7 text-[#4A3428]" />
+                    </div>
+                    <h3 className="text-lg font-bold text-[#4A3428] mb-2">Step 2: Customer Rates Their Experience</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                      They click the link and rate 1-5 stars.
+                    </p>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• 1-4 stars → Private feedback form (you fix it, nothing goes public)</li>
+                      <li>• 5 stars → Easy templates to post a Google review</li>
+                    </ul>
+                  </div>
+                  <div className="bg-white border-2 border-[#C9A961]/20 rounded-xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[#C9A961]/20 mb-4">
+                      <CheckCircle className="w-7 h-7 text-[#4A3428]" />
+                    </div>
+                    <h3 className="text-lg font-bold text-[#4A3428] mb-2">Step 3: You Get Results</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Unhappy customers handled privately. Happy customers leave 5-star reviews. Zero manual work after initial setup.
+                    </p>
+                  </div>
+                </div>
+                <p className="text-center text-gray-600 text-sm sm:text-base max-w-2xl mx-auto mb-8">
+                  Example: Customer gives 3 stars → You get private feedback via email. Fix the issue. No public damage. Customer happy.
+                </p>
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={scrollToForm}
+                    className="px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 transition-all shadow-md"
+                  >
+                    Join Free Beta →
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* Trust Signals Section */}
+            <section className="py-12 sm:py-16 bg-[#F5F5DC]/50">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                  <div className="flex flex-col items-center gap-2 p-4 bg-[#F5F5DC] border border-[#C9A961]/30 rounded-xl">
+                    <CheckCircle className="w-8 h-8 text-[#C9A961]" />
+                    <p className="text-sm font-semibold text-[#4A3428] text-center">Free Until April 2026</p>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 p-4 bg-[#F5F5DC] border border-[#C9A961]/30 rounded-xl">
+                    <CheckCircle className="w-8 h-8 text-[#C9A961]" />
+                    <p className="text-sm font-semibold text-[#4A3428] text-center">No Credit Card Required</p>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 p-4 bg-[#F5F5DC] border border-[#C9A961]/30 rounded-xl">
+                    <CheckCircle className="w-8 h-8 text-[#C9A961]" />
+                    <p className="text-sm font-semibold text-[#4A3428] text-center">Cancel Anytime</p>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 p-4 bg-[#F5F5DC] border border-[#C9A961]/30 rounded-xl">
+                    <CheckCircle className="w-8 h-8 text-[#C9A961]" />
+                    <p className="text-sm font-semibold text-[#4A3428] text-center">Utah-Based</p>
+                  </div>
+                </div>
+                <p className="text-center text-gray-600 font-medium">Join 50+ Utah service businesses testing ReviewFlo</p>
+              </div>
+            </section>
+
+            {/* Beta Offer Details */}
+            <section className="py-12 sm:py-16 bg-white">
+              <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8">Beta Tester Benefits</h2>
+                <div className="bg-[#F5F5DC]/80 border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8">
+                  <p className="text-gray-700 leading-relaxed mb-4">
+                    Use ReviewFlo completely free while we test and fix bugs and get feedback from business owners like you.
+                  </p>
+                  <p className="text-gray-700 font-semibold mb-2">Official launch: April 2026</p>
+                  <p className="text-gray-700 leading-relaxed">
+                    Beta testers get 50% off the first 3 months when we launch.
+                    <br />
+                    <span className="text-sm text-gray-600">($9.50 or $24.50/month vs $19-49/month)</span>
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Final CTA */}
+            <section className="py-12 sm:py-16 bg-gray-50/80">
+              <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">Ready to Stop Bad Reviews?</h2>
+                <button
+                  type="button"
+                  onClick={scrollToForm}
+                  className="px-10 py-4 bg-[#4A3428] text-white rounded-lg font-semibold text-lg hover:bg-[#4A3428]/90 transition-all shadow-lg mb-3"
+                >
+                  Join Free Beta - No Credit Card
+                </button>
+                <p className="text-sm text-gray-500">Takes 2 minutes to set up. No credit card required.</p>
+              </div>
+            </section>
+
+            {/* Form Section - Compact at bottom */}
+            <div ref={formRef} className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+              <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-[#C9A961]/15">
+                {/* Compact Step Indicator */}
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Create Your Free Account</h3>
+                <div className="mb-6 flex items-center justify-between gap-2">
               <div className="flex items-center justify-between gap-4">
                 {[1, 2, 3].map((stepNumber) => {
                   const isActive = stepNumber === currentStep;
@@ -412,206 +537,10 @@ fbq('track', 'PageView');`,
               <p className="mt-4 text-xs text-gray-500">
                 Step {currentStep} of {totalSteps}
               </p>
-            </div>
-
-            {/* Success: Account created */}
-            {showSuccess && (
-              <div className="text-center py-8 sm:py-10">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#C9A961]/15 mb-4">
-                  <CheckCircle className="w-8 h-8 text-[#C9A961]" />
-                </div>
-                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                  Your account is ready!
-                </h1>
-                <p className="text-base sm:text-lg text-gray-600 mb-6 max-w-md mx-auto">
-                  You&apos;re signed in. Go to your dashboard to start collecting reviews.
-                </p>
-                <button
-                  onClick={handleGoToDashboard}
-                  className="w-full sm:w-auto px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all shadow-md hover:shadow-lg"
-                >
-                  Go to dashboard →
-                </button>
-                <p className="mt-4 text-xs text-gray-500">
-                  Having trouble? Email{' '}
-                  <a
-                    href="mailto:jeremy@usereviewflo.com"
-                    className="font-semibold text-[#4A3428] hover:text-[#C9A961] transition-colors"
-                  >
-                    jeremy@usereviewflo.com
-                  </a>
-                  .
-                </p>
-              </div>
-            )}
-
-            {/* Preview: Show link, Confirm or Edit */}
-            {showPreview && !showSuccess && (
-              <div className="text-center">
-                <div className="mb-6 sm:mb-8">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                    Confirm your review link
-                  </h1>
-                  <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto">
-                    This is the link you&apos;ll text or email to customers after each job so they can
-                    leave you a review in a few taps.
-                  </p>
-                </div>
-                <div className="bg-gray-50 border border-[#C9A961]/40 rounded-xl p-5 sm:p-6 mb-6 text-left">
-                  <p className="text-xs font-medium text-gray-500 mb-2">Your customer review link</p>
-                  <p className="text-base sm:text-xl font-mono font-semibold text-[#4A3428] break-all mb-4">
-                    {displayHost}/{slug}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors text-sm"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-4 h-4 text-green-600" />
-                        Copied
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        Copy link
-                      </>
-                    )}
-                  </button>
-                </div>
-                <p className="text-sm font-medium text-gray-700 mb-3">Happy with this link?</p>
-                <button
-                  type="button"
-                  onClick={handleConfirmAndCreate}
-                  disabled={isSubmitting}
-                  className="w-full px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-3"
-                >
-                  {isSubmitting ? 'Creating your account...' : 'Confirm & create account'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleEditLink}
-                  className="text-xs sm:text-sm text-gray-500 hover:text-[#4A3428] underline"
-                >
-                  Want to change it? Edit link
-                </button>
-                {errors.submit && (
-                  <p className="mt-4 text-sm text-red-600">{errors.submit}</p>
-                )}
-              </div>
-            )}
-
-            {/* Editing: Custom slug input */}
-            {showEditing && !showSuccess && (
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-1">Edit your review link</h2>
-                <p className="text-sm text-gray-600 mb-4">
-                  Use only letters, numbers, and hyphens. 3–30 characters.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={customSlug}
-                      onChange={(e) => {
-                        setCustomSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''));
-                        setSlugAvailability('idle');
-                        setErrors({ ...errors, slug: '' });
-                      }}
-                      placeholder="your-business-name"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent font-mono text-sm"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleCheckSlugAvailability}
-                    disabled={slugAvailability === 'checking' || !customSlug}
-                    className="px-5 py-3 bg-gray-100 rounded-lg font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50 text-sm"
-                  >
-                    {slugAvailability === 'checking' ? 'Checking...' : 'Check'}
-                  </button>
-                </div>
-                {slugAvailability === 'available' && (
-                  <p className="text-green-600 font-medium mb-2">✓ Available</p>
-                )}
-                {slugAvailability === 'taken' && (
-                  <p className="text-red-600 font-medium mb-2">Already taken, try another</p>
-                )}
-                {errors.slug && <p className="text-red-600 text-sm mb-4">{errors.slug}</p>}
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    onClick={handleSaveCustomSlug}
-                    className="px-6 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 text-sm"
-                  >
-                    Save & Continue
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setStep('preview'); setErrors({}); }}
-                    className="px-6 py-3 text-gray-600 hover:text-gray-900 text-sm"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Form */}
-            {showForm && (
-              <>
-                {/* Hero Section */}
-                <div className="text-center mb-8">
-                  <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-                    Create your free ReviewFlo account
-                  </h1>
-                  <p className="text-xl sm:text-2xl text-gray-700 mb-6">
-                    Stop bad reviews before they go public and get more 5-star Google reviews.
-                  </p>
-
-                  {/* Main CTA Box - FREE EMPHASIS */}
-                  <div className="bg-gradient-to-br from-[#F5F5DC] to-[#C9A961]/10 border-2 border-[#C9A961]/60 rounded-2xl p-6 sm:p-8 mb-6 shadow-md">
-                    <div className="mb-4">
-                      <p className="text-sm font-semibold text-[#4A3428] tracking-[0.2em] uppercase mb-2">
-                        Free beta access
-                      </p>
-                      <p className="text-xl sm:text-2xl font-bold text-gray-900">
-                        No credit card. No contracts.
-                      </p>
-                    </div>
-
-                    <div className="bg-white/80 rounded-lg p-6 mb-6">
-                      <p className="text-base sm:text-lg text-gray-800 mb-3 leading-relaxed">
-                        Use ReviewFlo <strong>completely free</strong> while we test and fix bugs and get
-                        feedback from business owners like you.
-                      </p>
-                      <p className="text-sm sm:text-base text-gray-700 mb-3">
-                        <strong>Official launch:</strong> April 2026.
-                      </p>
-                      <p className="text-sm sm:text-base text-gray-700">
-                        Beta testers get <strong>50% off the first 3 months</strong> when we launch.
-                        <br />
-                        <span className="text-xs sm:text-sm text-gray-600">
-                          ($9.50 or $24.50/month vs $19-49/month)
-                        </span>
-                      </p>
-                    </div>
-
-                    <div className="inline-flex items-center gap-2 bg-[#4A3428] text-white px-6 py-3 rounded-lg font-semibold text-sm sm:text-base shadow-md">
-                      <span>Join the free beta</span>
-                      <span className="opacity-80">No credit card required</span>
-                    </div>
-                  </div>
-
-                  {/* Subtext */}
-                  <p className="text-base text-gray-600 mb-6">
-                    The simple review management software small business owners asked for.
-                  </p>
                 </div>
 
-                {/* Qualification Form */}
-                <form onSubmit={handleFormSubmit} className="space-y-6">
+                {/* Qualification Form - compact */}
+                <form onSubmit={handleFormSubmit} className="space-y-5">
                 {/* About you & your business */}
                 <div className="pb-4 border-b border-gray-200">
                   <p className="text-sm font-semibold text-[#4A3428] uppercase tracking-wide mb-4">
@@ -967,10 +896,145 @@ fbq('track', 'PageView');`,
                   </a>
                 </p>
               </div>
-              </>
-            )}
+            </div>
           </div>
-        </div>
+        </>
+        ) : (
+          /* Preview/Editing/Success - card layout */
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-10 border border-[#C9A961]/15">
+              {/* Step Indicator */}
+              <div className="mb-6 sm:mb-8">
+                <p className="text-xs font-semibold tracking-[0.2em] text-[#4A3428] uppercase mb-3">ReviewFlo Beta Signup</p>
+                <div className="flex items-center justify-between gap-4">
+                  {[1, 2, 3].map((stepNumber) => {
+                    const isActive = stepNumber === currentStep;
+                    const isCompleted = stepNumber < currentStep;
+                    const labels = ['Create account', 'Confirm review link', 'You\'re in'];
+                    return (
+                      <div key={stepNumber} className="flex-1 flex items-center gap-3">
+                        <div
+                          className={`flex items-center justify-center w-8 h-8 rounded-full border text-xs font-semibold ${
+                            isActive ? 'bg-[#4A3428] text-white border-[#4A3428]' : isCompleted ? 'bg-[#C9A961]/20 text-[#4A3428] border-[#C9A961]' : 'bg-white text-gray-400 border-gray-300'
+                          }`}
+                        >
+                          {stepNumber}
+                        </div>
+                        <div className="hidden sm:block">
+                          <p className={`text-xs font-medium ${isActive ? 'text-gray-900' : isCompleted ? 'text-gray-600' : 'text-gray-400'}`}>
+                            {labels[stepNumber - 1]}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="mt-4 text-xs text-gray-500">Step {currentStep} of {totalSteps}</p>
+              </div>
+
+              {showSuccess && (
+                <div className="text-center py-8 sm:py-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#C9A961]/15 mb-4">
+                    <CheckCircle className="w-8 h-8 text-[#C9A961]" />
+                  </div>
+                  <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Your account is ready!</h1>
+                  <p className="text-base sm:text-lg text-gray-600 mb-6 max-w-md mx-auto">
+                    You&apos;re signed in. Go to your dashboard to start collecting reviews.
+                  </p>
+                  <button
+                    onClick={handleGoToDashboard}
+                    className="w-full sm:w-auto px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all shadow-md hover:shadow-lg"
+                  >
+                    Go to dashboard →
+                  </button>
+                  <p className="mt-4 text-xs text-gray-500">
+                    Having trouble? Email{' '}
+                    <a href="mailto:jeremy@usereviewflo.com" className="font-semibold text-[#4A3428] hover:text-[#C9A961] transition-colors">
+                      jeremy@usereviewflo.com
+                    </a>
+                    .
+                  </p>
+                </div>
+              )}
+
+              {showPreview && !showSuccess && (
+                <div className="text-center">
+                  <div className="mb-6 sm:mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Confirm your review link</h1>
+                    <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto">
+                      This is the link you&apos;ll text or email to customers after each job so they can leave you a review in a few taps.
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 border border-[#C9A961]/40 rounded-xl p-5 sm:p-6 mb-6 text-left">
+                    <p className="text-xs font-medium text-gray-500 mb-2">Your customer review link</p>
+                    <p className="text-base sm:text-xl font-mono font-semibold text-[#4A3428] break-all mb-4">{displayHost}/{slug}</p>
+                    <button
+                      type="button"
+                      onClick={handleCopyLink}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors text-sm"
+                    >
+                      {copied ? <><Check className="w-4 h-4 text-green-600" />Copied</> : <><Copy className="w-4 h-4" />Copy link</>}
+                    </button>
+                  </div>
+                  <p className="text-sm font-medium text-gray-700 mb-3">Happy with this link?</p>
+                  <button
+                    type="button"
+                    onClick={handleConfirmAndCreate}
+                    disabled={isSubmitting}
+                    className="w-full px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-3"
+                  >
+                    {isSubmitting ? 'Creating your account...' : 'Confirm & create account'}
+                  </button>
+                  <button type="button" onClick={handleEditLink} className="text-xs sm:text-sm text-gray-500 hover:text-[#4A3428] underline">
+                    Want to change it? Edit link
+                  </button>
+                  {errors.submit && <p className="mt-4 text-sm text-red-600">{errors.submit}</p>}
+                </div>
+              )}
+
+              {showEditing && !showSuccess && (
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 mb-1">Edit your review link</h2>
+                  <p className="text-sm text-gray-600 mb-4">Use only letters, numbers, and hyphens. 3–30 characters.</p>
+                  <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={customSlug}
+                        onChange={(e) => {
+                          setCustomSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''));
+                          setSlugAvailability('idle');
+                          setErrors({ ...errors, slug: '' });
+                        }}
+                        placeholder="your-business-name"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent font-mono text-sm"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCheckSlugAvailability}
+                      disabled={slugAvailability === 'checking' || !customSlug}
+                      className="px-5 py-3 bg-gray-100 rounded-lg font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50 text-sm"
+                    >
+                      {slugAvailability === 'checking' ? 'Checking...' : 'Check'}
+                    </button>
+                  </div>
+                  {slugAvailability === 'available' && <p className="text-green-600 font-medium mb-2">✓ Available</p>}
+                  {slugAvailability === 'taken' && <p className="text-red-600 font-medium mb-2">Already taken, try another</p>}
+                  {errors.slug && <p className="text-red-600 text-sm mb-4">{errors.slug}</p>}
+                  <div className="flex flex-wrap gap-3">
+                    <button type="button" onClick={handleSaveCustomSlug} className="px-6 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 text-sm">
+                      Save & Continue
+                    </button>
+                    <button type="button" onClick={() => { setStep('preview'); setErrors({}); }} className="px-6 py-3 text-gray-600 hover:text-gray-900 text-sm">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

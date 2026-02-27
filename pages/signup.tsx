@@ -5,14 +5,9 @@ import Link from 'next/link'
 
 export default function SignupPage() {
   const router = useRouter()
-  const [step, setStep] = useState(1) // 1 = invite code, 2 = account details
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Step 1: Invite Code
-  const [inviteCode, setInviteCode] = useState('')
-
-  // Step 2: Account Details
   const [formData, setFormData] = useState({
     businessName: '',
     ownerName: '',
@@ -23,35 +18,6 @@ export default function SignupPage() {
     businessType: ''
   })
   const [agreeToTerms, setAgreeToTerms] = useState(false)
-
-  const handleValidateInviteCode = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setIsLoading(true)
-
-    try {
-      const response = await fetch('/api/validate-invite-code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: inviteCode.trim() }),
-      })
-
-      const data = await response.json()
-
-      if (data.valid) {
-        setStep(2) // Move to account creation form
-      } else {
-        setError(data.error || 'Invalid or already used invite code')
-      }
-    } catch (err) {
-      console.error('Error validating invite code:', err)
-      setError('An error occurred. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -84,7 +50,6 @@ export default function SignupPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          inviteCode: inviteCode.trim(),
           businessName: formData.businessName.trim(),
           ownerName: formData.ownerName.trim(),
           email: formData.email.trim(),
@@ -128,22 +93,9 @@ export default function SignupPage() {
                 ReviewFlo
               </h1>
               <p className="text-gray-600">
-                {step === 1 ? 'Join the Beta' : 'Create Your Account'}
+                Create Your Account
               </p>
             </div>
-
-          {/* Progress Indicator */}
-          <div className="flex items-center justify-center mb-8">
-            <div className="flex items-center">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
-                1
-              </div>
-              <div className={`w-16 h-1 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
-                2
-              </div>
-            </div>
-          </div>
 
           {/* Error Message */}
           {error && (
@@ -165,47 +117,8 @@ export default function SignupPage() {
             </div>
           )}
 
-          {/* Step 1: Invite Code */}
-          {step === 1 && (
-            <form onSubmit={handleValidateInviteCode} className="space-y-6">
-              <div>
-                <p className="text-gray-600 mb-6 text-center">
-                  ReviewFlo is currently in beta. Enter your invite code to get started.
-                </p>
-                <label
-                  htmlFor="inviteCode"
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                >
-                  Invite Code
-                </label>
-                <input
-                  type="text"
-                  id="inviteCode"
-                  value={inviteCode}
-                  onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                  placeholder="BETA-ABC123"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 uppercase"
-                  required
-                  autoComplete="off"
-                />
-                <p className="text-sm text-gray-500 mt-2">
-                  Format: BETA-XXXXXX
-                </p>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transform hover:scale-[1.02]"
-              >
-                {isLoading ? 'Validating...' : 'Continue'}
-              </button>
-            </form>
-          )}
-
-          {/* Step 2: Account Creation */}
-          {step === 2 && (
-            <form onSubmit={handleCreateAccount} className="space-y-6">
+          {/* Account Creation Form */}
+          <form onSubmit={handleCreateAccount} className="space-y-6">
               {/* Business Name */}
               <div>
                 <label
@@ -374,28 +287,15 @@ export default function SignupPage() {
                 </label>
               </div>
 
-              {/* Buttons */}
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep(1)
-                    setError('')
-                  }}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors"
-                >
-                  Back
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg"
-                >
-                  {isLoading ? 'Creating...' : 'Create Account'}
-                </button>
-              </div>
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg"
+              >
+                {isLoading ? 'Creating...' : 'Create Account'}
+              </button>
             </form>
-          )}
 
           {/* Back to Login */}
           <div className="mt-6 text-center">

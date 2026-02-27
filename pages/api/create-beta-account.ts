@@ -17,7 +17,6 @@ const supabaseAdmin = createClient(
 )
 
 interface CreateBetaAccountRequest {
-  inviteCode: string
   businessName: string
   ownerName: string
   email: string
@@ -36,7 +35,6 @@ export default async function handler(
 
   try {
     const {
-      inviteCode,
       businessName,
       ownerName,
       email,
@@ -44,28 +42,13 @@ export default async function handler(
     } = req.body as CreateBetaAccountRequest
 
     // Validate required fields
-    if (!inviteCode || !businessName || !ownerName || !email || !password) {
+    if (!businessName || !ownerName || !email || !password) {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
     // Validate password length
     if (password.length < 8) {
       return res.status(400).json({ error: 'Password must be at least 8 characters long' })
-    }
-
-    // Validate invite code again
-    const { data: inviteCodeData, error: inviteError } = await supabaseAdmin
-      .from('invite_codes')
-      .select('id, code, used')
-      .eq('code', inviteCode.trim().toUpperCase())
-      .single()
-
-    if (inviteError || !inviteCodeData) {
-      return res.status(400).json({ error: 'Invalid invite code' })
-    }
-
-    if (inviteCodeData.used) {
-      return res.status(400).json({ error: 'This invite code has already been used' })
     }
 
     // Create Supabase auth user with password
@@ -163,21 +146,6 @@ export default async function handler(
         details: businessError.message,
         code: businessError.code
       })
-    }
-
-    // Mark invite code as used
-    const { error: updateError } = await supabaseAdmin
-      .from('invite_codes')
-      .update({
-        used: true,
-        used_by: email,
-        used_at: new Date().toISOString()
-      })
-      .eq('id', inviteCodeData.id)
-
-    if (updateError) {
-      console.error('Error updating invite code:', updateError)
-      // Don't fail the request, just log the error
     }
 
     // Send welcome email

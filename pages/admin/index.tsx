@@ -539,12 +539,6 @@ export default function AdminDashboard() {
               </div>
               <div className="flex gap-3 mt-4 md:mt-0">
                 <Link
-                  href="/admin/invite-codes"
-                  className="bg-slate-700 hover:bg-slate-800 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-                >
-                  Invite Codes
-                </Link>
-                <Link
                   href="/admin/create-business"
                   className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
