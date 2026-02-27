@@ -6,7 +6,7 @@ import { CheckCircle, Copy, Check } from 'lucide-react';
 import Head from 'next/head';
 import Script from 'next/script';
 import { trackEvent } from '@/lib/posthog-provider';
-import { generateSlugFromBusinessName, isValidSlug, normalizeSlugForValidation } from '@/lib/slug-utils';
+import { generateSlugFromBusinessName, isValidSlug, isReservedSlug, normalizeSlugForValidation } from '@/lib/slug-utils';
 import { supabase } from '@/lib/supabase';
 
 type Step = 'form' | 'preview' | 'editing' | 'success';
@@ -155,8 +155,15 @@ export default function JoinPage() {
 
   const handleCheckSlugAvailability = async () => {
     const normalized = normalizeSlugForValidation(customSlug);
+    setErrors((e) => ({ ...e, slug: '' }));
+    if (isReservedSlug(normalized)) {
+      setSlugAvailability('taken');
+      setErrors((e) => ({ ...e, slug: 'That link is reserved. Please choose another.' }));
+      return;
+    }
     if (!isValidSlug(normalized)) {
       setSlugAvailability('idle');
+      setErrors((e) => ({ ...e, slug: 'Use only letters, numbers, and hyphens. 3–30 characters.' }));
       return;
     }
     setSlugAvailability('checking');
@@ -168,6 +175,9 @@ export default function JoinPage() {
       });
       const data = await res.json();
       setSlugAvailability(data.available ? 'available' : 'taken');
+      if (!data.available && data.error) {
+        setErrors((e) => ({ ...e, slug: data.error }));
+      }
     } catch {
       setSlugAvailability('idle');
     }
@@ -175,6 +185,11 @@ export default function JoinPage() {
 
   const handleSaveCustomSlug = async () => {
     const normalized = normalizeSlugForValidation(customSlug);
+    setErrors({});
+    if (isReservedSlug(normalized)) {
+      setErrors({ slug: 'That link is reserved. Please choose another.' });
+      return;
+    }
     if (!isValidSlug(normalized)) {
       setErrors({ slug: 'Use only letters, numbers, and hyphens. 3–30 characters.' });
       return;
@@ -195,7 +210,7 @@ export default function JoinPage() {
       const data = await res.json();
       setSlugAvailability(data.available ? 'available' : 'taken');
       if (!data.available) {
-        setErrors({ slug: 'That link is already taken. Try another.' });
+        setErrors({ slug: data.error || 'That link is already taken. Try another.' });
         return;
       }
     }
@@ -406,11 +421,10 @@ fbq('track', 'PageView');`,
                   <CheckCircle className="w-8 h-8 text-[#C9A961]" />
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                  You&apos;re in
+                  Your account is ready!
                 </h1>
                 <p className="text-base sm:text-lg text-gray-600 mb-6 max-w-md mx-auto">
-                  Your account is ready. Check your email for login details and your review link so you
-                  can start collecting more 5-star reviews.
+                  You&apos;re signed in. Go to your dashboard to start collecting reviews.
                 </p>
                 <button
                   onClick={handleGoToDashboard}

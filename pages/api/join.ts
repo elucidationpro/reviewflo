@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { isValidSlug, normalizeSlugForValidation } from '@/lib/slug-utils';
+import { isValidSlug, isReservedSlug, normalizeSlugForValidation } from '@/lib/slug-utils';
 import { sendAdminNotification } from '@/lib/email-service';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -65,6 +65,11 @@ export default async function handler(
     }
 
     const normalizedSlug = normalizeSlugForValidation(requestedSlug);
+    if (isReservedSlug(normalizedSlug)) {
+      return res.status(400).json({
+        error: 'That link is reserved. Please choose another.',
+      });
+    }
     if (!isValidSlug(normalizedSlug)) {
       return res.status(400).json({
         error: 'Invalid link. Use only letters, numbers, and hyphens (3–30 characters).',
@@ -124,32 +129,38 @@ export default async function handler(
       });
     }
 
-    // Create business with chosen slug
+    // Create business with chosen slug (must match dashboard query: WHERE user_id = auth.uid())
+    const businessInsert = {
+      user_id: authData.user.id,
+      business_name: businessNameTrim,
+      owner_email: emailTrim,
+      slug: normalizedSlug,
+      primary_color: '#3B82F6',
+      logo_url: null,
+      google_review_url: null,
+      facebook_review_url: null,
+      yelp_review_url: null,
+      nextdoor_review_url: null,
+      terms_accepted_at: new Date().toISOString(),
+    };
+    console.log('[join] Before business insert – user_id:', authData.user.id, 'slug:', normalizedSlug, 'business_name:', businessNameTrim);
+    console.log('[join] Business insert payload:', JSON.stringify(businessInsert, null, 2));
+
     const { data: business, error: businessError } = await supabaseAdmin
       .from('businesses')
-      .insert({
-        user_id: authData.user.id,
-        business_name: businessNameTrim,
-        owner_email: emailTrim,
-        slug: normalizedSlug,
-        primary_color: '#3B82F6',
-        logo_url: null,
-        google_review_url: null,
-        facebook_review_url: null,
-        yelp_review_url: null,
-        nextdoor_review_url: null,
-        terms_accepted_at: new Date().toISOString(),
-      })
+      .insert(businessInsert)
       .select()
       .single();
 
     if (businessError || !business) {
-      console.error('Error creating business:', businessError);
+      console.error('[join] Business insert failed:', businessError);
+      console.error('[join] Business error details:', JSON.stringify(businessError, null, 2));
       await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
       return res.status(500).json({
-        error: businessError?.message || 'Failed to create business',
+        error: businessError?.message || 'Failed to create business. Please try again or contact support.',
       });
     }
+    console.log('[join] Business created successfully – id:', business.id, 'user_id:', business.user_id);
 
     // Create 3 default templates
     const templatesToCreate = [
@@ -179,7 +190,20 @@ export default async function handler(
       },
     ];
 
-    await supabaseAdmin.from('review_templates').insert(templatesToCreate);
+    const { error: templatesError } = await supabaseAdmin
+      .from('review_templates')
+      .insert(templatesToCreate);
+
+    if (templatesError) {
+      console.error('[join] Template insert failed:', templatesError);
+      // Rollback: delete business and auth user so signup can be retried
+      await supabaseAdmin.from('businesses').delete().eq('id', business.id);
+      await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+      return res.status(500).json({
+        error: 'Failed to create default templates. Please try again or contact support.',
+      });
+    }
+    console.log('[join] 3 default templates created for business:', business.id);
 
     // Upsert lead
     const leadPayload = {
@@ -209,73 +233,51 @@ export default async function handler(
       });
     }
 
-    // Send welcome email
+    // Send welcome email (transactional tone, plain text + minimal HTML for deliverability)
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com';
     const loginUrl = `${baseUrl}/login`;
     const reviewPageUrl = `${baseUrl}/${normalizedSlug}`;
+    const loginDisplay = 'usereviewflo.com/login';
 
     try {
-      const emailHtml = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Welcome to ReviewFlo</title>
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #4A3428; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-              .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none; }
-              .button { display: inline-block; background: #C9A961; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 10px 0; }
-              .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
-              .box { background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e5e7eb; }
-              ol { padding-left: 20px; }
-              li { margin-bottom: 8px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1 style="margin: 0; font-size: 28px;">Welcome to ReviewFlo Beta! 🚀</h1>
-              </div>
-              <div class="content">
-                <p>Hi ${nameTrim}!</p>
-                <p>Your ReviewFlo account is ready. Log in and start sending your review link to customers today.</p>
-                <div class="box">
-                  <h2 style="color: #4A3428; font-size: 18px; margin: 0 0 12px 0;">Your login</h2>
-                  <p style="margin: 5px 0;"><strong>Website:</strong> <a href="${loginUrl}" style="color: #4A3428;">usereviewflo.com/login</a></p>
-                  <p style="margin: 5px 0;"><strong>Email:</strong> ${emailTrim}</p>
-                  <p style="margin: 5px 0;"><strong>Password:</strong> (the one you created)</p>
-                </div>
-                <div class="box">
-                  <h2 style="color: #4A3428; font-size: 18px; margin: 0 0 12px 0;">Your review link</h2>
-                  <p style="margin: 5px 0;"><a href="${reviewPageUrl}" style="color: #4A3428;">${reviewPageUrl}</a></p>
-                  <p style="margin: 12px 0 0 0;">Share this link with customers after each job.</p>
-                </div>
-                <h2 style="color: #4A3428; font-size: 18px; margin: 20px 0 10px 0;">What happens next</h2>
-                <ol>
-                  <li>Your customer opens the link</li>
-                  <li>They rate their experience (1–5 stars)</li>
-                  <li>If 1–4 stars: You get private feedback via email (nothing goes public)</li>
-                  <li>If 5 stars: They see easy templates to post a Google review</li>
-                </ol>
-                <div style="text-align: center; margin-top: 28px;">
-                  <a href="${loginUrl}" class="button">Log In to Your Dashboard</a>
-                </div>
-              </div>
-              <div class="footer">
-                <p style="margin: 0;">© ${new Date().getFullYear()} ReviewFlo. All rights reserved.</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `;
+      const emailText = `Hi ${businessNameTrim},
+
+Your ReviewFlo account is ready.
+
+Login: ${loginDisplay}
+Email: ${emailTrim}
+Password: (the one you created)
+
+Your review link: ${reviewPageUrl}
+
+Send this link to customers after each job.
+
+Questions? Reply to this email.
+
+- Jeremy
+ReviewFlo`;
+
+      const emailHtml = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px;">
+<p>Hi ${businessNameTrim},</p>
+<p>Your ReviewFlo account is ready.</p>
+<p><strong>Login:</strong> <a href="${loginUrl}" style="color: #2563eb;">${loginDisplay}</a><br>
+<strong>Email:</strong> ${emailTrim}<br>
+<strong>Password:</strong> (the one you created)</p>
+<p><strong>Your review link:</strong> <a href="${reviewPageUrl}" style="color: #2563eb;">${reviewPageUrl}</a></p>
+<p>Send this link to customers after each job.</p>
+<p>Questions? Reply to this email.</p>
+<p>- Jeremy<br>ReviewFlo</p>
+</body>
+</html>`;
 
       await resend.emails.send({
-        from: 'ReviewFlo <jeremy@usereviewflo.com>',
+        from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
         to: emailTrim,
-        subject: `Welcome to ReviewFlo Beta! 🚀 - ${businessNameTrim}`,
+        subject: 'Your ReviewFlo Account - Login Details',
+        text: emailText,
         html: emailHtml,
       });
     } catch (emailError) {

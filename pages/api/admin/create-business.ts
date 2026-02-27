@@ -116,6 +116,8 @@ export default async function handler(
       userId = authData.user.id
     }
 
+    const { isReservedSlug } = await import('@/lib/slug-utils')
+
     // Generate a unique slug from business name
     const baseSlug = businessName
       .toLowerCase()
@@ -127,8 +129,13 @@ export default async function handler(
     let slugExists = true
     let counter = 1
 
-    // Check if slug exists and append number if needed
+    // Check if slug exists or is reserved (e.g. /admin, /join); append number if needed
     while (slugExists) {
+      if (isReservedSlug(slug)) {
+        slug = `${baseSlug}-${counter}`
+        counter++
+        continue
+      }
       const { data: existingBusiness } = await supabaseAdmin
         .from('businesses')
         .select('id')

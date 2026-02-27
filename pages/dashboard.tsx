@@ -186,20 +186,21 @@ export default function DashboardPage() {
     setResolvingId(null)
   }
 
-  const reviewLink = typeof window !== 'undefined'
-    ? `${window.location.origin}/${business?.slug || ''}`
-    : `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${business?.slug || ''}`
+  const baseHost = 'usereviewflo.com'
+  const fullUrlForCopy = `https://${baseHost}/${business?.slug || ''}`
+
+  const displayLink = `${baseHost}/${business?.slug || ''}`
 
   const handleCopyReviewLink = async () => {
-    if (!reviewLink || reviewLink.endsWith('/')) return
+    if (!fullUrlForCopy || fullUrlForCopy.endsWith('/')) return
     try {
-      await navigator.clipboard.writeText(reviewLink)
+      await navigator.clipboard.writeText(fullUrlForCopy)
       setLinkCopied(true)
       setTimeout(() => setLinkCopied(false), 2500)
     } catch {
       // Fallback for older browsers
       const input = document.createElement('input')
-      input.value = reviewLink
+      input.value = fullUrlForCopy
       document.body.appendChild(input)
       input.select()
       document.execCommand('copy')
@@ -342,12 +343,12 @@ export default function DashboardPage() {
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 flex items-center bg-slate-50 rounded-lg px-4 py-3 border border-slate-200">
               <a
-                href={reviewLink}
+                href={fullUrlForCopy}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm md:text-base font-mono text-slate-800 truncate hover:underline flex-1 min-w-0"
               >
-                {reviewLink}
+                {displayLink}
               </a>
             </div>
             <button

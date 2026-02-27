@@ -35,11 +35,14 @@ export default function EarlyAccessJoinPage() {
   const [surveyError, setSurveyError] = useState('');
   const [surveyLoading, setSurveyLoading] = useState(false);
 
+  const [userEmail, setUserEmail] = useState<string>('');
+
   useEffect(() => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.access_token) {
         setSessionToken(session.access_token);
+        setUserEmail(session.user?.email ?? '');
         const res = await fetch('/api/early-access-status', {
           headers: { Authorization: `Bearer ${session.access_token}` },
         });
@@ -88,6 +91,7 @@ export default function EarlyAccessJoinPage() {
       if (error) throw error;
       if (data.session) {
         setSessionToken(data.session.access_token);
+        setUserEmail(email.trim());
         setStep(2);
       } else {
         router.push(`/early-access/confirm-email?email=${encodeURIComponent(email.trim())}`);
@@ -155,6 +159,7 @@ export default function EarlyAccessJoinPage() {
       if (error) throw error;
       if (data.session?.access_token) {
         setSessionToken(data.session.access_token);
+        setUserEmail(data.session.user?.email ?? signInEmail.trim());
         const res = await fetch('/api/early-access-status', {
           headers: { Authorization: `Bearer ${data.session.access_token}` },
         });
@@ -425,13 +430,34 @@ fbq('track', 'PageView');`,
               <>
                 <div className="text-center py-8">
                   <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold text-gray-900 mb-3">You're in!</h2>
-                  <p className="text-lg text-gray-600">Check your email for next steps. We&apos;ll get you set up within 24 hours.</p>
-                </div>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3">You&apos;re in! 🎉</h2>
+                  <p className="text-lg text-gray-600 mb-6">Your account is ready to use.</p>
+                  <div className="text-left max-w-md mx-auto space-y-4 mb-8">
+                    <div>
+                      <p className="font-semibold text-gray-900 mb-1">CHECK YOUR EMAIL:</p>
+                      <p className="text-gray-600">
+                        We sent your login details to <strong>{userEmail || '[your email]'}</strong>
+                        <br />
+                        <span className="text-sm">(Check spam folder if you don&apos;t see it)</span>
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 mb-1">WHAT&apos;S NEXT:</p>
+                      <ol className="list-decimal list-inside text-gray-600 space-y-1">
+                        <li>Log in to your dashboard</li>
+                        <li>Copy your review link</li>
+                        <li>Send it to your next customer</li>
+                      </ol>
+                    </div>
+                  </div>
                   <Link href="/dashboard" className="inline-block px-6 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90">
-                    Go to dashboard
+                    Go to Dashboard
                   </Link>
+                  <p className="mt-6 text-sm text-gray-500">
+                    Questions? <a href="mailto:jeremy@usereviewflo.com" className="text-[#4A3428] font-semibold hover:underline">Email jeremy@usereviewflo.com</a>
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-4">
                   <button
                     type="button"
                     onClick={handleSignOut}

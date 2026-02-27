@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
-import { isValidSlug, normalizeSlugForValidation } from '@/lib/slug-utils';
+import { isValidSlug, isReservedSlug, normalizeSlugForValidation } from '@/lib/slug-utils';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,6 +22,12 @@ export default async function handler(
     }
 
     const normalized = normalizeSlugForValidation(slug);
+    if (isReservedSlug(normalized)) {
+      return res.status(400).json({
+        available: false,
+        error: 'That link is reserved. Please choose another.',
+      });
+    }
     if (!isValidSlug(normalized)) {
       return res.status(400).json({
         available: false,

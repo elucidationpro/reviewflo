@@ -419,7 +419,7 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
     const subject = isBeta
       ? `New Beta Signup: ${data.businessName || 'N/A'}`
       : isQualify
-      ? `New ReviewFlo Beta Signup: ${data.businessName || data.email}`
+      ? `New Beta Signup: ${data.businessName || 'N/A'}`
       : isEarlyAccess
       ? `New Early Access Payment: ${data.email}`
       : isEarlyAccessBeta
@@ -454,7 +454,7 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
         <body>
           <div class="container">
             <div class="header">
-              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : isQualify ? '🎯 New Qualification' : isEarlyAccess ? '💰 New Early Access Payment' : isEarlyAccessBeta ? '🆓 New Free Beta Signup' : '📋 New Waitlist Signup'}</h1>
+              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : isQualify ? 'New ReviewFlo beta signup' : isEarlyAccess ? '💰 New Early Access Payment' : isEarlyAccessBeta ? '🆓 New Free Beta Signup' : '📋 New Waitlist Signup'}</h1>
             </div>
             <div class="content">
               ${isEarlyAccessBeta ? `
@@ -506,67 +506,67 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
                 </table>
                 <p>Welcome email ${data.customerEmailSent ? 'was sent' : 'may have failed'} to the customer.</p>
               ` : isQualify ? `
-                <p style="margin-bottom: 20px; font-size: 16px; color: #1f2937;">
-                  <strong>New beta tester signed up!</strong>
-                </p>
-
                 <h3 style="color: #374151; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">
-                  Business Details
+                  BUSINESS
                 </h3>
                 <table class="info-table">
                   <tr>
-                    <td>Business Name:</td>
+                    <td>Name:</td>
                     <td><strong>${data.businessName || 'N/A'}</strong></td>
                   </tr>
                   <tr>
-                    <td>Business Type:</td>
+                    <td>Type:</td>
                     <td>${data.businessType || 'N/A'}</td>
                   </tr>
                   <tr>
                     <td>Email:</td>
                     <td><a href="mailto:${data.email}" style="color: #2563eb;">${data.email}</a></td>
                   </tr>
-                  ${data.slug ? `
-                    <tr>
-                      <td>Review Link:</td>
-                      <td><a href="https://usereviewflo.com/${data.slug}" style="color: #2563eb;">usereviewflo.com/${data.slug}</a></td>
-                    </tr>
-                  ` : ''}
                   <tr>
-                    <td>Customers/Month:</td>
+                    <td>Slug:</td>
+                    <td>${data.slug || 'N/A'}</td>
+                  </tr>
+                </table>
+
+                <h3 style="color: #374151; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">
+                  REVIEW LINK
+                </h3>
+                <p style="margin: 0 0 20px 0;"><a href="https://usereviewflo.com/${data.slug || ''}" style="color: #2563eb;">usereviewflo.com/${data.slug || 'N/A'}</a></p>
+
+                <h3 style="color: #374151; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">
+                  SURVEY DATA
+                </h3>
+                <table class="info-table">
+                  <tr>
+                    <td>Customers/month:</td>
                     <td>${data.customersPerMonth || 'N/A'}</td>
                   </tr>
                   <tr>
-                    <td>Current Review Asking:</td>
+                    <td>Current review frequency:</td>
                     <td>${data.reviewAskingFrequency || 'N/A'}</td>
                   </tr>
                 </table>
 
                 <h3 style="color: #374151; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">
-                  Beta Offer
+                  ACCOUNT STATUS
                 </h3>
-                <table class="info-table">
-                  <tr>
-                    <td>Free Access:</td>
-                    <td>Until April 2026 launch</td>
-                  </tr>
-                  <tr>
-                    <td>Then:</td>
-                    <td>50% off first 3 months ($9.50 or $24.50/month)</td>
-                  </tr>
-                </table>
+                <p style="margin: 0 0 4px 0; color: #10b981;">✅ Auth user created</p>
+                <p style="margin: 0 0 4px 0; color: #10b981;">✅ Business record created</p>
+                <p style="margin: 0 0 4px 0; color: #10b981;">✅ Templates created</p>
+                <p style="margin: 0 0 20px 0; color: #10b981;">✅ Welcome email sent</p>
 
-                <div class="action-needed">
-                  <strong>✓ Next Steps:</strong><br>
-                  <ol style="margin: 10px 0; padding-left: 20px; color: #92400e;">
-                    <li style="margin-bottom: 8px;">They received welcome email with login credentials</li>
-                    <li style="margin-bottom: 8px;">Check Supabase to verify account created</li>
-                    <li style="margin-bottom: 8px;">Monitor if they send first review request (activation)</li>
-                  </ol>
-                  <p style="margin-top: 12px; font-size: 13px; color: #92400e;">
-                    <strong>Account created:</strong> ${new Date().toLocaleString('en-US', { timeZone: 'America/Denver', dateStyle: 'medium', timeStyle: 'short' })}
-                  </p>
-                </div>
+                <h3 style="color: #374151; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">
+                  NEXT STEPS
+                </h3>
+                <ol style="margin: 0 0 20px 0; padding-left: 20px;">
+                  <li style="margin-bottom: 6px;">Verify they received welcome email</li>
+                  <li style="margin-bottom: 6px;">Monitor if they activate (send first review request)</li>
+                  <li style="margin-bottom: 6px;">Check for bugs/feedback</li>
+                </ol>
+
+                <p style="margin: 0; font-size: 13px; color: #6b7280;">
+                  <strong>Signed up:</strong> ${new Date().toLocaleString('en-US', { timeZone: 'America/Denver', dateStyle: 'medium', timeStyle: 'short' })}
+                </p>
               ` : isBeta ? `
                 <table class="info-table">
                   <tr>

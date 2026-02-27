@@ -31,12 +31,25 @@ export function generateSlugFromBusinessName(businessName: string): string {
   return slug.substring(0, 30);
 }
 
+/** Slugs that conflict with app routes (e.g. /admin, /join) - cannot be used as business links */
+export const RESERVED_SLUGS = new Set([
+  'admin', 'join', 'login', 'signup', 'dashboard', 'settings',
+  'early-access', 'qualify', 'terms', 'privacy-policy', 'survey',
+  'onboarding', 'update-password', 'reset-password', 'api',
+]);
+
+export function isReservedSlug(slug: string): boolean {
+  if (!slug || typeof slug !== 'string') return false;
+  return RESERVED_SLUGS.has(slug.toLowerCase().trim());
+}
+
 /** Validate custom slug: letters, numbers, hyphens only, 3-30 chars, no leading/trailing hyphen */
 export const SLUG_REGEX = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
 
 export function isValidSlug(slug: string): boolean {
   if (!slug || typeof slug !== 'string') return false;
   const normalized = slug.toLowerCase().trim().replace(/-+/g, '-');
+  if (isReservedSlug(normalized)) return false;
   return normalized.length >= 3 && normalized.length <= 30 && SLUG_REGEX.test(normalized);
 }
 
