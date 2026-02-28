@@ -12,6 +12,35 @@ import { supabase } from '@/lib/supabase';
 
 type Step = 'form' | 'preview' | 'editing' | 'success';
 
+// Hook for fade-in on scroll (matches homepage)
+function useFadeInOnScroll() {
+  const ref = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
+
+  return { ref, isVisible };
+}
+
 export default function JoinPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>('form');
@@ -36,6 +65,12 @@ export default function JoinPage() {
   const hasTrackedPageView = useRef(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [modalAnimated, setModalAnimated] = useState(false);
+
+  const howItWorksSection = useFadeInOnScroll();
+  const trustSection = useFadeInOnScroll();
+  const seeItInActionSection = useFadeInOnScroll();
+  const questionsSection = useFadeInOnScroll();
+  const finalCtaSection = useFadeInOnScroll();
 
   const displayHost =
     process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, '').replace(/\/$/, '') ||
@@ -365,6 +400,18 @@ fbq('init', '750284611209309');
 fbq('track', 'PageView');`,
         }}
       />
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
+        .animate-slideUp { animation: slideUp 0.8s ease-out 0.2s both; }
+      `}</style>
 
       <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC] via-white to-[#F5F5DC]">
         {/* Header */}
@@ -391,9 +438,9 @@ fbq('track', 'PageView');`,
         {/* Main Content */}
         <>
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-[#E8DCC8]/30 via-white to-[#E8DCC8]/30">
+            <section className="relative overflow-hidden bg-gradient-to-br from-[#E8DCC8]/30 via-white to-[#E8DCC8]/30 animate-fadeIn">
               <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
-                <div className="text-center">
+                <div className="text-center animate-slideUp">
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 leading-tight">
                     Stop Bad Reviews Before They Go Public
                   </h1>
@@ -412,7 +459,12 @@ fbq('track', 'PageView');`,
             </section>
 
             {/* How It Works Section */}
-            <section className="py-12 sm:py-16 bg-white">
+            <section
+              ref={howItWorksSection.ref}
+              className={`py-12 sm:py-16 bg-white transition-all duration-700 ${
+                howItWorksSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
               <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8">
                   How It Works
@@ -468,7 +520,12 @@ fbq('track', 'PageView');`,
             </section>
 
             {/* Trust Signals Section */}
-            <section className="py-12 sm:py-16 bg-gray-50/50">
+            <section
+              ref={trustSection.ref}
+              className={`py-12 sm:py-16 bg-gray-50/50 transition-all duration-700 ${
+                trustSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
               <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -493,7 +550,12 @@ fbq('track', 'PageView');`,
             </section>
 
             {/* See It In Action Section */}
-            <section className="py-12 sm:py-16 bg-gray-50/50">
+            <section
+              ref={seeItInActionSection.ref}
+              className={`py-12 sm:py-16 bg-gray-50/50 transition-all duration-700 ${
+                seeItInActionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
               <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
                   <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
@@ -505,7 +567,7 @@ fbq('track', 'PageView');`,
                 </div>
 
                 {/* Step 1: Customer Rates */}
-                <div className="mb-12 flex flex-col md:flex-row items-center gap-6 md:gap-10">
+                <div className="mb-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
                   <div className="w-full md:w-1/2">
                     <Image
                       src="/images/sq-rating-page.png"
@@ -526,7 +588,7 @@ fbq('track', 'PageView');`,
                 </div>
 
                 {/* Step 2a: Unhappy Path */}
-                <div className="mb-12 flex flex-col md:flex-row-reverse items-center gap-6 md:gap-10">
+                <div className="mb-12 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
                   <div className="w-full md:w-1/2">
                     <Image
                       src="/images/sq-feedback-page.png"
@@ -547,7 +609,7 @@ fbq('track', 'PageView');`,
                 </div>
 
                 {/* Step 2b: Happy Path - Templates */}
-                <div className="mb-12 flex flex-col md:flex-row items-center gap-6 md:gap-10">
+                <div className="mb-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
                   <div className="w-full md:w-1/2">
                     <Image
                       src="/images/sq-templates-page.png"
@@ -568,7 +630,7 @@ fbq('track', 'PageView');`,
                 </div>
 
                 {/* Step 3: Platform Choice */}
-                <div className="mb-12 flex flex-col md:flex-row-reverse items-center gap-6 md:gap-10">
+                <div className="mb-12 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
                   <div className="w-full md:w-1/2">
                     <Image
                       src="/images/sq-platform-page.png"
@@ -589,7 +651,7 @@ fbq('track', 'PageView');`,
                 </div>
 
                 {/* Final Result */}
-                <div className="mb-0 flex flex-col md:flex-row items-center gap-6 md:gap-10">
+                <div className="mb-0 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
                   <div className="w-full md:w-1/2">
                     <Image
                       src="/images/sq-google-review.png"
@@ -612,7 +674,12 @@ fbq('track', 'PageView');`,
             </section>
 
             {/* Final CTA */}
-            <section className="py-12 sm:py-16 bg-white">
+            <section
+              ref={finalCtaSection.ref}
+              className={`py-12 sm:py-16 bg-white transition-all duration-700 ${
+                finalCtaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
               <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Ready to Stop Bad Reviews?</h2>
                 <button
@@ -626,7 +693,12 @@ fbq('track', 'PageView');`,
               </div>
             </section>
 
-            <section className="py-12 sm:py-16 bg-white">
+            <section
+              ref={questionsSection.ref}
+              className={`py-12 sm:py-16 bg-white transition-all duration-700 ${
+                questionsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
               <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">Questions</h2>
                 <div className="max-w-2xl mx-auto space-y-5">
