@@ -72,9 +72,11 @@ export default function LoginPage() {
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
             {/* Logo/Header */}
             <div className="text-center mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-                ReviewFlo
-              </h1>
+              <img
+                src="/images/reviewflo-logo.svg"
+                alt="ReviewFlo"
+                className="h-10 sm:h-12 w-auto mx-auto mb-4"
+              />
               <p className="text-gray-600">
                 Sign in to your account
               </p>
@@ -136,7 +138,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
                 required
                 autoComplete="email"
               />
@@ -156,7 +158,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
                 required
                 autoComplete="current-password"
               />
@@ -166,7 +168,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transform hover:scale-[1.02]"
+              className="w-full bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transform hover:scale-[1.02]"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center">
@@ -202,7 +204,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <Link
               href="/reset-password"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="text-sm text-[#4A3428] hover:text-[#4A3428]/90 font-medium"
             >
               Forgot your password?
             </Link>
