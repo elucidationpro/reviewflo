@@ -46,9 +46,6 @@ fbq('track', 'PageView');`,
               <Link href="/" className="flex items-center transition-opacity hover:opacity-80">
                 <img src="/images/reviewflo-logo.svg" alt="ReviewFlo" className="h-8 sm:h-10 w-auto" />
               </Link>
-              <Link href="/" className="text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors">
-                Back to Home
-              </Link>
             </div>
           </div>
         </header>

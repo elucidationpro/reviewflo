@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { CheckCircle, Mail, Calendar } from 'lucide-react';
+import { CheckCircle, Mail, Calendar, PartyPopper, Heart } from 'lucide-react';
 import Head from 'next/head';
 import { trackEvent } from '@/lib/posthog-provider';
 
@@ -27,7 +27,7 @@ export default function OnboardingPage() {
   return (
     <>
       <Head>
-        <title>Welcome to ReviewFlo! 🎉</title>
+        <title>Welcome to ReviewFlo!</title>
         <meta name="description" content="Your early access payment was successful. Check your email for next steps." />
         <meta name="robots" content="noindex, nofollow" />
       </Head>
@@ -57,8 +57,8 @@ export default function OnboardingPage() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              🎉 Welcome to ReviewFlo!
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-2">
+              <PartyPopper className="w-10 h-10 text-[#C9A961]" /> Welcome to ReviewFlo!
             </h1>
 
             {/* Subheadline */}
@@ -130,10 +130,10 @@ export default function OnboardingPage() {
             <div className="bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-lg p-6 mb-8">
               <h3 className="font-bold text-gray-900 mb-3">Your Early Access Details:</h3>
               <ul className="text-left text-gray-700 space-y-2">
-                <li>✅ 2 months of full ReviewFlo access</li>
-                <li>✅ Priority founder support</li>
-                <li>✅ Help shape new features</li>
-                <li>✅ All features included</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0" /> 2 months of full ReviewFlo access</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0" /> Priority founder support</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0" /> Help shape new features</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0" /> All features included</li>
               </ul>
             </div>
 
@@ -152,19 +152,10 @@ export default function OnboardingPage() {
                 </a>
               </p>
               <p className="text-sm text-gray-500 mt-4">
-                I'm here to make sure you have an amazing experience! 🙏
+                I&apos;m here to make sure you have an amazing experience! <span className="inline-flex align-middle ml-1"><Heart className="w-4 h-4 text-[#C9A961]" /></span>
               </p>
             </div>
 
-            {/* Back to Home */}
-            <div className="mt-8">
-              <a
-                href="/"
-                className="inline-block text-[#4A3428] hover:underline font-medium"
-              >
-                ← Back to Homepage
-              </a>
-            </div>
           </div>
         </section>
 

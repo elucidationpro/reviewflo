@@ -343,20 +343,12 @@ fbq('track', 'PageView');`,
                   className="h-8 sm:h-10 w-auto"
                 />
               </a>
-              <div className="flex items-center gap-4">
-                <a
-                  href="/login"
-                  className="hidden sm:inline-block text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors"
-                >
-                  Business Login
-                </a>
-                <a
-                  href="/"
-                  className="text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors"
-                >
-                  Back to Home
-                </a>
-              </div>
+              <a
+                href="/login"
+                className="hidden sm:inline-block text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors"
+              >
+                Login
+              </a>
             </div>
           </div>
         </header>
@@ -816,19 +808,19 @@ fbq('track', 'PageView');`,
                         </div>
                         <ul className="space-y-2 text-sm text-gray-700">
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Review automation</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Negative interception</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Email notifications</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Templates</span>
                           </li>
                         </ul>
@@ -845,19 +837,19 @@ fbq('track', 'PageView');`,
                         </div>
                         <ul className="space-y-2 text-sm text-gray-700">
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Everything in Basic</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>AI review drafts</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Reply management</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Priority support</span>
                           </li>
                         </ul>

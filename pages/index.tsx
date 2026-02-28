@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Star, CheckCircle, Clock, Users, Shield, Zap } from 'lucide-react';
+import { Star, CheckCircle, Clock, Users, Shield, Zap, Hand, PartyPopper } from 'lucide-react';
 import Image from 'next/image';
 import Head from 'next/head';
 
@@ -154,15 +154,15 @@ export default function LandingPage() {
                 href="/login"
                 className="text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors"
               >
-                Business Login
+                Login
               </a>
 
               {/* CTA Button */}
               <a
-                href="/qualify"
+                href="/join"
                 className="px-4 sm:px-6 py-2 sm:py-2.5 bg-[#4A3428] text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-md hover:shadow-lg"
               >
-                Apply for Beta →
+                Get More Reviews →
               </a>
             </div>
           </div>
@@ -196,10 +196,10 @@ export default function LandingPage() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6">
               <a
-                href="/qualify"
+                href="/join"
                 className="w-full sm:w-auto px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                Apply for Beta →
+                Get More Reviews →
               </a>
               <a
                 href="#waitlist-signup"
@@ -494,8 +494,8 @@ export default function LandingPage() {
                 </div>
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Hi, I&apos;m Jeremy 👋
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  Hi, I&apos;m Jeremy <Hand className="w-6 h-6 text-[#4A3428]" />
                 </h2>
                 <div className="prose prose-lg text-gray-600">
                   <p>
@@ -547,10 +547,10 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
             <a
-              href="/qualify"
+              href="/join"
               className="w-full sm:w-auto px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg"
             >
-              Apply for Beta →
+              Get More Reviews →
             </a>
             <a
               href="#waitlist-signup"
@@ -615,7 +615,7 @@ function BetaSignupForm() {
     return (
       <div className="text-center py-8">
         <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re In! 🎉</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">You&apos;re In! <PartyPopper className="w-6 h-6 text-[#C9A961]" /></h3>
         <p className="text-gray-600 mb-4">
           Welcome to ReviewFlo beta. I&apos;ll text you within 24 hours to get you set up.
         </p>

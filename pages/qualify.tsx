@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { CheckCircle, Copy, Check } from 'lucide-react';
+import { CheckCircle, Copy, Check, PartyPopper } from 'lucide-react';
 import Head from 'next/head';
 import Script from 'next/script';
 import { trackEvent } from '@/lib/posthog-provider';
@@ -349,12 +349,6 @@ fbq('track', 'PageView');`,
                   className="h-8 sm:h-10 w-auto"
                 />
               </a>
-              <a
-                href="/"
-                className="text-sm sm:text-base text-gray-600 hover:text-[#4A3428] font-medium transition-colors"
-              >
-                Back to Home
-              </a>
             </div>
           </div>
         </header>
@@ -507,8 +501,8 @@ fbq('track', 'PageView');`,
                   {/* Main CTA Box - FREE EMPHASIS */}
                   <div className="bg-gradient-to-br from-[#F5F5DC] to-[#C9A961]/10 border-3 border-[#C9A961] rounded-2xl p-8 mb-6 shadow-lg">
                     <div className="mb-4">
-                      <p className="text-3xl sm:text-4xl font-bold text-[#4A3428] mb-2">
-                        🎉 FREE BETA ACCESS
+                      <p className="text-3xl sm:text-4xl font-bold text-[#4A3428] mb-2 flex items-center gap-2">
+                        <PartyPopper className="w-8 h-8" /> FREE BETA ACCESS
                       </p>
                       <p className="text-xl font-bold text-gray-900">
                         NO CREDIT CARD REQUIRED
@@ -816,19 +810,19 @@ fbq('track', 'PageView');`,
                         </div>
                         <ul className="space-y-2 text-sm text-gray-700">
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Review automation</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Negative interception</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Email notifications</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Templates</span>
                           </li>
                         </ul>
@@ -845,19 +839,19 @@ fbq('track', 'PageView');`,
                         </div>
                         <ul className="space-y-2 text-sm text-gray-700">
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Everything in Basic</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>AI review drafts</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Reply management</span>
                           </li>
                           <li className="flex items-start">
-                            <span className="text-[#C9A961] mr-2">✅</span>
+                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Priority support</span>
                           </li>
                         </ul>

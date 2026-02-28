@@ -15,14 +15,9 @@ export default function PrivacyPolicyPage() {
       <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC] via-white to-[#E8DCC8]/30">
         <header className="bg-white/95 backdrop-blur-sm shadow-sm border-b border-[#C9A961]/20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4">
-            <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center transition-opacity hover:opacity-80">
-                <img src="/images/reviewflo-logo.svg" alt="ReviewFlo" className="h-8 sm:h-9 w-auto" />
-              </Link>
-              <Link href="/" className="text-sm text-[#4A3428]/80 hover:text-[#4A3428] font-medium">
-                Back to Home
-              </Link>
-            </div>
+            <Link href="/" className="flex items-center transition-opacity hover:opacity-80">
+              <img src="/images/reviewflo-logo.svg" alt="ReviewFlo" className="h-8 sm:h-9 w-auto" />
+            </Link>
           </div>
         </header>
 
@@ -129,14 +124,6 @@ export default function PrivacyPolicyPage() {
             </section>
           </div>
 
-          <div className="mt-14 pt-6 border-t border-[#C9A961]/20">
-            <Link
-              href="/"
-              className="inline-flex items-center text-[#4A3428] font-medium hover:text-[#C9A961] transition-colors"
-            >
-              ← Back to Home
-            </Link>
-          </div>
         </main>
 
         <footer className="max-w-3xl mx-auto px-4 py-8 text-center text-sm text-[#4A3428]/60">

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
+import { CheckCircle } from 'lucide-react';
 import { trackEvent } from '@/lib/posthog-provider';
 
 const SURVEY_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd1jTmwDjEy5XuG80Ox3FXA3AzMq1bPEpUzZ0cXliJb4I8ozg/viewform';
@@ -47,8 +48,8 @@ export default function SurveyPage() {
           <div className="w-full max-w-[600px]">
             {submitted ? (
               <div className="text-center">
-                <h1 className="text-3xl sm:text-4xl font-bold text-[#4A3428] mb-6">
-                  ✅ Survey Submitted!
+                <h1 className="text-3xl sm:text-4xl font-bold text-[#4A3428] mb-6 flex items-center justify-center gap-2">
+                  <CheckCircle className="w-10 h-10 text-[#C9A961]" /> Survey Submitted!
                 </h1>
                 <div className="space-y-4 text-[#4A3428]/90 leading-relaxed mb-10">
                   <p className="text-lg">
@@ -64,12 +65,6 @@ export default function SurveyPage() {
                     </a>
                   </p>
                 </div>
-                <Link
-                  href="/"
-                  className="inline-block px-8 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 transition-colors"
-                >
-                  Back to Home
-                </Link>
               </div>
             ) : (
               <div className="text-center">

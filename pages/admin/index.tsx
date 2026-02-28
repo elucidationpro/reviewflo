@@ -355,7 +355,7 @@ export default function AdminDashboard() {
       const data = await response.json()
 
       if (response.ok) {
-        setSuccessMessage('Beta invitation sent successfully! 🎉')
+        setSuccessMessage('Beta invitation sent successfully!')
         // Auto-hide success message after 5 seconds
         setTimeout(() => setSuccessMessage(''), 5000)
         // Refresh leads data to show updated status

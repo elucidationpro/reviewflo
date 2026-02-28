@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import Script from 'next/script';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, PartyPopper } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { trackEvent } from '@/lib/posthog-provider';
 
@@ -430,7 +430,7 @@ fbq('track', 'PageView');`,
               <>
                 <div className="text-center py-8">
                   <CheckCircle className="w-16 h-16 text-[#C9A961] mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold text-gray-900 mb-3">You&apos;re in! 🎉</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3 flex items-center justify-center gap-2">You&apos;re in! <PartyPopper className="w-6 h-6 text-[#C9A961]" /></h2>
                   <p className="text-lg text-gray-600 mb-6">Your account is ready to use.</p>
                   <div className="text-left max-w-md mx-auto space-y-4 mb-8">
                     <div>

@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useState } from 'react'
 import Link from 'next/link'
+import { PenLine, ClipboardList } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import ReviewFloFooter from '../../components/ReviewFloFooter'
 import { trackEvent } from '../../lib/posthog-provider'
@@ -163,7 +164,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
               ))}
             </div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Thanks for the 5-star rating! 🌟
+              Thanks for the 5-star rating!
             </h2>
             <p className="text-gray-600 text-lg">
               How would you like to leave your review?
@@ -186,7 +187,9 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                 style={{ borderColor: business.primary_color }}
               >
                 <div className="flex items-center gap-4">
-                  <div className="text-4xl">✍️</div>
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{ backgroundColor: `${business.primary_color}20` }}>
+                    <PenLine className="w-6 h-6" style={{ color: business.primary_color }} />
+                  </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-gray-800 mb-1">
                       Write Your Own Review
@@ -220,7 +223,9 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                 style={{ borderColor: business.primary_color }}
               >
                 <div className="flex items-center gap-4">
-                  <div className="text-4xl">📋</div>
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{ backgroundColor: `${business.primary_color}20` }}>
+                    <ClipboardList className="w-6 h-6" style={{ color: business.primary_color }} />
+                  </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-gray-800 mb-1">
                       Choose a Template
