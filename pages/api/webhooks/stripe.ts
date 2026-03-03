@@ -127,9 +127,9 @@ export default async function handler(
             console.error('Early access welcome email skipped: RESEND_API_KEY is not set. Add it in Vercel (or .env.local for local webhook testing).');
           } else {
           const { error: emailError } = await resend.emails.send({
-            from: 'ReviewFlo <jeremy@usereviewflo.com>',
+            from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
             to: customerEmail,
-            subject: 'Welcome to ReviewFlo Early Access! 🚀',
+            subject: 'Welcome to ReviewFlo Early Access',
             html: `
               <!DOCTYPE html>
               <html>

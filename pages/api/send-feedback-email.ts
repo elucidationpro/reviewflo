@@ -161,7 +161,7 @@ export default async function handler(
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: 'ReviewFlo <noreply@usereviewflo.com>',
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: ownerEmail,
       subject: `New Feedback from ${business.business_name}`,
       html: emailHtml,

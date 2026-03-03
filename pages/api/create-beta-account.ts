@@ -242,9 +242,9 @@ export default async function handler(
       `
 
       await resend.emails.send({
-        from: 'ReviewFlo <jeremy@usereviewflo.com>',
+        from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
         to: email,
-        subject: `Welcome to ReviewFlo Beta! 🚀 Your Account is Ready - ${businessName}`,
+        subject: `Your ReviewFlo Account is Ready - ${businessName}`,
         html: emailHtml,
       })
     } catch (emailError) {

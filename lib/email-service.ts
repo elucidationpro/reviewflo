@@ -26,9 +26,9 @@ interface EarlyAccessBetaWelcomeData {
 export async function sendEarlyAccessBetaWelcomeEmail(data: EarlyAccessBetaWelcomeData) {
   try {
     await resend.emails.send({
-      from: 'ReviewFlo <jeremy@usereviewflo.com>',
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: data.email,
-      subject: "You're In! ReviewFlo Free Beta 🎉",
+      subject: "You're In! ReviewFlo Free Beta",
       html: `
         <!DOCTYPE html>
         <html>
@@ -87,9 +87,9 @@ export async function sendEarlyAccessBetaWelcomeEmail(data: EarlyAccessBetaWelco
 export async function sendBetaConfirmationEmail(data: BetaSignupData) {
   try {
     await resend.emails.send({
-      from: 'ReviewFlo <jeremy@usereviewflo.com>',
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: data.email,
-      subject: "You're In! Welcome to ReviewFlo Beta 🎉",
+      subject: "You're In! Welcome to ReviewFlo Beta",
       html: `
         <!DOCTYPE html>
         <html>
@@ -165,9 +165,9 @@ export async function sendBetaInvitationEmail(data: BetaSignupData) {
     const betaSignupUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}#beta-signup`;
 
     await resend.emails.send({
-      from: 'ReviewFlo <jeremy@usereviewflo.com>',
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: data.email,
-      subject: "🎉 You're Invited to Join ReviewFlo Beta!",
+      subject: "You're Invited to Join ReviewFlo Beta",
       html: `
         <!DOCTYPE html>
         <html>
@@ -271,7 +271,7 @@ export async function sendBetaInvitationEmail(data: BetaSignupData) {
 export async function sendWaitlistConfirmationEmail(data: WaitlistSignupData) {
   try {
     await resend.emails.send({
-      from: 'ReviewFlo <jeremy@usereviewflo.com>',
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: data.email,
       subject: "You're on the ReviewFlo Waitlist",
       html: `
@@ -339,7 +339,7 @@ export async function sendQualificationEmail(data: QualificationData) {
     const surveyPageUrl = 'https://usereviewflo.com/survey';
 
     await resend.emails.send({
-      from: 'Jeremy from ReviewFlo <jeremy@usereviewflo.com>',
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: data.email,
       subject: "ReviewFlo Beta Survey - One More Step (3 minutes)",
       html: `
@@ -430,7 +430,7 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
     const companyEmail = 'jeremy@usereviewflo.com';
     const adminTo = [primaryAdmin, companyEmail].filter((e, i, a) => a.indexOf(e) === i);
     const result = await resend.emails.send({
-      from: 'ReviewFlo <jeremy@usereviewflo.com>',
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: adminTo,
       subject,
       html: `

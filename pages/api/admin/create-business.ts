@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { isAdminUser } from '../../../lib/adminAuth'
 import { Resend } from 'resend'
+import { wrapAuthLink } from '@/lib/auth-link-utils'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -238,70 +239,50 @@ export default async function handler(
         if (inviteError) {
           console.error('Error generating invite link:', inviteError)
         } else {
-          const inviteLink = inviteData?.properties?.action_link
+          const rawInviteLink = inviteData?.properties?.action_link
+          const inviteLink = rawInviteLink ? wrapAuthLink(rawInviteLink) : `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/login`
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'
+          const reviewPageUrl = `${baseUrl}/${slug}`
+          const loginDisplay = 'usereviewflo.com/login'
 
-          const emailHtml = `
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Welcome to ReviewFlo</title>
-              </head>
-              <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <div style="background: linear-gradient(to right, #3b82f6, #2563eb); padding: 40px 30px; border-radius: 10px 10px 0 0; text-align: center;">
-                  <h1 style="color: #ffffff; margin: 0; font-size: 32px;">Welcome to ReviewFlo!</h1>
-                </div>
+          const emailText = `Hi ${ownerName},
 
-                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px; padding: 30px; margin-bottom: 20px;">
-                  <p style="font-size: 18px; color: #1f2937; margin: 0 0 20px 0;">
-                    Hi ${ownerName}!
-                  </p>
+Your ReviewFlo account has been created.
 
-                  <p style="color: #4b5563; margin: 0 0 20px 0;">
-                    Your ReviewFlo account has been created! We're excited to help ${businessName} turn negative reviews into opportunities and make it easier for happy customers to share their experiences.
-                  </p>
+Set your password and activate: ${inviteLink}
 
-                  <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <h2 style="color: #1f2937; font-size: 20px; margin: 0 0 15px 0;">Your Account Details</h2>
-                    <p style="color: #4b5563; margin: 5px 0;"><strong>Email:</strong> ${ownerEmail}</p>
-                    <p style="color: #4b5563; margin: 5px 0;"><strong>Review Page:</strong> <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${slug}" style="color: #3b82f6;">${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${slug}</a></p>
-                  </div>
+Login: ${loginDisplay}
+Email: ${ownerEmail}
+Your review link: ${reviewPageUrl}
 
-                  <div style="background: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-                    <h3 style="color: #1e40af; font-size: 18px; margin: 0 0 10px 0;">Getting Started</h3>
-                    <ol style="color: #1e40af; margin: 0; padding-left: 20px;">
-                      <li style="margin-bottom: 10px;">Click the button below to set your password and activate your account</li>
-                      <li style="margin-bottom: 10px;">Log in to your dashboard</li>
-                      <li style="margin-bottom: 10px;">Customize your business settings and brand colors</li>
-                      <li style="margin-bottom: 10px;">Add your review platform URLs (Google, Yelp, etc.)</li>
-                      <li style="margin-bottom: 10px;">Create custom review templates for your customers</li>
-                      <li style="margin-bottom: 10px;">Share your review page link with customers</li>
-                    </ol>
-                  </div>
+Send the review link to customers after each job.
 
-                  <p style="color: #4b5563; margin: 20px 0 0 0;">
-                    If you have any questions or need help getting started, just reply to this email. We're here to help!
-                  </p>
+Questions? Reply to this email.
 
-                  <div style="text-align: center; margin-top: 30px;">
-                    <a href="${inviteLink || `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/login`}" style="display: inline-block; background-color: #3b82f6; color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                      Set Password & Activate Account
-                    </a>
-                  </div>
-                </div>
+- Jeremy
+ReviewFlo`
 
-                <div style="text-align: center; color: #9ca3af; font-size: 14px; padding: 20px;">
-                  <p style="margin: 0;">ReviewFlo - Fix it before it goes public</p>
-                </div>
-              </body>
-            </html>
-          `
+          const emailHtml = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px;">
+<p>Hi ${ownerName},</p>
+<p>Your ReviewFlo account has been created.</p>
+<p><strong>Set your password:</strong> <a href="${inviteLink}" style="color: #2563eb;">Click here to set password and activate</a></p>
+<p><strong>Login:</strong> <a href="${baseUrl}/login" style="color: #2563eb;">${loginDisplay}</a><br>
+<strong>Email:</strong> ${ownerEmail}<br>
+<strong>Your review link:</strong> <a href="${reviewPageUrl}" style="color: #2563eb;">${reviewPageUrl}</a></p>
+<p>Send the review link to customers after each job.</p>
+<p>Questions? Reply to this email.</p>
+<p>- Jeremy<br>ReviewFlo</p>
+</body>
+</html>`
 
           await resend.emails.send({
-            from: 'ReviewFlo <noreply@usereviewflo.com>',
+            from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
             to: ownerEmail,
-            subject: `Welcome to ReviewFlo - ${businessName}`,
+            subject: 'Your ReviewFlo Account - Set Your Password',
+            text: emailText,
             html: emailHtml,
           })
         }

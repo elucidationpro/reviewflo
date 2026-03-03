@@ -127,7 +127,7 @@ export default async function handler(
 
     // Send confirmation email
     const { error: emailError } = await resend.emails.send({
-      from: 'ReviewFlo <noreply@usereviewflo.com>',
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: email,
       subject: 'Welcome to ReviewFlo - You&apos;re on the list!',
       html: emailHtml,
