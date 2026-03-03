@@ -8,6 +8,7 @@ interface Business {
   business_name: string
   primary_color: string
   logo_url: string | null
+  skip_template_choice: boolean
   google_review_url: string | null
   facebook_review_url: string | null
   yelp_review_url: string | null
@@ -25,6 +26,7 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [migrationWarning, setMigrationWarning] = useState('')
   const [error, setError] = useState('')
 
   // Business data state
@@ -33,6 +35,7 @@ export default function SettingsPage() {
     business_name: '',
     primary_color: '#3B82F6',
     logo_url: '',
+    skip_template_choice: false,
     google_review_url: '',
     facebook_review_url: '',
     yelp_review_url: '',
@@ -75,6 +78,7 @@ export default function SettingsPage() {
           business_name: business.business_name,
           primary_color: business.primary_color || '#3B82F6',
           logo_url: business.logo_url || '',
+          skip_template_choice: business.skip_template_choice ?? false,
           google_review_url: business.google_review_url || '',
           facebook_review_url: business.facebook_review_url || '',
           yelp_review_url: business.yelp_review_url || '',
@@ -117,29 +121,44 @@ export default function SettingsPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setMigrationWarning('')
     setShowSuccess(false)
     setIsSaving(true)
 
     try {
-      // Update business data
-      const { error: businessError } = await supabase
-        .from('businesses')
-        .update({
-          business_name: businessData.business_name,
-          primary_color: businessData.primary_color,
-          logo_url: businessData.logo_url || null,
-          google_review_url: businessData.google_review_url || null,
-          facebook_review_url: businessData.facebook_review_url || null,
-          yelp_review_url: businessData.yelp_review_url || null,
-          nextdoor_review_url: businessData.nextdoor_review_url || null,
-        })
-        .eq('id', businessData.id)
-
-      if (businessError) {
-        console.error('Error updating business:', businessError)
-        setError('Failed to update business information')
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setError('Session expired. Please log in again.')
         setIsSaving(false)
         return
+      }
+
+      const res = await fetch('/api/update-business-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+        body: JSON.stringify({
+          businessId: businessData.id,
+          businessName: businessData.business_name,
+          primaryColor: businessData.primary_color,
+          logoUrl: businessData.logo_url || null,
+          skipTemplateChoice: businessData.skip_template_choice,
+          googleReviewUrl: businessData.google_review_url || null,
+          facebookReviewUrl: businessData.facebook_review_url || null,
+          yelpReviewUrl: businessData.yelp_review_url || null,
+          nextdoorReviewUrl: businessData.nextdoor_review_url || null,
+        }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        const msg = data.details ? `${data.error}: ${data.details}` : (data.error || 'Failed to update business information')
+        setError(msg)
+        setIsSaving(false)
+        return
+      }
+
+      if (data.templateSettingSkipped) {
+        setMigrationWarning(data.message || 'The template choice option requires a database migration — run add-skip-template-choice-migration.sql in Supabase.')
       }
 
       // Update review templates (upsert for each platform)
@@ -176,7 +195,8 @@ export default function SettingsPage() {
       // Hide success message after 3 seconds
       setTimeout(() => {
         setShowSuccess(false)
-      }, 3000)
+        setMigrationWarning('')
+      }, 6000)
     } catch (err) {
       console.error('Error saving settings:', err)
       setError('An unexpected error occurred')
@@ -229,6 +249,18 @@ export default function SettingsPage() {
                 />
               </svg>
               <p className="text-green-800 text-sm font-medium">Settings saved successfully!</p>
+            </div>
+          </div>
+        )}
+
+        {/* Migration Warning */}
+        {migrationWarning && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="flex items-start">
+              <svg className="w-5 h-5 text-amber-600 mt-0.5 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <p className="text-amber-800 text-sm">{migrationWarning}</p>
             </div>
           </div>
         )}
@@ -386,7 +418,47 @@ export default function SettingsPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                   placeholder="https://nextdoor.com/pages/your-business"
                 />
+          </div>
+          </div>
+        </div>
+
+          {/* Review Flow Section */}
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Review Flow</h2>
+            <p className="text-gray-600 mb-6">
+              Control how customers leave reviews after giving 5 stars
+            </p>
+            <div className="flex items-center justify-between gap-6 py-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <label htmlFor="includeTemplateChoice" className="text-sm font-semibold text-gray-900">
+                    Enable templates
+                  </label>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    Recommended
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Give your customers the choice between writing their own review or choosing from templates. Disabling templates sends customers directly to your public review link.
+                </p>
               </div>
+              <button
+                type="button"
+                role="switch"
+                id="includeTemplateChoice"
+                aria-checked={!businessData.skip_template_choice}
+                onClick={() => setBusinessData({ ...businessData, skip_template_choice: !businessData.skip_template_choice })}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                  !businessData.skip_template_choice ? 'bg-blue-600' : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    !businessData.skip_template_choice ? 'translate-x-5' : 'translate-x-0.5'
+                  }`}
+                  aria-hidden
+                />
+              </button>
             </div>
           </div>
 

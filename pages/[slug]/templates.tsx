@@ -12,6 +12,7 @@ interface Business {
   business_name: string
   slug: string
   primary_color: string
+  skip_template_choice?: boolean
   google_review_url?: string
   facebook_review_url?: string
   yelp_review_url?: string
@@ -30,7 +31,11 @@ interface PageProps {
 }
 
 export default function TemplatesPage({ business, templates }: PageProps) {
-  const [reviewPath, setReviewPath] = useState<'write_own' | 'use_template' | null>(null)
+  const hasPlatformLinks = !!(business.google_review_url || business.facebook_review_url || business.yelp_review_url || business.nextdoor_review_url)
+  // When skip_template_choice is true, go straight to platform links (no "Write Own" vs "Template" choice)
+  const [reviewPath, setReviewPath] = useState<'write_own' | 'use_template' | null>(
+    business.skip_template_choice && hasPlatformLinks ? 'write_own' : null
+  )
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [copiedTemplate, setCopiedTemplate] = useState(false)
   const [clickedPlatform, setClickedPlatform] = useState<string | null>(null)
@@ -167,11 +172,11 @@ export default function TemplatesPage({ business, templates }: PageProps) {
               Thanks for the 5-star rating!
             </h2>
             <p className="text-gray-600 text-lg">
-              How would you like to leave your review?
+              {business.skip_template_choice ? 'Choose where to leave your review:' : 'How would you like to leave your review?'}
             </p>
           </div>
 
-          {/* STEP 1: Initial Choice */}
+          {/* STEP 1: Initial Choice (skipped when skip_template_choice) */}
           {!reviewPath && (
             <div className="space-y-4 mt-8">
               <button
@@ -476,10 +481,10 @@ export default function TemplatesPage({ business, templates }: PageProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.params as { slug: string }
 
-  // Fetch business data from Supabase
+  // Fetch business data from Supabase (use select * so skip_template_choice works if migration ran)
   const { data: business, error: businessError } = await supabase
     .from('businesses')
-    .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, yelp_review_url, nextdoor_review_url')
+    .select('*')
     .eq('slug', slug)
     .single()
 
@@ -487,6 +492,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       notFound: true,
     }
+  }
+
+  const businessWithSettings = {
+    ...business,
+    skip_template_choice: business.skip_template_choice ?? false,
   }
 
   // Fetch review templates for this business
@@ -498,7 +508,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      business,
+      business: businessWithSettings,
       templates: templates || [],
     },
   }
