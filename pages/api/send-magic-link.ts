@@ -94,7 +94,8 @@ export default async function handler(
     }
 
     // Generate magic link (generateLink does NOT send email - we send via Resend)
-    const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/api/auth/verify-magic-link`;
+    // Must be a client page - Supabase puts session in URL hash, which API routes cannot read
+    const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/join/callback`;
 
     const { data: linkData, error: magicLinkError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',

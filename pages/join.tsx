@@ -62,6 +62,21 @@ export default function JoinPage() {
     }
   }, []);
 
+  // Show error from URL (e.g. redirect after expired/invalid magic link)
+  useEffect(() => {
+    const q = router.query.error;
+    if (typeof q === 'string') {
+      if (q === 'expired_link') {
+        setError('That login link has expired. Request a new one below.');
+      } else if (q === 'invalid_link' || q === 'invalid_data') {
+        setError('That link is invalid. Request a new one below.');
+      } else if (q === 'setup_failed') {
+        setError('We couldn\'t complete your signup. Please try again or contact support.');
+      }
+      router.replace('/join', undefined, { shallow: true });
+    }
+  }, [router.query.error, router]);
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
