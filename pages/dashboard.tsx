@@ -925,7 +925,6 @@ export default function DashboardPage() {
           onContinueWithFree={handleComingSoonContinue}
         />
       )}
-    </div>
     </>
   )
 }
