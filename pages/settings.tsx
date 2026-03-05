@@ -29,7 +29,6 @@ export default function SettingsPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [migrationWarning, setMigrationWarning] = useState('')
   const [error, setError] = useState('')
-  const [passwordSet, setPasswordSet] = useState(false)
 
   // Business data state
   const [businessData, setBusinessData] = useState<Business>({
@@ -60,8 +59,6 @@ export default function SettingsPage() {
           router.push('/login')
           return
         }
-
-        setPasswordSet(!!user.user_metadata?.password_set_at)
 
         // Fetch business data
         const { data: business, error: businessError } = await supabase
@@ -224,7 +221,6 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
       <OnboardingProgress
-        passwordSet={passwordSet}
         hasGoogleLink={!!(businessData.google_review_url && businessData.google_review_url.trim())}
         hasFacebookLink={!!(businessData.facebook_review_url && businessData.facebook_review_url.trim())}
         hasCustomColor={!!hasCustomColor}

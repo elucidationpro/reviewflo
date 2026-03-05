@@ -49,7 +49,6 @@ export default function DashboardPage() {
   const [feedbackList, setFeedbackList] = useState<Feedback[]>([])
   const [resolvingId, setResolvingId] = useState<string | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
-  const [passwordSet, setPasswordSet] = useState(false)
 
   useEffect(() => {
     checkAuthAndFetchData()
@@ -64,8 +63,6 @@ export default function DashboardPage() {
         router.push('/login')
         return
       }
-
-      setPasswordSet(!!user.user_metadata?.password_set_at)
 
       // Fetch business data for the logged-in user
       console.time('[Dashboard] Business Fetch')
@@ -284,7 +281,6 @@ export default function DashboardPage() {
       </Head>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
       <OnboardingProgress
-        passwordSet={passwordSet}
         hasGoogleLink={!!(business.google_review_url && business.google_review_url.trim())}
         hasFacebookLink={!!(business.facebook_review_url && business.facebook_review_url.trim())}
         hasCustomColor={!!hasCustomColor}

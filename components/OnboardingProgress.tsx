@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 interface OnboardingProgressProps {
-  passwordSet: boolean;
   hasGoogleLink: boolean;
   hasFacebookLink: boolean;
   hasCustomColor: boolean;
@@ -14,7 +13,6 @@ interface OnboardingProgressProps {
 const HELP_EMAIL = 'jeremy@usereviewflo.com';
 
 export default function OnboardingProgress({
-  passwordSet,
   hasGoogleLink,
   hasFacebookLink,
   hasCustomColor,
@@ -24,7 +22,6 @@ export default function OnboardingProgress({
   const [openStep, setOpenStep] = useState<string | null>(null);
 
   const steps = [
-    { done: passwordSet, label: 'Password', key: 'password', hasDetails: false },
     { done: hasGoogleLink || hasFacebookLink, label: 'Add review links', key: 'links', hasDetails: true },
     { done: hasCustomColor, label: 'Brand color', key: 'color', hasDetails: true },
     { done: hasEditedTemplates, label: 'Edit review templates', key: 'templates', hasDetails: true },
