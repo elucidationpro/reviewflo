@@ -78,7 +78,7 @@ export default function JoinCallbackPage() {
         }
 
         setStatus('success');
-        router.replace('/dashboard');
+        router.replace('/join/set-password');
       } catch (err) {
         console.error('[join/callback] Error:', err);
         setError('Something went wrong');

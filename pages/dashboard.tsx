@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 import { trackEvent, identifyUser } from '../lib/posthog-provider'
+import OnboardingProgress from '../components/OnboardingProgress'
 
 interface Business {
   id: string
   business_name: string
   slug: string
   primary_color: string
+  google_review_url?: string | null
+  facebook_review_url?: string | null
+  skip_template_choice?: boolean
 }
 
 interface ReviewStats {
@@ -34,7 +39,6 @@ interface Feedback {
 }
 
 export default function DashboardPage() {
-  console.log('[Component] DashboardPage component loaded and executing')
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
@@ -45,50 +49,41 @@ export default function DashboardPage() {
   const [feedbackList, setFeedbackList] = useState<Feedback[]>([])
   const [resolvingId, setResolvingId] = useState<string | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
+  const [passwordSet, setPasswordSet] = useState(false)
 
   useEffect(() => {
-    console.log('[Component] DashboardPage useEffect is running')
     checkAuthAndFetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const checkAuthAndFetchData = async () => {
-    console.time('[Dashboard] Total Load Time')
-    console.log('[Dashboard] Starting checkAuthAndFetchData')
     try {
-      // Check if user is authenticated
-      console.time('[Dashboard] Auth Check')
       const { data: { user } } = await supabase.auth.getUser()
-      console.timeEnd('[Dashboard] Auth Check')
-      console.log('[Dashboard] User check result:', user)
 
       if (!user) {
-        console.log('[Dashboard] No user found, redirecting to /login')
         router.push('/login')
         return
       }
+
+      setPasswordSet(!!user.user_metadata?.password_set_at)
 
       // Fetch business data for the logged-in user
       console.time('[Dashboard] Business Fetch')
       const { data: businessData, error: businessError } = await supabase
         .from('businesses')
-        .select('id, business_name, slug, primary_color')
+        .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice')
         .eq('user_id', user.id)
         .single()
       console.timeEnd('[Dashboard] Business Fetch')
 
       if (businessError || !businessData) {
-        console.log('[Dashboard] No business found, setting isLoading to false')
-        console.error('Error fetching business:', businessError)
         setIsLoading(false)
-        console.timeEnd('[Dashboard] Total Load Time')
         return
       }
 
-      console.log('[Dashboard] Business found:', businessData.business_name)
       setBusiness(businessData)
 
-      // EVENT 2: Track business onboarding (first time dashboard load)
+      // Track business onboarding
       // Identify the business owner in PostHog
       identifyUser(user.id, {
         businessId: businessData.id,
@@ -103,8 +98,6 @@ export default function DashboardPage() {
         onboardingDate: new Date().toISOString(),
       })
 
-      // Parallelize reviews and feedback fetching
-      console.time('[Dashboard] Parallel Data Fetch')
       const startOfMonth = new Date()
       startOfMonth.setDate(1)
       startOfMonth.setHours(0, 0, 0, 0)
@@ -122,11 +115,8 @@ export default function DashboardPage() {
           .order('created_at', { ascending: false })
           .limit(50) // Limit to last 50 feedback items for better performance
       ])
-      console.timeEnd('[Dashboard] Parallel Data Fetch')
 
-      // Process reviews
       if (!reviewsResult.error && reviewsResult.data) {
-        console.log('[Dashboard] Reviews loaded:', reviewsResult.data.length)
         const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
         reviewsResult.data.forEach((review) => {
           const rating = review.star_rating as 1 | 2 | 3 | 4 | 5
@@ -140,27 +130,16 @@ export default function DashboardPage() {
           breakdown
         })
       } else if (reviewsResult.error) {
-        console.error('[Dashboard] Reviews fetch error:', reviewsResult.error)
         // Don't block page load, just show empty stats
       }
 
-      // Process feedback
       if (!feedbackResult.error && feedbackResult.data) {
-        console.log('[Dashboard] Feedback loaded:', feedbackResult.data.length)
         setFeedbackList(feedbackResult.data)
-      } else if (feedbackResult.error) {
-        console.error('[Dashboard] Feedback fetch error:', feedbackResult.error)
-        // Don't block page load, just show empty feedback
       }
 
-      console.log('[Dashboard] Setting isLoading to false - SUCCESS')
       setIsLoading(false)
-      console.timeEnd('[Dashboard] Total Load Time')
     } catch (error) {
-      console.error('[Dashboard] Caught error in checkAuthAndFetchData:', error)
-      console.log('[Dashboard] Setting isLoading to false - ERROR')
       setIsLoading(false)
-      console.timeEnd('[Dashboard] Total Load Time')
     }
   }
 
@@ -295,8 +274,22 @@ export default function DashboardPage() {
     )
   }
 
+  const hasCustomColor = business.primary_color && business.primary_color !== '#3B82F6'
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
+    <>
+      <Head>
+        <title>Dashboard - ReviewFlo</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
+      <OnboardingProgress
+        passwordSet={passwordSet}
+        hasGoogleLink={!!(business.google_review_url && business.google_review_url.trim())}
+        hasFacebookLink={!!(business.facebook_review_url && business.facebook_review_url.trim())}
+        hasCustomColor={!!hasCustomColor}
+        hasEditedTemplates={!business.skip_template_choice}
+      />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
@@ -313,7 +306,7 @@ export default function DashboardPage() {
             <div className="flex gap-3 mt-4 md:mt-0">
               <Link
                 href="/settings"
-                className="bg-slate-700 hover:bg-slate-800 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
               >
                 Settings
               </Link>
@@ -336,7 +329,7 @@ export default function DashboardPage() {
             borderLeftWidth: '6px',
           }}
         >
-          <h2 className="text-lg font-semibold text-slate-800 mb-1">Your Review Link</h2>
+          <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-1">Your Review Link</h2>
           <p className="text-slate-600 text-sm mb-4">
             Send this link to customers after each job. They rate their experience, then get guided to leave a Google review.
           </p>
@@ -387,7 +380,7 @@ export default function DashboardPage() {
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Monthly Reviews Card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-6">
+            <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-6">
               Reviews This Month
             </h2>
             <div className="text-center mb-6">
@@ -448,14 +441,14 @@ export default function DashboardPage() {
               })
           */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-6">
+            <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-6">
               Quick Stats
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                 <div>
                   <p className="text-sm text-slate-600 mb-1">Average Rating</p>
-                  <p className="text-2xl font-bold text-slate-800">
+                  <p className="text-3xl font-bold text-slate-800">
                     {reviewStats.total > 0
                       ? (
                           (reviewStats.breakdown[5] * 5 +
@@ -468,35 +461,39 @@ export default function DashboardPage() {
                       : '0.0'}
                   </p>
                 </div>
-                <svg
-                  className="w-12 h-12"
-                  fill={business.primary_color}
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${business.primary_color || '#4f46e5'}20` }}>
+                  <svg
+                    className="w-8 h-8"
+                    fill={business.primary_color || '#4f46e5'}
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                </div>
               </div>
 
               <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                 <div>
                   <p className="text-sm text-slate-600 mb-1">Pending Feedback</p>
-                  <p className="text-2xl font-bold text-slate-800">
+                  <p className="text-3xl font-bold text-slate-800">
                     {feedbackList.filter(f => !f.is_resolved).length}
                   </p>
                 </div>
-                <svg
-                  className="w-12 h-12 text-indigo-500"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                  />
-                </svg>
+                <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-8 h-8 text-slate-800"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                    />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
@@ -504,7 +501,7 @@ export default function DashboardPage() {
 
         {/* Recent Feedback */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
-          <h2 className="text-xl font-bold text-slate-800 mb-6">
+          <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-6">
             Recent Feedback
           </h2>
 
@@ -600,7 +597,7 @@ export default function DashboardPage() {
                       <button
                         onClick={() => handleResolveFeedback(feedback.id)}
                         disabled={resolvingId === feedback.id}
-                        className="mt-4 md:mt-0 md:ml-4 bg-slate-700 hover:bg-slate-800 text-white font-semibold px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="mt-4 md:mt-0 md:ml-4 inline-flex items-center px-4 py-2 text-sm font-medium bg-slate-700 hover:bg-slate-800 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                       >
                         {resolvingId === feedback.id ? 'Resolving...' : 'Mark Resolved'}
                       </button>
@@ -613,11 +610,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-slate-800/60 text-sm mt-8">
+        <p className="text-center text-slate-500 text-sm mt-8">
           Powered by ReviewFlo
         </p>
       </div>
     </div>
+    </>
   )
 }
 

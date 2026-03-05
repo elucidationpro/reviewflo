@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
+import OnboardingProgress from '../components/OnboardingProgress'
 
 interface Business {
   id: string
@@ -28,6 +29,7 @@ export default function SettingsPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [migrationWarning, setMigrationWarning] = useState('')
   const [error, setError] = useState('')
+  const [passwordSet, setPasswordSet] = useState(false)
 
   // Business data state
   const [businessData, setBusinessData] = useState<Business>({
@@ -58,6 +60,8 @@ export default function SettingsPage() {
           router.push('/login')
           return
         }
+
+        setPasswordSet(!!user.user_metadata?.password_set_at)
 
         // Fetch business data
         const { data: business, error: businessError } = await supabase
@@ -215,8 +219,17 @@ export default function SettingsPage() {
     )
   }
 
+  const hasCustomColor = businessData.primary_color && businessData.primary_color !== '#3B82F6'
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+      <OnboardingProgress
+        passwordSet={passwordSet}
+        hasGoogleLink={!!(businessData.google_review_url && businessData.google_review_url.trim())}
+        hasFacebookLink={!!(businessData.facebook_review_url && businessData.facebook_review_url.trim())}
+        hasCustomColor={!!hasCustomColor}
+        hasEditedTemplates={!businessData.skip_template_choice}
+      />
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6">
@@ -358,6 +371,10 @@ export default function SettingsPage() {
             <p className="text-gray-600 mb-6">
               Add the URLs where customers can leave reviews for your business
             </p>
+            <p className="text-sm text-gray-500 mb-6">
+              Not sure how to find these? Check the setup guide in the bottom-right corner, or{' '}
+              <a href="mailto:jeremy@usereviewflo.com" className="text-blue-600 hover:underline">email me</a> and I can help.
+            </p>
 
             <div className="space-y-6">
               {/* Google Review URL */}
@@ -373,6 +390,12 @@ export default function SettingsPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                   placeholder="https://g.page/your-business/review"
                 />
+                <ol className="text-xs text-gray-500 mt-1 list-decimal list-inside space-y-0.5">
+                  <li>Log into Google Business Profile</li>
+                  <li>Search your business</li>
+                  <li>Click &quot;Get more reviews&quot;</li>
+                  <li>Copy the link that appears</li>
+                </ol>
               </div>
 
               {/* Facebook Review URL */}
@@ -388,6 +411,11 @@ export default function SettingsPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                   placeholder="https://www.facebook.com/your-page/reviews"
                 />
+                <ol className="text-xs text-gray-500 mt-1 list-decimal list-inside space-y-0.5">
+                  <li>Go to your Facebook Page</li>
+                  <li>Copy the page URL</li>
+                  <li>Add <code className="bg-gray-100 px-1 rounded">/reviews</code> to the end</li>
+                </ol>
               </div>
 
               {/* Yelp Review URL */}
