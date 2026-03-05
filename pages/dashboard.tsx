@@ -911,6 +911,8 @@ export default function DashboardPage() {
             </div>
           </div>
         </a>
+          </div>
+        </div>
       </div>
       {showComingSoonModal && comingSoonTier && (
         <ComingSoonTierModal
