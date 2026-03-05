@@ -67,20 +67,21 @@ export default function LoginPage() {
         <meta property="og:description" content="Sign in to your ReviewFlo account to manage customer reviews and feedback." />
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-        <div className="max-w-md w-full">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-            {/* Logo/Header */}
-            <div className="text-center mb-8">
-              <img
-                src="/images/reviewflo-logo.svg"
-                alt="ReviewFlo"
-                className="h-10 sm:h-12 w-auto mx-auto mb-4"
-              />
-              <p className="text-gray-600">
-                Sign in to your account
-              </p>
-            </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="flex items-center justify-center px-4 py-8 min-h-screen">
+          <div className="max-w-md w-full">
+            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+              {/* Logo/Header */}
+              <div className="text-center mb-8">
+                <img
+                  src="/images/reviewflo-logo.svg"
+                  alt="ReviewFlo"
+                  className="h-10 sm:h-12 w-auto mx-auto mb-4"
+                />
+                <p className="text-gray-600">
+                  Sign in to your account
+                </p>
+              </div>
 
           {/* Success Message */}
           {successMessage && (
@@ -200,32 +201,30 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Forgot Password Link */}
-          <div className="mt-6 text-center">
-            <Link
-              href="/reset-password"
-              className="text-sm text-[#4A3428] hover:text-[#4A3428]/90 font-medium"
-            >
-              Forgot your password?
-            </Link>
+          {/* Forgot Password / Create Account Links */}
+          <div className="mt-6 space-y-2 text-center">
+            <div>
+              <Link
+                href="/reset-password"
+                className="text-sm text-[#4A3428] hover:text-[#4A3428]/90 font-medium"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+            <div className="text-sm text-gray-600">
+              <span>Don&apos;t have an account? </span>
+              <Link
+                href="/join"
+                className="font-medium text-[#4A3428] hover:text-[#4A3428]/90 underline-offset-2 hover:underline"
+              >
+                Create one for free
+              </Link>
+            </div>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center text-gray-400 text-sm mt-6 space-y-2">
-          <div className="flex items-center justify-center gap-4">
-            <Link href="/terms" className="hover:text-gray-600 transition-colors">
-              Terms of Service
-            </Link>
-            <span>•</span>
-            <Link href="/terms#privacy" className="hover:text-gray-600 transition-colors">
-              Privacy Policy
-            </Link>
+            </div>
           </div>
-          <p>Powered by ReviewFlo</p>
         </div>
       </div>
-    </div>
     </>
   )
 }

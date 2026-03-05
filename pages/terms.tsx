@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav'
+import SiteFooter from '@/components/SiteFooter'
 
 export default function TermsPage() {
   return (
@@ -9,17 +11,27 @@ export default function TermsPage() {
         <meta name="description" content="ReviewFlo Terms of Service and Privacy Policy. Beta service terms and conditions." />
         <meta name="robots" content="index, follow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Terms of Service</h1>
-            <p className="text-gray-600">Last Updated: November 11, 2025</p>
-            <p className="text-gray-600 mt-2">Contact: support@usereviewflo.com</p>
-          </div>
+      <div className="min-h-screen bg-white">
+        <SiteNav variant="marketing" />
+        <div className={SITE_NAV_SPACER_CLASS} />
 
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#E8DCC8]/30 via-white to-[#E8DCC8]/30 py-12 sm:py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Terms of Service
+            </h1>
+            <p className="text-lg text-gray-600 mb-2">
+              Last Updated: November 11, 2025
+            </p>
+            <p className="text-gray-500 text-sm">
+              Contact: support@usereviewflo.com
+            </p>
+          </div>
+        </section>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           {/* Terms Content */}
-          <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 mb-8">
+          <div className="mb-12">
             <div className="prose prose-gray max-w-none">
 
               {/* Introduction */}
@@ -232,7 +244,7 @@ export default function TermsPage() {
           </div>
 
           {/* Privacy Policy */}
-          <div id="privacy" className="bg-white rounded-xl shadow-lg p-8 md:p-12 mb-8">
+          <div id="privacy" className="pt-12 border-t border-gray-200">
             <h1 className="text-4xl font-bold text-gray-900 mb-6">Privacy Policy</h1>
 
             <div className="prose prose-gray max-w-none">
@@ -373,6 +385,7 @@ export default function TermsPage() {
           </div>
 
         </div>
+        <SiteFooter />
       </div>
     </>
   )

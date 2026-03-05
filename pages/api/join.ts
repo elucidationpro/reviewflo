@@ -27,6 +27,16 @@ interface JoinRequest {
   businessType: string;
   customersPerMonth: string;
   reviewAskingFrequency: string;
+  /** Always 'free' for new signups */
+  tier?: string;
+  /** 'pro' | 'ai' | null - which upcoming tier they want launch notification for */
+  interested_in_tier?: 'pro' | 'ai' | null;
+  /** True if they selected Pro or AI (get notified at launch) */
+  notify_on_launch?: boolean;
+  /** True for signups before May 2026 (50% off first 3 months) */
+  launch_discount_eligible?: boolean;
+  /** For future use: set true when user claims the launch discount */
+  launch_discount_claimed?: boolean;
 }
 
 export default async function handler(
@@ -48,6 +58,11 @@ export default async function handler(
       businessType,
       customersPerMonth,
       reviewAskingFrequency,
+      tier: requestedTier,
+      interested_in_tier: interestedInTier,
+      notify_on_launch: notifyOnLaunch,
+      launch_discount_eligible: launchDiscountEligible,
+      launch_discount_claimed: launchDiscountClaimed = false,
     } = req.body as JoinRequest;
 
     const nameTrim = typeof name === 'string' ? name.trim() : '';
@@ -142,6 +157,11 @@ export default async function handler(
       yelp_review_url: null,
       nextdoor_review_url: null,
       terms_accepted_at: new Date().toISOString(),
+      tier: requestedTier === 'pro' || requestedTier === 'ai' ? 'free' : (requestedTier || 'free'),
+      interested_in_tier: interestedInTier ?? null,
+      notify_on_launch: notifyOnLaunch === true,
+      launch_discount_eligible: launchDiscountEligible !== false,
+      launch_discount_claimed: launchDiscountClaimed === true,
     };
     console.log('[join] Before business insert – user_id:', authData.user.id, 'slug:', normalizedSlug, 'business_name:', businessNameTrim);
     console.log('[join] Business insert payload:', JSON.stringify(businessInsert, null, 2));
@@ -240,10 +260,15 @@ export default async function handler(
     const loginDisplay = 'usereviewflo.com/login';
 
     try {
+      const launchTierLabel = interestedInTier === 'pro' ? 'Pro' : interestedInTier === 'ai' ? 'AI' : null;
+      const launchNotificationLine =
+        notifyOnLaunch && launchTierLabel
+          ? `\nWe've added you to the ${launchTierLabel} launch notification list. You'll get 50% off for the first 3 months when it launches in May 2026.\n\n`
+          : '';
+
       const emailText = `Hi ${businessNameTrim},
 
-Your ReviewFlo account is ready.
-
+Your ReviewFlo account is ready.${launchNotificationLine}
 Login: ${loginDisplay}
 Email: ${emailTrim}
 Password: (the one you created)
@@ -263,6 +288,7 @@ ReviewFlo`;
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px;">
 <p>Hi ${businessNameTrim},</p>
 <p>Your ReviewFlo account is ready.</p>
+${notifyOnLaunch && launchTierLabel ? `<p>We've added you to the <strong>${launchTierLabel}</strong> launch notification list. You'll get 50% off for the first 3 months when it launches in May 2026.</p>` : ''}
 <p><strong>Login:</strong> <a href="${loginUrl}" style="color: #2563eb;">${loginDisplay}</a><br>
 <strong>Email:</strong> ${emailTrim}<br>
 <strong>Password:</strong> (the one you created)</p>

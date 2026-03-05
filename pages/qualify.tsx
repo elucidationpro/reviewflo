@@ -8,12 +8,17 @@ import Script from 'next/script';
 import { trackEvent } from '@/lib/posthog-provider';
 import { generateSlugFromBusinessName, isValidSlug, isReservedSlug, normalizeSlugForValidation } from '@/lib/slug-utils';
 import { supabase } from '@/lib/supabase';
+import ComingSoonTierModal from '@/components/ComingSoonTierModal';
 
-type Step = 'form' | 'preview' | 'editing' | 'success';
+type Step = 'form' | 'tier' | 'preview' | 'editing' | 'success';
+type TierChoice = 'free' | 'pro' | 'ai';
 
 export default function QualifyPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>('form');
+  const [selectedTier, setSelectedTier] = useState<TierChoice>('free');
+  const [showLaunchModal, setShowLaunchModal] = useState(false);
+  const [notifyOnLaunchPreference, setNotifyOnLaunchPreference] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     businessName: '',
@@ -138,13 +143,37 @@ export default function QualifyPage() {
     }));
     setSlug(finalSlug);
     setCustomSlug(finalSlug);
-    setStep('preview');
+    setStep('tier');
 
     trackEvent('slug_previewed', {
       businessName: trimmedBusinessName,
       slug: finalSlug,
       source: 'auto-generated',
     });
+  };
+
+  const handleTierBack = () => {
+    setStep('form');
+  };
+
+  const handleTierContinue = () => {
+    trackEvent('tier_selected', { tier: selectedTier });
+    if (selectedTier === 'pro' || selectedTier === 'ai') {
+      trackEvent('launch_notification_requested', { tier: selectedTier });
+      setShowLaunchModal(true);
+    } else {
+      setStep('preview');
+    }
+  };
+
+  const handleLaunchModalClose = () => {
+    setShowLaunchModal(false);
+  };
+
+  const handleLaunchModalContinueWithFree = (notifyOnLaunch: boolean) => {
+    setNotifyOnLaunchPreference(notifyOnLaunch);
+    setShowLaunchModal(false);
+    setStep('preview');
   };
 
   const handleEditLink = () => {
@@ -253,6 +282,11 @@ export default function QualifyPage() {
           businessType: formData.businessType,
           customersPerMonth: formData.customersPerMonth,
           reviewAskingFrequency: formData.reviewAskingFrequency,
+          tier: 'free',
+          interested_in_tier: selectedTier === 'free' ? null : selectedTier,
+          notify_on_launch: selectedTier === 'free' ? false : notifyOnLaunchPreference,
+          launch_discount_eligible: true,
+          launch_discount_claimed: false,
         }),
       });
 
@@ -271,6 +305,8 @@ export default function QualifyPage() {
           reviewAskingFrequency: formData.reviewAskingFrequency,
           email: formData.email,
           slug,
+          tier: 'free',
+          interested_in_tier: selectedTier === 'free' ? null : selectedTier,
         });
         if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
           (window as any).fbq('track', 'Lead', {
@@ -300,6 +336,7 @@ export default function QualifyPage() {
   };
 
   const showForm = step === 'form';
+  const showTier = step === 'tier';
   const showPreview = step === 'preview';
   const showEditing = step === 'editing';
   const showSuccess = step === 'success';
@@ -364,7 +401,9 @@ fbq('track', 'PageView');`,
                   Your account is ready!
                 </h1>
                 <p className="text-lg text-gray-600 mb-6">
-                  You're signed in. Go to your dashboard to start collecting reviews.
+                  {selectedTier === 'free'
+                    ? "You're signed in. Go to your dashboard to start collecting reviews."
+                    : `Your free account is ready! We'll email you when ${selectedTier === 'pro' ? 'Pro' : 'AI'} launches in May 2026. You'll get 50% off for the first 3 months.`}
                 </p>
                 <button
                   onClick={handleGoToDashboard}
@@ -372,6 +411,132 @@ fbq('track', 'PageView');`,
                 >
                   Go to Dashboard →
                 </button>
+              </div>
+            )}
+
+            {/* Tier selection: Choose plan before URL preview */}
+            {showTier && !showSuccess && (
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2 text-center">
+                  Choose Your Plan
+                </h1>
+                <p className="text-center text-gray-600 mb-6">
+                  You can start with Free today and upgrade when Pro & AI launch in May 2026.
+                </p>
+
+                <div className="space-y-4 mb-8">
+                  {/* Basic (Free) */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTier('free')}
+                    className={`w-full text-left p-5 rounded-xl border-2 transition-all ${
+                      selectedTier === 'free'
+                        ? 'border-[#C9A961] bg-[#C9A961]/10'
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5">
+                        {selectedTier === 'free' ? (
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#C9A961]" />
+                        ) : null}
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900">BASIC (FREE)</p>
+                        <p className="text-sm text-[#4A3428] font-medium">Available Now</p>
+                        <p className="text-sm text-gray-600 mt-2">
+                          Start using ReviewFlo today
+                        </p>
+                        <ul className="text-sm text-gray-600 mt-1 space-y-0.5">
+                          <li>• Stop bad reviews</li>
+                          <li>• Google Reviews</li>
+                          <li>• Manual sending</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Pro */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTier('pro')}
+                    className={`w-full text-left p-5 rounded-xl border-2 transition-all ${
+                      selectedTier === 'pro'
+                        ? 'border-[#C9A961] bg-[#C9A961]/10'
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5">
+                        {selectedTier === 'pro' ? (
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#C9A961]" />
+                        ) : null}
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900">PRO – $19/mo</p>
+                        <p className="text-sm text-gray-500">Coming May 2026</p>
+                        <p className="text-sm text-[#4A3428] font-medium">50% off first 3 months ($9.50/mo)</p>
+                        <p className="text-sm text-gray-600 mt-2">
+                          Get notified when Pro launches
+                        </p>
+                        <ul className="text-sm text-gray-600 mt-1 space-y-0.5">
+                          <li>• Dashboard email sending</li>
+                          <li>• Auto follow-ups</li>
+                          <li>• Multi-platform</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* AI */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTier('ai')}
+                    className={`w-full text-left p-5 rounded-xl border-2 transition-all ${
+                      selectedTier === 'ai'
+                        ? 'border-[#C9A961] bg-[#C9A961]/10'
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5">
+                        {selectedTier === 'ai' ? (
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#C9A961]" />
+                        ) : null}
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900">AI – $49/mo</p>
+                        <p className="text-sm text-gray-500">Coming May 2026</p>
+                        <p className="text-sm text-[#4A3428] font-medium">50% off first 3 months ($24.50/mo)</p>
+                        <p className="text-sm text-gray-600 mt-2">
+                          Get notified when AI launches
+                        </p>
+                        <ul className="text-sm text-gray-600 mt-1 space-y-0.5">
+                          <li>• SMS automation</li>
+                          <li>• AI features</li>
+                          <li>• Fully automated</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={handleTierBack}
+                    className="px-6 py-3 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg font-medium"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleTierContinue}
+                    className="flex-1 px-8 py-4 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 transition-all"
+                  >
+                    Continue
+                  </button>
+                </div>
               </div>
             )}
 
@@ -895,6 +1060,16 @@ fbq('track', 'PageView');`,
           </div>
         </div>
       </div>
+
+      {/* Pro/AI launch modal */}
+      {showLaunchModal && (selectedTier === 'pro' || selectedTier === 'ai') && (
+        <ComingSoonTierModal
+          open={showLaunchModal}
+          tier={selectedTier}
+          onClose={handleLaunchModalClose}
+          onContinueWithFree={handleLaunchModalContinueWithFree}
+        />
+      )}
     </>
   );
 }

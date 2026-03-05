@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 import { supabase } from '../../lib/supabase'
 import { checkIsAdmin } from '../../lib/adminAuth'
 
@@ -35,20 +36,6 @@ interface WaitlistSignup {
   created_at: string
 }
 
-interface Lead {
-  id: string
-  email: string
-  name: string | null
-  phone: string | null
-  business_name: string
-  business_type: string
-  status: 'waitlist' | 'beta_invited' | 'beta_active' | 'converted' | 'declined'
-  business_id: string | null
-  challenge: string | null
-  source: string
-  created_at: string
-}
-
 interface EarlyAccessSignup {
   id: string
   user_id: string
@@ -78,14 +65,11 @@ export default function AdminDashboard() {
   const [filteredBusinesses, setFilteredBusinesses] = useState<Business[]>([])
   const [betaSignups, setBetaSignups] = useState<BetaSignup[]>([])
   const [waitlistSignups, setWaitlistSignups] = useState<WaitlistSignup[]>([])
-  const [leads, setLeads] = useState<Lead[]>([])
   const [earlyAccessSignups, setEarlyAccessSignups] = useState<EarlyAccessSignup[]>([])
-  const [statusFilter, setStatusFilter] = useState<string>('all')
   const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0 })
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
-  const [invitingLeadId, setInvitingLeadId] = useState<string | null>(null)
   const [deletingEarlyAccessId, setDeletingEarlyAccessId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -198,23 +182,6 @@ export default function AdminDashboard() {
         console.error('[Admin] Failed to fetch waitlist signups:', waitlistResponse.status)
       }
 
-      // Fetch leads via API (unified pipeline)
-      console.time('[Admin] API Fetch Leads')
-      const leadsResponse = await fetch('/api/admin/get-leads', {
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-      })
-      console.timeEnd('[Admin] API Fetch Leads')
-
-      if (leadsResponse.ok) {
-        const leadsData = await leadsResponse.json()
-        console.log('[Admin] Leads received:', leadsData.leads?.length || 0)
-        setLeads(leadsData.leads || [])
-      } else {
-        console.error('[Admin] Failed to fetch leads:', leadsResponse.status)
-      }
-
       // Fetch early access signups
       const earlyRes = await fetch('/api/admin/get-early-access', {
         headers: { 'Authorization': `Bearer ${session.access_token}` },
@@ -240,58 +207,6 @@ export default function AdminDashboard() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.push('/login')
-  }
-
-  const handleUpdateLeadStatus = async (leadId: string, newStatus: string) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const response = await fetch('/api/admin/update-lead-status', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ leadId, status: newStatus }),
-      })
-
-      if (response.ok) {
-        // Refresh leads data
-        checkAdminAndFetchData()
-      } else {
-        console.error('Failed to update lead status')
-      }
-    } catch (error) {
-      console.error('Error updating lead status:', error)
-    }
-  }
-
-  const handleDeleteLead = async (leadId: string) => {
-    if (!confirm('Are you sure you want to delete this lead?')) return
-
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const response = await fetch('/api/admin/delete-lead', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ leadId }),
-      })
-
-      if (response.ok) {
-        // Refresh leads data
-        checkAdminAndFetchData()
-      } else {
-        console.error('Failed to delete lead')
-      }
-    } catch (error) {
-      console.error('Error deleting lead:', error)
-    }
   }
 
   const handleDeleteEarlyAccessSignup = async (signupId: string) => {
@@ -327,50 +242,6 @@ export default function AdminDashboard() {
       setError('Failed to remove')
     } finally {
       setDeletingEarlyAccessId(null)
-    }
-  }
-
-  const handleInviteToBeta = async (leadId: string) => {
-    setInvitingLeadId(leadId)
-    setError('')
-    setSuccessMessage('')
-
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        setError('Session expired. Please refresh the page.')
-        setInvitingLeadId(null)
-        return
-      }
-
-      const response = await fetch('/api/admin/invite-to-beta', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ leadId }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setSuccessMessage('Beta invitation sent successfully!')
-        // Auto-hide success message after 5 seconds
-        setTimeout(() => setSuccessMessage(''), 5000)
-        // Refresh leads data to show updated status
-        checkAdminAndFetchData()
-      } else {
-        setError(data.error || 'Failed to send beta invitation')
-        // Auto-hide error message after 5 seconds
-        setTimeout(() => setError(''), 5000)
-      }
-    } catch (error) {
-      console.error('Error inviting to beta:', error)
-      setError('An error occurred while sending the invitation')
-      setTimeout(() => setError(''), 5000)
-    } finally {
-      setInvitingLeadId(null)
     }
   }
 
@@ -417,46 +288,6 @@ export default function AdminDashboard() {
       setTimeout(() => setError(''), 5000)
     }
   }
-
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case 'waitlist':
-        return 'bg-blue-100 text-blue-800'
-      case 'beta_invited':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'beta_active':
-        return 'bg-green-100 text-green-800'
-      case 'converted':
-        return 'bg-gray-100 text-gray-800'
-      case 'declined':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'waitlist':
-        return 'Waitlist'
-      case 'beta_invited':
-        return 'Beta Invited'
-      case 'beta_active':
-        return 'Beta Active'
-      case 'converted':
-        return 'Converted'
-      case 'declined':
-        return 'Declined'
-      default:
-        return status
-    }
-  }
-
-  // Exclude converted leads from pipeline (they appear only in Active Businesses below)
-  const pipelineLeads = leads.filter(lead => lead.status !== 'converted')
-  const filteredLeads = statusFilter === 'all'
-    ? pipelineLeads
-    : pipelineLeads.filter(lead => lead.status === statusFilter)
 
   if (isLoading) {
     return (
@@ -639,178 +470,6 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Leads Pipeline Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
-              <h2 className="text-xl font-semibold text-slate-800 tracking-tight">
-                Leads Pipeline ({filteredLeads.length})
-              </h2>
-              <div className="flex items-center gap-3">
-                <label htmlFor="statusFilter" className="text-sm font-medium text-slate-600">
-                  Filter by Status:
-                </label>
-                <select
-                  id="statusFilter"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-slate-800"
-                >
-                  <option value="all">All (not yet converted)</option>
-                  <option value="waitlist">Waitlist</option>
-                  <option value="beta_invited">Beta Invited</option>
-                  <option value="beta_active">Beta Active</option>
-                  <option value="declined">Declined</option>
-                </select>
-              </div>
-            </div>
-            <p className="text-sm text-slate-500 mb-4">Converted leads appear only in Active Businesses below.</p>
-
-            {filteredLeads.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-slate-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
-                        Business Name
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
-                        Source
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-slate-800 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredLeads.map((lead) => (
-                      <tr key={lead.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="px-4 py-4">
-                          <div>
-                            <p className="font-semibold text-slate-800">{lead.name || 'N/A'}</p>
-                            {lead.phone && (
-                              <p className="text-xs text-slate-500 mt-1">{lead.phone}</p>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4">
-                          <a href={`mailto:${lead.email}`} className="text-slate-800 hover:text-indigo-600 hover:underline">
-                            {lead.email}
-                          </a>
-                        </td>
-                        <td className="px-4 py-4">
-                          <p className="font-medium text-slate-800">{lead.business_name}</p>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 mt-1">
-                            {lead.business_type}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(lead.status)}`}>
-                            {getStatusLabel(lead.status)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4">
-                          <span className="text-sm text-slate-600 capitalize">{lead.source}</span>
-                        </td>
-                        <td className="px-4 py-4 text-sm text-slate-600">
-                          {new Date(lead.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex justify-end gap-2">
-                            {lead.status === 'waitlist' && (
-                              <button
-                                onClick={() => handleInviteToBeta(lead.id)}
-                                disabled={invitingLeadId === lead.id}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                {invitingLeadId === lead.id ? (
-                                  <>
-                                    <svg
-                                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                      />
-                                      <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                      />
-                                    </svg>
-                                    Sending...
-                                  </>
-                                ) : (
-                                  'Invite to Beta'
-                                )}
-                              </button>
-                            )}
-                            {lead.status === 'beta_invited' && (
-                              <button
-                                onClick={() => handleUpdateLeadStatus(lead.id, 'beta_active')}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
-                              >
-                                Mark as Active
-                              </button>
-                            )}
-                            {lead.status === 'beta_active' && (
-                              <Link
-                                href={{
-                                  pathname: '/admin/create-business',
-                                  query: {
-                                    leadId: lead.id,
-                                    name: lead.name || '',
-                                    email: lead.email,
-                                    phone: lead.phone || '',
-                                    businessName: lead.business_name,
-                                    businessType: lead.business_type
-                                  }
-                                }}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
-                              >
-                                Create Account
-                              </Link>
-                            )}
-                            <button
-                              onClick={() => handleDeleteLead(lead.id)}
-                              className="inline-flex items-center px-3 py-1.5 text-sm bg-red-600 hover:bg-red-700 text-white font-medium rounded transition-colors"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-slate-500">
-                  {statusFilter === 'all' ? 'No leads in the pipeline yet.' : `No ${getStatusLabel(statusFilter).toLowerCase()} leads.`}
-                </p>
-              </div>
-            )}
           </div>
 
           {/* Early Access Signups */}
@@ -996,9 +655,24 @@ export default function AdminDashboard() {
           </div>
 
           {/* Footer */}
-          <p className="text-center text-slate-500 text-sm mt-8">
-            Powered by ReviewFlo
-          </p>
+          <a
+            href="https://usereviewflo.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block mt-8 transition-opacity hover:opacity-70"
+          >
+            <div className="flex items-center justify-center gap-2 text-slate-500 text-sm">
+              <span>Powered by</span>
+              <div className="relative w-24 h-6">
+                <Image
+                  src="/images/reviewflo-logo.svg"
+                  alt="ReviewFlo"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          </a>
         </div>
       </div>
     </>

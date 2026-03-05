@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { PostHogProvider } from "@/lib/posthog-provider";
+import LaunchBanner from "@/components/LaunchBanner";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 

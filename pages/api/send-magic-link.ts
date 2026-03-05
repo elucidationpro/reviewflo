@@ -71,28 +71,6 @@ export default async function handler(
       ? `${normalizedSlug}-${Math.floor(Math.random() * 10000)}`
       : normalizedSlug;
 
-    // Store pending signup data in leads table (schema: business_type NOT NULL, status must be waitlist|beta_invited|beta_active|converted|declined)
-    const leadPayload = {
-      email: emailTrim,
-      business_name: businessNameTrim,
-      business_type: 'other',
-      status: 'waitlist',
-      source: 'magic_link_join',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    const { error: leadError } = await supabaseAdmin
-      .from('leads')
-      .upsert(leadPayload, { onConflict: 'email' });
-
-    if (leadError) {
-      console.error('[send-magic-link] Lead upsert failed:', leadError);
-      return res.status(500).json({
-        error: 'Failed to process signup. Please try again.'
-      });
-    }
-
     // Generate magic link (generateLink does NOT send email - we send via Resend)
     // Must be a client page - Supabase puts session in URL hash, which API routes cannot read
     const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/join/callback`;
@@ -152,12 +130,6 @@ export default async function handler(
         error: 'Failed to send login link. Please try again or contact support.'
       });
     }
-
-    // Update lead timestamp
-    await supabaseAdmin
-      .from('leads')
-      .update({ updated_at: new Date().toISOString() })
-      .eq('email', emailTrim);
 
     console.log('[send-magic-link] Magic link sent successfully to:', emailTrim);
 

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 import OnboardingProgress from '../components/OnboardingProgress'
+import { trackEvent } from '../lib/posthog-provider'
 
 interface Business {
   id: string
@@ -14,6 +15,11 @@ interface Business {
   facebook_review_url: string | null
   yelp_review_url: string | null
   nextdoor_review_url: string | null
+  tier: 'free' | 'pro' | 'ai'
+  interested_in_tier: 'pro' | 'ai' | null
+  notify_on_launch: boolean
+  launch_discount_eligible: boolean
+  launch_discount_claimed: boolean
 }
 
 interface ReviewTemplate {
@@ -29,6 +35,9 @@ export default function SettingsPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [migrationWarning, setMigrationWarning] = useState('')
   const [error, setError] = useState('')
+  const [planSaving, setPlanSaving] = useState(false)
+  const [planMessage, setPlanMessage] = useState('')
+  const [planError, setPlanError] = useState('')
 
   // Business data state
   const [businessData, setBusinessData] = useState<Business>({
@@ -41,6 +50,11 @@ export default function SettingsPage() {
     facebook_review_url: '',
     yelp_review_url: '',
     nextdoor_review_url: '',
+    tier: 'free',
+    interested_in_tier: null,
+    notify_on_launch: false,
+    launch_discount_eligible: true,
+    launch_discount_claimed: false,
   })
 
   // Review templates state - one for each platform
@@ -84,6 +98,11 @@ export default function SettingsPage() {
           facebook_review_url: business.facebook_review_url || '',
           yelp_review_url: business.yelp_review_url || '',
           nextdoor_review_url: business.nextdoor_review_url || '',
+          tier: (business.tier as 'free' | 'pro' | 'ai') || 'free',
+          interested_in_tier: (business.interested_in_tier as 'pro' | 'ai' | null) ?? null,
+          notify_on_launch: business.notify_on_launch ?? false,
+          launch_discount_eligible: business.launch_discount_eligible ?? true,
+          launch_discount_claimed: business.launch_discount_claimed ?? false,
         })
 
         // Fetch review templates
@@ -118,6 +137,72 @@ export default function SettingsPage() {
 
     fetchData()
   }, [router])
+
+  const handlePlanPreferenceClick = async (tier: 'pro' | 'ai' | null) => {
+    setPlanError('')
+    setPlanMessage('')
+    setPlanSaving(true)
+
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      if (!session) {
+        setPlanError('Session expired. Please log in again.')
+        setPlanSaving(false)
+        return
+      }
+
+      const res = await fetch('/api/update-launch-preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          businessId: businessData.id,
+          interestedInTier: tier,
+          notifyOnLaunch: tier !== null,
+        }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setPlanError(
+          data?.error ||
+            'Failed to update launch notification preference. Please try again.'
+        )
+        setPlanSaving(false)
+        return
+      }
+
+      const updatedTier = (data?.interested_in_tier ?? tier) as 'pro' | 'ai' | null
+      const updatedNotify = data?.notify_on_launch ?? (tier !== null)
+
+      setBusinessData((prev) => ({
+        ...prev,
+        interested_in_tier: updatedTier,
+        notify_on_launch: updatedNotify,
+      }))
+
+      if (tier) {
+        const label = tier === 'pro' ? 'Pro' : 'AI'
+        setPlanMessage(`We'll email you when ${label} launches in May 2026.`)
+        trackEvent('upgrade_notification_requested', {
+          tier,
+          source: 'settings',
+        })
+      } else {
+        setPlanMessage('You will stay on the Free plan. We will not send Pro/AI launch emails.')
+      }
+    } catch (err) {
+      console.error('Error updating launch preference from settings:', err)
+      setPlanError('An unexpected error occurred. Please try again.')
+    } finally {
+      setPlanSaving(false)
+    }
+  }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -217,6 +302,11 @@ export default function SettingsPage() {
   }
 
   const hasCustomColor = businessData.primary_color && businessData.primary_color !== '#3B82F6'
+  const currentPlanLabel =
+    businessData.tier === 'pro' ? 'Pro' : businessData.tier === 'ai' ? 'AI' : 'Free'
+  const launchNotificationLabel = businessData.interested_in_tier
+    ? `${businessData.interested_in_tier === 'pro' ? 'Pro tier' : 'AI tier'}`
+    : 'None'
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
@@ -359,6 +449,79 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Plan & Billing */}
+          <div id="plan-billing" className="bg-white rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Plan &amp; Billing</h2>
+            <p className="text-gray-600 text-sm mb-6">
+              See your current plan and control launch notifications for upcoming Pro &amp; AI tiers.
+            </p>
+
+            <div className="space-y-2 mb-6">
+              <p className="text-sm text-gray-800">
+                <span className="font-semibold">Current Plan:</span>{' '}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full border text-xs font-semibold tracking-wide uppercase"
+                  style={{
+                    backgroundColor: '#F5F5DC',
+                    borderColor: '#C9A961',
+                    color: '#4A3428',
+                  }}
+                >
+                  {currentPlanLabel === 'Pro'
+                    ? 'PRO PLAN'
+                    : currentPlanLabel === 'AI'
+                    ? 'AI PLAN'
+                    : 'FREE PLAN'}
+                </span>
+              </p>
+              <p className="text-sm text-gray-800">
+                <span className="font-semibold">Launch Notification:</span>{' '}
+                <span className="text-gray-700">{launchNotificationLabel}</span>
+              </p>
+              {businessData.launch_discount_eligible && (
+                <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 inline-block">
+                  You qualify for <span className="font-semibold">50% off</span> the first 3 months
+                  when Pro or AI launch in May 2026.
+                </p>
+              )}
+            </div>
+
+            <p className="text-sm text-gray-800 mb-4">
+              Interested in upgrading when Pro or AI launch?
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => handlePlanPreferenceClick('pro')}
+                disabled={planSaving}
+                className="px-4 py-2.5 bg-[#4A3428] text-white rounded-lg text-sm font-semibold hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60"
+              >
+                Get notified when Pro launches
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePlanPreferenceClick('ai')}
+                disabled={planSaving}
+                className="px-4 py-2.5 border border-[#C9A961] bg-[#F5F5DC]/70 text-[#4A3428] rounded-lg text-sm font-semibold hover:bg-[#F5F5DC] transition-colors disabled:opacity-60"
+              >
+                Get notified when AI launches
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePlanPreferenceClick(null)}
+                disabled={planSaving}
+                className="px-4 py-2.5 border border-gray-300 bg-white text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors disabled:opacity-60"
+              >
+                I&apos;m happy with Free
+              </button>
+            </div>
+            {planMessage && (
+              <p className="mt-3 text-sm text-emerald-700 font-medium">{planMessage}</p>
+            )}
+            {planError && (
+              <p className="mt-3 text-sm text-red-600 font-medium">{planError}</p>
+            )}
           </div>
 
           {/* Review Platform URLs Section */}

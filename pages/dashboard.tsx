@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 import { supabase } from '../lib/supabase'
 import { trackEvent, identifyUser } from '../lib/posthog-provider'
 import OnboardingProgress from '../components/OnboardingProgress'
+import ComingSoonTierModal, { type ComingSoonTier } from '@/components/ComingSoonTierModal'
+import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav'
 
 interface Business {
   id: string
@@ -14,6 +17,10 @@ interface Business {
   google_review_url?: string | null
   facebook_review_url?: string | null
   skip_template_choice?: boolean
+  tier: 'free' | 'pro' | 'ai'
+  interested_in_tier?: 'pro' | 'ai' | null
+  notify_on_launch?: boolean
+  launch_discount_eligible?: boolean
 }
 
 interface ReviewStats {
@@ -49,6 +56,12 @@ export default function DashboardPage() {
   const [feedbackList, setFeedbackList] = useState<Feedback[]>([])
   const [resolvingId, setResolvingId] = useState<string | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
+  const [showComingSoonModal, setShowComingSoonModal] = useState(false)
+  const [comingSoonTier, setComingSoonTier] = useState<ComingSoonTier | null>(null)
+  const [launchMessage, setLaunchMessage] = useState<string | null>(null)
+  const [launchError, setLaunchError] = useState<string | null>(null)
+  const [updatingLaunchPref, setUpdatingLaunchPref] = useState(false)
+  const [hasTrackedUpgradeCardView, setHasTrackedUpgradeCardView] = useState(false)
 
   useEffect(() => {
     checkAuthAndFetchData()
@@ -68,7 +81,7 @@ export default function DashboardPage() {
       console.time('[Dashboard] Business Fetch')
       const { data: businessData, error: businessError } = await supabase
         .from('businesses')
-        .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice')
+        .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible')
         .eq('user_id', user.id)
         .single()
       console.timeEnd('[Dashboard] Business Fetch')
@@ -78,7 +91,7 @@ export default function DashboardPage() {
         return
       }
 
-      setBusiness(businessData)
+      setBusiness(businessData as Business)
 
       // Track business onboarding
       // Identify the business owner in PostHog
@@ -186,6 +199,115 @@ export default function DashboardPage() {
     }
   }
 
+  const handleTrackUpgradeCardViewed = useCallback(() => {
+    if (!business || hasTrackedUpgradeCardView) return
+    if (business.tier !== 'free' || business.interested_in_tier) return
+
+    trackEvent('upgrade_card_viewed', {
+      businessId: business.id,
+      tier: business.tier,
+      source: 'dashboard',
+    })
+    setHasTrackedUpgradeCardView(true)
+  }, [business, hasTrackedUpgradeCardView])
+
+  useEffect(() => {
+    handleTrackUpgradeCardViewed()
+  }, [handleTrackUpgradeCardViewed])
+
+  const handlePricingClick = () => {
+    if (business) {
+      trackEvent('pricing_viewed_from_dashboard', {
+        businessId: business.id,
+        source: 'dashboard',
+      })
+    }
+    router.push('/#pricing')
+  }
+
+  const updateLaunchPreference = useCallback(
+    async (tier: ComingSoonTier | null, notifyOnLaunch: boolean) => {
+      if (!business || !tier) return
+      setUpdatingLaunchPref(true)
+      setLaunchError(null)
+      setLaunchMessage(null)
+
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+
+        if (!session) {
+          setLaunchError('Session expired. Please log in again.')
+          setUpdatingLaunchPref(false)
+          return
+        }
+
+        const res = await fetch('/api/update-launch-preferences', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            businessId: business.id,
+            interestedInTier: tier,
+            notifyOnLaunch,
+          }),
+        })
+
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) {
+          setLaunchError(
+            data?.error ||
+              'Failed to update your launch notification preference. Please try again.'
+          )
+          setUpdatingLaunchPref(false)
+          return
+        }
+
+        const updatedTier = (data?.interested_in_tier ?? tier) as 'pro' | 'ai'
+        const updatedNotify = data?.notify_on_launch ?? notifyOnLaunch
+
+        setBusiness({
+          ...business,
+          interested_in_tier: updatedTier,
+          notify_on_launch: updatedNotify,
+        })
+
+        const tierLabel = updatedTier === 'pro' ? 'Pro' : 'AI'
+        setLaunchMessage(
+          updatedNotify
+            ? `We'll email you when ${tierLabel} launches in May 2026.`
+            : `Your preference for the ${tierLabel} tier has been updated.`
+        )
+
+        trackEvent('upgrade_notification_requested', {
+          businessId: business.id,
+          tier: updatedTier,
+          notifyOnLaunch: updatedNotify,
+          source: 'dashboard',
+        })
+      } catch (error) {
+        console.error('Error updating launch preference from dashboard:', error)
+        setLaunchError('Something went wrong. Please try again.')
+      } finally {
+        setUpdatingLaunchPref(false)
+      }
+    },
+    [business]
+  )
+
+  const handleComingSoonContinue = useCallback(
+    async (notifyOnLaunch: boolean) => {
+      if (!comingSoonTier) return
+      await updateLaunchPreference(comingSoonTier, notifyOnLaunch)
+      setShowComingSoonModal(false)
+      setComingSoonTier(null)
+    },
+    [comingSoonTier, updateLaunchPreference]
+  )
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
@@ -272,6 +394,10 @@ export default function DashboardPage() {
   }
 
   const hasCustomColor = business.primary_color && business.primary_color !== '#3B82F6'
+  const currentTierLabel =
+    business.tier === 'pro' ? 'Pro Plan' : business.tier === 'ai' ? 'AI Plan' : 'Free Plan'
+  const tierBadgeLabel =
+    business.tier === 'pro' ? 'PRO PLAN' : business.tier === 'ai' ? 'AI PLAN' : 'FREE PLAN'
 
   return (
     <>
@@ -279,98 +405,222 @@ export default function DashboardPage() {
         <title>Dashboard - ReviewFlo</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
-      <OnboardingProgress
-        hasGoogleLink={!!(business.google_review_url && business.google_review_url.trim())}
-        hasFacebookLink={!!(business.facebook_review_url && business.facebook_review_url.trim())}
-        hasCustomColor={!!hasCustomColor}
-        hasEditedTemplates={!business.skip_template_choice}
-      />
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div>
-              <h1
-                className="text-3xl md:text-4xl font-bold mb-2"
-                style={{ color: business.primary_color || '#1e293b' }}
-              >
-                {business.business_name}
-              </h1>
-              <p className="text-slate-600">Dashboard Overview</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+        <SiteNav
+          variant="dashboard"
+          businessName={business.business_name}
+          onLogout={handleLogout}
+        />
+        <div className={SITE_NAV_SPACER_CLASS} />
+        <div className="px-4 py-8">
+          <OnboardingProgress
+            hasGoogleLink={!!(business.google_review_url && business.google_review_url.trim())}
+            hasFacebookLink={!!(business.facebook_review_url && business.facebook_review_url.trim())}
+            hasCustomColor={!!hasCustomColor}
+            hasEditedTemplates={!business.skip_template_choice}
+          />
+          <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <div className="flex flex-wrap items-center gap-3 mb-1">
+                  <h1
+                    className="text-3xl md:text-4xl font-bold"
+                    style={{ color: business.primary_color || '#1e293b' }}
+                  >
+                    {business.business_name}
+                  </h1>
+                  <span
+                    className="inline-flex items-center px-3 py-1 rounded-full border text-xs font-semibold tracking-wide uppercase"
+                    style={{
+                      backgroundColor: '#F5F5DC',
+                      borderColor: '#C9A961',
+                      color: '#4A3428',
+                    }}
+                  >
+                    {tierBadgeLabel}
+                  </span>
+                </div>
+                <p className="text-slate-600">
+                  Dashboard Overview · <span className="font-medium">{currentTierLabel}</span>
+                </p>
+              </div>
             </div>
-            <div className="flex gap-3 mt-4 md:mt-0">
-              <Link
-                href="/settings"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-              >
-                Settings
-              </Link>
+          </div>
+
+          {/* Your Review Link - Primary CTA for first-time users */}
+          <div
+            className="mb-8 rounded-xl border-2 p-6 md:p-8 shadow-lg"
+            style={{
+              backgroundColor: 'white',
+              borderColor: business.primary_color || '#6366f1',
+              borderLeftWidth: '6px',
+            }}
+          >
+            <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-1">
+              Your Review Link
+            </h2>
+            <p className="text-slate-600 text-sm mb-4">
+              Send this link to customers after each job. They rate their experience, then get guided
+              to leave a Google review.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1 flex items-center bg-slate-50 rounded-lg px-4 py-3 border border-slate-200">
+                <a
+                  href={fullUrlForCopy}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm md:text-base font-mono text-slate-800 truncate hover:underline flex-1 min-w-0"
+                >
+                  {displayLink}
+                </a>
+              </div>
               <button
-                onClick={handleLogout}
-                className="bg-slate-600 hover:bg-slate-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                onClick={handleCopyReviewLink}
+                className="shrink-0 flex items-center justify-center gap-2 font-semibold px-6 py-3 rounded-lg transition-colors"
+                style={{
+                  backgroundColor: business.primary_color || '#6366f1',
+                  color: 'white',
+                }}
               >
-                Logout
+                {linkCopied ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Copy Link
+                  </>
+                )}
               </button>
             </div>
+            {reviewStats.total === 0 && feedbackList.length === 0 && (
+              <p className="text-sm text-slate-500 mt-4">
+                💡 Try it first: send the link to yourself and rate your own &quot;service&quot; to see
+                how it works.
+              </p>
+            )}
           </div>
-        </div>
 
-        {/* Your Review Link - Primary CTA for first-time users */}
-        <div
-          className="mb-8 rounded-xl border-2 p-6 md:p-8 shadow-lg"
-          style={{
-            backgroundColor: 'white',
-            borderColor: business.primary_color || '#6366f1',
-            borderLeftWidth: '6px',
-          }}
-        >
-          <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-1">Your Review Link</h2>
-          <p className="text-slate-600 text-sm mb-4">
-            Send this link to customers after each job. They rate their experience, then get guided to leave a Google review.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 flex items-center bg-slate-50 rounded-lg px-4 py-3 border border-slate-200">
-              <a
-                href={fullUrlForCopy}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm md:text-base font-mono text-slate-800 truncate hover:underline flex-1 min-w-0"
-              >
-                {displayLink}
-              </a>
-            </div>
-            <button
-              onClick={handleCopyReviewLink}
-              className="shrink-0 flex items-center justify-center gap-2 font-semibold px-6 py-3 rounded-lg transition-colors"
-              style={{
-                backgroundColor: business.primary_color || '#6366f1',
-                color: 'white',
-              }}
-            >
-              {linkCopied ? (
-                <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Copied!
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                  Copy Link
-                </>
+          {/* Upgrade Coming Soon Card */}
+          {business.tier === 'free' && !business.interested_in_tier && (
+            <div className="mb-8 bg-white rounded-2xl shadow-xl border border-amber-200 p-6 md:p-8">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                <div className="flex-1">
+                  <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">
+                    Pro &amp; AI Tiers Launching May 2026
+                  </h2>
+                  <p className="text-slate-700 text-sm mb-4">
+                    Want more features once you&apos;ve got the basics working?
+                  </p>
+
+                  <div className="space-y-4 text-sm text-slate-700">
+                    <div>
+                      <p className="font-semibold">PRO ($19/mo)</p>
+                      <p className="text-slate-600">
+                        Dashboard sending, auto follow-ups, multi-platform.
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">AI ($49/mo)</p>
+                      <p className="text-slate-600">
+                        SMS automation, AI features, CRM integration.
+                      </p>
+                    </div>
+                    <p className="text-emerald-700 font-medium">
+                      Early signup bonus: 50% off first 3 months.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3 w-full md:w-64">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setComingSoonTier('pro')
+                      setShowComingSoonModal(true)
+                    }}
+                    className="w-full px-6 py-3.5 rounded-lg font-semibold text-sm bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors"
+                    disabled={updatingLaunchPref}
+                  >
+                    Get Notified for Pro
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setComingSoonTier('ai')
+                      setShowComingSoonModal(true)
+                    }}
+                    className="w-full px-6 py-3.5 rounded-lg font-semibold text-sm border border-[#C9A961] text-[#4A3428] bg-[#F5F5DC]/60 hover:bg-[#F5F5DC] transition-colors"
+                    disabled={updatingLaunchPref}
+                  >
+                    Get Notified for AI
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePricingClick}
+                    className="w-full px-6 py-3.5 rounded-lg font-semibold text-sm bg-white text-[#4A3428] border border-slate-200 hover:bg-slate-50 transition-colors"
+                  >
+                    See Full Pricing
+                  </button>
+                </div>
+              </div>
+              {launchMessage && (
+                <p className="mt-4 text-sm text-emerald-700 font-medium">{launchMessage}</p>
               )}
-            </button>
-          </div>
-          {(reviewStats.total === 0 && feedbackList.length === 0) && (
-            <p className="text-sm text-slate-500 mt-4">
-              💡 Try it first: send the link to yourself and rate your own &quot;service&quot; to see how it works.
-            </p>
+              {launchError && (
+                <p className="mt-4 text-sm text-red-600 font-medium">{launchError}</p>
+              )}
+            </div>
           )}
-        </div>
+
+          {/* Already on launch list card */}
+          {business.tier === 'free' && business.interested_in_tier && (
+            <div className="mb-8 bg-white rounded-2xl shadow-xl border border-emerald-200 p-6 md:p-8">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                <div className="flex-1">
+                  <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">
+                    You&apos;re on the{' '}
+                    {business.interested_in_tier === 'pro' ? 'Pro' : 'AI'} Launch List
+                  </h2>
+                  <p className="text-slate-700 text-sm mb-3">
+                    We&apos;ll email you when{' '}
+                    {business.interested_in_tier === 'pro' ? 'Pro' : 'AI'} launches in May 2026.
+                  </p>
+                  <p className="text-emerald-700 text-sm font-medium">
+                    Your launch discount: 50% off first 3 months.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3 w-full md:w-64">
+                  <button
+                    type="button"
+                    onClick={() => router.push('/settings#plan-billing')}
+                    className="w-full px-6 py-3.5 rounded-lg font-semibold text-sm bg-white text-emerald-800 border border-emerald-300 hover:bg-emerald-50 transition-colors"
+                  >
+                    Change Preference
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePricingClick}
+                    className="w-full px-6 py-3.5 rounded-lg font-semibold text-sm bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors"
+                  >
+                    See What&apos;s Included
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
         {/* Stats Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
@@ -495,6 +745,43 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Pro/AI feature placeholder */}
+        {business.tier === 'free' && (
+          <div className="mb-8 bg-amber-50 border border-dashed border-amber-300 rounded-xl p-6 md:p-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h2 className="text-lg md:text-xl font-semibold text-amber-900 mb-1">
+                  Send Review Requests
+                </h2>
+                <p className="text-sm text-amber-800">
+                  Available in Pro tier (May 2026). You&apos;ll be able to send review requests
+                  directly from this dashboard.
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setComingSoonTier('pro')
+                    setShowComingSoonModal(true)
+                  }}
+                  className="px-4 py-2.5 rounded-lg text-sm font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors"
+                  disabled={updatingLaunchPref}
+                >
+                  Get Notified
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePricingClick}
+                  className="px-4 py-2.5 rounded-lg text-sm font-semibold border border-amber-300 text-amber-900 bg-white/60 hover:bg-white transition-colors"
+                >
+                  Learn More
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Recent Feedback */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
           <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-6">
@@ -606,12 +893,37 @@ export default function DashboardPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-slate-500 text-sm mt-8">
-          Powered by ReviewFlo
-        </p>
+        <a
+          href="https://usereviewflo.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block mt-8 transition-opacity hover:opacity-70"
+        >
+          <div className="flex items-center justify-center gap-2 text-slate-500 text-sm">
+            <span>Powered by</span>
+            <div className="relative w-24 h-6">
+              <Image
+                src="/images/reviewflo-logo.svg"
+                alt="ReviewFlo"
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+        </a>
       </div>
+      {showComingSoonModal && comingSoonTier && (
+        <ComingSoonTierModal
+          open={showComingSoonModal}
+          tier={comingSoonTier}
+          onClose={() => {
+            setShowComingSoonModal(false)
+            setComingSoonTier(null)
+          }}
+          onContinueWithFree={handleComingSoonContinue}
+        />
+      )}
     </div>
     </>
   )
 }
-

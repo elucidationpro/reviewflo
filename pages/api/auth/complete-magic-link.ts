@@ -107,16 +107,6 @@ export default async function handler(
       .from('review_templates')
       .insert(templatesToCreate);
 
-    // Update lead status to converted
-    await supabaseAdmin
-      .from('leads')
-      .update({
-        status: 'converted',
-        business_id: business.id,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('email', email);
-
     return res.status(200).json({ success: true });
   } catch (error) {
     console.error('[complete-magic-link] Unexpected error:', error);

@@ -1,0 +1,34 @@
+{
+  "posts": [
+    {
+      "slug": "how-to-respond-to-negative-google-reviews",
+      "publishDate": "2025-03-09",
+      "priority": 1,
+      "status": "scheduled"
+    },
+    {
+      "slug": "how-to-prevent-bad-google-reviews",
+      "publishDate": "2025-03-13",
+      "priority": 2,
+      "status": "scheduled"
+    },
+    {
+      "slug": "how-to-get-more-google-reviews",
+      "publishDate": "2025-03-17",
+      "priority": 3,
+      "status": "scheduled"
+    },
+    {
+      "slug": "podium-alternative-small-business",
+      "publishDate": "2025-03-21",
+      "priority": 4,
+      "status": "scheduled"
+    },
+    {
+      "slug": "how-to-get-more-google-reviews-barbershop",
+      "publishDate": "2025-03-25",
+      "priority": 5,
+      "status": "scheduled"
+    }
+  ]
+}
