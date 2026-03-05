@@ -160,13 +160,16 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
     <Link
       href="/"
       onClick={handleLogoClick('desktop')}
-      className="flex items-center transition-opacity hover:opacity-80"
+      className="relative inline-flex items-center transition-opacity hover:opacity-80"
     >
       <img
         src="/images/reviewflo-logo.svg"
         alt="ReviewFlo"
         className="h-8 sm:h-10 w-auto"
       />
+      <span className="absolute -top-1 -right-3 text-[10px] sm:text-xs text-[#4A3428]">
+        ™
+      </span>
     </Link>
   );
 
@@ -191,13 +194,16 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
               <Link
                 href="/"
                 onClick={handleLogoClick('desktop')}
-                className="flex items-center transition-opacity hover:opacity-80"
+                className="relative inline-flex items-center transition-opacity hover:opacity-80"
               >
                 <img
                   src="/images/reviewflo-logo.svg"
                   alt="ReviewFlo"
                   className="h-8 sm:h-10 w-auto"
                 />
+                <span className="absolute -top-1 -right-3 text-[10px] sm:text-xs text-[#4A3428]">
+                  ™
+                </span>
               </Link>
               <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-slate-600">
                 <Link
