@@ -70,26 +70,30 @@ export default function DashboardPage() {
 
   const checkAuthAndFetchData = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) {
         router.push('/login')
         return
       }
+      const user = session.user
 
-      // Fetch business data for the logged-in user
+      // Fetch business (auto-heals: finds by user_id, or by owner_email and updates link)
       console.time('[Dashboard] Business Fetch')
-      const { data: businessData, error: businessError } = await supabase
-        .from('businesses')
-        .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible')
-        .eq('user_id', user.id)
-        .single()
+      const res = await fetch('/api/my-business', {
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
+      })
+      const data = await res.json()
       console.timeEnd('[Dashboard] Business Fetch')
 
-      if (businessError || !businessData) {
+      if (res.status === 401) {
+        router.push('/login')
+        return
+      }
+      if (!res.ok || !data.business) {
         setIsLoading(false)
         return
       }
+      const businessData = data.business
 
       setBusiness(businessData as Business)
 

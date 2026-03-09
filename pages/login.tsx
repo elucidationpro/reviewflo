@@ -32,7 +32,10 @@ export default function LoginPage() {
       })
 
       if (authError) {
-        setError(authError.message)
+        // Network errors often show as "Load failed" or "Failed to fetch"
+        const msg = authError.message
+        const isNetworkError = /load failed|failed to fetch|network/i.test(msg)
+        setError(isNetworkError ? 'Connection failed. Please check your internet and try again.' : msg)
         setIsLoading(false)
         return
       }
@@ -53,7 +56,9 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error('Login error:', err)
-      setError('An unexpected error occurred. Please try again.')
+      const msg = err instanceof Error ? err.message : ''
+      const isNetworkError = /load failed|failed to fetch|network/i.test(msg)
+      setError(isNetworkError ? 'Connection failed. Please check your internet and try again.' : 'An unexpected error occurred. Please try again.')
       setIsLoading(false)
     }
   }
