@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https: blob:",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.supabase.co https://*.posthog.com wss://*.supabase.co https://www.facebook.com https://www.googletagmanager.com https://www.google-analytics.com",
+      "connect-src 'self' https://*.supabase.co https://*.posthog.com wss://*.supabase.co https://www.facebook.com https://www.googletagmanager.com https://www.google-analytics.com https://*.a.run.app https://*.conversionsapigateway.com",
       "frame-src 'self' https://*.supabase.co",
       "object-src 'none'",
       "base-uri 'self'",

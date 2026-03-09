@@ -86,10 +86,19 @@ export default function DashboardPage() {
       console.timeEnd('[Dashboard] Business Fetch')
 
       if (res.status === 401) {
+        console.log('[Dashboard] Unauthorized - redirecting to login')
         router.push('/login')
         return
       }
       if (!res.ok || !data.business) {
+        console.log('[Dashboard] No business found:', {
+          status: res.status,
+          ok: res.ok,
+          hasBusiness: !!data.business,
+          userEmail: user.email,
+          userId: user.id,
+          data
+        })
         setIsLoading(false)
         return
       }
