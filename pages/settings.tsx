@@ -57,10 +57,10 @@ export default function SettingsPage() {
     launch_discount_claimed: false,
   })
 
-  // Review templates state - one for each platform
+  // Review templates state - one for each platform (alphabetically ordered to match customer-facing page)
   const [templates, setTemplates] = useState<ReviewTemplate[]>([
-    { id: '', template_text: '', platform: 'google' },
     { id: '', template_text: '', platform: 'facebook' },
+    { id: '', template_text: '', platform: 'google' },
     { id: '', template_text: '', platform: 'yelp' },
   ])
 
@@ -115,14 +115,14 @@ export default function SettingsPage() {
         if (templatesError) {
           console.error('Error fetching templates:', templatesError)
         } else if (templatesData && templatesData.length > 0) {
-          // Map templates by platform
-          const googleTemplate = templatesData.find(t => t.platform === 'google')
+          // Map templates by platform (alphabetically ordered to match customer-facing page)
           const facebookTemplate = templatesData.find(t => t.platform === 'facebook')
+          const googleTemplate = templatesData.find(t => t.platform === 'google')
           const yelpTemplate = templatesData.find(t => t.platform === 'yelp')
 
           setTemplates([
-            googleTemplate || { id: '', template_text: '', platform: 'google' },
             facebookTemplate || { id: '', template_text: '', platform: 'facebook' },
+            googleTemplate || { id: '', template_text: '', platform: 'google' },
             yelpTemplate || { id: '', template_text: '', platform: 'yelp' },
           ])
         }
