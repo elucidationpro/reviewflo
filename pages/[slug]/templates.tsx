@@ -499,12 +499,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     skip_template_choice: business.skip_template_choice ?? false,
   }
 
-  // Fetch review templates for this business
-  const { data: templates } = await supabase
+  // Fetch review templates for this business in specific display order
+  const { data: templatesData } = await supabase
     .from('review_templates')
     .select('id, template_text, platform')
     .eq('business_id', business.id)
-    .order('platform', { ascending: true })
+
+  // Sort templates in consistent order: google (1), facebook (2), yelp (3)
+  const templates = templatesData ? [
+    templatesData.find(t => t.platform === 'google'),
+    templatesData.find(t => t.platform === 'facebook'),
+    templatesData.find(t => t.platform === 'yelp'),
+  ].filter(Boolean) : []
 
   return {
     props: {

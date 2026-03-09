@@ -57,10 +57,10 @@ export default function SettingsPage() {
     launch_discount_claimed: false,
   })
 
-  // Review templates state - one for each platform (alphabetically ordered to match customer-facing page)
+  // Review templates state - 3 generic templates (platform is just used as ID)
   const [templates, setTemplates] = useState<ReviewTemplate[]>([
-    { id: '', template_text: '', platform: 'facebook' },
     { id: '', template_text: '', platform: 'google' },
+    { id: '', template_text: '', platform: 'facebook' },
     { id: '', template_text: '', platform: 'yelp' },
   ])
 
@@ -115,14 +115,14 @@ export default function SettingsPage() {
         if (templatesError) {
           console.error('Error fetching templates:', templatesError)
         } else if (templatesData && templatesData.length > 0) {
-          // Map templates by platform (alphabetically ordered to match customer-facing page)
-          const facebookTemplate = templatesData.find(t => t.platform === 'facebook')
+          // Map templates in display order: Template 1 (google), Template 2 (facebook), Template 3 (yelp)
           const googleTemplate = templatesData.find(t => t.platform === 'google')
+          const facebookTemplate = templatesData.find(t => t.platform === 'facebook')
           const yelpTemplate = templatesData.find(t => t.platform === 'yelp')
 
           setTemplates([
-            facebookTemplate || { id: '', template_text: '', platform: 'facebook' },
             googleTemplate || { id: '', template_text: '', platform: 'google' },
+            facebookTemplate || { id: '', template_text: '', platform: 'facebook' },
             yelpTemplate || { id: '', template_text: '', platform: 'yelp' },
           ])
         }
