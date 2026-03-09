@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import Link from 'next/link'
-import { supabase } from '../lib/supabase'
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('')
@@ -14,12 +13,15 @@ export default function ResetPasswordPage() {
     setIsLoading(true)
 
     try {
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/update-password`,
+      const res = await fetch('/api/send-password-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
       })
+      const data = await res.json()
 
-      if (resetError) {
-        setError(resetError.message)
+      if (!res.ok) {
+        setError(data.error || 'Failed to send reset link')
         setIsLoading(false)
         return
       }
