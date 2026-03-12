@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { sendCompleteRegistration } from '@/lib/meta-conversions';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -106,6 +107,9 @@ export default async function handler(
     await supabaseAdmin
       .from('review_templates')
       .insert(templatesToCreate);
+
+    // Server-side Meta Conversions API (works with ad blockers)
+    await sendCompleteRegistration({ email });
 
     return res.status(200).json({ success: true });
   } catch (error) {

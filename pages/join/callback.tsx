@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Script from 'next/script';
 import { supabase } from '../../lib/supabase';
 
 /**
@@ -77,6 +78,17 @@ export default function JoinCallbackPage() {
           return;
         }
 
+        // Fire Meta Pixel CompleteRegistration (required for ad conversion tracking)
+        if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+          const eventId = `reg_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+          (window as any).fbq('track', 'CompleteRegistration', {
+            value: 0,
+            currency: 'USD',
+            content_name: 'Free Tier Signup',
+            status: 'free_signup',
+          }, { eventID: eventId });
+        }
+
         setStatus('success');
         router.replace('/join/set-password');
       } catch (err) {
@@ -94,7 +106,17 @@ export default function JoinCallbackPage() {
       <>
         <Head>
           <title>Completing signup - ReviewFlo</title>
+          <noscript>
+            <img height="1" width="1" style={{ display: 'none' }} src="https://www.facebook.com/tr?id=750284611209309&ev=PageView&noscript=1" alt="" />
+          </noscript>
         </Head>
+        <Script
+          id="meta-pixel-join-callback"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','750284611209309');fbq('track','PageView');`,
+          }}
+        />
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />

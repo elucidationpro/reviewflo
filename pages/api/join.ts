@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
+import { sendCompleteRegistration } from '@/lib/meta-conversions';
 import { isValidSlug, isReservedSlug, normalizeSlugForValidation } from '@/lib/slug-utils';
 import { sendAdminNotification } from '@/lib/email-service';
 
@@ -326,6 +327,9 @@ ${notifyOnLaunch && launchTierLabel ? `<p>We've added you to the <strong>${launc
     } catch (adminError) {
       console.error('Admin notification failed:', adminError);
     }
+
+    // Server-side Meta Conversions API (works with ad blockers)
+    await sendCompleteRegistration({ email: emailTrim });
 
     return res.status(200).json({
       success: true,

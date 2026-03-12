@@ -309,6 +309,13 @@ export default function QualifyPage() {
           interested_in_tier: selectedTier === 'free' ? null : selectedTier,
         });
         if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+          const eventId = `reg_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+          (window as any).fbq('track', 'CompleteRegistration', {
+            value: 0,
+            currency: 'USD',
+            content_name: 'Free Tier Signup',
+            status: 'free_signup',
+          }, { eventID: eventId });
           (window as any).fbq('track', 'Lead', {
             content_name: 'Free Beta Signup',
             content_category: 'Beta Test',
