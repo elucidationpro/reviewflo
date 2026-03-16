@@ -47,6 +47,15 @@ export default function QualifyPage() {
     ? (typeof window !== 'undefined' ? window.location.origin : 'https://usereviewflo.com') + '/' + slug
     : '';
 
+  // Pre-select tier/notify when arriving from pricing page (?tier=pro&notify=1)
+  useEffect(() => {
+    const { tier: qTier, notify: qNotify } = router.query;
+    if (qTier === 'pro' || qTier === 'ai') {
+      setSelectedTier(qTier);
+      setNotifyOnLaunchPreference(qNotify === '1' || qNotify === 'true');
+    }
+  }, [router.query.tier, router.query.notify]);
+
   // Track page view on mount
   useEffect(() => {
     if (!hasTrackedPageView.current) {

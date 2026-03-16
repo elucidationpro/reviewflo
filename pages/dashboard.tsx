@@ -7,7 +7,11 @@ import { supabase } from '../lib/supabase'
 import { trackEvent, identifyUser } from '../lib/posthog-provider'
 import OnboardingProgress from '../components/OnboardingProgress'
 import ComingSoonTierModal, { type ComingSoonTier } from '@/components/ComingSoonTierModal'
+import SendRequestModal from '@/components/SendRequestModal'
+import ReviewRequestsList from '@/components/ReviewRequestsList'
+import GoogleStatsCard from '@/components/GoogleStatsCard'
 import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav'
+import { canSendFromDashboard, canAccessGoogleStats } from '../lib/tier-permissions'
 
 interface Business {
   id: string
@@ -62,6 +66,8 @@ export default function DashboardPage() {
   const [launchError, setLaunchError] = useState<string | null>(null)
   const [updatingLaunchPref, setUpdatingLaunchPref] = useState(false)
   const [hasTrackedUpgradeCardView, setHasTrackedUpgradeCardView] = useState(false)
+  const [showSendModal, setShowSendModal] = useState(false)
+  const [refetchRequestsTrigger, setRefetchRequestsTrigger] = useState(0)
 
   useEffect(() => {
     checkAuthAndFetchData()
@@ -525,7 +531,36 @@ export default function DashboardPage() {
                 how it works.
               </p>
             )}
+            {canSendFromDashboard(business.tier) && (
+              <>
+                <div className="mt-6 pt-6 border-t border-slate-200">
+                  <p className="text-slate-600 text-sm mb-3">OR</p>
+                  <button
+                    type="button"
+                    onClick={() => setShowSendModal(true)}
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-colors"
+                    style={{ backgroundColor: business.primary_color || '#6366f1' }}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Send Request via Email
+                  </button>
+                </div>
+              </>
+            )}
           </div>
+
+          {/* Review Requests Section - Pro/AI only */}
+          {canSendFromDashboard(business.tier) && (
+            <ReviewRequestsList
+              businessId={business.id}
+              businessSlug={business.slug}
+              tier={business.tier}
+              onSendRequest={() => setShowSendModal(true)}
+              refetchTrigger={refetchRequestsTrigger}
+            />
+          )}
 
           {/* Upgrade Coming Soon Card */}
           {business.tier === 'free' && !business.interested_in_tier && (
@@ -758,17 +793,23 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Pro/AI feature placeholder */}
-        {business.tier === 'free' && (
+        {/* Google Business Stats - Pro/AI only */}
+        {canAccessGoogleStats(business.tier) && (
+          <div className="mb-8">
+            <GoogleStatsCard primaryColor={business.primary_color || '#6366f1'} />
+          </div>
+        )}
+
+        {/* Free tier: Upgrade prompt for Send from Dashboard */}
+        {!canSendFromDashboard(business.tier) && (
           <div className="mb-8 bg-amber-50 border border-dashed border-amber-300 rounded-xl p-6 md:p-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h2 className="text-lg md:text-xl font-semibold text-amber-900 mb-1">
-                  Send Review Requests
+                  Send Review Requests from Dashboard
                 </h2>
                 <p className="text-sm text-amber-800">
-                  Available in Pro tier (May 2026). You&apos;ll be able to send review requests
-                  directly from this dashboard.
+                  Pro tier lets you send review request emails directly from this dashboard. Upgrade to Pro to unlock.
                 </p>
               </div>
               <div className="flex gap-3">
@@ -788,7 +829,7 @@ export default function DashboardPage() {
                   onClick={handlePricingClick}
                   className="px-4 py-2.5 rounded-lg text-sm font-semibold border border-amber-300 text-amber-900 bg-white/60 hover:bg-white transition-colors"
                 >
-                  Learn More
+                  Upgrade to Pro
                 </button>
               </div>
             </div>
@@ -938,6 +979,15 @@ export default function DashboardPage() {
           onContinueWithFree={handleComingSoonContinue}
         />
       )}
+      <SendRequestModal
+        open={showSendModal}
+        businessName={business.business_name}
+        onClose={() => setShowSendModal(false)}
+        onSuccess={() => {
+          setShowSendModal(false)
+          setRefetchRequestsTrigger((t) => t + 1)
+        }}
+      />
     </>
   )
 }

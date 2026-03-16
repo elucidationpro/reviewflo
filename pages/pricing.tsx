@@ -110,11 +110,16 @@ export default function PricingPage() {
     trackEvent('pricing_cta_clicked', { tier });
   }, []);
 
-  const handleComingSoonContinue = useCallback(() => {
+  const handleComingSoonContinue = useCallback((notifyOnLaunch: boolean) => {
     setShowComingSoonModal(false);
+    const tier = comingSoonTier;
     setComingSoonTier(null);
-    if (typeof window !== 'undefined') window.location.href = '/join';
-  }, []);
+    if (typeof window !== 'undefined' && tier) {
+      // /qualify has the full form with tier selection; preserve intent via URL
+      const params = new URLSearchParams({ tier, notify: notifyOnLaunch ? '1' : '0' });
+      window.location.href = `/qualify?${params.toString()}`;
+    }
+  }, [comingSoonTier]);
 
   return (
     <>

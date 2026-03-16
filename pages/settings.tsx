@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 import OnboardingProgress from '../components/OnboardingProgress'
 import { trackEvent } from '../lib/posthog-provider'
+import { canAccessMultiPlatform, canRemoveBranding, getTemplateSlots, canAccessGoogleStats } from '../lib/tier-permissions'
 
 interface Business {
   id: string
@@ -20,6 +21,8 @@ interface Business {
   notify_on_launch: boolean
   launch_discount_eligible: boolean
   launch_discount_claimed: boolean
+  show_reviewflo_branding: boolean
+  google_place_id: string | null
 }
 
 interface ReviewTemplate {
@@ -55,6 +58,8 @@ export default function SettingsPage() {
     notify_on_launch: false,
     launch_discount_eligible: true,
     launch_discount_claimed: false,
+    show_reviewflo_branding: true,
+    google_place_id: null,
   })
 
   // Review templates state - 3 generic templates (platform is just used as ID)
@@ -103,6 +108,8 @@ export default function SettingsPage() {
           notify_on_launch: business.notify_on_launch ?? false,
           launch_discount_eligible: business.launch_discount_eligible ?? true,
           launch_discount_claimed: business.launch_discount_claimed ?? false,
+          show_reviewflo_branding: business.show_reviewflo_branding ?? true,
+          google_place_id: business.google_place_id || null,
         })
 
         // Fetch review templates
@@ -232,6 +239,8 @@ export default function SettingsPage() {
           facebookReviewUrl: businessData.facebook_review_url || null,
           yelpReviewUrl: businessData.yelp_review_url || null,
           nextdoorReviewUrl: businessData.nextdoor_review_url || null,
+          showReviewfloBranding: businessData.show_reviewflo_branding,
+          googlePlaceId: businessData.google_place_id || null,
         }),
       })
 
@@ -536,6 +545,66 @@ export default function SettingsPage() {
             </p>
 
             <div className="space-y-6">
+              {/* Google Business Profile Connection - Pro/AI only */}
+              {canAccessGoogleStats(businessData.tier) && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-900 mb-2">
+                  Google Business Profile Integration
+                </h3>
+                <p className="text-xs text-gray-600 mb-3">
+                  Connect your Google Business Profile to automatically fetch your Place ID and enable dashboard stats. Works for all businesses, including service-area businesses!
+                </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) return;
+
+                    const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID || 'YOUR_CLIENT_ID';
+                    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`;
+                    const scope = 'https://www.googleapis.com/auth/business.manage';
+                    const state = session.access_token; // Pass session token as state
+
+                    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&state=${state}&access_type=offline&prompt=consent`;
+
+                    window.location.href = authUrl;
+                  }}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                  </svg>
+                  Connect Google Business Profile
+                </button>
+                <p className="text-xs text-gray-500 mt-2">
+                  Or manually enter your Place ID below if you prefer.
+                </p>
+              </div>
+              )}
+
+              {/* Google Place ID - Pro/AI only, optional manual override */}
+              {canAccessGoogleStats(businessData.tier) && (
+              <div>
+                <label htmlFor="googlePlaceId" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Google Place ID <span className="text-gray-500 font-normal">(optional - manual entry)</span>
+                </label>
+                <input
+                  type="text"
+                  id="googlePlaceId"
+                  value={businessData.google_place_id || ''}
+                  onChange={(e) => setBusinessData({ ...businessData, google_place_id: e.target.value || null })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  placeholder="ChIJ..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Only needed if the automatic connection above doesn't work. Get it from <a href="https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Place ID Finder</a>.
+                </p>
+              </div>
+              )}
+
               {/* Google Review URL */}
               <div>
                 <label htmlFor="googleUrl" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -557,10 +626,11 @@ export default function SettingsPage() {
                 </ol>
               </div>
 
-              {/* Facebook Review URL */}
+              {/* Facebook Review URL - Pro only */}
+              {canAccessMultiPlatform(businessData.tier) && (
               <div>
                 <label htmlFor="facebookUrl" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Facebook Review URL (optional)
+                  Facebook Review URL (Pro)
                 </label>
                 <input
                   type="url"
@@ -576,8 +646,10 @@ export default function SettingsPage() {
                   <li>Add <code className="bg-gray-100 px-1 rounded">/reviews</code> to the end</li>
                 </ol>
               </div>
+              )}
 
-              {/* Yelp Review URL */}
+              {/* Yelp Review URL - Pro only */}
+              {canAccessMultiPlatform(businessData.tier) && (
               <div>
                 <label htmlFor="yelpUrl" className="block text-sm font-semibold text-gray-700 mb-2">
                   Yelp Review URL (optional)
@@ -591,6 +663,7 @@ export default function SettingsPage() {
                   placeholder="https://www.yelp.com/biz/your-business"
                 />
               </div>
+              )}
 
               {/* Nextdoor Review URL */}
               <div>
@@ -608,6 +681,41 @@ export default function SettingsPage() {
           </div>
           </div>
         </div>
+
+          {/* Branding Settings - Pro only */}
+          {canRemoveBranding(businessData.tier) && (
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Branding Settings (Pro)</h2>
+            <p className="text-gray-600 mb-6">Control whether &quot;Powered by ReviewFlo&quot; appears on customer-facing pages.</p>
+            <div className="flex items-center justify-between gap-6 py-4">
+              <div>
+                <label htmlFor="showBranding" className="text-sm font-semibold text-gray-900">
+                  Show &quot;Powered by ReviewFlo&quot;
+                </label>
+                <p className="text-sm text-gray-500 mt-1">
+                  When disabled, your review pages won&apos;t show ReviewFlo branding.
+                </p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                id="showBranding"
+                aria-checked={businessData.show_reviewflo_branding}
+                onClick={() => setBusinessData({ ...businessData, show_reviewflo_branding: !businessData.show_reviewflo_branding })}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                  businessData.show_reviewflo_branding ? 'bg-blue-600' : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    businessData.show_reviewflo_branding ? 'translate-x-5' : 'translate-x-0.5'
+                  }`}
+                  aria-hidden
+                />
+              </button>
+            </div>
+          </div>
+          )}
 
           {/* Review Flow Section */}
           <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -651,13 +759,20 @@ export default function SettingsPage() {
 
           {/* Review Templates Section */}
           <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Review Templates</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Review Templates
+              {getTemplateSlots(businessData.tier) === 1 && (
+                <span className="ml-2 text-sm font-normal text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
+                  Free: 1 template
+                </span>
+              )}
+            </h2>
             <p className="text-gray-600 mb-6">
               Create generic review templates that customers can copy and paste when leaving reviews
             </p>
 
             <div className="space-y-6">
-              {templates.map((template, index) => (
+              {templates.slice(0, getTemplateSlots(businessData.tier)).map((template, index) => (
                 <div key={template.platform}>
                   <label
                     htmlFor={`template-${template.platform}`}
@@ -680,6 +795,16 @@ export default function SettingsPage() {
                 </div>
               ))}
             </div>
+            {getTemplateSlots(businessData.tier) === 1 && (
+              <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-800">
+                  Want 3 professional templates?{' '}
+                  <Link href="/#pricing" className="font-semibold text-amber-900 hover:underline">
+                    Upgrade to Pro →
+                  </Link>
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Save Button */}

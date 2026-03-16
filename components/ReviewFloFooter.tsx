@@ -1,6 +1,13 @@
 import Image from 'next/image';
 
-export default function ReviewFloFooter() {
+interface ReviewFloFooterProps {
+  /** If false and business is Pro/AI, hide branding. Default true. */
+  showBranding?: boolean;
+}
+
+export default function ReviewFloFooter({ showBranding = true }: ReviewFloFooterProps) {
+  if (!showBranding) return null;
+
   return (
     <a
       href="https://usereviewflo.com"

@@ -412,6 +412,10 @@ export async function sendQualificationEmail(data: QualificationData) {
 
 export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify' | 'early_access' | 'early_access_beta', data: Record<string, unknown>) {
   try {
+    if (!process.env.RESEND_API_KEY) {
+      console.error('[sendAdminNotification] RESEND_API_KEY is not set');
+      return { success: false, error: 'Email service not configured' };
+    }
     const isBeta = type === 'beta';
     const isQualify = type === 'qualify';
     const isEarlyAccess = type === 'early_access';
@@ -426,14 +430,21 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
       ? `New Free Beta Signup: ${data.email}`
       : 'New Waitlist Signup';
 
-    const primaryAdmin = (process.env.ADMIN_EMAIL || 'jeremy.elucidation@gmail.com') as string;
-    const companyEmail = 'jeremy@usereviewflo.com';
-    const adminTo = [primaryAdmin, companyEmail].filter((e, i, a) => a.indexOf(e) === i);
-    const result = await resend.emails.send({
-      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
-      to: adminTo,
-      subject,
-      html: `
+    // Explicit list: ADMIN_EMAILS overrides (comma-separated). Otherwise both default admin addresses.
+    const adminEmailsRaw = process.env.ADMIN_EMAILS?.trim();
+    const adminTo = adminEmailsRaw
+      ? adminEmailsRaw.split(',').map(e => e.trim()).filter(Boolean)
+      : [
+          process.env.ADMIN_EMAIL || 'jeremy.elucidation@gmail.com',
+          'jeremy@usereviewflo.com',
+        ].filter((e, i, a) => a.indexOf(e) === i) as string[];
+
+    if (adminTo.length === 0) {
+      console.error('[sendAdminNotification] No admin emails configured');
+      return { success: false, error: 'No admin emails' };
+    }
+
+    const emailHtml = `
         <!DOCTYPE html>
         <html>
         <head>
@@ -633,13 +644,152 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
           </div>
         </body>
         </html>
-      `
-    });
+      `;
 
-    console.log('Admin notification sent:', result);
+    // Send one email per admin (more reliable than single email with multiple To)
+    const batchPayload = adminTo.map(email => ({
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>' as const,
+      to: [email],
+      subject,
+      html: emailHtml,
+    }));
+    const result = adminTo.length === 1
+      ? await resend.emails.send(batchPayload[0])
+      : await resend.batch.send(batchPayload);
+
+    if (result.error) {
+      console.error('[sendAdminNotification] Resend error:', result.error);
+      return { success: false, error: result.error };
+    }
+    console.log('[sendAdminNotification] Sent to', adminTo.join(', '), adminTo.length === 1 ? `id: ${result.data?.id}` : '');
     return { success: true };
   } catch (error) {
-    console.error('Error sending admin notification:', error);
+    console.error('[sendAdminNotification] Error:', error);
     return { success: false, error };
   }
+}
+
+// --- REVIEW REQUEST EMAILS (Pro tier) ---
+
+export interface ReviewRequestEmailData {
+  customerName: string;
+  customerEmail: string;
+  businessName: string;
+  ownerName: string;
+  reviewLink: string;
+  optionalNote?: string | null;
+}
+
+export async function sendReviewRequestEmail(data: ReviewRequestEmailData) {
+  try {
+    const noteHtml = data.optionalNote
+      ? `<p style="margin: 20px 0; padding: 15px; background: #f8fafc; border-left: 4px solid #94a3b8; border-radius: 4px;">${escapeHtml(data.optionalNote)}</p>`
+      : '';
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .cta { display: inline-block; background: #4A3428; color: white !important; padding: 14px 28px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: 600; }
+          .footer { text-align: center; color: #6b7280; margin-top: 30px; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <p>Hi ${escapeHtml(data.customerName)},</p>
+          <p>Thanks for choosing ${escapeHtml(data.businessName)}!</p>
+          <p>We'd love to hear about your experience. Could you take 30 seconds to share your feedback?</p>
+          ${noteHtml}
+          <p><a href="${data.reviewLink}" class="cta">Rate Your Experience →</a></p>
+          <p>Your feedback helps us improve and serve you better.</p>
+          <p>Thanks,<br>${escapeHtml(data.ownerName)}<br>${escapeHtml(data.businessName)}</p>
+          <div class="footer">
+            <p>Powered by ReviewFlo</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const { data: result, error } = await resend.emails.send({
+      from: `${data.businessName} via ReviewFlo <reviews@usereviewflo.com>`,
+      to: data.customerEmail,
+      subject: `How was your experience with ${data.businessName}?`,
+      html,
+    });
+
+    if (error) {
+      console.error('[sendReviewRequestEmail] Resend error:', error);
+      return { success: false, error };
+    }
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error('[sendReviewRequestEmail] Error:', error);
+    return { success: false, error };
+  }
+}
+
+export interface ReviewReminderEmailData {
+  customerName: string;
+  customerEmail: string;
+  businessName: string;
+  reviewLink: string;
+}
+
+export async function sendReviewReminderEmail(data: ReviewReminderEmailData) {
+  try {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .cta { display: inline-block; background: #4A3428; color: white !important; padding: 14px 28px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: 600; }
+          .footer { text-align: center; color: #6b7280; margin-top: 30px; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <p>Hi ${escapeHtml(data.customerName)},</p>
+          <p>Just a quick reminder - we'd still love to hear about your experience with ${escapeHtml(data.businessName)}.</p>
+          <p><a href="${data.reviewLink}" class="cta">Share Your Feedback →</a></p>
+          <p>Takes 30 seconds and helps us improve.</p>
+          <p>Thanks,<br>${escapeHtml(data.businessName)}</p>
+          <div class="footer">
+            <p>Powered by ReviewFlo</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const { data: result, error } = await resend.emails.send({
+      from: `${data.businessName} via ReviewFlo <reviews@usereviewflo.com>`,
+      to: data.customerEmail,
+      subject: `Quick reminder: Feedback for ${data.businessName}`,
+      html,
+    });
+
+    if (error) {
+      console.error('[sendReviewReminderEmail] Resend error:', error);
+      return { success: false, error };
+    }
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error('[sendReviewReminderEmail] Error:', error);
+    return { success: false, error };
+  }
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }

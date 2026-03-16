@@ -12,6 +12,8 @@ interface Business {
   business_name: string
   slug: string
   primary_color: string
+  tier?: 'free' | 'pro' | 'ai'
+  show_reviewflo_branding?: boolean
 }
 
 interface PageProps {
@@ -74,7 +76,7 @@ export default function ReviewPage({ business }: PageProps) {
   return (
     <>
       <Head>
-        <title>{business.business_name} - Share Your Experience</title>
+        <title>{`${business.business_name} - Share Your Experience`}</title>
         <meta name="description" content="How was your recent experience? We'd love to hear your feedback." />
 
         {/* Open Graph / Facebook */}
@@ -95,36 +97,36 @@ export default function ReviewPage({ business }: PageProps) {
         {/* Prevent search indexing of individual business review pages */}
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8 sm:py-12">
         <div className="max-w-2xl w-full">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+          <div className="bg-white rounded-xl shadow-lg p-8 sm:p-10 md:p-12">
             {/* Business Name */}
             <h1
-              className="text-3xl md:text-4xl font-bold text-center mb-3"
+              className="text-2xl sm:text-3xl font-semibold text-center mb-4 tracking-tight"
               style={{ color: business.primary_color }}
             >
               {business.business_name}
             </h1>
 
-          {/* Subtitle */}
-          <p className="text-gray-600 text-center mb-8 md:mb-12 text-lg">
-            How would you rate your experience?
-          </p>
+            {/* Subtitle */}
+            <p className="text-gray-600 text-center mb-8 text-base sm:text-lg">
+              How would you rate your experience?
+            </p>
 
-          {/* Star Rating */}
-          <div className="flex justify-center items-center gap-4 md:gap-6 mb-8">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                onClick={() => handleStarClick(star)}
-                onMouseEnter={() => setHoveredRating(star)}
-                onMouseLeave={() => setHoveredRating(null)}
-                disabled={isSubmitting}
-                className="transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-opacity-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label={`Rate ${star} stars`}
-              >
+            {/* Star Rating */}
+            <div className="flex justify-center items-center gap-2 sm:gap-3 mb-6">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => handleStarClick(star)}
+                  onMouseEnter={() => setHoveredRating(star)}
+                  onMouseLeave={() => setHoveredRating(null)}
+                  disabled={isSubmitting}
+                  className="transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed p-1"
+                  aria-label={`Rate ${star} stars`}
+                >
                 <svg
-                  className="w-16 h-16 md:w-20 md:h-20 transition-colors duration-200"
+                  className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 transition-colors duration-200"
                   fill={star <= displayRating ? business.primary_color : 'none'}
                   stroke={star <= displayRating ? business.primary_color : '#D1D5DB'}
                   strokeWidth="2"
@@ -141,26 +143,26 @@ export default function ReviewPage({ business }: PageProps) {
             ))}
           </div>
 
-          {/* Loading indicator */}
-          {isSubmitting && (
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2"
-                   style={{ borderColor: business.primary_color }}
-              />
-              <p className="text-gray-600 mt-3">Submitting your rating...</p>
-            </div>
-          )}
+            {/* Loading indicator */}
+            {isSubmitting && (
+              <div className="text-center py-2">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2"
+                     style={{ borderColor: business.primary_color }}
+                />
+                <p className="text-gray-600 mt-3 text-sm">Submitting your rating...</p>
+              </div>
+            )}
 
-          {/* Helper text */}
-          {!isSubmitting && (
-            <p className="text-center text-gray-500 text-sm">
-              Click a star to rate your experience
-            </p>
-          )}
-        </div>
+            {/* Helper text */}
+            {!isSubmitting && (
+              <p className="text-center text-gray-500 text-sm pt-2">
+                Click a star to rate your experience
+              </p>
+            )}
+          </div>
 
         {/* Footer */}
-        <div className="text-center text-gray-400 text-sm mt-6 space-y-2">
+        <div className="text-center text-gray-400 text-sm mt-8 space-y-2">
           <div className="flex items-center justify-center gap-4 mb-4">
             <Link href="/terms" className="hover:text-gray-600 transition-colors">
               Terms of Service
@@ -170,7 +172,7 @@ export default function ReviewPage({ business }: PageProps) {
               Privacy Policy
             </Link>
           </div>
-          <ReviewFloFooter />
+          <ReviewFloFooter showBranding={business.show_reviewflo_branding !== false || business.tier === 'free'} />
         </div>
       </div>
     </div>
@@ -184,7 +186,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // Fetch business data from Supabase
   const { data: business, error } = await supabase
     .from('businesses')
-    .select('id, business_name, slug, primary_color')
+    .select('id, business_name, slug, primary_color, tier, show_reviewflo_branding')
     .eq('slug', slug)
     .single()
 

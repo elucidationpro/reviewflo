@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
+import Script from 'next/script'
 import { getBlogPost } from '@/lib/blog-posts'
 import { isPostPublished, getScheduleEntry } from '@/lib/blog-schedule'
 import { BlogPostLayout, BlogPostCTA } from '@/components/BlogPostLayout'
@@ -43,16 +44,18 @@ export default function BlogPostPage({ slug, title, description, publishedAt, ke
   return (
     <>
       <Head>
-        <title>{title} | ReviewFlo</title>
+        <title>{`${title} | ReviewFlo`}</title>
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords.join(', ')} />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={url} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
       </Head>
+      <Script
+        id="blog-jsonld"
+        type="application/ld+json"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <BlogPostLayout>
         <section className="relative overflow-hidden bg-gradient-to-br from-[#E8DCC8]/30 via-white to-[#E8DCC8]/30 py-12 sm:py-20">
           <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">

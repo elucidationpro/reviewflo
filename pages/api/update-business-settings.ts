@@ -22,6 +22,8 @@ interface UpdateBusinessSettingsRequest {
   facebookReviewUrl?: string | null
   yelpReviewUrl?: string | null
   nextdoorReviewUrl?: string | null
+  showReviewfloBranding?: boolean
+  googlePlaceId?: string | null
 }
 
 export default async function handler(
@@ -73,6 +75,8 @@ export default async function handler(
     if (body.facebookReviewUrl !== undefined) updateData.facebook_review_url = body.facebookReviewUrl
     if (body.yelpReviewUrl !== undefined) updateData.yelp_review_url = body.yelpReviewUrl
     if (body.nextdoorReviewUrl !== undefined) updateData.nextdoor_review_url = body.nextdoorReviewUrl
+    if (body.showReviewfloBranding !== undefined) updateData.show_reviewflo_branding = body.showReviewfloBranding
+    if (body.googlePlaceId !== undefined) updateData.google_place_id = body.googlePlaceId
 
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ error: 'No fields to update' })

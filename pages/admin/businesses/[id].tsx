@@ -312,7 +312,7 @@ export default function EditBusinessPage() {
   return (
     <>
       <Head>
-        <title>Edit {business.business_name} - Admin Dashboard</title>
+        <title>{`Edit ${business.business_name} - Admin Dashboard`}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">

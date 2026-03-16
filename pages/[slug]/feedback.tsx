@@ -10,6 +10,8 @@ interface Business {
   business_name: string
   slug: string
   primary_color: string
+  tier?: 'free' | 'pro' | 'ai'
+  show_reviewflo_branding?: boolean
 }
 
 interface PageProps {
@@ -161,7 +163,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                 Privacy Policy
               </Link>
             </div>
-            <ReviewFloFooter />
+            <ReviewFloFooter showBranding={business.tier === 'free' || business.show_reviewflo_branding !== false} />
           </div>
         </div>
       </div>
@@ -340,7 +342,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
               Privacy Policy
             </Link>
           </div>
-          <ReviewFloFooter />
+          <ReviewFloFooter showBranding={business.tier === 'free' || business.show_reviewflo_branding !== false} />
         </div>
       </div>
     </div>
@@ -354,7 +356,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // Fetch business data from Supabase
   const { data: business, error } = await supabase
     .from('businesses')
-    .select('id, business_name, slug, primary_color')
+    .select('id, business_name, slug, primary_color, tier, show_reviewflo_branding')
     .eq('slug', slug)
     .single()
 

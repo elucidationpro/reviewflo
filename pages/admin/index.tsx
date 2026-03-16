@@ -15,6 +15,8 @@ interface Business {
   reviews_count: number
   feedback_count: number
   user_id: string
+  tier: 'free' | 'pro' | 'ai'
+  admin_override?: boolean
 }
 
 interface BetaSignup {
@@ -71,6 +73,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [deletingEarlyAccessId, setDeletingEarlyAccessId] = useState<string | null>(null)
+  const [updatingTierId, setUpdatingTierId] = useState<string | null>(null)
 
   useEffect(() => {
     console.log('[Component] AdminDashboard useEffect is running')
@@ -242,6 +245,45 @@ export default function AdminDashboard() {
       setError('Failed to remove')
     } finally {
       setDeletingEarlyAccessId(null)
+    }
+  }
+
+  const handleOverrideTier = async (businessId: string, newTier: 'free' | 'pro' | 'ai') => {
+    setUpdatingTierId(businessId)
+    setError('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setError('Session expired. Please refresh.')
+        setUpdatingTierId(null)
+        return
+      }
+      const response = await fetch('/api/admin/override-tier', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ business_id: businessId, new_tier: newTier }),
+      })
+      const data = await response.json()
+      if (response.ok) {
+        setBusinesses(prev =>
+          prev.map(b => (b.id === businessId ? { ...b, tier: newTier, admin_override: true } : b))
+        )
+        setFilteredBusinesses(prev =>
+          prev.map(b => (b.id === businessId ? { ...b, tier: newTier, admin_override: true } : b))
+        )
+        setSuccessMessage(`Tier set to ${newTier.toUpperCase()} for testing`)
+        setTimeout(() => setSuccessMessage(''), 3000)
+      } else {
+        setError(data.error || 'Failed to update tier')
+      }
+    } catch (err) {
+      console.error('Error overriding tier:', err)
+      setError('Failed to update tier')
+    } finally {
+      setUpdatingTierId(null)
     }
   }
 
@@ -555,7 +597,7 @@ export default function AdminDashboard() {
 
           {/* Search Bar */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
-            <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-4">Search Businesses</h2>
+            <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-4">ReviewFlo Admin Panel</h2>
             <input
               type="text"
               placeholder="Search businesses by name or email..."
@@ -576,6 +618,9 @@ export default function AdminDashboard() {
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                       Owner Email
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
+                      Tier
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
                       Created
@@ -602,6 +647,18 @@ export default function AdminDashboard() {
                       </td>
                       <td className="px-6 py-4 text-slate-600">
                         {business.owner_email}
+                      </td>
+                      <td className="px-6 py-4">
+                        <select
+                          value={business.tier || 'free'}
+                          onChange={(e) => handleOverrideTier(business.id, e.target.value as 'free' | 'pro' | 'ai')}
+                          disabled={updatingTierId === business.id}
+                          className="text-sm font-medium px-2 py-1.5 rounded border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                        >
+                          <option value="free">Free</option>
+                          <option value="pro">Pro (testing)</option>
+                          <option value="ai">AI (testing)</option>
+                        </select>
                       </td>
                       <td className="px-6 py-4 text-slate-600">
                         {new Date(business.created_at).toLocaleDateString()}

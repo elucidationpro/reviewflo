@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import { PostHogProvider } from "@/lib/posthog-provider";
 import LaunchBanner from "@/components/LaunchBanner";
 import { useEffect } from "react";
@@ -28,6 +29,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <PostHogProvider>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       <Component {...pageProps} />
     </PostHogProvider>
   );
