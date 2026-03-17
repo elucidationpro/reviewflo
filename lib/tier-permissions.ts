@@ -34,3 +34,23 @@ export function getTemplateSlots(tier: Tier | undefined): number {
 export function isPaidTier(tier: Tier | undefined): boolean {
   return tier === 'pro' || tier === 'ai'
 }
+
+/** Can use SMS automation (AI tier only) */
+export function canUseSMS(tier: Tier | undefined): boolean {
+  return tier === 'ai'
+}
+
+/** Can use CRM integrations (Square, Jobber, Housecall Pro) - AI tier only */
+export function canUseCRMIntegration(tier: Tier | undefined): boolean {
+  return tier === 'ai'
+}
+
+/** Can use AI features (review drafts, response generator) - AI tier only */
+export function canUseAIFeatures(tier: Tier | undefined): boolean {
+  return tier === 'ai'
+}
+
+/** Can use white-label branding - AI tier only */
+export function canUseWhiteLabel(tier: Tier | undefined): boolean {
+  return tier === 'ai'
+}
