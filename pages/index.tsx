@@ -302,20 +302,20 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#E8DCC8]/30 via-white to-[#E8DCC8]/30 animate-fadeIn">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
           <div className="text-center animate-slideUp">
             {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
               Stop Bad Reviews Before They Go Public
             </h1>
 
             {/* Subheadline */}
-            <p className="text-lg sm:text-xl text-gray-600 mb-4 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-xl text-gray-600 mb-3 sm:mb-4 max-w-2xl mx-auto leading-relaxed">
               Get 10x More 5-Star Google Reviews — Automatically
             </p>
 
             {/* Tagline */}
-            <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm sm:text-lg text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
               The simple review management software for{' '}
               <span className="text-[#4A3428] font-semibold whitespace-nowrap">
                 {typedWord}
@@ -325,34 +325,36 @@ export default function LandingPage() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-3">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-4 sm:mb-3">
               <a
                 href="/join"
-                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-xl"
+                style={{ touchAction: 'manipulation' }}
               >
                 Start Free
                 <ArrowRight className="w-4 h-4" />
               </a>
               <a
                 href="#how-it-works"
-                className="w-full sm:w-auto px-8 py-3.5 bg-white text-[#4A3428] rounded-lg font-semibold text-base border-2 border-[#C9A961] hover:border-[#4A3428] hover:bg-[#E8DCC8]/20 transition-all duration-200"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 bg-white text-[#4A3428] rounded-lg font-semibold text-base border-2 border-[#C9A961] hover:border-[#4A3428] hover:bg-[#E8DCC8]/20 transition-all duration-200"
+                style={{ touchAction: 'manipulation' }}
               >
                 See How It Works ↓
               </a>
             </div>
 
             {/* Trust signals */}
-            <div className="flex flex-wrap justify-center gap-3 text-sm">
-              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-gray-600 shadow-sm">
-                <Clock className="w-4 h-4 text-[#C9A961]" />
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 text-xs sm:text-sm">
+              <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white border border-gray-200 rounded-full text-gray-600 shadow-sm">
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C9A961]" />
                 5-minute setup
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-gray-600 shadow-sm">
-                <Shield className="w-4 h-4 text-[#C9A961]" />
+              <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white border border-gray-200 rounded-full text-gray-600 shadow-sm">
+                <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C9A961]" />
                 No credit card required
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-gray-600 shadow-sm">
-                <CheckCircle className="w-4 h-4 text-[#C9A961]" />
+              <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white border border-gray-200 rounded-full text-gray-600 shadow-sm">
+                <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C9A961]" />
                 Free forever
               </div>
             </div>
@@ -369,10 +371,10 @@ export default function LandingPage() {
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 text-center">
+          <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2 text-center">
             How ReviewFlo Works
           </h2>
-          <p className="text-lg text-gray-600 mb-10 sm:mb-12 text-center max-w-2xl mx-auto">
+          <p className="text-sm sm:text-lg text-gray-600 mb-8 sm:mb-12 text-center max-w-2xl mx-auto">
             A simple 3-step flow that turns happy customers into public 5-star reviews.
           </p>
 
@@ -436,8 +438,8 @@ export default function LandingPage() {
         <div ref={actionStepsRef} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Section header — slides up on enter */}
-          <div className="action-header text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          <div className="action-header text-center mb-8 sm:mb-12">
+            <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">
               See It In Action
             </h2>
             <p className="text-sm text-gray-500 max-w-xl mx-auto">
@@ -577,11 +579,11 @@ export default function LandingPage() {
         }`}
       >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          <div className="text-center mb-8 sm:mb-10">
+            <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">
               Simple Pricing
             </h2>
-            <p className="text-gray-600 text-base sm:text-lg">
+            <p className="text-gray-600 text-sm sm:text-lg">
               Start free. Upgrade when Pro &amp; AI launch in May 2026.
             </p>
           </div>
@@ -642,7 +644,7 @@ export default function LandingPage() {
               <Star key={i} className="w-5 h-5 fill-[#C9A961] text-[#C9A961]" />
             ))}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+          <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-3">
             Built for Local Service Businesses
           </h2>
           <p className="text-gray-600 text-sm sm:text-base mb-6">
@@ -669,24 +671,26 @@ export default function LandingPage() {
               <Star key={i} className="w-5 h-5 fill-[#C9A961] text-[#C9A961]" />
             ))}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+          <h2 className="text-xl sm:text-3xl font-bold text-white mb-3">
             Ready to Stop Worrying About Bad Reviews?
           </h2>
-          <p className="text-[#E8DCC8]/80 text-base mb-8">
+          <p className="text-[#E8DCC8]/80 text-sm sm:text-base mb-6 sm:mb-8">
             Simple review management for local service businesses. Free forever.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6 sm:mb-8">
             <a
               href="/join"
-              className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 bg-[#C9A961] text-[#4A3428] rounded-lg font-bold hover:bg-[#C9A961]/90 transition-all duration-200 shadow-lg"
+              className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 bg-[#C9A961] text-[#4A3428] rounded-lg font-bold hover:bg-[#C9A961]/90 transition-all duration-200 shadow-lg"
+              style={{ touchAction: 'manipulation' }}
             >
               Start Free - No Credit Card
               <ArrowRight className="w-4 h-4" />
             </a>
             <a
               href="/pricing"
-              className="w-full sm:w-auto px-8 py-3.5 bg-transparent text-white rounded-lg font-semibold border-2 border-white/30 hover:border-white hover:bg-white/10 transition-all duration-200"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 bg-transparent text-white rounded-lg font-semibold border-2 border-white/30 hover:border-white hover:bg-white/10 transition-all duration-200"
+              style={{ touchAction: 'manipulation' }}
             >
               See Full Pricing
             </a>
