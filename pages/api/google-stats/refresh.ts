@@ -1,7 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { canAccessGoogleStats } from '../../../lib/tier-permissions'
-import { getPlaceIdWithCache } from '../../../lib/google-places'
+import { getPlaceIdWithCache, extractPlaceIdFromReviewUrl } from '../../../lib/google-places'
+import {
+  refreshAccessToken,
+  getPlaceIdFromGoogleBusinessProfile,
+} from '../../../lib/google-business-profile'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -9,7 +13,19 @@ const supabaseAdmin = createClient(
   { auth: { autoRefreshToken: false, persistSession: false } }
 )
 
-/** Manual refresh of Google Business stats. Requires GOOGLE_PLACES_API_KEY and google_place_id. */
+const PLACE_ID_INVALID =
+  /Place ID.*no longer valid|refresh cached Place ID|INVALID_REQUEST|NOT_FOUND/i
+
+async function fetchPlaceDetails(placeId: string) {
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY
+  if (!apiKey) return { status: 'ERROR', error: 'Google Places API not configured' }
+  const res = await fetch(
+    `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=rating,user_ratings_total,reviews&key=${apiKey}`
+  )
+  return res.json()
+}
+
+/** Manual refresh of Google Business stats. Requires GOOGLE_PLACES_API_KEY. */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -32,7 +48,7 @@ export default async function handler(
 
     const { data: business } = await supabaseAdmin
       .from('businesses')
-      .select('id, google_place_id, google_review_url, tier')
+      .select('id, google_place_id, google_review_url, tier, google_oauth_refresh_token, google_oauth_access_token, google_oauth_expires_at')
       .eq('user_id', user.id)
       .single()
 
@@ -40,8 +56,7 @@ export default async function handler(
       return res.status(403).json({ error: 'Pro or AI tier required' })
     }
 
-    // Auto-extract Place ID from Google Review URL
-    const placeId = await getPlaceIdWithCache(
+    let placeId = await getPlaceIdWithCache(
       business.id,
       business.google_review_url,
       business.google_place_id,
@@ -50,21 +65,69 @@ export default async function handler(
 
     if (!placeId) {
       return res.status(400).json({
-        error: 'Unable to extract Place ID from your Google Review URL. Please check your URL in settings.'
+        error: 'Add your Google Review URL in Settings, or connect Google Business Profile, then try again.'
       })
     }
 
-    const apiKey = process.env.GOOGLE_PLACES_API_KEY
-    if (!apiKey) {
-      return res.status(503).json({ error: 'Google Places API not configured' })
-    }
-
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=rating,user_ratings_total,reviews&key=${apiKey}`
-    const response = await fetch(url)
-    const data = await response.json()
+    let data = await fetchPlaceDetails(placeId)
 
     if (data.status !== 'OK' || !data.result) {
-      return res.status(400).json({ error: data.error_message || 'Failed to fetch place data' })
+      const errMsg = data.error_message || 'Failed to fetch place data'
+      if (!PLACE_ID_INVALID.test(errMsg)) {
+        return res.status(400).json({ error: errMsg })
+      }
+
+      // Place ID is stale – clear cache and try to get a fresh one
+      await supabaseAdmin
+        .from('businesses')
+        .update({ google_place_id: null })
+        .eq('id', business.id)
+
+      let freshPlaceId: string | null = null
+
+      if (business.google_oauth_refresh_token) {
+        try {
+          const tokens = await refreshAccessToken(business.google_oauth_refresh_token)
+          const profile = await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken)
+          if (profile?.placeId) {
+            freshPlaceId = profile.placeId
+            await supabaseAdmin
+              .from('businesses')
+              .update({
+                google_place_id: profile.placeId,
+                google_oauth_access_token: tokens.accessToken,
+                google_oauth_expires_at: new Date(Date.now() + tokens.expiresIn * 1000).toISOString(),
+              })
+              .eq('id', business.id)
+          }
+        } catch (e) {
+          console.warn('[google-stats/refresh] OAuth refresh failed:', e)
+        }
+      }
+
+      if (!freshPlaceId && business.google_review_url) {
+        freshPlaceId = await extractPlaceIdFromReviewUrl(business.google_review_url)
+        if (freshPlaceId) {
+          await supabaseAdmin
+            .from('businesses')
+            .update({ google_place_id: freshPlaceId })
+            .eq('id', business.id)
+        }
+      }
+
+      if (!freshPlaceId) {
+        return res.status(400).json({
+          error: 'Place ID expired. Reconnect Google Business Profile in Settings, or update your Google Review URL, then try again.'
+        })
+      }
+
+      placeId = freshPlaceId
+      data = await fetchPlaceDetails(placeId)
+      if (data.status !== 'OK' || !data.result) {
+        return res.status(400).json({
+          error: data.error_message || 'Still unable to fetch place data after refresh.'
+        })
+      }
     }
 
     const result = data.result
