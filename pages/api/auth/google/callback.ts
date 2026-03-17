@@ -104,8 +104,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     );
   } catch (error) {
     console.error('[Google OAuth] Callback error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[Google OAuth] Error details:', errorMessage);
     return res.redirect(
-      `/settings?error=${encodeURIComponent('Failed to connect Google Business Profile')}`
+      `/settings?error=${encodeURIComponent(`Failed to connect: ${errorMessage}`)}`
     );
   }
 }
