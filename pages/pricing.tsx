@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { CheckCircle, ChevronDown, ChevronRight } from 'lucide-react';
+import { CheckCircle, ChevronDown, ChevronRight, X } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import ComingSoonTierModal from '@/components/ComingSoonTierModal';
@@ -310,25 +310,35 @@ export default function PricingPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {[
-                    ['Starting Price', 'FREE', '$289/mo', '$299/mo', '$75/mo'],
-                    ['Pro Tier (May 2026)', '$19/mo', 'N/A', 'N/A', 'N/A'],
-                    ['Contract Required', 'No', '12 mo', '12 mo', 'No'],
-                    ['Negative Review Intercept', '✓', '✗', '✗', '✗'],
-                    ['Multi-Platform Reviews', '✓', '✓', '✓', '✓'],
-                    ['SMS Automation (May 2026)', '✓', '✓', '✓', '✓'],
-                    ['AI Features (May 2026)', '✓', '✗', '✗', '✗'],
-                    ['Email Support', '✓', '✓', '✓', '✓'],
-                    ['Free Tier', '✓', '✗', '✗', '✗'],
-                  ].map((row, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
-                      <td className="py-3 px-4 sm:px-6 text-gray-900 font-medium">{row[0]}</td>
-                      <td className="py-3 px-4 sm:px-6 text-center font-medium text-[#4A3428] bg-[#E8DCC8]/10">{row[1]}</td>
-                      <td className="py-3 px-4 sm:px-6 text-center text-gray-600">{row[2]}</td>
-                      <td className="py-3 px-4 sm:px-6 text-center text-gray-600">{row[3]}</td>
-                      <td className="py-3 px-4 sm:px-6 text-center text-gray-600">{row[4]}</td>
-                    </tr>
-                  ))}
+                  {(() => {
+                    const CHECK = '__CHECK__';
+                    const CROSS = '__CROSS__';
+                    const rows: [string, string, string, string, string][] = [
+                      ['Starting Price', 'FREE', '$289/mo', '$299/mo', '$75/mo'],
+                      ['Pro Tier (May 2026)', '$19/mo', 'N/A', 'N/A', 'N/A'],
+                      ['Contract Required', 'No', '12 mo', '12 mo', 'No'],
+                      ['Negative Review Intercept', CHECK, CROSS, CROSS, CROSS],
+                      ['Multi-Platform Reviews', CHECK, CHECK, CHECK, CHECK],
+                      ['SMS Automation (May 2026)', CHECK, CHECK, CHECK, CHECK],
+                      ['AI Features (May 2026)', CHECK, CROSS, CROSS, CROSS],
+                      ['Email Support', CHECK, CHECK, CHECK, CHECK],
+                      ['Free Tier', CHECK, CROSS, CROSS, CROSS],
+                    ];
+                    const renderCell = (val: string, isReviewFlo: boolean) => {
+                      if (val === CHECK) return <CheckCircle className={`w-5 h-5 mx-auto ${isReviewFlo ? 'text-[#4A3428]' : 'text-green-500'}`} />;
+                      if (val === CROSS) return <X className="w-5 h-5 mx-auto text-red-400" />;
+                      return <span className={isReviewFlo ? 'font-semibold text-[#4A3428]' : ''}>{val}</span>;
+                    };
+                    return rows.map((row, i) => (
+                      <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
+                        <td className="py-3.5 px-4 sm:px-6 text-gray-900 font-medium">{row[0]}</td>
+                        <td className="py-3.5 px-4 sm:px-6 text-center bg-[#E8DCC8]/10">{renderCell(row[1], true)}</td>
+                        <td className="py-3.5 px-4 sm:px-6 text-center text-gray-600">{renderCell(row[2], false)}</td>
+                        <td className="py-3.5 px-4 sm:px-6 text-center text-gray-600">{renderCell(row[3], false)}</td>
+                        <td className="py-3.5 px-4 sm:px-6 text-center text-gray-600">{renderCell(row[4], false)}</td>
+                      </tr>
+                    ));
+                  })()}
                 </tbody>
               </table>
             </div>
