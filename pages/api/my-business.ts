@@ -41,7 +41,7 @@ export default async function handler(
     // First try: find by user_id (normal case)
     const { data: byUserId, error: byUserIdError } = await supabaseAdmin
       .from('businesses')
-      .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible')
+      .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, sms_enabled, twilio_phone_number, white_label_enabled, custom_logo_url, custom_brand_name, custom_brand_color, business_type, square_access_token')
       .eq('user_id', user.id)
       .single()
 
@@ -57,7 +57,7 @@ export default async function handler(
     const emailTrimmed = user.email.trim().toLowerCase()
     const { data: match, error: emailError } = await supabaseAdmin
       .from('businesses')
-      .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible')
+      .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, sms_enabled, twilio_phone_number, white_label_enabled, custom_logo_url, custom_brand_name, custom_brand_color, business_type, square_access_token')
       .ilike('owner_email', emailTrimmed)
       .limit(1)
       .maybeSingle()

@@ -21,12 +21,22 @@ cd supabase/migrations
 # The file is: 20250316000000_google_business_oauth.sql
 ```
 
-### 2. Create Google OAuth Credentials
+### 2. Request Business Profile API Access
+
+⚠️ **Important**: Google requires manual approval for Business Profile API access.
+
+1. Go to [Google Business Profile API Access Form](https://support.google.com/business/contact/business_api)
+2. Fill out the form explaining your use case
+3. Google will open a support case and review within 5 business days
+4. Wait for approval email before proceeding
+
+### 3. Create Google OAuth Credentials
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Select your project (or create a new one)
 3. Enable these APIs:
-   - **My Business Business Information API** (replaces deprecated Google My Business API)
+   - **My Business Account Management API**
+   - **My Business Business Information API**
    - **Places API (New)** or **Places API**
 4. Go to **APIs & Services** → **Credentials**
 5. Click **Create Credentials** → **OAuth client ID**
@@ -95,7 +105,22 @@ npm run dev
 - Service area businesses ARE supported!
 - The API returns Place IDs even for businesses without physical addresses
 
-##Future Enhancements
+### "Quota exceeded" error
+- The My Business Account Management API has low default quotas (60 requests/minute)
+- Wait 1-2 minutes and try again
+- For production: Request a quota increase in Google Cloud Console
+
+## Important: Request Quota Increase for Production
+
+The My Business Account Management API has very low default quotas (60 requests/minute). Before launching to users:
+
+1. Go to **APIs & Services** → **My Business Account Management API** → **Quotas & System Limits**
+2. Find "Requests per minute"
+3. Click the pencil icon to request an increase
+4. Request 10,000 requests/minute (free, requires Google approval)
+5. This ensures smooth operation when multiple users connect their accounts
+
+## Future Enhancements
 
 - [ ] Let users choose which location if they have multiple
 - [ ] Auto-refresh stats daily using the refresh token

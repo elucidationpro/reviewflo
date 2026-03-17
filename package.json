@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.79.0",
     "@supabase/supabase-js": "^2.75.0",
     "@vercel/og": "^0.6.4",
     "canvas": "^3.2.0",
@@ -19,7 +20,8 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "resend": "^6.6.0",
-    "stripe": "^20.3.1"
+    "stripe": "^20.3.1",
+    "twilio": "^5.13.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -24,6 +24,12 @@ interface UpdateBusinessSettingsRequest {
   nextdoorReviewUrl?: string | null
   showReviewfloBranding?: boolean
   googlePlaceId?: string | null
+  smsEnabled?: boolean
+  twilioPhoneNumber?: string | null
+  whiteLabelEnabled?: boolean
+  customLogoUrl?: string | null
+  customBrandName?: string | null
+  customBrandColor?: string | null
 }
 
 export default async function handler(
@@ -77,6 +83,12 @@ export default async function handler(
     if (body.nextdoorReviewUrl !== undefined) updateData.nextdoor_review_url = body.nextdoorReviewUrl
     if (body.showReviewfloBranding !== undefined) updateData.show_reviewflo_branding = body.showReviewfloBranding
     if (body.googlePlaceId !== undefined) updateData.google_place_id = body.googlePlaceId
+    if (body.smsEnabled !== undefined) updateData.sms_enabled = body.smsEnabled
+    if (body.twilioPhoneNumber !== undefined) updateData.twilio_phone_number = body.twilioPhoneNumber
+    if (body.whiteLabelEnabled !== undefined) updateData.white_label_enabled = body.whiteLabelEnabled
+    if (body.customLogoUrl !== undefined) updateData.custom_logo_url = body.customLogoUrl
+    if (body.customBrandName !== undefined) updateData.custom_brand_name = body.customBrandName
+    if (body.customBrandColor !== undefined) updateData.custom_brand_color = body.customBrandColor
 
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ error: 'No fields to update' })
