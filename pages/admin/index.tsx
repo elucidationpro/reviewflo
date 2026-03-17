@@ -333,7 +333,7 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
+      <div className="min-h-screen bg-gray-50 px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header Skeleton */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8 animate-pulse">
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
         <title>Admin Dashboard - ReviewFlo</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
+      <div className="min-h-screen bg-gray-50 px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
@@ -413,13 +413,13 @@ export default function AdminDashboard() {
               <div className="flex gap-3 mt-4 md:mt-0">
                 <Link
                   href="/admin/create-business"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                  className="bg-slate-800 hover:bg-slate-900 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
                   Create New Business
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="bg-slate-600 hover:bg-slate-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                  className="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
                   Logout
                 </button>
@@ -475,7 +475,7 @@ export default function AdminDashboard() {
                   <p className="text-sm text-slate-600 mb-1">Total Businesses</p>
                   <p className="text-3xl font-bold text-slate-800">{stats.total}</p>
                 </div>
-                <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
                   <svg className="w-8 h-8 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
@@ -489,7 +489,7 @@ export default function AdminDashboard() {
                   <p className="text-sm text-slate-600 mb-1">Recent Signups (7 days)</p>
                   <p className="text-3xl font-bold text-slate-800">{stats.recentSignups}</p>
                 </div>
-                <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
                   <svg className="w-8 h-8 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                   </svg>
@@ -505,7 +505,7 @@ export default function AdminDashboard() {
                     {businesses.reduce((sum, b) => sum + b.reviews_count, 0)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
                   <svg className="w-8 h-8 text-slate-800" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
@@ -536,13 +536,13 @@ export default function AdminDashboard() {
                     {earlyAccessSignups.map((row) => (
                       <tr key={row.id} className="hover:bg-slate-50/80">
                         <td className="px-4 py-3">
-                          <a href={`mailto:${row.email}`} className="text-slate-800 hover:text-indigo-600 hover:underline">{row.email}</a>
+                          <a href={`mailto:${row.email}`} className="text-slate-800 hover:text-gray-900 hover:underline">{row.email}</a>
                         </td>
                         <td className="px-4 py-3 text-slate-600">{row.full_name || '—'}</td>
                         <td className="px-4 py-3 text-slate-600">{row.business_type || '—'}</td>
                         <td className="px-4 py-3">
                           {row.stripe_session_id ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">Yes</span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">Yes</span>
                           ) : (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">No</span>
                           )}
@@ -603,7 +603,7 @@ export default function AdminDashboard() {
               placeholder="Search businesses by name or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-slate-800"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-slate-800"
             />
           </div>
 
@@ -653,7 +653,7 @@ export default function AdminDashboard() {
                           value={business.tier || 'free'}
                           onChange={(e) => handleOverrideTier(business.id, e.target.value as 'free' | 'pro' | 'ai')}
                           disabled={updatingTierId === business.id}
-                          className="text-sm font-medium px-2 py-1.5 rounded border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                          className="text-sm font-medium px-2 py-1.5 rounded border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-[#C9A961] disabled:opacity-50"
                         >
                           <option value="free">Free</option>
                           <option value="pro">Pro (testing)</option>
@@ -664,12 +664,12 @@ export default function AdminDashboard() {
                         {new Date(business.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold">
+                        <span className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold">
                           {business.reviews_count}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold">
+                        <span className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold">
                           {business.feedback_count}
                         </span>
                       </td>
@@ -684,7 +684,7 @@ export default function AdminDashboard() {
                           <Link
                             href={`/${business.slug}`}
                             target="_blank"
-                            className="px-3 py-1 text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded transition-colors"
+                            className="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-800 text-white font-medium rounded transition-colors"
                           >
                             View
                           </Link>

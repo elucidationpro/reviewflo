@@ -324,7 +324,7 @@ fbq('track', 'PageView');`,
                   </div>
                   <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
                     <CheckCircle className="w-6 h-6 text-[#C9A961]" />
-                    <p className="text-xs font-semibold text-gray-900 text-center">Join 50+ Utah Businesses</p>
+                    <p className="text-xs font-semibold text-gray-900 text-center">Early Beta Access</p>
                   </div>
                 </div>
               </div>

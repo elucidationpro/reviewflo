@@ -206,9 +206,9 @@ export default function CreateBusinessPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600 mx-auto"></div>
           <p className="text-gray-600 mt-4">Loading...</p>
         </div>
       </div>
@@ -221,13 +221,13 @@ export default function CreateBusinessPage() {
         <title>Create Business - Admin Dashboard</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+      <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-6">
             <Link
               href="/admin"
-              className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium mb-4"
+              className="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium mb-4"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -238,13 +238,13 @@ export default function CreateBusinessPage() {
               <div>
                 <div className="flex items-center gap-3">
                   <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Create New Business</h1>
-                  <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">ADMIN</span>
+                  <span className="bg-gray-800 text-white text-xs font-bold px-3 py-1 rounded-full">ADMIN</span>
                 </div>
                 <p className="text-gray-600 mt-2">Pre-create a fully configured business account</p>
               </div>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+                className="px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold rounded-lg transition-colors"
               >
                 Logout
               </button>
@@ -274,7 +274,7 @@ export default function CreateBusinessPage() {
                       href={`${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${createdBusinessSlug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
+                      className="text-[#4A3428] hover:underline"
                     >
                       {process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/{createdBusinessSlug}
                     </a>
@@ -313,7 +313,7 @@ export default function CreateBusinessPage() {
                     id="businessName"
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                     required
                   />
                 </div>
@@ -328,7 +328,7 @@ export default function CreateBusinessPage() {
                       id="ownerName"
                       value={formData.ownerName}
                       onChange={(e) => setFormData({ ...formData, ownerName: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                       required
                     />
                   </div>
@@ -342,7 +342,7 @@ export default function CreateBusinessPage() {
                       id="ownerEmail"
                       value={formData.ownerEmail}
                       onChange={(e) => setFormData({ ...formData, ownerEmail: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                       required
                     />
                   </div>
@@ -358,7 +358,7 @@ export default function CreateBusinessPage() {
                       id="phone"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                     />
                   </div>
 
@@ -370,7 +370,7 @@ export default function CreateBusinessPage() {
                       id="businessType"
                       value={formData.businessType}
                       onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                     >
                       <option value="">Select industry...</option>
                       <option value="Auto Detailing">Auto Detailing</option>
@@ -401,7 +401,7 @@ export default function CreateBusinessPage() {
                       type="text"
                       value={formData.primaryColor}
                       onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                     />
                   </div>
                 </div>
@@ -423,7 +423,7 @@ export default function CreateBusinessPage() {
                     value={formData.googleReviewUrl}
                     onChange={(e) => setFormData({ ...formData, googleReviewUrl: e.target.value })}
                     placeholder="https://g.page/business-name/review"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -437,7 +437,7 @@ export default function CreateBusinessPage() {
                     value={formData.facebookReviewUrl}
                     onChange={(e) => setFormData({ ...formData, facebookReviewUrl: e.target.value })}
                     placeholder="https://www.facebook.com/page/reviews"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -451,7 +451,7 @@ export default function CreateBusinessPage() {
                     value={formData.yelpReviewUrl}
                     onChange={(e) => setFormData({ ...formData, yelpReviewUrl: e.target.value })}
                     placeholder="https://www.yelp.com/biz/business-name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -465,7 +465,7 @@ export default function CreateBusinessPage() {
                     value={formData.nextdoorReviewUrl}
                     onChange={(e) => setFormData({ ...formData, nextdoorReviewUrl: e.target.value })}
                     placeholder="https://nextdoor.com/pages/business-name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
               </div>
@@ -489,7 +489,7 @@ export default function CreateBusinessPage() {
                     onChange={(e) => setFormData({ ...formData, template1: e.target.value })}
                     placeholder="I had an excellent experience with [Business Name]! The service exceeded my expectations. Highly recommend!"
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
                   />
                   <p className="text-xs text-gray-500 mt-1">Default template will be used if left blank</p>
                 </div>
@@ -504,7 +504,7 @@ export default function CreateBusinessPage() {
                     onChange={(e) => setFormData({ ...formData, template2: e.target.value })}
                     placeholder="Just had a great experience with [Business Name]! Professional service and fantastic results. 5 stars!"
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
                   />
                   <p className="text-xs text-gray-500 mt-1">Default template will be used if left blank</p>
                 </div>
@@ -519,7 +519,7 @@ export default function CreateBusinessPage() {
                     onChange={(e) => setFormData({ ...formData, template3: e.target.value })}
                     placeholder="5 stars for [Business Name]! Quality work, professional service, and fair pricing. Will definitely use again."
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
                   />
                   <p className="text-xs text-gray-500 mt-1">Default template will be used if left blank</p>
                 </div>
@@ -534,7 +534,7 @@ export default function CreateBusinessPage() {
                   type="checkbox"
                   checked={formData.sendWelcomeEmail}
                   onChange={(e) => setFormData({ ...formData, sendWelcomeEmail: e.target.checked })}
-                  className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-5 h-5 text-[#4A3428] border-gray-300 rounded focus:ring-[#C9A961]"
                 />
                 <span className="ml-3 text-gray-700 font-medium">Send welcome email with login credentials to owner</span>
               </label>
@@ -551,7 +551,7 @@ export default function CreateBusinessPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-3 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Creating Business...' : 'Create Business'}
               </button>

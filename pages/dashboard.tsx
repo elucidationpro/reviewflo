@@ -11,7 +11,7 @@ import SendRequestModal from '@/components/SendRequestModal'
 import ReviewRequestsList from '@/components/ReviewRequestsList'
 import GoogleStatsCard from '@/components/GoogleStatsCard'
 import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav'
-import { canSendFromDashboard, canAccessGoogleStats } from '../lib/tier-permissions'
+import { canSendFromDashboard, canAccessGoogleStats, canUseSMS } from '../lib/tier-permissions'
 
 interface Business {
   id: string
@@ -329,7 +329,7 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 px-4 py-8">
+      <div className="min-h-screen bg-gray-50 px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header Skeleton */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8 animate-pulse">
@@ -395,7 +395,7 @@ export default function DashboardPage() {
 
   if (!business) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 md:p-12 max-w-md text-center">
           <h1 className="text-2xl font-bold text-slate-800 mb-4">No Business Found</h1>
           <p className="text-slate-600 mb-6">
@@ -403,7 +403,7 @@ export default function DashboardPage() {
           </p>
           <button
             onClick={handleLogout}
-            className="bg-slate-700 hover:bg-slate-800 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+            className="bg-gray-700 hover:bg-gray-800 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
           >
             Logout
           </button>
@@ -424,7 +424,7 @@ export default function DashboardPage() {
         <title>Dashboard - ReviewFlo</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+      <div className="min-h-screen bg-gray-50">
         <SiteNav
           variant="dashboard"
           businessName={business.business_name}
@@ -527,8 +527,7 @@ export default function DashboardPage() {
             </div>
             {reviewStats.total === 0 && feedbackList.length === 0 && (
               <p className="text-sm text-slate-500 mt-4">
-                💡 Try it first: send the link to yourself and rate your own &quot;service&quot; to see
-                how it works.
+                Try it first: send the link to yourself and rate your own &quot;service&quot; to see how it works.
               </p>
             )}
             {canSendFromDashboard(business.tier) && (
@@ -773,7 +772,7 @@ export default function DashboardPage() {
                     {feedbackList.filter(f => !f.is_resolved).length}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-[#E8DCC8]/50 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-8 h-8 text-slate-800"
                     fill="none"

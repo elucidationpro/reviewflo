@@ -1,12 +1,69 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { CheckCircle, Clock, Shield } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { CheckCircle, Clock, Shield, Star, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Head from 'next/head';
 import Script from 'next/script';
 import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
+
+// Typewriter cycling hook
+const CYCLING_WORDS = [
+  'Barbers',
+  'Plumbers',
+  'Auto Detailers',
+  'Electricians',
+  'HVAC Pros',
+  'Cleaners',
+  'local businesses',
+];
+const PAUSE_ON_LAST_MS = 3200;
+const PAUSE_DEFAULT_MS = 1400;
+const TYPE_SPEED_MS = 80;
+const DELETE_SPEED_MS = 45;
+
+function useTypewriter(words: string[]) {
+  const [displayText, setDisplayText] = useState('');
+  const [wordIndex, setWordIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentWord = words[wordIndex];
+    const isLastWord = wordIndex === words.length - 1;
+
+    let delay: number;
+
+    if (!isDeleting) {
+      if (displayText.length < currentWord.length) {
+        delay = TYPE_SPEED_MS;
+        const t = setTimeout(
+          () => setDisplayText(currentWord.slice(0, displayText.length + 1)),
+          delay
+        );
+        return () => clearTimeout(t);
+      } else {
+        delay = isLastWord ? PAUSE_ON_LAST_MS : PAUSE_DEFAULT_MS;
+        const t = setTimeout(() => setIsDeleting(true), delay);
+        return () => clearTimeout(t);
+      }
+    } else {
+      if (displayText.length > 0) {
+        delay = DELETE_SPEED_MS;
+        const t = setTimeout(
+          () => setDisplayText(displayText.slice(0, -1)),
+          delay
+        );
+        return () => clearTimeout(t);
+      } else {
+        setIsDeleting(false);
+        setWordIndex((prev) => (prev + 1) % words.length);
+      }
+    }
+  }, [displayText, isDeleting, wordIndex, words]);
+
+  return displayText;
+}
 
 // Hook for fade-in on scroll
 function useFadeInOnScroll() {
@@ -39,8 +96,42 @@ function useFadeInOnScroll() {
 
 export default function LandingPage() {
   const howItWorksSection = useFadeInOnScroll();
-  const seeItInActionSection = useFadeInOnScroll();
   const pricingSection = useFadeInOnScroll();
+  const typedWord = useTypewriter(CYCLING_WORDS);
+  const actionStepsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = actionStepsRef.current;
+    if (!container) return;
+
+    const header = container.querySelector('.action-header');
+    let headerObserver: IntersectionObserver | null = null;
+    if (header) {
+      headerObserver = new IntersectionObserver(
+        ([entry]) => {
+          entry.target.classList.toggle('action-header--visible', entry.isIntersecting);
+        },
+        { threshold: 0.5 }
+      );
+      headerObserver.observe(header);
+    }
+
+    const rows = container.querySelectorAll('.action-step');
+    const rowObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.classList.toggle('action-step--visible', entry.isIntersecting);
+        });
+      },
+      { threshold: 0.35 }
+    );
+    rows.forEach((row) => rowObserver.observe(row));
+
+    return () => {
+      headerObserver?.disconnect();
+      rowObserver.disconnect();
+    };
+  }, []);
 
   return (
     <>
@@ -127,6 +218,83 @@ export default function LandingPage() {
         .animate-slideUp {
           animation: slideUp 0.8s ease-out 0.2s both;
         }
+
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        .cursor-blink {
+          animation: blink 1s step-end infinite;
+        }
+
+        /* === See It In Action Animations === */
+
+        .action-header {
+          opacity: 0;
+          transform: translateY(24px);
+          transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .action-header--visible {
+          opacity: 1;
+          transform: none;
+        }
+
+        /* Image slides from LEFT */
+        .action-step-img {
+          opacity: 0;
+          transform: translateX(-44px);
+          transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                      transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        /* Image slides from RIGHT */
+        .action-step-img-right {
+          opacity: 0;
+          transform: translateX(44px);
+          transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                      transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .action-step--visible .action-step-img,
+        .action-step--visible .action-step-img-right {
+          opacity: 1;
+          transform: none;
+        }
+
+        /* Text fades up with stagger delay */
+        .action-step-text {
+          opacity: 0;
+          transform: translateY(18px);
+          transition: opacity 0.6s ease-out 0.15s,
+                      transform 0.6s ease-out 0.15s;
+        }
+        .action-step--visible .action-step-text {
+          opacity: 1;
+          transform: none;
+        }
+
+        /* Step badge pops in with spring */
+        .action-step-badge {
+          opacity: 0;
+          transform: scale(0.75);
+          transition: opacity 0.35s ease-out 0.1s,
+                      transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;
+        }
+        .action-step--visible .action-step-badge {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        /* Respect prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+          .action-header,
+          .action-step-img,
+          .action-step-img-right,
+          .action-step-text,
+          .action-step-badge {
+            transition: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+          }
+        }
       `}</style>
       <div className="min-h-screen bg-white">
         <SiteNav variant="marketing" />
@@ -148,16 +316,22 @@ export default function LandingPage() {
 
             {/* Tagline */}
             <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-              The simple review management software for service businesses. Free forever.
+              The simple review management software for{' '}
+              <span className="text-[#4A3428] font-semibold whitespace-nowrap">
+                {typedWord}
+                <span className="cursor-blink inline-block w-[2px] h-[1em] bg-[#C9A961] ml-[2px] align-middle" />
+              </span>
+              . Free forever.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-3">
               <a
                 href="/join"
-                className="w-full sm:w-auto px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold text-base hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 Start Free
+                <ArrowRight className="w-4 h-4" />
               </a>
               <a
                 href="#how-it-works"
@@ -167,19 +341,19 @@ export default function LandingPage() {
               </a>
             </div>
 
-            <p className="text-sm text-gray-500 mb-6">
-              No credit card • Takes 2 minutes • Free forever
-            </p>
-
             {/* Trust signals */}
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-wrap justify-center gap-3 text-sm">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-gray-600 shadow-sm">
                 <Clock className="w-4 h-4 text-[#C9A961]" />
                 5-minute setup
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-gray-600 shadow-sm">
                 <Shield className="w-4 h-4 text-[#C9A961]" />
                 No credit card required
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-gray-600 shadow-sm">
+                <CheckCircle className="w-4 h-4 text-[#C9A961]" />
+                Free forever
               </div>
             </div>
           </div>
@@ -202,14 +376,17 @@ export default function LandingPage() {
             A simple 3-step flow that turns happy customers into public 5-star reviews.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid md:grid-cols-3 gap-6 sm:gap-8 relative">
+            {/* Connector line (desktop only) */}
+            <div className="hidden md:block absolute top-10 left-[calc(16.67%+1.5rem)] right-[calc(16.67%+1.5rem)] h-px bg-[#C9A961]/30 z-0" />
+
             {/* Step 1 */}
-            <div className="bg-white p-6 sm:p-8 rounded-xl shadow-md border border-[#C9A961]/20 transition-all duration-300 hover:shadow-lg hover:border-[#C9A961]/40">
-              <div className="w-11 h-11 bg-[#C9A961]/20 rounded-lg flex items-center justify-center mb-4">
-                <CheckCircle className="w-6 h-6 text-[#4A3428]" />
+            <div className="relative bg-white p-6 sm:p-8 rounded-xl shadow-md border border-[#C9A961]/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-[#C9A961]/50 z-10">
+              <div className="w-11 h-11 bg-[#4A3428] rounded-full flex items-center justify-center mb-5 text-white font-bold text-lg">
+                1
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Step 1: Send Your Link
+                Send Your Link
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 After each job, send customers a single ReviewFlo link by text or email. No apps, no logins.
@@ -217,12 +394,12 @@ export default function LandingPage() {
             </div>
 
             {/* Step 2 */}
-            <div className="bg-white p-6 sm:p-8 rounded-xl shadow-md border border-[#C9A961]/20 transition-all duration-300 hover:shadow-lg hover:border-[#C9A961]/40">
-              <div className="w-11 h-11 bg-[#C9A961]/20 rounded-lg flex items-center justify-center mb-4">
-                <CheckCircle className="w-6 h-6 text-[#4A3428]" />
+            <div className="relative bg-white p-6 sm:p-8 rounded-xl shadow-md border border-[#C9A961]/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-[#C9A961]/50 z-10">
+              <div className="w-11 h-11 bg-[#4A3428] rounded-full flex items-center justify-center mb-5 text-white font-bold text-lg">
+                2
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Step 2: Smart Routing
+                Smart Routing
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 Happy customers are guided to leave a public review. Unhappy customers are routed to a private feedback form.
@@ -230,12 +407,12 @@ export default function LandingPage() {
             </div>
 
             {/* Step 3 */}
-            <div className="bg-white p-6 sm:p-8 rounded-xl shadow-md border border-[#C9A961]/20 transition-all duration-300 hover:shadow-lg hover:border-[#C9A961]/40">
-              <div className="w-11 h-11 bg-[#C9A961]/20 rounded-lg flex items-center justify-center mb-4">
-                <CheckCircle className="w-6 h-6 text-[#4A3428]" />
+            <div className="relative bg-white p-6 sm:p-8 rounded-xl shadow-md border border-[#C9A961]/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-[#C9A961]/50 z-10">
+              <div className="w-11 h-11 bg-[#C9A961] rounded-full flex items-center justify-center mb-5 text-[#4A3428] font-bold text-lg">
+                3
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Step 3: Get Results
+                Get Results
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 Fix issues privately before they go public and steadily grow your 5-star reviews on Google.
@@ -255,15 +432,11 @@ export default function LandingPage() {
       </section>
 
       {/* See It In Action Section */}
-      <section
-        id="see-it-in-action"
-        ref={seeItInActionSection.ref}
-        className={`py-12 sm:py-16 bg-gray-50/50 transition-all duration-700 ${
-          seeItInActionSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+      <section id="see-it-in-action" className="py-12 sm:py-16 bg-gray-50/50">
+        <div ref={actionStepsRef} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Section header — slides up on enter */}
+          <div className="action-header text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               See It In Action
             </h2>
@@ -272,20 +445,23 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Step 1: Customer Rates */}
-          <div className="mb-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
-            <div className="w-full md:w-1/2">
+          {/* Step 1: image LEFT → slides from left */}
+          <div className="action-step mb-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
+            <div className="action-step-img w-full md:w-1/2 group">
               <Image
                 src="/images/sq-rating-page.png"
                 alt="Customer rating screen"
                 width={400}
                 height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200"
+                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
               />
             </div>
-            <div className="w-full md:w-1/2">
+            <div className="action-step-text w-full md:w-1/2">
+              <span className="action-step-badge inline-block px-3 py-1 bg-[#E8DCC8] text-[#4A3428] text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
+                Step 1
+              </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Step 1: Customer Rates
+                Customer Rates
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 Your customer receives your link and sees this simple 1-5 star rating screen. One click, takes 5 seconds.
@@ -293,20 +469,23 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Step 2a: Unhappy Path */}
-          <div className="mb-12 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
-            <div className="w-full md:w-1/2">
+          {/* Step 2a: image RIGHT → slides from right */}
+          <div className="action-step mb-12 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
+            <div className="action-step-img-right w-full md:w-1/2 group">
               <Image
                 src="/images/sq-feedback-page.png"
                 alt="Private feedback form"
                 width={400}
                 height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200"
+                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
               />
             </div>
-            <div className="w-full md:w-1/2">
+            <div className="action-step-text w-full md:w-1/2">
+              <span className="action-step-badge inline-block px-3 py-1 bg-[#FEE2E2] text-red-700 text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
+                Step 2a — Unhappy
+              </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Step 2a: If They&apos;re Unhappy (1-4 stars)
+                If They&apos;re Unhappy (1-4 stars)
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 They see a private feedback form where they can tell you what went wrong. You get an email. Nothing goes public. You can fix it.
@@ -314,20 +493,23 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Step 2b: Happy Path - Templates */}
-          <div className="mb-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
-            <div className="w-full md:w-1/2">
+          {/* Step 2b: image LEFT → slides from left */}
+          <div className="action-step mb-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
+            <div className="action-step-img w-full md:w-1/2 group">
               <Image
                 src="/images/sq-templates-page.png"
                 alt="Template selection"
                 width={400}
                 height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200"
+                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
               />
             </div>
-            <div className="w-full md:w-1/2">
+            <div className="action-step-text w-full md:w-1/2">
+              <span className="action-step-badge inline-block px-3 py-1 bg-[#DCFCE7] text-green-700 text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
+                Step 2b — Happy
+              </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Step 2b: If They&apos;re Happy (5 stars)
+                If They&apos;re Happy (5 stars)
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 They choose to write their own review or use a pre-written template. Templates make it effortless.
@@ -335,20 +517,23 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Step 3: Platform Choice */}
-          <div className="mb-12 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
-            <div className="w-full md:w-1/2">
+          {/* Step 3: image RIGHT → slides from right */}
+          <div className="action-step mb-12 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
+            <div className="action-step-img-right w-full md:w-1/2 group">
               <Image
                 src="/images/sq-platform-page.png"
                 alt="Platform selection screen"
                 width={400}
                 height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200"
+                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
               />
             </div>
-            <div className="w-full md:w-1/2">
+            <div className="action-step-text w-full md:w-1/2">
+              <span className="action-step-badge inline-block px-3 py-1 bg-[#E8DCC8] text-[#4A3428] text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
+                Step 3
+              </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Step 3: Choose Platform
+                Choose Platform
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 Customer picks Google, Facebook, or Yelp. One click and they&apos;re there.
@@ -356,26 +541,30 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Final Result */}
-          <div className="mb-0 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
-            <div className="w-full md:w-1/2">
+          {/* Final Result: image LEFT → slides from left */}
+          <div className="action-step mb-0 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
+            <div className="action-step-img w-full md:w-1/2 group">
               <Image
                 src="/images/sq-google-review.png"
                 alt="5-star Google review"
                 width={400}
                 height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200"
+                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
               />
             </div>
-            <div className="w-full md:w-1/2">
+            <div className="action-step-text w-full md:w-1/2">
+              <span className="action-step-badge inline-block px-3 py-1 bg-[#C9A961] text-white text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
+                ★ Result
+              </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                The Result: A Public 5-Star Review
+                A Public 5-Star Review
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 The template copies to their clipboard. Google opens. They paste and post. Done in under a minute.
               </p>
             </div>
           </div>
+
         </div>
       </section>
 
@@ -398,39 +587,48 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div className="border border-gray-200 rounded-lg p-5 text-center bg-white">
-              <p className="text-xs font-semibold text-[#4A3428] uppercase tracking-wide mb-1">Free</p>
-              <p className="text-2xl font-bold text-gray-900 mb-1">
+            {/* Free */}
+            <div className="border-2 border-[#C9A961]/50 rounded-xl p-6 text-center bg-white shadow-sm hover:shadow-md transition-shadow">
+              <span className="inline-block px-2.5 py-0.5 bg-[#4A3428] text-white text-xs font-semibold rounded-full mb-3">Available Now</span>
+              <p className="text-xs font-semibold text-[#4A3428] uppercase tracking-widest mb-2">Free</p>
+              <p className="text-3xl font-bold text-gray-900 mb-1">
                 $0<span className="text-sm font-normal text-gray-500">/mo</span>
               </p>
-              <p className="text-xs text-gray-500">Forever</p>
+              <p className="text-xs text-gray-500 mb-3">Forever</p>
+              <p className="text-xs text-gray-600">Stop bad reviews · Google reviews · Basic templates</p>
             </div>
-            <div className="border border-gray-200 rounded-lg p-5 text-center bg-white">
-              <p className="text-xs font-semibold text-[#4A3428] uppercase tracking-wide mb-1">Pro</p>
-              <p className="text-2xl font-bold text-gray-900 mb-1">
+            {/* Pro */}
+            <div className="border border-gray-200 rounded-xl p-6 text-center bg-white shadow-sm hover:shadow-md transition-shadow">
+              <span className="inline-block px-2.5 py-0.5 bg-gray-100 text-gray-500 text-xs font-semibold rounded-full mb-3">May 2026</span>
+              <p className="text-xs font-semibold text-[#4A3428] uppercase tracking-widest mb-2">Pro</p>
+              <p className="text-3xl font-bold text-gray-900 mb-1">
                 $19<span className="text-sm font-normal text-gray-500">/mo</span>
               </p>
-              <p className="text-xs text-gray-500">Coming May 2026</p>
+              <p className="text-xs text-[#4A3428] font-medium mb-3">Launch: $9.50/mo*</p>
+              <p className="text-xs text-gray-600">Dashboard sending · Auto follow-ups · Multi-platform</p>
             </div>
-            <div className="border border-gray-200 rounded-lg p-5 text-center bg-white">
-              <p className="text-xs font-semibold text-[#4A3428] uppercase tracking-wide mb-1">AI</p>
-              <p className="text-2xl font-bold text-gray-900 mb-1">
+            {/* AI */}
+            <div className="border border-gray-200 rounded-xl p-6 text-center bg-white shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+              <span className="absolute top-0 right-0 px-2.5 py-1 bg-[#C9A961] text-[#4A3428] text-xs font-bold">Most Popular</span>
+              <span className="inline-block px-2.5 py-0.5 bg-gray-100 text-gray-500 text-xs font-semibold rounded-full mb-3">May 2026</span>
+              <p className="text-xs font-semibold text-[#4A3428] uppercase tracking-widest mb-2">AI</p>
+              <p className="text-3xl font-bold text-gray-900 mb-1">
                 $49<span className="text-sm font-normal text-gray-500">/mo</span>
               </p>
-              <p className="text-xs text-gray-500">Coming May 2026</p>
+              <p className="text-xs text-[#4A3428] font-medium mb-3">Launch: $24.50/mo*</p>
+              <p className="text-xs text-gray-600">SMS automation · AI drafts · CRM integration</p>
             </div>
           </div>
 
-          <p className="text-center text-gray-600 text-sm mb-4">
-            Start free. Upgrade when Pro &amp; AI launch in May 2026.
-          </p>
+          <p className="text-center text-gray-500 text-xs mb-6">*50% off first 3 months for early signups</p>
 
           <div className="text-center">
             <a
               href="/pricing"
-              className="inline-flex items-center justify-center px-6 py-3 text-sm sm:text-base font-semibold text-[#4A3428] border border-[#C9A961] rounded-lg hover:border-[#4A3428] hover:bg-[#E8DCC8]/30 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm sm:text-base font-semibold text-[#4A3428] border border-[#C9A961] rounded-lg hover:border-[#4A3428] hover:bg-[#E8DCC8]/30 transition-colors"
             >
-              See Full Pricing →
+              See Full Pricing
+              <ArrowRight className="w-4 h-4" />
             </a>
           </div>
         </div>
@@ -439,40 +637,64 @@ export default function LandingPage() {
       {/* Social Proof Section */}
       <section className="py-12 sm:py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex justify-center gap-1 mb-3">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-5 h-5 fill-[#C9A961] text-[#C9A961]" />
+            ))}
+          </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-            Join 50+ Utah Service Businesses
+            Built for Local Service Businesses
           </h2>
-          <p className="text-gray-600 text-sm sm:text-base mb-4">
-            Used by barbers, auto detailers, plumbers, electricians, cleaners, HVAC pros, and more.
+          <p className="text-gray-600 text-sm sm:text-base mb-6">
+            Helping local pros get more 5-star reviews every week.
           </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {['Barbers', 'Auto Detailers', 'Plumbers', 'Electricians', 'Cleaners', 'HVAC Pros', 'Mechanics', 'Landscapers'].map((biz) => (
+              <span
+                key={biz}
+                className="px-3 py-1.5 bg-white border border-[#C9A961]/30 rounded-full text-sm text-gray-700 font-medium shadow-sm"
+              >
+                {biz}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-12 sm:py-20 border-t border-gray-100">
+      <section className="py-12 sm:py-20 bg-gradient-to-br from-[#4A3428] to-[#3a2820]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+          <div className="flex justify-center gap-1 mb-4">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-5 h-5 fill-[#C9A961] text-[#C9A961]" />
+            ))}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
             Ready to Stop Worrying About Bad Reviews?
           </h2>
+          <p className="text-[#E8DCC8]/80 text-base mb-8">
+            Simple review management for local service businesses. Free forever.
+          </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
             <a
               href="/join"
-              className="w-full sm:w-auto px-8 py-3.5 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 transition-all duration-200 shadow-lg"
+              className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 bg-[#C9A961] text-[#4A3428] rounded-lg font-bold hover:bg-[#C9A961]/90 transition-all duration-200 shadow-lg"
             >
               Start Free - No Credit Card
+              <ArrowRight className="w-4 h-4" />
             </a>
             <a
               href="/pricing"
-              className="w-full sm:w-auto px-8 py-3.5 bg-white text-[#4A3428] rounded-lg font-semibold border-2 border-[#C9A961] hover:border-[#4A3428] hover:bg-[#E8DCC8]/20 transition-all duration-200"
+              className="w-full sm:w-auto px-8 py-3.5 bg-transparent text-white rounded-lg font-semibold border-2 border-white/30 hover:border-white hover:bg-white/10 transition-all duration-200"
             >
               See Full Pricing
             </a>
           </div>
 
-          <p className="text-gray-500 text-sm">
-            Questions? <strong>Text:</strong> (385) 522-5040 · <strong>Email:</strong>{' '}
-            <a href="mailto:jeremy@usereviewflo.com" className="text-[#4A3428] hover:underline">
+          <p className="text-[#E8DCC8]/70 text-sm">
+            Questions? <strong className="text-[#E8DCC8]">Text:</strong> (385) 522-5040 · <strong className="text-[#E8DCC8]">Email:</strong>{' '}
+            <a href="mailto:jeremy@usereviewflo.com" className="text-[#C9A961] hover:underline">
               jeremy@usereviewflo.com
             </a>
           </p>

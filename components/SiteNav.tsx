@@ -190,28 +190,28 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
       <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`flex items-center justify-between ${NAV_HEIGHT_CLASS}`}>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3 sm:gap-6">
               <Link
                 href="/"
                 onClick={handleLogoClick('desktop')}
-                className="relative inline-flex items-center transition-opacity hover:opacity-80"
+                className="relative inline-flex items-center transition-opacity hover:opacity-80 shrink-0"
               >
                 <img
                   src="/images/reviewflo-logo.svg"
                   alt="ReviewFlo"
-                  className="h-8 sm:h-10 w-auto"
+                  className="h-7 sm:h-10 w-auto"
                 />
                 <span className="absolute -top-1 -right-3 text-[10px] sm:text-xs text-[#4A3428]">
                   ™
                 </span>
               </Link>
-              <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-slate-600">
+              <nav className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm font-medium text-slate-600">
                 <Link
                   href="/dashboard"
                   onClick={handleNavClick('dashboard', 'desktop')}
-                  className={`transition-colors ${
+                  className={`transition-colors whitespace-nowrap ${
                     isDashboardActive
-                      ? 'text-slate-900 border-b-2 border-[#C9A961] pb-1'
+                      ? 'text-slate-900 border-b-2 border-[#C9A961] pb-0.5 sm:pb-1'
                       : 'hover:text-slate-900'
                   }`}
                 >
@@ -220,9 +220,9 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
                 <Link
                   href="/settings"
                   onClick={handleNavClick('settings', 'desktop')}
-                  className={`transition-colors ${
+                  className={`transition-colors whitespace-nowrap ${
                     isSettingsActive
-                      ? 'text-slate-900 border-b-2 border-[#C9A961] pb-1'
+                      ? 'text-slate-900 border-b-2 border-[#C9A961] pb-0.5 sm:pb-1'
                       : 'hover:text-slate-900'
                   }`}
                 >
@@ -230,9 +230,9 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
                 </Link>
               </nav>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               {businessName && (
-                <span className="hidden sm:inline-flex max-w-xs truncate text-sm text-slate-700">
+                <span className="hidden md:inline-flex max-w-xs truncate text-sm text-slate-700">
                   {businessName}
                 </span>
               )}
@@ -240,7 +240,7 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
                 <button
                   type="button"
                   onClick={handleLogoutClick}
-                  className="px-4 sm:px-5 py-2 rounded-lg bg-slate-700 text-white text-sm font-semibold hover:bg-slate-800 transition-colors"
+                  className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg bg-slate-700 text-white text-xs sm:text-sm font-semibold hover:bg-slate-800 transition-colors whitespace-nowrap"
                 >
                   Logout
                 </button>

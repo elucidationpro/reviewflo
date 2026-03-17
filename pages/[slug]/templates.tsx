@@ -35,7 +35,6 @@ interface PageProps {
 
 export default function TemplatesPage({ business, templates }: PageProps) {
   const hasPlatformLinks = !!(business.google_review_url || business.facebook_review_url || business.yelp_review_url || business.nextdoor_review_url)
-  // When skip_template_choice is true, go straight to platform links (no "Write Own" vs "Template" choice)
   const [reviewPath, setReviewPath] = useState<'write_own' | 'use_template' | null>(
     business.skip_template_choice && hasPlatformLinks ? 'write_own' : null
   )
@@ -46,15 +45,13 @@ export default function TemplatesPage({ business, templates }: PageProps) {
   const handleTemplateClick = (templateText: string, templateIndex: number) => {
     setSelectedTemplate(templateText)
 
-    // Copy template to clipboard immediately
     navigator.clipboard.writeText(templateText).then(() => {
       setCopiedTemplate(true)
-      setTimeout(() => setCopiedTemplate(false), 5000) // Show for 5 seconds
+      setTimeout(() => setCopiedTemplate(false), 5000)
     }).catch(err => {
       console.error('Failed to copy template:', err)
     })
 
-    // Track template selection
     trackEvent('template_selected', {
       businessId: business.id,
       businessName: business.business_name,
@@ -63,13 +60,9 @@ export default function TemplatesPage({ business, templates }: PageProps) {
   }
 
   const handlePlatformClick = (platformName: string, platformUrl: string, templateText?: string) => {
-    // Show clicked state
     setClickedPlatform(platformName)
-
-    // Reset clicked state after brief delay
     setTimeout(() => setClickedPlatform(null), 1500)
 
-    // Track platform selection
     trackEvent('platform_selected', {
       businessId: business.id,
       businessName: business.business_name,
@@ -78,7 +71,6 @@ export default function TemplatesPage({ business, templates }: PageProps) {
       templateUsed: !!templateText,
     })
 
-    // Track Google-specific event for backward compatibility
     if (platformName === 'Google') {
       trackEvent('five_star_to_google', {
         businessId: business.id,
@@ -86,7 +78,6 @@ export default function TemplatesPage({ business, templates }: PageProps) {
       })
     }
 
-    // Open platform URL immediately (template already copied if applicable)
     window.open(platformUrl, '_blank')
   }
 
@@ -144,340 +135,264 @@ export default function TemplatesPage({ business, templates }: PageProps) {
         <meta name="description" content={`Thank you for your 5-star rating! Leave a review for ${business.business_name}.`} />
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8 sm:py-12">
-      <div className="max-w-3xl mx-auto">
-        {/* Header Section */}
-        <div className="bg-white rounded-xl shadow-lg p-8 sm:p-10 md:p-12 mb-8">
-          {/* Business Name */}
-          <h1
-            className="text-2xl sm:text-3xl font-semibold text-center mb-6 tracking-tight"
-            style={{ color: business.primary_color }}
-          >
-            {business.business_name}
-          </h1>
 
-          {/* Thank You Message with Stars */}
-          <div className="text-center pb-6 mb-6 border-b border-gray-100">
-            <div className="flex justify-center gap-1 mb-4">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <svg
-                  key={star}
-                  className="w-6 h-6 sm:w-7 sm:h-7"
-                  fill={business.primary_color}
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden
-                >
-                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
-              ))}
-            </div>
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1.5">
-              Thanks for the 5-star rating
-            </h2>
-            <p className="text-gray-600 text-base sm:text-lg">
-              {business.skip_template_choice ? 'Choose where to leave your review:' : 'How would you like to leave your review?'}
-            </p>
-          </div>
+      <div className="min-h-dvh bg-gray-50 px-4 py-8 sm:py-12">
+        <div className="max-w-sm sm:max-w-md md:max-w-lg mx-auto">
 
-          {/* STEP 1: Initial Choice (skipped when skip_template_choice) */}
-          {!reviewPath && (
-            <div className="space-y-3">
-              <button
-                onClick={() => {
-                  setReviewPath('write_own')
-                  trackEvent('review_path_selected', {
-                    businessId: business.id,
-                    businessName: business.business_name,
-                    path: 'write_own',
-                  })
-                }}
-                className="w-full p-5 border-2 rounded-xl hover:shadow-md transition-all duration-200 text-left group"
-                style={{ borderColor: business.primary_color }}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{ backgroundColor: `${business.primary_color}20` }}>
-                    <PenLine className="w-6 h-6" style={{ color: business.primary_color }} />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-800 mb-1">
-                      Write Your Own Review
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Express your experience in your own words
-                    </p>
-                  </div>
+          {/* Header Card */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10 mb-4">
+
+            {/* Business Name */}
+            <h1
+              className="text-xl md:text-2xl font-bold text-center tracking-tight mb-5"
+              style={{ color: business.primary_color }}
+            >
+              {business.business_name}
+            </h1>
+
+            {/* 5-Star Celebration */}
+            <div className="text-center mb-5 pb-5 border-b border-gray-100">
+              <div className="flex justify-center gap-1.5 md:gap-2 mb-3">
+                {[1, 2, 3, 4, 5].map((star) => (
                   <svg
-                    className="w-6 h-6 text-gray-400 group-hover:text-gray-600 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
+                    key={star}
+                    className="w-7 h-7 md:w-8 md:h-8"
+                    fill={business.primary_color}
                     viewBox="0 0 24 24"
+                    aria-hidden
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  setReviewPath('use_template')
-                  trackEvent('review_path_selected', {
-                    businessId: business.id,
-                    businessName: business.business_name,
-                    path: 'use_template',
-                  })
-                }}
-                className="w-full p-5 border-2 rounded-xl hover:shadow-md transition-all duration-200 text-left group"
-                style={{ borderColor: business.primary_color }}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{ backgroundColor: `${business.primary_color}20` }}>
-                    <ClipboardList className="w-6 h-6" style={{ color: business.primary_color }} />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-800 mb-1">
-                      Choose a Template
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Use a pre-written review template
-                    </p>
-                  </div>
-                  <svg
-                    className="w-6 h-6 text-gray-400 group-hover:text-gray-600 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </button>
-            </div>
-          )}
-
-          {/* STEP 2A: Write Your Own - Platform Selection */}
-          {reviewPath === 'write_own' && platforms.length > 0 && (
-            <div className="mt-8">
-              <button
-                onClick={() => setReviewPath(null)}
-                className="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2 text-sm"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-                Back
-              </button>
-
-              <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
-                Choose where to leave your review:
-              </h3>
-
-              <div className="space-y-3">
-                {platforms.map((platform) => (
-                  <button
-                    key={platform.name}
-                    onClick={() => handlePlatformClick(platform.name, platform.url!)}
-                    disabled={clickedPlatform === platform.name}
-                    className="w-full flex items-center gap-4 p-5 border-2 border-gray-200 rounded-xl hover:shadow-lg transition-all duration-200 group disabled:opacity-100"
-                    style={{
-                      backgroundColor: clickedPlatform === platform.name ? '#10B981' + '15' : platform.color + '08',
-                      borderColor: clickedPlatform === platform.name ? '#10B981' : 'rgb(229, 231, 235)'
-                    }}
-                  >
-                    <div className="transform group-hover:scale-110 transition-transform">
-                      {platform.icon}
-                    </div>
-                    <div className="flex-1 text-left">
-                      <span className="font-semibold text-gray-800 text-lg">
-                        {platform.name} Reviews
-                      </span>
-                      {clickedPlatform === platform.name && (
-                        <p className="text-sm text-green-700 mt-1 font-medium">
-                          Opening...
-                        </p>
-                      )}
-                    </div>
-                    {clickedPlatform === platform.name ? (
-                      <svg
-                        className="w-6 h-6 text-green-600"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-6 h-6 text-gray-400 group-hover:text-gray-600 transition-colors"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    )}
-                  </button>
                 ))}
               </div>
+              <p className="font-semibold text-gray-900 md:text-lg mb-0.5">
+                Thanks for the 5-star rating!
+              </p>
+              <p className="text-gray-500 text-sm md:text-base">
+                {business.skip_template_choice
+                  ? 'Choose where to leave your review:'
+                  : 'How would you like to leave your review?'}
+              </p>
             </div>
-          )}
 
-          {/* STEP 2B: Template Path - Template Selection */}
-          {reviewPath === 'use_template' && !selectedTemplate && templates.length > 0 && (
-            <div className="mt-8">
-              <button
-                onClick={() => setReviewPath(null)}
-                className="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2 text-sm"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-                Back
-              </button>
-
-              <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
-                Choose a template:
-              </h3>
-
-              <div className="space-y-4">
-                {templates.slice(0, getTemplateSlots(business.tier)).map((template, index) => (
-                  <button
-                    key={template.id}
-                    onClick={() => handleTemplateClick(template.template_text, index)}
-                    className="w-full border-2 border-gray-200 rounded-xl p-5 hover:border-gray-300 hover:shadow-lg transition-all duration-200 text-left group relative"
+            {/* STEP 1: Path Choice */}
+            {!reviewPath && (
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    setReviewPath('write_own')
+                    trackEvent('review_path_selected', {
+                      businessId: business.id,
+                      businessName: business.business_name,
+                      path: 'write_own',
+                    })
+                  }}
+                  style={{ touchAction: 'manipulation' }}
+                  className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-100 hover:border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 text-left cursor-pointer group"
+                >
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: `${business.primary_color}18` }}
                   >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 mt-1"
-                        style={{ backgroundColor: business.primary_color }}
-                      >
-                        {index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-gray-700 leading-relaxed">
+                    <PenLine className="w-5 h-5" style={{ color: business.primary_color }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm">Write your own</p>
+                    <p className="text-gray-400 text-xs">In your own words</p>
+                  </div>
+                  <svg className="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setReviewPath('use_template')
+                    trackEvent('review_path_selected', {
+                      businessId: business.id,
+                      businessName: business.business_name,
+                      path: 'use_template',
+                    })
+                  }}
+                  style={{ touchAction: 'manipulation' }}
+                  className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-100 hover:border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 text-left cursor-pointer group"
+                >
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: `${business.primary_color}18` }}
+                  >
+                    <ClipboardList className="w-5 h-5" style={{ color: business.primary_color }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm">Use a template</p>
+                    <p className="text-gray-400 text-xs">Quick pre-written option</p>
+                  </div>
+                  <svg className="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            {/* STEP 2A: Write Own — Platform Selection */}
+            {reviewPath === 'write_own' && platforms.length > 0 && (
+              <div>
+                {!business.skip_template_choice && (
+                  <button
+                    onClick={() => setReviewPath(null)}
+                    style={{ touchAction: 'manipulation' }}
+                    className="mb-5 flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back
+                  </button>
+                )}
+
+                <p className="text-sm font-semibold text-gray-700 mb-3">Choose a platform:</p>
+
+                <div className="space-y-2.5">
+                  {platforms.map((platform) => (
+                    <button
+                      key={platform.name}
+                      onClick={() => handlePlatformClick(platform.name, platform.url!)}
+                      disabled={clickedPlatform === platform.name}
+                      style={{ touchAction: 'manipulation' }}
+                      className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 cursor-pointer disabled:cursor-default"
+                    >
+                      <div className="shrink-0">{platform.icon}</div>
+                      <span className="flex-1 text-left font-medium text-gray-800 text-sm">
+                        {platform.name}
+                      </span>
+                      {clickedPlatform === platform.name ? (
+                        <svg className="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2B: Template Selection */}
+            {reviewPath === 'use_template' && !selectedTemplate && templates.length > 0 && (
+              <div>
+                <button
+                  onClick={() => setReviewPath(null)}
+                  style={{ touchAction: 'manipulation' }}
+                  className="mb-5 flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back
+                </button>
+
+                <p className="text-sm font-semibold text-gray-700 mb-3">Choose a template:</p>
+
+                <div className="space-y-2.5">
+                  {templates.slice(0, getTemplateSlots(business.tier)).map((template, index) => (
+                    <button
+                      key={template.id}
+                      onClick={() => handleTemplateClick(template.template_text, index)}
+                      style={{ touchAction: 'manipulation' }}
+                      className="w-full border border-gray-100 rounded-xl p-4 hover:border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 text-left cursor-pointer group"
+                    >
+                      <div className="flex items-start gap-3">
+                        <span
+                          className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5"
+                          style={{ backgroundColor: business.primary_color }}
+                        >
+                          {index + 1}
+                        </span>
+                        <p className="text-gray-700 text-sm leading-relaxed flex-1">
                           {template.template_text}
                         </p>
+                        <svg className="w-4 h-4 text-gray-300 group-hover:text-gray-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
                       </div>
-                      <svg
-                        className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0 mt-1"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* STEP 2B Continued: Platform Selection After Template Choice */}
-          {reviewPath === 'use_template' && selectedTemplate && platforms.length > 0 && (
-            <div className="mt-8">
-              <button
-                onClick={() => setSelectedTemplate(null)}
-                className="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2 text-sm"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-                Choose different template
-              </button>
+            {/* STEP 2B Continued: Platform after Template */}
+            {reviewPath === 'use_template' && selectedTemplate && platforms.length > 0 && (
+              <div>
+                <button
+                  onClick={() => setSelectedTemplate(null)}
+                  style={{ touchAction: 'manipulation' }}
+                  className="mb-5 flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Choose different template
+                </button>
 
-              {copiedTemplate && (
-                <div className="mb-6 p-4 bg-green-50 border-2 border-green-400 rounded-lg text-center shadow-sm">
-                  <p className="text-green-800 font-semibold flex items-center justify-center gap-2 text-base">
-                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                {copiedTemplate && (
+                  <div className="mb-4 flex items-center gap-2 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                    <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    Template copied to clipboard!
-                  </p>
-                </div>
-              )}
+                    <p className="text-emerald-800 text-sm font-medium">Template copied to clipboard</p>
+                  </div>
+                )}
 
-              <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
-                Choose where to post:
-              </h3>
+                <p className="text-sm font-semibold text-gray-700 mb-3">Choose where to post:</p>
 
-              <div className="space-y-3">
-                {platforms.map((platform) => (
-                  <button
-                    key={platform.name}
-                    onClick={() => handlePlatformClick(platform.name, platform.url!, selectedTemplate)}
-                    disabled={clickedPlatform === platform.name}
-                    className="w-full flex items-center gap-4 p-5 border-2 border-gray-200 rounded-xl hover:shadow-lg transition-all duration-200 group disabled:opacity-100"
-                    style={{
-                      backgroundColor: clickedPlatform === platform.name ? '#10B981' + '15' : platform.color + '08',
-                      borderColor: clickedPlatform === platform.name ? '#10B981' : 'rgb(229, 231, 235)'
-                    }}
-                  >
-                    <div className="transform group-hover:scale-110 transition-transform">
-                      {platform.icon}
-                    </div>
-                    <div className="flex-1 text-left">
-                      <span className="font-semibold text-gray-800 text-lg">
-                        {platform.name} Reviews
-                      </span>
-                      <p className="text-sm mt-1" style={{
-                        color: clickedPlatform === platform.name ? '#15803d' : 'rgb(75, 85, 99)'
-                      }}>
-                        {clickedPlatform === platform.name ? (
-                          <span className="font-medium">Opening {platform.name}...</span>
-                        ) : (
-                          'Click to open review page'
+                <div className="space-y-2.5">
+                  {platforms.map((platform) => (
+                    <button
+                      key={platform.name}
+                      onClick={() => handlePlatformClick(platform.name, platform.url!, selectedTemplate)}
+                      disabled={clickedPlatform === platform.name}
+                      style={{ touchAction: 'manipulation' }}
+                      className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 cursor-pointer disabled:cursor-default"
+                    >
+                      <div className="shrink-0">{platform.icon}</div>
+                      <div className="flex-1 text-left min-w-0">
+                        <p className="font-medium text-gray-800 text-sm">{platform.name}</p>
+                        {clickedPlatform === platform.name && (
+                          <p className="text-xs text-emerald-600">Opening…</p>
                         )}
-                      </p>
-                    </div>
-                    {clickedPlatform === platform.name ? (
-                      <svg
-                        className="w-6 h-6 text-green-600"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-6 h-6 text-gray-400 group-hover:text-gray-600 transition-colors"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
+                      </div>
+                      {clickedPlatform === platform.name ? (
+                        <svg className="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="text-center text-gray-400 text-sm space-y-2">
-          <div className="flex items-center justify-center gap-4">
-            <Link href="/terms" className="hover:text-gray-600 transition-colors">
-              Terms of Service
-            </Link>
-            <span>•</span>
-            <Link href="/terms#privacy" className="hover:text-gray-600 transition-colors">
-              Privacy Policy
-            </Link>
+            )}
           </div>
-          <ReviewFloFooter showBranding={business.show_reviewflo_branding !== false || business.tier === 'free'} />
+
+          {/* Footer */}
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-3 text-xs text-gray-300 mb-1">
+              <Link href="/terms" className="hover:text-gray-500 transition-colors">Terms</Link>
+              <span>·</span>
+              <Link href="/terms#privacy" className="hover:text-gray-500 transition-colors">Privacy</Link>
+            </div>
+            <ReviewFloFooter showBranding={business.show_reviewflo_branding !== false || business.tier === 'free'} />
+          </div>
+
         </div>
       </div>
-    </div>
     </>
   )
 }
@@ -485,7 +400,6 @@ export default function TemplatesPage({ business, templates }: PageProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.params as { slug: string }
 
-  // Fetch business data from Supabase (use select * so skip_template_choice works if migration ran)
   const { data: business, error: businessError } = await supabase
     .from('businesses')
     .select('*')
@@ -493,9 +407,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .single()
 
   if (businessError || !business) {
-    return {
-      notFound: true,
-    }
+    return { notFound: true }
   }
 
   const businessWithSettings = {
@@ -503,13 +415,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     skip_template_choice: business.skip_template_choice ?? false,
   }
 
-  // Fetch review templates for this business in specific display order
   const { data: templatesData } = await supabase
     .from('review_templates')
     .select('id, template_text, platform')
     .eq('business_id', business.id)
 
-  // Sort templates in consistent order: google (1), facebook (2), yelp (3)
   const templates = templatesData ? [
     templatesData.find(t => t.platform === 'google'),
     templatesData.find(t => t.platform === 'facebook'),

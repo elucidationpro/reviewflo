@@ -27,17 +27,19 @@ export default function FeedbackPage({ business, rating }: PageProps) {
   const [phone, setPhone] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [formError, setFormError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setFormError('')
 
     if (!whatHappened.trim() || !howToMakeRight.trim()) {
-      alert('Please fill in both fields')
+      setFormError('Please fill in both fields before submitting.')
       return
     }
 
     if (wantsContact && !email.trim() && !phone.trim()) {
-      alert('Please provide an email or phone number if you want us to contact you')
+      setFormError('Please provide an email or phone number so we can reach you.')
       return
     }
 
@@ -59,12 +61,11 @@ export default function FeedbackPage({ business, rating }: PageProps) {
 
       if (error) {
         console.error('Error saving feedback:', error)
-        alert('There was an error submitting your feedback. Please try again.')
+        setFormError('Something went wrong. Please try again.')
         setIsSubmitting(false)
         return
       }
 
-      // EVENT 6: Track private feedback submission
       trackEvent('private_feedback_submitted', {
         rating,
         businessId: business.id,
@@ -73,13 +74,10 @@ export default function FeedbackPage({ business, rating }: PageProps) {
         wantsContact,
       })
 
-      // Send email notification
       try {
         await fetch('/api/send-feedback-email', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             businessId: business.id,
             starRating: rating,
@@ -92,76 +90,54 @@ export default function FeedbackPage({ business, rating }: PageProps) {
         })
       } catch (emailError) {
         console.error('Error sending email:', emailError)
-        // Don't block the user flow if email fails
       }
 
       setIsSubmitted(true)
     } catch (err) {
       console.error('Error submitting feedback:', err)
-      alert('There was an error submitting your feedback. Please try again.')
+      setFormError('Something went wrong. Please try again.')
       setIsSubmitting(false)
     }
   }
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-        <div className="max-w-2xl w-full">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center">
+      <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 px-4 py-10">
+        <div className="w-full max-w-xs sm:max-w-sm md:max-w-md">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 text-center">
             {/* Success Icon */}
-            <div className="mb-6">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+              style={{ backgroundColor: `${business.primary_color}15` }}
+            >
               <svg
-                className="w-20 h-20 mx-auto"
+                className="w-8 h-8"
                 style={{ color: business.primary_color }}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
 
-            {/* Thank You Message */}
-            <h1
-              className="text-3xl md:text-4xl font-bold mb-4"
-              style={{ color: business.primary_color }}
-            >
-              Thank You!
+            <h1 className="text-xl font-bold text-gray-900 mb-2">
+              Thank you for your feedback
             </h1>
-
-            <p className="text-gray-600 text-lg mb-2">
-              We appreciate you taking the time to share your feedback with us.
+            <p className="text-gray-500 text-sm">
+              {wantsContact
+                ? "We'll be in touch soon to make things right."
+                : 'We appreciate you taking the time to share your experience.'}
             </p>
-
-            {wantsContact && (
-              <p className="text-gray-600 text-lg mb-6">
-                We&apos;ll be in touch with you soon to make things right.
-              </p>
-            )}
-
-            <div className="mt-8 pt-8 border-t border-gray-200">
-              <p className="text-gray-500 text-sm">
-                Your feedback helps us improve our service.
-              </p>
-            </div>
           </div>
 
           {/* Footer */}
-          <div className="text-center text-gray-400 text-sm mt-6 space-y-2">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <Link href="/terms" className="hover:text-gray-600 transition-colors">
-                Terms of Service
-              </Link>
-              <span>•</span>
-              <Link href="/terms#privacy" className="hover:text-gray-600 transition-colors">
-                Privacy Policy
-              </Link>
+          <div className="mt-5 text-center">
+            <div className="flex items-center justify-center gap-3 text-xs text-gray-300 mb-1">
+              <Link href="/terms" className="hover:text-gray-500 transition-colors">Terms</Link>
+              <span>·</span>
+              <Link href="/terms#privacy" className="hover:text-gray-500 transition-colors">Privacy</Link>
             </div>
             <ReviewFloFooter showBranding={business.tier === 'free' || business.show_reviewflo_branding !== false} />
           </div>
@@ -171,89 +147,90 @@ export default function FeedbackPage({ business, rating }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
-      <div className="max-w-2xl w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-          {/* Business Name */}
+    <div className="min-h-dvh bg-gray-50 px-4 py-8 sm:py-12">
+      <div className="max-w-sm sm:max-w-md md:max-w-lg mx-auto">
+
+        {/* Form Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10">
+
+          {/* Header */}
           <h1
-            className="text-3xl md:text-4xl font-bold text-center mb-3"
+            className="text-xl md:text-2xl font-bold text-center tracking-tight mb-1"
             style={{ color: business.primary_color }}
           >
             {business.business_name}
           </h1>
-
-          {/* Subtitle */}
-          <p className="text-gray-600 text-center mb-8 text-lg">
-            We&apos;re sorry to hear about your experience. Please help us understand what happened.
+          <p className="text-gray-400 text-sm md:text-base text-center mb-6">
+            We&apos;d like to understand what happened.
           </p>
 
-          {/* Feedback Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* What Happened Field */}
+          {/* Form Error */}
+          {formError && (
+            <div className="mb-4 flex items-start gap-2.5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl">
+              <svg className="w-4 h-4 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+              <p className="text-red-700 text-sm">{formError}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* What Happened */}
             <div>
-              <label
-                htmlFor="whatHappened"
-                className="block text-lg font-semibold text-gray-700 mb-2"
-              >
+              <label htmlFor="whatHappened" className="block text-sm font-semibold text-gray-700 mb-1.5">
                 What happened?
               </label>
               <textarea
                 id="whatHappened"
                 value={whatHappened}
                 onChange={(e) => setWhatHappened(e.target.value)}
-                placeholder="Please describe your experience..."
+                placeholder="Please describe your experience…"
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:border-transparent resize-none text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none text-gray-900 placeholder-gray-300 text-sm"
+                style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
                 required
               />
             </div>
 
-            {/* How Can We Make It Right Field */}
+            {/* How to Make Right */}
             <div>
-              <label
-                htmlFor="howToMakeRight"
-                className="block text-lg font-semibold text-gray-700 mb-2"
-              >
+              <label htmlFor="howToMakeRight" className="block text-sm font-semibold text-gray-700 mb-1.5">
                 How can we make it right?
               </label>
               <textarea
                 id="howToMakeRight"
                 value={howToMakeRight}
                 onChange={(e) => setHowToMakeRight(e.target.value)}
-                placeholder="What would make this better for you..."
+                placeholder="What would make this better for you…"
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:border-transparent resize-none text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none text-gray-900 placeholder-gray-300 text-sm"
+                style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
                 required
               />
             </div>
 
             {/* Contact Checkbox */}
-            <div className="border-t border-gray-200 pt-6">
-              <label className="flex items-start cursor-pointer">
+            <div className="pt-1 border-t border-gray-100">
+              <label className="flex items-center gap-3 cursor-pointer py-1">
                 <input
                   type="checkbox"
                   checked={wantsContact}
                   onChange={(e) => setWantsContact(e.target.checked)}
-                  className="mt-1 w-5 h-5 rounded cursor-pointer"
-                  style={{
-                    accentColor: business.primary_color
-                  }}
+                  className="w-4 h-4 rounded cursor-pointer shrink-0"
+                  style={{ accentColor: business.primary_color }}
                 />
-                <span className="ml-3 text-gray-700 font-medium">
-                  Would you like us to contact you?
+                <span className="text-sm text-gray-700">
+                  I&apos;d like to be contacted about this
                 </span>
               </label>
             </div>
 
             {/* Conditional Contact Fields */}
             {wantsContact && (
-              <div className="space-y-4 pl-8 animate-fadeIn">
+              <div className="space-y-3 pl-7">
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Email (optional)
+                  <label htmlFor="email" className="block text-xs font-medium text-gray-600 mb-1">
+                    Email <span className="text-gray-400">(optional)</span>
                   </label>
                   <input
                     type="email"
@@ -261,16 +238,15 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    autoComplete="email"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 placeholder-gray-300 text-sm"
+                    style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
                   />
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Phone (optional)
+                  <label htmlFor="phone" className="block text-xs font-medium text-gray-600 mb-1">
+                    Phone <span className="text-gray-400">(optional)</span>
                   </label>
                   <input
                     type="tel"
@@ -278,72 +254,51 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="(555) 123-4567"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    autoComplete="tel"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 placeholder-gray-300 text-sm"
+                    style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
                   />
                 </div>
 
-                <p className="text-sm text-gray-500 italic">
-                  Please provide at least one contact method
-                </p>
+                <p className="text-xs text-gray-400">Provide at least one contact method</p>
               </div>
             )}
 
-            {/* Submit Button */}
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transform hover:scale-[1.02]"
-                style={{
-                  backgroundColor: business.primary_color,
-                  opacity: isSubmitting ? 0.5 : 1
-                }}
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    Submitting...
-                  </span>
-                ) : (
-                  'Submit Feedback'
-                )}
-              </button>
-            </div>
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              style={{
+                backgroundColor: business.primary_color,
+                touchAction: 'manipulation',
+              } as React.CSSProperties}
+              className="w-full text-white font-semibold py-3.5 px-6 rounded-xl transition-opacity duration-150 disabled:opacity-50 disabled:cursor-not-allowed active:opacity-80 cursor-pointer"
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Submitting…
+                </span>
+              ) : (
+                'Submit Feedback'
+              )}
+            </button>
           </form>
         </div>
 
         {/* Footer */}
-        <div className="text-center text-gray-400 text-sm mt-6 space-y-2">
-          <div className="flex items-center justify-center gap-4">
-            <Link href="/terms" className="hover:text-gray-600 transition-colors">
-              Terms of Service
-            </Link>
-            <span>•</span>
-            <Link href="/terms#privacy" className="hover:text-gray-600 transition-colors">
-              Privacy Policy
-            </Link>
+        <div className="mt-5 text-center">
+          <div className="flex items-center justify-center gap-3 text-xs text-gray-300 mb-1">
+            <Link href="/terms" className="hover:text-gray-500 transition-colors">Terms</Link>
+            <span>·</span>
+            <Link href="/terms#privacy" className="hover:text-gray-500 transition-colors">Privacy</Link>
           </div>
           <ReviewFloFooter showBranding={business.tier === 'free' || business.show_reviewflo_branding !== false} />
         </div>
+
       </div>
     </div>
   )
@@ -353,7 +308,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.params as { slug: string }
   const rating = parseInt(context.query.rating as string) || 3
 
-  // Fetch business data from Supabase
   const { data: business, error } = await supabase
     .from('businesses')
     .select('id, business_name, slug, primary_color, tier, show_reviewflo_branding')
@@ -361,15 +315,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .single()
 
   if (error || !business) {
-    return {
-      notFound: true,
-    }
+    return { notFound: true }
   }
 
-  return {
-    props: {
-      business,
-      rating,
-    },
-  }
+  return { props: { business, rating } }
 }
