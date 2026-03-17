@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { sendReviewReminderEmail } from '../../../lib/email-service'
-import { sendReviewReminderSMS } from '../../../lib/sms-service'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -33,7 +32,7 @@ export default async function handler(
 
     const { data: pending, error } = await supabaseAdmin
       .from('review_requests')
-      .select('id, business_id, customer_name, customer_email, customer_phone, review_link, sent_via')
+      .select('id, business_id, customer_name, customer_email, review_link')
       .eq('status', 'pending')
       .eq('reminder_sent', false)
       .lt('sent_at', iso)
@@ -46,52 +45,28 @@ export default async function handler(
     const businessIds = [...new Set((pending || []).map((r) => r.business_id))]
     const { data: businesses } = await supabaseAdmin
       .from('businesses')
-      .select('id, business_name, tier, sms_enabled, twilio_phone_number')
+      .select('id, business_name')
       .in('id', businessIds)
-    const bizMap = new Map((businesses || []).map((b) => [b.id, b]))
+    const bizMap = new Map((businesses || []).map((b) => [b.id, b.business_name]))
 
     let sent = 0
     for (const req of pending || []) {
-      const biz = bizMap.get(req.business_id)
-      const businessName = biz?.business_name || 'Your business'
-
-      // AI tier + SMS enabled + has customer_phone -> send SMS reminder
-      if (biz?.tier === 'ai' && biz?.sms_enabled && req.customer_phone) {
-        const result = await sendReviewReminderSMS(
-          req.customer_phone,
-          req.customer_name,
-          businessName,
-          req.review_link,
-          biz.twilio_phone_number
-        )
-        if (result.success) {
-          await supabaseAdmin
-            .from('review_requests')
-            .update({
-              reminder_sent: true,
-              reminder_sent_at: new Date().toISOString(),
-            })
-            .eq('id', req.id)
-          sent++
-        }
-      } else if (req.customer_email) {
-        // Send email reminder (Pro/Free or when no phone)
-        const result = await sendReviewReminderEmail({
-          customerName: req.customer_name,
-          customerEmail: req.customer_email,
-          businessName,
-          reviewLink: req.review_link,
-        })
-        if (result.success) {
-          await supabaseAdmin
-            .from('review_requests')
-            .update({
-              reminder_sent: true,
-              reminder_sent_at: new Date().toISOString(),
-            })
-            .eq('id', req.id)
-          sent++
-        }
+      const businessName = bizMap.get(req.business_id) || 'Your business'
+      const result = await sendReviewReminderEmail({
+        customerName: req.customer_name,
+        customerEmail: req.customer_email,
+        businessName,
+        reviewLink: req.review_link,
+      })
+      if (result.success) {
+        await supabaseAdmin
+          .from('review_requests')
+          .update({
+            reminder_sent: true,
+            reminder_sent_at: new Date().toISOString(),
+          })
+          .eq('id', req.id)
+        sent++
       }
     }
 

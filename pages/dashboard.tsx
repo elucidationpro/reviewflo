@@ -11,7 +11,7 @@ import SendRequestModal from '@/components/SendRequestModal'
 import ReviewRequestsList from '@/components/ReviewRequestsList'
 import GoogleStatsCard from '@/components/GoogleStatsCard'
 import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav'
-import { canSendFromDashboard, canAccessGoogleStats, canUseSMS } from '../lib/tier-permissions'
+import { canSendFromDashboard, canAccessGoogleStats } from '../lib/tier-permissions'
 
 interface Business {
   id: string
