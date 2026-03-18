@@ -90,23 +90,23 @@ export default function ReviewPage({ business }: PageProps) {
       </Head>
 
       <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 px-4 py-10">
-        <div className="w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl">
+        <div className="w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-xl xl:max-w-2xl">
 
           {/* Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-8 py-10 md:px-16 md:py-16 lg:px-24 lg:py-24 xl:px-32 xl:py-32">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-8 py-10 md:px-14 md:py-14 lg:px-20 lg:py-20 xl:px-24 xl:py-24">
             {/* Business Name */}
             <h1
-              className="text-xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-center tracking-tight mb-1"
+              className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold text-center tracking-tight mb-1"
               style={{ color: business.primary_color }}
             >
               {business.business_name}
             </h1>
-            <p className="text-gray-400 text-sm md:text-lg lg:text-2xl xl:text-3xl text-center mb-8 md:mb-10 lg:mb-14 xl:mb-16">
+            <p className="text-gray-400 text-sm md:text-base lg:text-xl xl:text-2xl text-center mb-8 md:mb-10 lg:mb-12 xl:mb-14">
               How was your experience?
             </p>
 
             {/* Star Rating */}
-            <div className="flex justify-center items-center gap-2 md:gap-4 lg:gap-6 xl:gap-8 mb-6 md:mb-8 lg:mb-12 xl:mb-14">
+            <div className="flex justify-center items-center gap-2 md:gap-3 lg:gap-5 xl:gap-6 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
@@ -119,7 +119,7 @@ export default function ReviewPage({ business }: PageProps) {
                   aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
                 >
                   <svg
-                    className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-24 lg:h-24 xl:w-28 xl:h-28 2xl:w-32 2xl:h-32 transition-colors duration-150"
+                    className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 transition-colors duration-150"
                     fill={star <= displayRating ? business.primary_color : 'none'}
                     stroke={star <= displayRating ? business.primary_color : '#CBD5E1'}
                     strokeWidth="1.5"

@@ -137,14 +137,14 @@ export default function TemplatesPage({ business, templates }: PageProps) {
       </Head>
 
       <div className="min-h-dvh bg-gray-50 px-4 py-8 sm:py-12">
-        <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-3xl xl:max-w-4xl 2xl:max-w-5xl mx-auto">
+        <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl mx-auto">
 
           {/* Header Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10 lg:p-14 xl:p-16 mb-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10 lg:p-12 xl:p-14 mb-4">
 
             {/* Business Name */}
             <h1
-              className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold text-center tracking-tight mb-5"
+              className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-center tracking-tight mb-5"
               style={{ color: business.primary_color }}
             >
               {business.business_name}
@@ -152,11 +152,11 @@ export default function TemplatesPage({ business, templates }: PageProps) {
 
             {/* 5-Star Celebration */}
             <div className="text-center mb-5 pb-5 border-b border-gray-100">
-              <div className="flex justify-center gap-1.5 md:gap-2 lg:gap-3 xl:gap-4 mb-3">
+              <div className="flex justify-center gap-1.5 md:gap-2 lg:gap-2.5 xl:gap-3 mb-3">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
-                    className="w-7 h-7 md:w-8 md:h-8 lg:w-12 lg:h-12 xl:w-14 xl:h-14"
+                    className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12"
                     fill={business.primary_color}
                     viewBox="0 0 24 24"
                     aria-hidden
@@ -165,10 +165,10 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                   </svg>
                 ))}
               </div>
-              <p className="font-semibold text-gray-900 md:text-lg lg:text-2xl xl:text-3xl mb-0.5">
+              <p className="font-semibold text-gray-900 md:text-lg lg:text-xl xl:text-2xl mb-0.5">
                 Thanks for the 5-star rating!
               </p>
-              <p className="text-gray-500 text-sm md:text-base lg:text-xl xl:text-2xl">
+              <p className="text-gray-500 text-sm md:text-base lg:text-lg xl:text-xl">
                 {business.skip_template_choice
                   ? 'Choose where to leave your review:'
                   : 'How would you like to leave your review?'}

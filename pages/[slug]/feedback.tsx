@@ -103,8 +103,8 @@ export default function FeedbackPage({ business, rating }: PageProps) {
   if (isSubmitted) {
     return (
       <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 px-4 py-10">
-        <div className="w-full max-w-xs sm:max-w-sm md:max-w-md">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 text-center">
+        <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xl xl:max-w-2xl">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 lg:p-14 xl:p-16 text-center">
             {/* Success Icon */}
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
@@ -122,10 +122,10 @@ export default function FeedbackPage({ business, rating }: PageProps) {
               </svg>
             </div>
 
-            <h1 className="text-xl font-bold text-gray-900 mb-2">
+            <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 mb-2">
               Thank you for your feedback
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 text-sm lg:text-base xl:text-lg">
               {wantsContact
                 ? "We'll be in touch soon to make things right."
                 : 'We appreciate you taking the time to share your experience.'}
@@ -148,19 +148,19 @@ export default function FeedbackPage({ business, rating }: PageProps) {
 
   return (
     <div className="min-h-dvh bg-gray-50 px-4 py-8 sm:py-12">
-      <div className="max-w-sm sm:max-w-md md:max-w-lg mx-auto">
+      <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl mx-auto">
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10 lg:p-12 xl:p-14">
 
           {/* Header */}
           <h1
-            className="text-xl md:text-2xl font-bold text-center tracking-tight mb-1"
+            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-center tracking-tight mb-1"
             style={{ color: business.primary_color }}
           >
             {business.business_name}
           </h1>
-          <p className="text-gray-400 text-sm md:text-base text-center mb-6">
+          <p className="text-gray-400 text-sm md:text-base lg:text-lg text-center mb-6">
             We&apos;d like to understand what happened.
           </p>
 
@@ -177,7 +177,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* What Happened */}
             <div>
-              <label htmlFor="whatHappened" className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label htmlFor="whatHappened" className="block text-sm lg:text-base font-semibold text-gray-700 mb-1.5">
                 What happened?
               </label>
               <textarea
@@ -186,7 +186,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                 onChange={(e) => setWhatHappened(e.target.value)}
                 placeholder="Please describe your experience…"
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none text-gray-900 placeholder-gray-300 text-sm"
+                className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none text-gray-900 placeholder-gray-300 text-sm lg:text-base"
                 style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
                 required
               />
@@ -194,7 +194,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
 
             {/* How to Make Right */}
             <div>
-              <label htmlFor="howToMakeRight" className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label htmlFor="howToMakeRight" className="block text-sm lg:text-base font-semibold text-gray-700 mb-1.5">
                 How can we make it right?
               </label>
               <textarea
@@ -203,7 +203,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                 onChange={(e) => setHowToMakeRight(e.target.value)}
                 placeholder="What would make this better for you…"
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none text-gray-900 placeholder-gray-300 text-sm"
+                className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none text-gray-900 placeholder-gray-300 text-sm lg:text-base"
                 style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
                 required
               />
@@ -272,7 +272,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                 backgroundColor: business.primary_color,
                 touchAction: 'manipulation',
               } as React.CSSProperties}
-              className="w-full text-white font-semibold py-3.5 px-6 rounded-xl transition-opacity duration-150 disabled:opacity-50 disabled:cursor-not-allowed active:opacity-80 cursor-pointer"
+              className="w-full text-white font-semibold py-3.5 lg:py-4 px-6 text-sm lg:text-base rounded-xl transition-opacity duration-150 disabled:opacity-50 disabled:cursor-not-allowed active:opacity-80 cursor-pointer"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
