@@ -301,35 +301,6 @@ fbq('track', 'PageView');`,
               </div>
             </section>
 
-            {/* Trust Signals Section */}
-            <section
-              ref={trustSection.ref}
-              className={`py-12 sm:py-16 bg-gray-50/50 transition-all duration-700 ${
-                trustSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
-            >
-              <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <CheckCircle className="w-6 h-6 text-[#C9A961]" />
-                    <p className="text-xs font-semibold text-gray-900 text-center">Free Forever</p>
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <CheckCircle className="w-6 h-6 text-[#C9A961]" />
-                    <p className="text-xs font-semibold text-gray-900 text-center">No Credit Card Required</p>
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <CheckCircle className="w-6 h-6 text-[#C9A961]" />
-                    <p className="text-xs font-semibold text-gray-900 text-center">Cancel Anytime</p>
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <CheckCircle className="w-6 h-6 text-[#C9A961]" />
-                    <p className="text-xs font-semibold text-gray-900 text-center">Early Beta Access</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
             {/* Signup Form Section */}
             <section
               ref={formSectionRef}
@@ -400,6 +371,35 @@ fbq('track', 'PageView');`,
                     </p>
                   </div>
                 )}
+              </div>
+            </section>
+
+            {/* Trust Signals Section */}
+            <section
+              ref={trustSection.ref}
+              className={`py-12 sm:py-16 bg-gray-50/50 transition-all duration-700 ${
+                trustSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
+              <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <CheckCircle className="w-6 h-6 text-[#C9A961]" />
+                    <p className="text-xs font-semibold text-gray-900 text-center">Free Forever</p>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <CheckCircle className="w-6 h-6 text-[#C9A961]" />
+                    <p className="text-xs font-semibold text-gray-900 text-center">No Credit Card Required</p>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <CheckCircle className="w-6 h-6 text-[#C9A961]" />
+                    <p className="text-xs font-semibold text-gray-900 text-center">Cancel Anytime</p>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <CheckCircle className="w-6 h-6 text-[#C9A961]" />
+                    <p className="text-xs font-semibold text-gray-900 text-center">Early Beta Access</p>
+                  </div>
+                </div>
               </div>
             </section>
         </>
