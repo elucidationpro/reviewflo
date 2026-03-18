@@ -21,6 +21,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // This endpoint is user-specific (Authorization header), so it must never be cached
+  // by the browser/CDN, otherwise we can get 304 responses with no body.
+  res.setHeader('Cache-Control', 'no-store, max-age=0')
+  res.setHeader('Pragma', 'no-cache')
+  res.setHeader('Expires', '0')
+  res.setHeader('Vary', 'Authorization')
+
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
   }

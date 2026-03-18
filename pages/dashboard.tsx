@@ -88,7 +88,6 @@ export default function DashboardPage() {
       const res = await fetch('/api/my-business', {
         headers: { 'Authorization': `Bearer ${session.access_token}` },
       })
-      const data = await res.json()
       console.timeEnd('[Dashboard] Business Fetch')
 
       if (res.status === 401) {
@@ -96,6 +95,9 @@ export default function DashboardPage() {
         router.push('/login')
         return
       }
+
+      const data = await res.json().catch(() => ({} as any))
+
       if (!res.ok || !data.business) {
         console.log('[Dashboard] No business found:', {
           status: res.status,
