@@ -42,16 +42,25 @@ export default async function handler(
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
 
     if (authError || !user) {
+      console.error('[my-business] auth.getUser failed:', authError?.message, authError?.status)
       return res.status(401).json({ error: 'Unauthorized' })
     }
+
+    // Only select columns that actually exist in the database.
+    // Do NOT add speculative future columns here — they'll break every lookup
+    // until the DB migration runs.
+    const BUSINESS_SELECT = 'id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, business_type'
 
     // First try: find by user_id (normal case)
     const { data: byUserId, error: byUserIdError } = await supabaseAdmin
       .from('businesses')
-      .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, sms_enabled, twilio_phone_number, white_label_enabled, custom_logo_url, custom_brand_name, custom_brand_color, business_type, square_access_token')
+      .select(BUSINESS_SELECT)
       .eq('user_id', user.id)
       .single()
 
+    if (byUserIdError) {
+      console.error('[my-business] user_id lookup error:', byUserIdError.message, byUserIdError.code)
+    }
     if (!byUserIdError && byUserId) {
       return res.status(200).json({ business: byUserId })
     }
@@ -64,7 +73,7 @@ export default async function handler(
     const emailTrimmed = user.email.trim().toLowerCase()
     const { data: match, error: emailError } = await supabaseAdmin
       .from('businesses')
-      .select('id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, sms_enabled, twilio_phone_number, white_label_enabled, custom_logo_url, custom_brand_name, custom_brand_color, business_type, square_access_token')
+      .select(BUSINESS_SELECT)
       .ilike('owner_email', emailTrimmed)
       .limit(1)
       .maybeSingle()
