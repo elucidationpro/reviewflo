@@ -137,14 +137,14 @@ export default function TemplatesPage({ business, templates }: PageProps) {
       </Head>
 
       <div className="min-h-dvh bg-gray-50 px-4 py-8 sm:py-12">
-        <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto">
+        <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-3xl xl:max-w-4xl 2xl:max-w-5xl mx-auto">
 
           {/* Header Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10 lg:p-14 mb-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10 lg:p-14 xl:p-16 mb-4">
 
             {/* Business Name */}
             <h1
-              className="text-xl md:text-2xl lg:text-3xl font-bold text-center tracking-tight mb-5"
+              className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold text-center tracking-tight mb-5"
               style={{ color: business.primary_color }}
             >
               {business.business_name}
@@ -152,11 +152,11 @@ export default function TemplatesPage({ business, templates }: PageProps) {
 
             {/* 5-Star Celebration */}
             <div className="text-center mb-5 pb-5 border-b border-gray-100">
-              <div className="flex justify-center gap-1.5 md:gap-2 lg:gap-3 mb-3">
+              <div className="flex justify-center gap-1.5 md:gap-2 lg:gap-3 xl:gap-4 mb-3">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
-                    className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10"
+                    className="w-7 h-7 md:w-8 md:h-8 lg:w-12 lg:h-12 xl:w-14 xl:h-14"
                     fill={business.primary_color}
                     viewBox="0 0 24 24"
                     aria-hidden
@@ -165,10 +165,10 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                   </svg>
                 ))}
               </div>
-              <p className="font-semibold text-gray-900 md:text-lg lg:text-xl mb-0.5">
+              <p className="font-semibold text-gray-900 md:text-lg lg:text-2xl xl:text-3xl mb-0.5">
                 Thanks for the 5-star rating!
               </p>
-              <p className="text-gray-500 text-sm md:text-base lg:text-lg">
+              <p className="text-gray-500 text-sm md:text-base lg:text-xl xl:text-2xl">
                 {business.skip_template_choice
                   ? 'Choose where to leave your review:'
                   : 'How would you like to leave your review?'}
@@ -188,10 +188,10 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                     })
                   }}
                   style={{ touchAction: 'manipulation' }}
-                  className="w-full flex items-center gap-4 p-4 lg:p-5 rounded-xl border-2 border-gray-100 hover:border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 text-left cursor-pointer group"
+                  className="w-full flex items-center gap-4 p-4 lg:p-5 xl:p-6 rounded-xl border-2 border-gray-100 hover:border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 text-left cursor-pointer group"
                 >
                   <div
-                    className="w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center shrink-0"
+                    className="w-10 h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full flex items-center justify-center shrink-0"
                     style={{ backgroundColor: `${business.primary_color}18` }}
                   >
                     <PenLine className="w-5 h-5 lg:w-6 lg:h-6" style={{ color: business.primary_color }} />
@@ -215,10 +215,10 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                     })
                   }}
                   style={{ touchAction: 'manipulation' }}
-                  className="w-full flex items-center gap-4 p-4 lg:p-5 rounded-xl border-2 border-gray-100 hover:border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 text-left cursor-pointer group"
+                  className="w-full flex items-center gap-4 p-4 lg:p-5 xl:p-6 rounded-xl border-2 border-gray-100 hover:border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 text-left cursor-pointer group"
                 >
                   <div
-                    className="w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center shrink-0"
+                    className="w-10 h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full flex items-center justify-center shrink-0"
                     style={{ backgroundColor: `${business.primary_color}18` }}
                   >
                     <ClipboardList className="w-5 h-5 lg:w-6 lg:h-6" style={{ color: business.primary_color }} />
@@ -259,10 +259,10 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                       onClick={() => handlePlatformClick(platform.name, platform.url!)}
                       disabled={clickedPlatform === platform.name}
                       style={{ touchAction: 'manipulation' }}
-                      className="w-full flex items-center gap-4 px-4 py-3.5 lg:px-5 lg:py-4 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 cursor-pointer disabled:cursor-default"
+                      className="w-full flex items-center gap-4 px-4 py-3.5 lg:px-5 lg:py-4 xl:px-6 xl:py-5 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 cursor-pointer disabled:cursor-default"
                     >
                       <div className="shrink-0">{platform.icon}</div>
-                      <span className="flex-1 text-left font-medium text-gray-800 text-sm lg:text-base">
+                      <span className="flex-1 text-left font-medium text-gray-800 text-sm lg:text-base xl:text-lg">
                         {platform.name}
                       </span>
                       {clickedPlatform === platform.name ? (
@@ -302,7 +302,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                       key={template.id}
                       onClick={() => handleTemplateClick(template.template_text, index)}
                       style={{ touchAction: 'manipulation' }}
-                      className="w-full border border-gray-100 rounded-xl p-4 lg:p-5 hover:border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 text-left cursor-pointer group"
+                      className="w-full border border-gray-100 rounded-xl p-4 lg:p-5 xl:p-6 hover:border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 text-left cursor-pointer group"
                     >
                       <div className="flex items-start gap-3">
                         <span
@@ -311,7 +311,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                         >
                           {index + 1}
                         </span>
-                        <p className="text-gray-700 text-sm lg:text-base leading-relaxed flex-1">
+                        <p className="text-gray-700 text-sm lg:text-base xl:text-lg leading-relaxed flex-1">
                           {template.template_text}
                         </p>
                         <svg className="w-4 h-4 text-gray-300 group-hover:text-gray-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -356,11 +356,11 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                       onClick={() => handlePlatformClick(platform.name, platform.url!, selectedTemplate)}
                       disabled={clickedPlatform === platform.name}
                       style={{ touchAction: 'manipulation' }}
-                      className="w-full flex items-center gap-4 px-4 py-3.5 lg:px-5 lg:py-4 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 cursor-pointer disabled:cursor-default"
+                      className="w-full flex items-center gap-4 px-4 py-3.5 lg:px-5 lg:py-4 xl:px-6 xl:py-5 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 active:bg-gray-100 transition-all duration-150 cursor-pointer disabled:cursor-default"
                     >
                       <div className="shrink-0">{platform.icon}</div>
                       <div className="flex-1 text-left min-w-0">
-                        <p className="font-medium text-gray-800 text-sm lg:text-base">{platform.name}</p>
+                        <p className="font-medium text-gray-800 text-sm lg:text-base xl:text-lg">{platform.name}</p>
                         {clickedPlatform === platform.name && (
                           <p className="text-xs text-emerald-600">Opening…</p>
                         )}

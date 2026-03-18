@@ -90,23 +90,23 @@ export default function ReviewPage({ business }: PageProps) {
       </Head>
 
       <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 px-4 py-10">
-        <div className="w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-xl">
+        <div className="w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl">
 
           {/* Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-8 py-10 md:px-16 md:py-16 lg:px-20 lg:py-20">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-8 py-10 md:px-16 md:py-16 lg:px-24 lg:py-24 xl:px-32 xl:py-32">
             {/* Business Name */}
             <h1
-              className="text-xl md:text-3xl lg:text-4xl font-bold text-center tracking-tight mb-1"
+              className="text-xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-center tracking-tight mb-1"
               style={{ color: business.primary_color }}
             >
               {business.business_name}
             </h1>
-            <p className="text-gray-400 text-sm md:text-lg lg:text-xl text-center mb-8 md:mb-10 lg:mb-12">
+            <p className="text-gray-400 text-sm md:text-lg lg:text-2xl xl:text-3xl text-center mb-8 md:mb-10 lg:mb-14 xl:mb-16">
               How was your experience?
             </p>
 
             {/* Star Rating */}
-            <div className="flex justify-center items-center gap-2 md:gap-4 lg:gap-5 mb-6 md:mb-8 lg:mb-10">
+            <div className="flex justify-center items-center gap-2 md:gap-4 lg:gap-6 xl:gap-8 mb-6 md:mb-8 lg:mb-12 xl:mb-14">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
@@ -119,7 +119,7 @@ export default function ReviewPage({ business }: PageProps) {
                   aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
                 >
                   <svg
-                    className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 transition-colors duration-150"
+                    className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-24 lg:h-24 xl:w-28 xl:h-28 2xl:w-32 2xl:h-32 transition-colors duration-150"
                     fill={star <= displayRating ? business.primary_color : 'none'}
                     stroke={star <= displayRating ? business.primary_color : '#CBD5E1'}
                     strokeWidth="1.5"
@@ -142,10 +142,10 @@ export default function ReviewPage({ business }: PageProps) {
                   className="w-5 h-5 rounded-full border-2 border-gray-100 animate-spin"
                   style={{ borderTopColor: business.primary_color }}
                 />
-                <p className="text-gray-400 text-xs md:text-sm">Saving…</p>
+                <p className="text-gray-400 text-xs md:text-sm lg:text-base">Saving…</p>
               </div>
             ) : (
-              <p className="text-center text-gray-400 text-xs md:text-sm h-8 flex items-center justify-center">
+              <p className="text-center text-gray-400 text-xs md:text-sm lg:text-base h-8 flex items-center justify-center">
                 Tap a star to rate
               </p>
             )}
