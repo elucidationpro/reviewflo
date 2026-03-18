@@ -870,8 +870,10 @@ export default function DashboardPage() {
                         >
                           {feedback.is_resolved ? 'Resolved' : 'Pending'}
                         </span>
-                        <span className="text-sm text-slate-500">
-                          {new Date(feedback.created_at).toLocaleDateString()}
+                        <span className="text-sm text-slate-500" title={new Date(feedback.created_at).toLocaleString()}>
+                          {new Date(feedback.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                          {' · '}
+                          {new Date(feedback.created_at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
                         </span>
                       </div>
 
