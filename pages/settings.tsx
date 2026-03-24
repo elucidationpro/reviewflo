@@ -310,7 +310,7 @@ export default function SettingsPage() {
   const [planMessage, setPlanMessage] = useState('')
   const [planError, setPlanError] = useState('')
   const [showManualGoogle, setShowManualGoogle] = useState(false)
-  const [activeSection, setActiveSection] = useState<'branding' | 'links' | 'flow' | 'plan'>('branding')
+  const [activeSection, setActiveSection] = useState<'branding' | 'links' | 'flow' | 'plan' | 'sms' | 'crm' | 'ai-features'>('branding')
 
   const [businessData, setBusinessData] = useState<Business>({
     id: '',
@@ -599,6 +599,35 @@ export default function SettingsPage() {
         </svg>
       ),
     },
+    ...(businessData.tier === 'ai' ? [
+      {
+        id: 'sms' as const,
+        label: 'SMS Automation',
+        icon: (
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+        ),
+      },
+      {
+        id: 'crm' as const,
+        label: 'CRM Integration',
+        icon: (
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        ),
+      },
+      {
+        id: 'ai-features' as const,
+        label: 'AI Features',
+        icon: (
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        ),
+      }
+    ] : []),
     {
       id: 'plan' as const,
       label: 'Plan',
@@ -1015,6 +1044,285 @@ export default function SettingsPage() {
                         </p>
                       </div>
                     )}
+                  </Card>
+                </>
+              )}
+
+              {/* ══ SMS AUTOMATION (AI Tier) ══ */}
+              {activeSection === 'sms' && (
+                <>
+                  <Card title="SMS Automation">
+                    <div className="space-y-4">
+                      <div className="p-4 bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-xl">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-[#C9A961]/20 flex items-center justify-center shrink-0">
+                            <svg className="w-4 h-4 text-[#4A3428]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900 mb-1">Feature Coming Soon</p>
+                            <p className="text-xs text-gray-600 leading-relaxed">
+                              SMS automation will be available when the AI tier launches in May 2026. Send review requests via text message with Twilio integration.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Field
+                        label="Enable SMS Requests"
+                        help="When enabled, you can send review requests via SMS in addition to email."
+                      >
+                        <Toggle
+                          id="smsEnabled"
+                          checked={false}
+                          onChange={() => {}}
+                          label="SMS automation enabled"
+                          description="Disabled until May 2026 launch"
+                        />
+                      </Field>
+
+                      <Field
+                        label="Twilio Phone Number"
+                        htmlFor="twilioPhone"
+                        help="Your Twilio phone number (format: +1234567890)"
+                      >
+                        <input
+                          type="tel"
+                          id="twilioPhone"
+                          value=""
+                          disabled
+                          className={`${inputCls} opacity-50 cursor-not-allowed`}
+                          placeholder="+1234567890"
+                        />
+                      </Field>
+
+                      <Field
+                        label="Twilio Account SID"
+                        htmlFor="twilioSid"
+                        help="Find this in your Twilio console dashboard"
+                      >
+                        <input
+                          type="text"
+                          id="twilioSid"
+                          value=""
+                          disabled
+                          className={`${inputCls} opacity-50 cursor-not-allowed`}
+                          placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        />
+                      </Field>
+
+                      <Field
+                        label="Twilio Auth Token"
+                        htmlFor="twilioToken"
+                        help="Keep this secret. Never share with anyone."
+                      >
+                        <input
+                          type="password"
+                          id="twilioToken"
+                          value=""
+                          disabled
+                          className={`${inputCls} opacity-50 cursor-not-allowed`}
+                          placeholder="••••••••••••••••••••••••••••••••"
+                        />
+                      </Field>
+                    </div>
+                  </Card>
+                </>
+              )}
+
+              {/* ══ CRM INTEGRATION (AI Tier) ══ */}
+              {activeSection === 'crm' && (
+                <>
+                  <Card title="CRM Integrations">
+                    <div className="space-y-4">
+                      <div className="p-4 bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-xl">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-[#C9A961]/20 flex items-center justify-center shrink-0">
+                            <svg className="w-4 h-4 text-[#4A3428]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900 mb-1">Feature Coming Soon</p>
+                            <p className="text-xs text-gray-600 leading-relaxed">
+                              CRM integrations will be available when the AI tier launches in May 2026. Automatically sync customers and trigger review requests from your CRM.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Square */}
+                      <div className="p-4 border border-gray-200 rounded-xl">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
+                              <svg className="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M4.01 8.54C4.01 6.03 5.95 4 8.33 4c1.27 0 2.41.59 3.16 1.51l-1.46 1.46c-.4-.52-1.01-.84-1.7-.84-1.31 0-2.37 1.11-2.37 2.47 0 1.36 1.06 2.47 2.37 2.47.69 0 1.3-.32 1.7-.84l1.46 1.46A4.07 4.07 0 018.33 13c-2.38 0-4.32-2.03-4.32-4.46M13.44 4h1.87v9h-1.87zM20 8.54c0-1.31-1.06-2.37-2.37-2.37-.69 0-1.3.32-1.7.84l-1.46-1.46A4.07 4.07 0 0117.63 4c2.38 0 4.32 2.03 4.32 4.46S20.01 13 17.63 13a4.07 4.07 0 01-3.16-1.51l1.46-1.46c.4.52 1.01.84 1.7.84 1.31 0 2.37-1.11 2.37-2.47z"/>
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-gray-900">Square</p>
+                              <p className="text-xs text-gray-500">Point of sale integration</p>
+                            </div>
+                          </div>
+                          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
+                            Not Connected
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          disabled
+                          className="w-full px-4 py-2 bg-gray-100 text-gray-400 rounded-lg text-sm font-semibold cursor-not-allowed"
+                        >
+                          Connect Square
+                        </button>
+                      </div>
+
+                      {/* Jobber */}
+                      <div className="p-4 border border-gray-200 rounded-xl">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
+                              <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                <rect x="4" y="4" width="7" height="7" rx="1"/>
+                                <rect x="13" y="4" width="7" height="7" rx="1"/>
+                                <rect x="4" y="13" width="7" height="7" rx="1"/>
+                                <rect x="13" y="13" width="7" height="7" rx="1"/>
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-gray-900">Jobber</p>
+                              <p className="text-xs text-gray-500">Field service management</p>
+                            </div>
+                          </div>
+                          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
+                            Not Connected
+                          </span>
+                        </div>
+                        <Field
+                          label="API Key"
+                          htmlFor="jobberApiKey"
+                          help="Get your API key from Jobber settings"
+                        >
+                          <input
+                            type="password"
+                            id="jobberApiKey"
+                            value=""
+                            disabled
+                            className={`${inputCls} opacity-50 cursor-not-allowed`}
+                            placeholder="Enter Jobber API key"
+                          />
+                        </Field>
+                      </div>
+
+                      {/* Housecall Pro */}
+                      <div className="p-4 border border-gray-200 rounded-xl">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
+                              <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 3L4 9v11h5v-7h6v7h5V9l-8-6z"/>
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-gray-900">Housecall Pro</p>
+                              <p className="text-xs text-gray-500">Home services software</p>
+                            </div>
+                          </div>
+                          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
+                            Not Connected
+                          </span>
+                        </div>
+                        <Field
+                          label="API Key"
+                          htmlFor="housecallApiKey"
+                          help="Get your API key from Housecall Pro settings"
+                        >
+                          <input
+                            type="password"
+                            id="housecallApiKey"
+                            value=""
+                            disabled
+                            className={`${inputCls} opacity-50 cursor-not-allowed`}
+                            placeholder="Enter Housecall Pro API key"
+                          />
+                        </Field>
+                      </div>
+                    </div>
+                  </Card>
+                </>
+              )}
+
+              {/* ══ AI FEATURES (AI Tier) ══ */}
+              {activeSection === 'ai-features' && (
+                <>
+                  <Card title="AI-Powered Features">
+                    <div className="space-y-4">
+                      <div className="p-4 bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-xl">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-[#C9A961]/20 flex items-center justify-center shrink-0">
+                            <svg className="w-4 h-4 text-[#4A3428]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900 mb-1">Feature Coming Soon</p>
+                            <p className="text-xs text-gray-600 leading-relaxed">
+                              AI features will be available when the AI tier launches in May 2026. Get AI-generated review drafts for customers and AI-powered responses to reviews.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Toggle
+                        id="aiReviewDrafts"
+                        checked={false}
+                        onChange={() => {}}
+                        label="AI Review Drafts"
+                        description="Suggest AI-generated review text to customers based on keywords they select. Makes it easier for customers to leave detailed, positive reviews."
+                      />
+
+                      <Toggle
+                        id="aiReviewResponses"
+                        checked={false}
+                        onChange={() => {}}
+                        label="AI Review Responses"
+                        description="Generate professional, personalized responses to customer reviews automatically. Review and edit before posting."
+                      />
+
+                      <Field
+                        label="Response Tone"
+                        htmlFor="responseTone"
+                        help="How should AI-generated responses sound?"
+                      >
+                        <select
+                          id="responseTone"
+                          disabled
+                          className={`${inputCls} opacity-50 cursor-not-allowed`}
+                        >
+                          <option>Professional</option>
+                          <option>Friendly</option>
+                          <option>Casual</option>
+                          <option>Formal</option>
+                        </select>
+                      </Field>
+
+                      <Field
+                        label="Business Type"
+                        htmlFor="businessType"
+                        help="Helps AI understand your industry for better responses"
+                      >
+                        <input
+                          type="text"
+                          id="businessType"
+                          value=""
+                          disabled
+                          className={`${inputCls} opacity-50 cursor-not-allowed`}
+                          placeholder="e.g., HVAC, Plumbing, Landscaping, Auto Repair"
+                        />
+                      </Field>
+                    </div>
                   </Card>
                 </>
               )}
