@@ -1,9 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+
+type SortOption = 'recent' | 'lowest' | 'highest'
+
+interface Review {
+  author?: string
+  rating?: number
+  text?: string
+  time?: number
+}
 
 interface Stats {
   total_reviews: number
   average_rating: number
-  recent_reviews: Array<{ author?: string; rating?: number; text?: string }>
+  recent_reviews: Review[]
   reviews_this_month: number | null
   last_fetched: string
 }
@@ -17,6 +26,7 @@ export default function GoogleStatsCard({ primaryColor }: GoogleStatsCardProps) 
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')
+  const [sortBy, setSortBy] = useState<SortOption>('recent')
 
   const fetchStats = async () => {
     try {
@@ -37,6 +47,27 @@ export default function GoogleStatsCard({ primaryColor }: GoogleStatsCardProps) 
 
   useEffect(() => {
     fetchStats()
+  }, [])
+
+  // Auto-refresh when user lands on dashboard (after login)
+  useEffect(() => {
+    let cancelled = false
+    const runRefresh = async () => {
+      try {
+        const { data: { session } } = await (await import('../lib/supabase')).supabase.auth.getSession()
+        if (!session || cancelled) return
+        const res = await fetch('/api/google-stats/refresh', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        if (cancelled) return
+        if (res.ok) await fetchStats()
+      } catch {
+        // Silent fail for auto-refresh
+      }
+    }
+    runRefresh()
+    return () => { cancelled = true }
   }, [])
 
   const handleRefresh = async () => {
@@ -61,6 +92,19 @@ export default function GoogleStatsCard({ primaryColor }: GoogleStatsCardProps) 
       setRefreshing(false)
     }
   }
+
+  const sortReviews = useCallback((reviews: Review[], option: SortOption): Review[] => {
+    const copy = [...reviews]
+    switch (option) {
+      case 'lowest':
+        return copy.sort((a, b) => (a.rating ?? 5) - (b.rating ?? 5))
+      case 'highest':
+        return copy.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+      case 'recent':
+      default:
+        return copy.sort((a, b) => (b.time ?? 0) - (a.time ?? 0))
+    }
+  }, [])
 
   const timeAgo = (iso: string) => {
     const d = new Date(iso)
@@ -112,9 +156,31 @@ export default function GoogleStatsCard({ primaryColor }: GoogleStatsCardProps) 
           </div>
           {stats.recent_reviews && stats.recent_reviews.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-sm font-semibold text-slate-700 mb-3">Recent Reviews</h3>
-              <div className="space-y-3">
-                {stats.recent_reviews.slice(0, 5).map((r, i) => (
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                <h3 className="text-sm font-semibold text-slate-700">
+                  All Reviews ({stats.recent_reviews.length})
+                </h3>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-slate-500 mr-1">Sort:</span>
+                  {(['recent', 'highest', 'lowest'] as const).map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setSortBy(opt)}
+                      className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                        sortBy === opt
+                          ? 'bg-slate-200 text-slate-800'
+                          : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      {opt === 'recent' ? 'Recent' : opt === 'highest' ? 'Highest' : 'Lowest'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div
+                className={`space-y-3 ${stats.recent_reviews.length > 8 ? 'max-h-[420px] overflow-y-auto pr-1' : ''}`}
+              >
+                {sortReviews(stats.recent_reviews, sortBy).map((r, i) => (
                   <div key={i} className="p-3 bg-slate-50 rounded-lg border border-slate-100">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-medium text-slate-800">{r.author || 'Anonymous'}</span>

@@ -12,6 +12,8 @@ interface Business {
   primary_color: string
   tier?: 'free' | 'pro' | 'ai'
   show_reviewflo_branding?: boolean
+  show_business_name?: boolean
+  logo_url?: string | null
 }
 
 interface PageProps {
@@ -19,7 +21,12 @@ interface PageProps {
   rating: number
 }
 
+function getDisplayLogoUrl(b: Business): string | null {
+  return b.logo_url || null
+}
+
 export default function FeedbackPage({ business, rating }: PageProps) {
+  const displayLogoUrl = getDisplayLogoUrl(business)
   const [whatHappened, setWhatHappened] = useState('')
   const [howToMakeRight, setHowToMakeRight] = useState('')
   const [wantsContact, setWantsContact] = useState(false)
@@ -105,6 +112,17 @@ export default function FeedbackPage({ business, rating }: PageProps) {
       <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 px-4 py-10">
         <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xl xl:max-w-2xl">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 lg:p-14 xl:p-16 text-center">
+            {/* Logo */}
+            {displayLogoUrl && (
+              <div className="flex justify-center mb-5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={displayLogoUrl}
+                  alt={business.business_name}
+                  className="max-h-24 md:max-h-28 w-auto object-contain"
+                />
+              </div>
+            )}
             {/* Success Icon */}
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
@@ -152,14 +170,26 @@ export default function FeedbackPage({ business, rating }: PageProps) {
 
         {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10 lg:p-12 xl:p-14">
-
-          {/* Header */}
-          <h1
-            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-center tracking-tight mb-1"
-            style={{ color: business.primary_color }}
-          >
-            {business.business_name}
-          </h1>
+          {/* Logo */}
+          {displayLogoUrl && (
+            <div className="flex justify-center mb-5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={displayLogoUrl}
+                alt={business.business_name}
+                className="max-h-28 md:max-h-36 w-auto object-contain"
+              />
+            </div>
+          )}
+          {/* Header — business name hidden if owner disabled it */}
+          {business.show_business_name !== false && (
+            <h1
+              className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-center tracking-tight mb-1"
+              style={{ color: business.primary_color }}
+            >
+              {business.business_name}
+            </h1>
+          )}
           <p className="text-gray-400 text-sm md:text-base lg:text-lg text-center mb-6">
             We&apos;d like to understand what happened.
           </p>
@@ -310,7 +340,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const { data: business, error } = await supabase
     .from('businesses')
-    .select('id, business_name, slug, primary_color, tier, show_reviewflo_branding')
+    .select('*')
     .eq('slug', slug)
     .single()
 

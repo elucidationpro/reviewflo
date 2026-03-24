@@ -20,6 +20,8 @@ interface Business {
   nextdoor_review_url?: string
   tier?: 'free' | 'pro' | 'ai'
   show_reviewflo_branding?: boolean
+  show_business_name?: boolean
+  logo_url?: string | null
 }
 
 interface ReviewTemplate {
@@ -33,7 +35,12 @@ interface PageProps {
   templates: ReviewTemplate[]
 }
 
+function getDisplayLogoUrl(b: Business): string | null {
+  return b.logo_url || null
+}
+
 export default function TemplatesPage({ business, templates }: PageProps) {
+  const displayLogoUrl = getDisplayLogoUrl(business)
   const hasPlatformLinks = !!(business.google_review_url || business.facebook_review_url || business.yelp_review_url || business.nextdoor_review_url)
   const [reviewPath, setReviewPath] = useState<'write_own' | 'use_template' | null>(
     business.skip_template_choice && hasPlatformLinks ? 'write_own' : null
@@ -141,14 +148,26 @@ export default function TemplatesPage({ business, templates }: PageProps) {
 
           {/* Header Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 md:p-10 lg:p-12 xl:p-14 mb-4">
-
-            {/* Business Name */}
-            <h1
-              className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-center tracking-tight mb-5"
-              style={{ color: business.primary_color }}
-            >
-              {business.business_name}
-            </h1>
+            {/* Logo */}
+            {displayLogoUrl && (
+              <div className="flex justify-center mb-5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={displayLogoUrl}
+                  alt={business.business_name}
+                  className="max-h-28 md:max-h-36 w-auto object-contain"
+                />
+              </div>
+            )}
+            {/* Business Name — hidden if owner disabled it */}
+            {business.show_business_name !== false && (
+              <h1
+                className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-center tracking-tight mb-5"
+                style={{ color: business.primary_color }}
+              >
+                {business.business_name}
+              </h1>
+            )}
 
             {/* 5-Star Celebration */}
             <div className="text-center mb-5 pb-5 border-b border-gray-100">

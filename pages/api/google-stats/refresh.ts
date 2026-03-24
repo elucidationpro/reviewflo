@@ -5,6 +5,7 @@ import { getPlaceIdWithCache, extractPlaceIdFromReviewUrl } from '../../../lib/g
 import {
   refreshAccessToken,
   getPlaceIdFromGoogleBusinessProfile,
+  fetchAllReviewsFromBusinessProfile,
 } from '../../../lib/google-business-profile'
 
 const supabaseAdmin = createClient(
@@ -56,6 +57,50 @@ export default async function handler(
       return res.status(403).json({ error: 'Pro or AI tier required' })
     }
 
+    // Try Google Business Profile API first (returns ALL reviews) when OAuth is connected
+    if (business.google_oauth_refresh_token) {
+      try {
+        const tokens = await refreshAccessToken(business.google_oauth_refresh_token)
+        const gbpResult = await fetchAllReviewsFromBusinessProfile(tokens.accessToken)
+        if (gbpResult && gbpResult.reviews.length >= 0) {
+          // Update tokens in DB
+          await supabaseAdmin
+            .from('businesses')
+            .update({
+              google_oauth_access_token: tokens.accessToken,
+              google_oauth_expires_at: new Date(Date.now() + tokens.expiresIn * 1000).toISOString(),
+            })
+            .eq('id', business.id)
+
+          const { error: upsertError } = await supabaseAdmin
+            .from('google_business_stats')
+            .upsert(
+              {
+                business_id: business.id,
+                total_reviews: gbpResult.totalReviewCount,
+                average_rating: gbpResult.averageRating,
+                recent_reviews: gbpResult.reviews,
+                reviews_this_month: null,
+                last_fetched: new Date().toISOString(),
+              },
+              { onConflict: 'business_id' }
+            )
+
+          if (!upsertError) {
+            return res.status(200).json({
+              success: true,
+              total_reviews: gbpResult.totalReviewCount,
+              average_rating: gbpResult.averageRating,
+              source: 'business_profile',
+            })
+          }
+        }
+      } catch (e) {
+        console.warn('[google-stats/refresh] GBP API failed, falling back to Places:', e)
+      }
+    }
+
+    // Fallback: Places API (max 5 reviews) when no OAuth or GBP failed
     let placeId = await getPlaceIdWithCache(
       business.id,
       business.google_review_url,

@@ -14,14 +14,21 @@ interface Business {
   primary_color: string
   tier?: 'free' | 'pro' | 'ai'
   show_reviewflo_branding?: boolean
+  show_business_name?: boolean
+  logo_url?: string | null
 }
 
 interface PageProps {
   business: Business
 }
 
+function getDisplayLogoUrl(b: Business): string | null {
+  return b.logo_url || null
+}
+
 export default function ReviewPage({ business }: PageProps) {
   const router = useRouter()
+  const displayLogoUrl = getDisplayLogoUrl(business)
   const [selectedRating, setSelectedRating] = useState<number | null>(null)
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -94,13 +101,26 @@ export default function ReviewPage({ business }: PageProps) {
 
           {/* Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-8 py-10 md:px-14 md:py-14 lg:px-20 lg:py-20 xl:px-24 xl:py-24">
-            {/* Business Name */}
-            <h1
-              className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold text-center tracking-tight mb-1"
-              style={{ color: business.primary_color }}
-            >
-              {business.business_name}
-            </h1>
+            {/* Logo */}
+            {displayLogoUrl && (
+              <div className="flex justify-center mb-6 md:mb-8">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={displayLogoUrl}
+                  alt={business.business_name}
+                  className="max-h-36 md:max-h-44 w-auto object-contain"
+                />
+              </div>
+            )}
+            {/* Business Name — hidden if owner disabled it */}
+            {business.show_business_name !== false && (
+              <h1
+                className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold text-center tracking-tight mb-1"
+                style={{ color: business.primary_color }}
+              >
+                {business.business_name}
+              </h1>
+            )}
             <p className="text-gray-400 text-sm md:text-base lg:text-xl xl:text-2xl text-center mb-8 md:mb-10 lg:mb-12 xl:mb-14">
               How was your experience?
             </p>
@@ -176,7 +196,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const { data: business, error } = await supabase
     .from('businesses')
-    .select('id, business_name, slug, primary_color, tier, show_reviewflo_branding')
+    .select('*')
     .eq('slug', slug)
     .single()
 

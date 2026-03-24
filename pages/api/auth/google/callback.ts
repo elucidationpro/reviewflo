@@ -76,11 +76,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Calculate token expiration time
     const expiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
 
-    // Store tokens and Place ID in database
+    // Build Google review URL from Place ID for the review page
+    const googleReviewUrl = businessData.placeId
+      ? `https://search.google.com/local/writereview?placeid=${businessData.placeId}`
+      : null;
+
+    // Store tokens, Place ID, and review URL in database
     const { error: updateError } = await supabaseAdmin
       .from('businesses')
       .update({
         google_place_id: businessData.placeId,
+        google_review_url: googleReviewUrl,
         google_oauth_access_token: tokens.accessToken,
         google_oauth_refresh_token: tokens.refreshToken,
         google_oauth_expires_at: expiresAt.toISOString(),
@@ -96,11 +102,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     console.log('[Google OAuth] Successfully connected Google Business Profile');
-    console.log('[Google OAuth] Place ID:', businessData.placeId);
+    console.log('[Google OAuth] Place ID:', businessData.placeId ?? '(none — service-area business)');
 
     // Redirect back to settings with success message
+    const successMsg = businessData.placeId
+      ? 'Google Business Profile connected successfully!'
+      : 'Google Business Profile connected! No Place ID found — this may be a service-area business. Try refreshing stats or entering your Place ID manually.';
+
     return res.redirect(
-      `/settings?success=${encodeURIComponent('Google Business Profile connected successfully!')}`
+      `/settings?success=${encodeURIComponent(successMsg)}`
     );
   } catch (error) {
     console.error('[Google OAuth] Callback error:', error);

@@ -23,6 +23,7 @@ interface UpdateBusinessSettingsRequest {
   yelpReviewUrl?: string | null
   nextdoorReviewUrl?: string | null
   showReviewfloBranding?: boolean
+  showBusinessName?: boolean
   googlePlaceId?: string | null
   smsEnabled?: boolean
   twilioPhoneNumber?: string | null
@@ -82,6 +83,7 @@ export default async function handler(
     if (body.yelpReviewUrl !== undefined) updateData.yelp_review_url = body.yelpReviewUrl
     if (body.nextdoorReviewUrl !== undefined) updateData.nextdoor_review_url = body.nextdoorReviewUrl
     if (body.showReviewfloBranding !== undefined) updateData.show_reviewflo_branding = body.showReviewfloBranding
+    if (body.showBusinessName !== undefined) updateData.show_business_name = body.showBusinessName
     if (body.googlePlaceId !== undefined) updateData.google_place_id = body.googlePlaceId
     if (body.smsEnabled !== undefined) updateData.sms_enabled = body.smsEnabled
     if (body.twilioPhoneNumber !== undefined) updateData.twilio_phone_number = body.twilioPhoneNumber
@@ -102,22 +104,26 @@ export default async function handler(
     if (updateError) {
       console.error('Error updating business settings:', updateError)
       const errMsg = (updateError as { message?: string }).message || String(updateError)
-      // If column doesn't exist (migration not run), retry without skip_template_choice
-      const isColumnError = /skip_template_choice|does not exist|undefined column|column.*not found/i.test(errMsg)
-      if (isColumnError && body.skipTemplateChoice !== undefined) {
-        const { skip_template_choice: _skip, ...coreData } = updateData
-        const { error: retryError } = await supabaseAdmin
-          .from('businesses')
-          .update(coreData)
-          .eq('id', businessId)
-        if (retryError) {
-          return res.status(500).json({ error: 'Failed to update business information', details: (retryError as { message?: string }).message })
+      // If column doesn't exist (migration not run), retry without columns that may not exist yet
+      const isColumnError = /does not exist|undefined column|column.*not found|schema cache/i.test(errMsg)
+      if (isColumnError) {
+        const AI_TIER_COLUMNS = ['skip_template_choice', 'white_label_enabled', 'custom_logo_url', 'custom_brand_name', 'custom_brand_color']
+        const coreData = { ...updateData }
+        for (const col of AI_TIER_COLUMNS) {
+          delete coreData[col]
         }
-        return res.status(200).json({
-          success: true,
-          templateSettingSkipped: true,
-          message: 'Settings saved. The template choice option requires a database migration — run add-skip-template-choice-migration.sql in Supabase.'
-        })
+        if (Object.keys(coreData).length > 0) {
+          const { error: retryError } = await supabaseAdmin
+            .from('businesses')
+            .update(coreData)
+            .eq('id', businessId)
+          if (!retryError) {
+            return res.status(200).json({
+              success: true,
+              message: 'Settings saved. Some AI-tier options require a database migration.',
+            })
+          }
+        }
       }
       return res.status(500).json({ error: 'Failed to update business information', details: errMsg })
     }
