@@ -9,6 +9,7 @@ import {
   isReservedSlug,
   normalizeSlugForValidation,
 } from '../../../../lib/slug-utils';
+import { sendAdminNotification } from '@/lib/email-service';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -269,6 +270,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         updated_at: new Date().toISOString(),
       },
     ]);
+
+    // Send admin notification for new signup
+    try {
+      await sendAdminNotification('signup', {
+        email,
+        name,
+        businessName,
+        slug,
+        signupMethod: 'Google',
+      });
+    } catch (adminErr) {
+      console.error('[Google Signup] Admin notification failed:', adminErr);
+    }
 
     // Generate a magic link to sign the user in and send them to the confirm page
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({

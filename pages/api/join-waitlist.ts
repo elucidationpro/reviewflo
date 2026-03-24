@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Resend } from 'resend'
 import { createClient } from '@supabase/supabase-js'
+import { sendAdminNotification } from '@/lib/email-service'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -136,6 +137,18 @@ export default async function handler(
     if (emailError) {
       console.error('Error sending confirmation email:', emailError)
       // Don't fail the request if email fails - they're still on the waitlist
+    }
+
+    // Send admin notification
+    try {
+      await sendAdminNotification('waitlist', {
+        email,
+        businessName,
+        businessType,
+        phone: phone || undefined,
+      })
+    } catch (adminErr) {
+      console.error('[join-waitlist] Admin notification failed:', adminErr)
     }
 
     return res.status(200).json({ success: true })

@@ -410,7 +410,7 @@ export async function sendQualificationEmail(data: QualificationData) {
   }
 }
 
-export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify' | 'early_access' | 'early_access_beta', data: Record<string, unknown>) {
+export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify' | 'early_access' | 'early_access_beta' | 'signup', data: Record<string, unknown>) {
   try {
     if (!process.env.RESEND_API_KEY) {
       console.error('[sendAdminNotification] RESEND_API_KEY is not set');
@@ -420,6 +420,7 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
     const isQualify = type === 'qualify';
     const isEarlyAccess = type === 'early_access';
     const isEarlyAccessBeta = type === 'early_access_beta';
+    const isSignup = type === 'signup';
     const subject = isBeta
       ? `New Beta Signup: ${data.businessName || 'N/A'}`
       : isQualify
@@ -428,6 +429,8 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
       ? `New Early Access Payment: ${data.email}`
       : isEarlyAccessBeta
       ? `New Free Beta Signup: ${data.email}`
+      : isSignup
+      ? `New Signup: ${data.businessName || data.email || 'N/A'}`
       : 'New Waitlist Signup';
 
     // Explicit list: ADMIN_EMAILS overrides (comma-separated). Otherwise both default admin addresses.
@@ -465,7 +468,7 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
         <body>
           <div class="container">
             <div class="header">
-              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : isQualify ? 'New ReviewFlo beta signup' : isEarlyAccess ? '💰 New Early Access Payment' : isEarlyAccessBeta ? '🆓 New Free Beta Signup' : '📋 New Waitlist Signup'}</h1>
+              <h1 style="margin: 0; font-size: 24px;">${isBeta ? '🎉 New Beta Signup!' : isQualify ? 'New ReviewFlo beta signup' : isEarlyAccess ? '💰 New Early Access Payment' : isEarlyAccessBeta ? '🆓 New Free Beta Signup' : isSignup ? '🆕 New Account Signup!' : '📋 New Waitlist Signup'}</h1>
             </div>
             <div class="content">
               ${isEarlyAccessBeta ? `
@@ -612,6 +615,32 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
                   <strong>⚡ Action Required:</strong><br>
                   Text <a href="tel:${data.phone}" style="color: #92400e; font-weight: bold;">${data.phone}</a> within 24 hours to set them up.
                 </div>
+              ` : isSignup ? `
+                <table class="info-table">
+                  <tr>
+                    <td>Name:</td>
+                    <td><strong>${data.name || 'N/A'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Email:</td>
+                    <td><a href="mailto:${data.email}" style="color: #2563eb;">${data.email}</a></td>
+                  </tr>
+                  <tr>
+                    <td>Business Name:</td>
+                    <td><strong>${data.businessName || 'N/A'}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Review Link:</td>
+                    <td><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/${data.slug || ''}" style="color: #2563eb;">usereviewflo.com/${data.slug || 'N/A'}</a></td>
+                  </tr>
+                  <tr>
+                    <td>Method:</td>
+                    <td>${data.signupMethod || 'Google'}</td>
+                  </tr>
+                </table>
+                <p style="margin: 0; font-size: 13px; color: #6b7280;">
+                  <strong>Signed up:</strong> ${new Date().toLocaleString('en-US', { timeZone: 'America/Denver', dateStyle: 'medium', timeStyle: 'short' })}
+                </p>
               ` : `
                 <table class="info-table">
                   <tr>
