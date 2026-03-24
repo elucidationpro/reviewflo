@@ -69,7 +69,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (e) {
       console.warn('[Google Login] GBP lookup failed (non-blocking):', e);
     }
-    const inferredBusinessName = gbpData?.businessName || ownerName || 'My Business';
+    // When GBP fails: use placeholder; owner name stored separately for client emails
+    const inferredBusinessName = gbpData?.businessName || 'My Business';
     const inferredPlaceId = gbpData?.placeId || null;
 
     const buildUniqueSlug = async (businessName: string) => {
@@ -127,6 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           user_id: userId,
           business_name: inferredBusinessName,
           owner_email: email,
+          owner_name: ownerName || null,
           slug,
           primary_color: '#3B82F6',
           logo_url: null,

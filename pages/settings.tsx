@@ -668,6 +668,8 @@ export default function SettingsPage() {
       navExtra={sidebarNav}
     >
       <OnboardingProgress
+        businessId={businessData.id}
+        tier={businessData.tier}
         hasGoogleLink={!!(businessData.google_review_url && businessData.google_review_url.trim())}
         hasFacebookLink={!!(businessData.facebook_review_url && businessData.facebook_review_url.trim())}
         hasCustomColor={!!hasCustomColor}

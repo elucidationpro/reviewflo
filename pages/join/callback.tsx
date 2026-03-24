@@ -90,7 +90,7 @@ export default function JoinCallbackPage() {
         }
 
         setStatus('success');
-        router.replace('/join/set-password');
+        router.replace('/join/confirm-details');
       } catch (err) {
         console.error('[join/callback] Error:', err);
         setError('Something went wrong');

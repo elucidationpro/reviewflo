@@ -317,6 +317,8 @@ export default function DashboardPage() {
       </Head>
 
       <OnboardingProgress
+        businessId={business.id}
+        tier={business.tier}
         hasGoogleLink={!!(business.google_review_url && business.google_review_url.trim())}
         hasFacebookLink={!!(business.facebook_review_url && business.facebook_review_url.trim())}
         hasCustomColor={!!hasCustomColor}

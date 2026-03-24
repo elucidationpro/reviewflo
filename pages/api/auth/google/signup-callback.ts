@@ -68,7 +68,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Fetch GBP data (business name + Place ID)
     const gbpData = await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken);
-    const businessName = gbpData?.businessName || name || 'My Business';
+    // When GBP fails: use individual's name for owner, let them fill business name on confirm
+    const businessName = gbpData?.businessName || 'My Business';
     const placeId = gbpData?.placeId || null;
 
     // Build Google review URL if we have a Place ID
@@ -117,6 +118,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             user_id: existing.id,
             business_name: businessName,
             owner_email: email,
+            owner_name: name || null,
             slug,
             primary_color: '#3B82F6',
             logo_url: null,
@@ -217,6 +219,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         user_id: userId,
         business_name: businessName,
         owner_email: email,
+        owner_name: name || null,
         slug,
         primary_color: '#3B82F6',
         logo_url: null,

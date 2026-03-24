@@ -24,6 +24,7 @@ export default function GoogleConfirmPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [ownerName, setOwnerName] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [googleReviewUrl, setGoogleReviewUrl] = useState<string | null>(null);
   const [hasPlaceId, setHasPlaceId] = useState(false);
@@ -38,7 +39,7 @@ export default function GoogleConfirmPage() {
 
       const { data: business, error: bizError } = await supabase
         .from('businesses')
-        .select('id, business_name, slug, google_review_url, google_place_id')
+        .select('id, business_name, slug, google_review_url, google_place_id, owner_name')
         .eq('user_id', session.user.id)
         .single();
 
@@ -48,6 +49,7 @@ export default function GoogleConfirmPage() {
         return;
       }
 
+      setOwnerName(business.owner_name || '');
       setBusinessName(business.business_name || '');
       setGoogleReviewUrl(business.google_review_url || null);
       setHasPlaceId(!!business.google_place_id);
@@ -76,7 +78,10 @@ export default function GoogleConfirmPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ businessName: businessName.trim() }),
+        body: JSON.stringify({
+          businessName: businessName.trim(),
+          ownerName: ownerName.trim(),
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -121,7 +126,9 @@ export default function GoogleConfirmPage() {
                 <CheckCircle className="w-7 h-7 text-green-600" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900">You&apos;re almost in!</h1>
-              <p className="text-gray-500 text-sm mt-1">We pulled your info from Google. Confirm your business name below.</p>
+              <p className="text-gray-500 text-sm mt-1">
+                {hasPlaceId ? 'We pulled your info from Google. Confirm your details below.' : 'We have your name from Google. Add your business name below.'}
+              </p>
             </div>
 
             {/* GBP connection status */}
@@ -136,17 +143,32 @@ export default function GoogleConfirmPage() {
               <div className="mb-5 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
                 <p className="text-sm text-amber-800">
-                  We connected your Google Business Profile but couldn&apos;t find a Place ID automatically. You can add your Google Review URL manually in Settings after signing up.
+                  We connected your Google account but couldn&apos;t pull your business automatically. Add your business name below and you can connect your Google Review URL in Settings.
                 </p>
               </div>
             )}
 
             <form onSubmit={handleConfirm} className="space-y-5">
 
+              {/* Owner / Personal Name */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  value={ownerName}
+                  onChange={(e) => setOwnerName(e.target.value)}
+                  placeholder="e.g. Jane Smith"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
+                />
+                <p className="mt-1 text-xs text-gray-500">Used when we email you directly.</p>
+              </div>
+
               {/* Business Name */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Business Name
+                  Business Name <span className="text-amber-600">*</span>
                 </label>
                 <input
                   type="text"

@@ -16,6 +16,7 @@ const supabaseAdmin = createClient(
 interface UpdateBusinessRequest {
   businessId: string
   businessName?: string
+  ownerName?: string
   ownerEmail?: string
   primaryColor?: string
   logoUrl?: string
@@ -52,6 +53,7 @@ export default async function handler(
     const {
       businessId,
       businessName,
+      ownerName,
       ownerEmail,
       primaryColor,
       logoUrl,
@@ -68,6 +70,7 @@ export default async function handler(
     // Build update object with only provided fields
     const updateData: Record<string, string | null> = {}
     if (businessName !== undefined) updateData.business_name = businessName
+    if (ownerName !== undefined) updateData.owner_name = ownerName || null
     if (ownerEmail !== undefined) updateData.owner_email = ownerEmail
     if (primaryColor !== undefined) updateData.primary_color = primaryColor
     if (logoUrl !== undefined) updateData.logo_url = logoUrl || null

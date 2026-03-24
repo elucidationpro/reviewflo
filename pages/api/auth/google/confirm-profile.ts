@@ -52,6 +52,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const businessName = String(req.body?.businessName || '').trim()
+    const ownerNameSent = 'ownerName' in (req.body || {})
+    const ownerName = ownerNameSent
+      ? (typeof req.body?.ownerName === 'string' ? req.body.ownerName.trim() || null : null)
+      : undefined
+
     if (!businessName) {
       return res.status(400).json({ error: 'Business name is required' })
     }
@@ -67,13 +72,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const slug = await buildUniqueSlug(businessName)
+    const updateData: Record<string, unknown> = {
+      business_name: businessName,
+      slug,
+    }
+    if (ownerNameSent) updateData.owner_name = ownerName ?? null
+
     const { error: updateError } = await supabaseAdmin
       .from('businesses')
-      .update({
-        business_name: businessName,
-        slug,
-      })
+      .update(updateData)
       .eq('id', business.id)
+
+    // Sync owner name to user_metadata for use in account page / direct client emails
+    if (ownerNameSent) {
+      await supabaseAdmin.auth.admin.updateUserById(user.id, {
+        user_metadata: { ...user.user_metadata, full_name: ownerName ?? null },
+      })
+    }
 
     if (updateError) {
       return res.status(500).json({ error: 'Failed to save business profile' })

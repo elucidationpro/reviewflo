@@ -8,6 +8,7 @@ import { checkIsAdmin } from '../../../lib/adminAuth'
 interface Business {
   id: string
   business_name: string
+  owner_name?: string | null
   owner_email: string
   slug: string
   primary_color: string
@@ -134,6 +135,7 @@ export default function EditBusinessPage() {
         body: JSON.stringify({
           businessId: business.id,
           businessName: business.business_name,
+          ownerName: business.owner_name ?? undefined,
           ownerEmail: business.owner_email,
           primaryColor: business.primary_color,
           logoUrl: business.logo_url,
@@ -427,6 +429,18 @@ export default function EditBusinessPage() {
                     onChange={(e) => setBusiness({ ...business, business_name: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Owner Name</label>
+                  <input
+                    type="text"
+                    value={business.owner_name ?? ''}
+                    onChange={(e) => setBusiness({ ...business, owner_name: e.target.value })}
+                    placeholder="e.g. Jane Smith"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Used when emailing this client directly.</p>
                 </div>
 
                 <div>

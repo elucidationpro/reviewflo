@@ -9,6 +9,7 @@ import { checkIsAdmin } from '../../lib/adminAuth'
 interface Business {
   id: string
   business_name: string
+  owner_name?: string | null
   owner_email: string
   slug: string
   created_at: string
@@ -90,7 +91,8 @@ export default function AdminDashboard() {
       const filtered = businesses.filter(
         (b) =>
           b.business_name.toLowerCase().includes(query) ||
-          b.owner_email.toLowerCase().includes(query)
+          b.owner_email.toLowerCase().includes(query) ||
+          (b.owner_name && b.owner_name.toLowerCase().includes(query))
       )
       setFilteredBusinesses(filtered)
     }
@@ -646,7 +648,10 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-slate-600">
-                        {business.owner_email}
+                        <div>
+                          {business.owner_name && <p className="font-medium text-slate-800">{business.owner_name}</p>}
+                          <a href={`mailto:${business.owner_email}`} className="text-slate-600 hover:underline">{business.owner_email}</a>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <select

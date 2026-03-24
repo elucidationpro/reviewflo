@@ -28,6 +28,16 @@ export default function SetPasswordPage() {
         router.replace('/dashboard');
         return;
       }
+      // Ensure they've completed the name step first (magic-link signup)
+      const { data: business } = await supabase
+        .from('businesses')
+        .select('owner_name')
+        .eq('user_id', user.id)
+        .single();
+      if (business && !business.owner_name) {
+        router.replace('/join/confirm-details');
+        return;
+      }
       setIsChecking(false);
     };
     check();
