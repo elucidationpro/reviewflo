@@ -6,6 +6,7 @@ import Head from 'next/head';
 import { CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav';
+import { generateSlugFromBusinessName } from '@/lib/slug-utils';
 
 /**
  * Google Signup Confirmation Page
@@ -13,7 +14,7 @@ import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav';
  * Shown after a user completes "Sign up with Google".
  * Their account and business are already created — this page lets them:
  * - Verify / edit their business name
- * - Confirm or change their auto-generated review link slug
+ * - See their auto-generated review page slug (read-only)
  * - See their connected Google review URL
  * - Land on the dashboard
  */
@@ -23,13 +24,9 @@ export default function GoogleConfirmPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [slugError, setSlugError] = useState('');
-
   const [businessName, setBusinessName] = useState('');
-  const [slug, setSlug] = useState('');
   const [googleReviewUrl, setGoogleReviewUrl] = useState<string | null>(null);
   const [hasPlaceId, setHasPlaceId] = useState(false);
-  const [businessId, setBusinessId] = useState('');
 
   useEffect(() => {
     async function loadBusiness() {
@@ -51,9 +48,7 @@ export default function GoogleConfirmPage() {
         return;
       }
 
-      setBusinessId(business.id);
       setBusinessName(business.business_name || '');
-      setSlug(business.slug || '');
       setGoogleReviewUrl(business.google_review_url || null);
       setHasPlaceId(!!business.google_place_id);
       setLoading(false);
@@ -62,64 +57,30 @@ export default function GoogleConfirmPage() {
     loadBusiness();
   }, [router]);
 
-  // Validate slug as user types
-  const handleSlugChange = (value: string) => {
-    const normalized = value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
-    setSlug(normalized);
-    if (normalized.length < 3) {
-      setSlugError('Must be at least 3 characters');
-    } else if (normalized.length > 30) {
-      setSlugError('Must be 30 characters or fewer');
-    } else {
-      setSlugError('');
-    }
-  };
+  const previewSlug = generateSlugFromBusinessName(businessName.trim()) || 'my-business';
 
   const handleConfirm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (slugError || !businessName.trim() || !slug) return;
+    if (!businessName.trim()) return;
 
     setSaving(true);
     setError('');
 
     try {
-      // Check slug availability (unless unchanged)
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.replace('/join'); return; }
 
-      // Fetch the current slug to see if it changed
-      const { data: current } = await supabase
-        .from('businesses')
-        .select('slug')
-        .eq('id', businessId)
-        .single();
-
-      if (slug !== current?.slug) {
-        const { data: existing } = await supabase
-          .from('businesses')
-          .select('id')
-          .eq('slug', slug)
-          .neq('id', businessId)
-          .single();
-
-        if (existing) {
-          setSlugError('That link is already taken — try another');
-          setSaving(false);
-          return;
-        }
-      }
-
-      // Update business name and slug
-      const { error: updateError } = await supabase
-        .from('businesses')
-        .update({
-          business_name: businessName.trim(),
-          slug,
-        })
-        .eq('id', businessId);
-
-      if (updateError) {
-        setError('Failed to save your info. Please try again.');
+      const res = await fetch('/api/auth/google/confirm-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ businessName: businessName.trim() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data?.error || 'Failed to save your info. Please try again.');
         setSaving(false);
         return;
       }
@@ -160,7 +121,7 @@ export default function GoogleConfirmPage() {
                 <CheckCircle className="w-7 h-7 text-green-600" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900">You&apos;re almost in!</h1>
-              <p className="text-gray-500 text-sm mt-1">We pulled your info from Google. Confirm or edit below.</p>
+              <p className="text-gray-500 text-sm mt-1">We pulled your info from Google. Confirm your business name below.</p>
             </div>
 
             {/* GBP connection status */}
@@ -196,25 +157,18 @@ export default function GoogleConfirmPage() {
                 />
               </div>
 
-              {/* Review Page Slug */}
+              {/* Review Page Slug (read-only) */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Your ReviewFlo Link
                 </label>
-                <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[#C9A961]">
+                <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
                   <span className="px-3 py-3 bg-gray-50 text-gray-500 text-sm border-r border-gray-300 whitespace-nowrap">
                     usereviewflo.com/
                   </span>
-                  <input
-                    type="text"
-                    value={slug}
-                    onChange={(e) => handleSlugChange(e.target.value)}
-                    className="flex-1 px-3 py-3 text-gray-900 text-sm outline-none"
-                    required
-                  />
+                  <span className="flex-1 px-3 py-3 text-gray-700 text-sm font-medium truncate">{previewSlug}</span>
                 </div>
-                {slugError && <p className="mt-1 text-xs text-red-600">{slugError}</p>}
-                <p className="mt-1 text-xs text-gray-500">Share this link with customers to collect reviews.</p>
+                <p className="mt-1 text-xs text-gray-500">This link is automatically generated from your business name.</p>
               </div>
 
               {/* Google Review URL (read-only display) */}
@@ -237,7 +191,7 @@ export default function GoogleConfirmPage() {
 
               <button
                 type="submit"
-                disabled={saving || !!slugError || !businessName.trim()}
+                disabled={saving || !businessName.trim()}
                 className="w-full px-6 py-3 bg-[#4A3428] text-white font-semibold rounded-lg hover:bg-[#4A3428]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? (

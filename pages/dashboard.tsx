@@ -325,80 +325,6 @@ export default function DashboardPage() {
 
       <div className="px-6 py-8 max-w-2xl mx-auto space-y-4">
 
-        {/* ── Your Review Link ── */}
-        <Card>
-          <h2 className="text-base font-bold text-gray-900 mb-1">Your Review Link</h2>
-          <p className="text-xs text-gray-500 mb-4">
-            Send this to customers after each job — they rate their experience, then get guided to Google.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <div className="flex-1 flex items-center bg-gray-50 rounded-lg px-3.5 py-2.5 border border-gray-200 min-w-0">
-              <a
-                href={fullUrlForCopy}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-mono text-gray-700 truncate hover:underline"
-              >
-                {displayLink}
-              </a>
-            </div>
-            <button
-              onClick={handleCopyReviewLink}
-              className="shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
-              style={{ backgroundColor: business.primary_color || '#4A3428' }}
-            >
-              {linkCopied ? (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Copied!
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                  Copy Link
-                </>
-              )}
-            </button>
-          </div>
-
-          {reviewStats.total === 0 && (
-            <p className="text-xs text-gray-400 mt-3">
-              Tip: send the link to yourself first to see how the flow works.
-            </p>
-          )}
-
-          {canSendFromDashboard(business.tier) && (
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <button
-                type="button"
-                onClick={() => setShowSendModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
-                style={{ backgroundColor: business.primary_color || '#4A3428' }}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                Send Request via Email
-              </button>
-            </div>
-          )}
-        </Card>
-
-        {/* ── Review Requests (Pro/AI) ── */}
-        {canSendFromDashboard(business.tier) && (
-          <ReviewRequestsList
-            businessId={business.id}
-            businessSlug={business.slug}
-            tier={business.tier}
-            onSendRequest={() => setShowSendModal(true)}
-            refetchTrigger={refetchRequestsTrigger}
-          />
-        )}
-
         {/* ── Stats row ── */}
         <div className="grid grid-cols-2 gap-4">
           {/* Reviews this month */}
@@ -463,6 +389,64 @@ export default function DashboardPage() {
         {canAccessGoogleStats(business.tier) && (
           <GoogleStatsCard primaryColor={business.primary_color || '#4A3428'} />
         )}
+
+        {/* ── Review Requests (Pro/AI) ── */}
+        {canSendFromDashboard(business.tier) && (
+          <ReviewRequestsList
+            businessId={business.id}
+            businessSlug={business.slug}
+            tier={business.tier}
+            onSendRequest={() => setShowSendModal(true)}
+            refetchTrigger={refetchRequestsTrigger}
+          />
+        )}
+
+        {/* ── Your Review Link ── */}
+        <Card>
+          <h2 className="text-base font-bold text-gray-900 mb-1">Your Review Link</h2>
+          <p className="text-xs text-gray-500 mb-4">
+            Send this to customers after each job — they rate their experience, then get guided to Google.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex-1 flex items-center bg-gray-50 rounded-lg px-3.5 py-2.5 border border-gray-200 min-w-0">
+              <a
+                href={fullUrlForCopy}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-mono text-gray-700 truncate hover:underline"
+              >
+                {displayLink}
+              </a>
+            </div>
+            <button
+              onClick={handleCopyReviewLink}
+              className="shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
+              style={{ backgroundColor: business.primary_color || '#4A3428' }}
+            >
+              {linkCopied ? (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  Copy Link
+                </>
+              )}
+            </button>
+          </div>
+
+          {reviewStats.total === 0 && (
+            <p className="text-xs text-gray-400 mt-3">
+              Tip: send the link to yourself first to see how the flow works.
+            </p>
+          )}
+        </Card>
 
         {/* ── Send from Dashboard promo (free) ── */}
         {!canSendFromDashboard(business.tier) && (

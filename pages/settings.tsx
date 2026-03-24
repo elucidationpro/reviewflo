@@ -342,6 +342,22 @@ export default function SettingsPage() {
   ])
 
   useEffect(() => {
+    const success = router.query.success
+    const queryError = router.query.error
+    if (typeof success === 'string') {
+      setShowSuccess(true)
+      setError('')
+      setTimeout(() => setShowSuccess(false), 5000)
+      router.replace('/settings', undefined, { shallow: true })
+      return
+    }
+    if (typeof queryError === 'string') {
+      setError(decodeURIComponent(queryError))
+      router.replace('/settings', undefined, { shallow: true })
+    }
+  }, [router, router.query.error, router.query.success])
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser()

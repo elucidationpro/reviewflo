@@ -64,10 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if account already exists (perPage 1000 to handle growing user base)
     const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-    const alreadyExists = existingUser?.users?.some((u) => u.email === email);
-    if (alreadyExists) {
-      return res.redirect(`/login?error=${encodeURIComponent('An account with this Google email already exists. Please log in.')}`);
-    }
+    const existing = existingUser?.users?.find((u) => u.email === email);
 
     // Fetch GBP data (business name + Place ID)
     const gbpData = await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken);
@@ -78,6 +75,93 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const googleReviewUrl = placeId
       ? `https://search.google.com/local/writereview?placeid=${placeId}`
       : null;
+
+    // If account exists, treat signup as login and link GBP data.
+    if (existing) {
+      const expiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
+      let { data: business } = await supabaseAdmin
+        .from('businesses')
+        .select('id')
+        .eq('user_id', existing.id)
+        .single();
+
+      if (!business?.id) {
+        let baseSlug = generateSlugFromBusinessName(businessName) || 'my-business';
+        if (baseSlug.length < 3) baseSlug = baseSlug.padEnd(3, '0');
+        let slug = baseSlug;
+        let attempt = 0;
+        while (true) {
+          const candidate = attempt === 0 ? slug : `${baseSlug.slice(0, 27)}-${attempt}`;
+          const normalized = normalizeSlugForValidation(candidate);
+          if (!isReservedSlug(normalized)) {
+            const { data: existingSlug } = await supabaseAdmin
+              .from('businesses')
+              .select('id')
+              .eq('slug', normalized)
+              .single();
+            if (!existingSlug) {
+              slug = normalized;
+              break;
+            }
+          }
+          attempt++;
+          if (attempt > 99) {
+            slug = `${baseSlug.slice(0, 24)}-${Date.now().toString().slice(-5)}`;
+            break;
+          }
+        }
+
+        const { data: createdBusiness } = await supabaseAdmin
+          .from('businesses')
+          .insert({
+            user_id: existing.id,
+            business_name: businessName,
+            owner_email: email,
+            slug,
+            primary_color: '#3B82F6',
+            logo_url: null,
+            google_review_url: googleReviewUrl,
+            google_place_id: placeId,
+            google_oauth_access_token: tokens.accessToken,
+            google_oauth_refresh_token: tokens.refreshToken || null,
+            google_oauth_expires_at: expiresAt.toISOString(),
+            google_business_name: businessName,
+            facebook_review_url: null,
+            yelp_review_url: null,
+            nextdoor_review_url: null,
+            terms_accepted_at: new Date().toISOString(),
+            tier: 'free',
+            launch_discount_eligible: true,
+          })
+          .select('id')
+          .single();
+        business = createdBusiness || null;
+      } else {
+        await supabaseAdmin
+          .from('businesses')
+          .update({
+            google_place_id: placeId,
+            google_review_url: googleReviewUrl,
+            google_oauth_access_token: tokens.accessToken,
+            ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
+            google_oauth_expires_at: expiresAt.toISOString(),
+            google_business_name: businessName,
+          })
+          .eq('id', business.id);
+      }
+
+      const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+        },
+      });
+      if (linkError || !linkData?.properties?.action_link) {
+        return res.redirect(`/login?error=${encodeURIComponent('Unable to sign you in. Please try again.')}`);
+      }
+      return res.redirect(linkData.properties.action_link);
+    }
 
     // Generate a slug from the business name, ensuring uniqueness
     let baseSlug = generateSlugFromBusinessName(businessName) || 'my-business';
@@ -139,7 +223,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         google_review_url: googleReviewUrl,
         google_place_id: placeId,
         google_oauth_access_token: tokens.accessToken,
-        google_oauth_refresh_token: tokens.refreshToken,
+        ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
         google_oauth_expires_at: expiresAt.toISOString(),
         google_business_name: businessName,
         facebook_review_url: null,

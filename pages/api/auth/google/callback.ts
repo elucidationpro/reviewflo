@@ -61,23 +61,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log('[Google OAuth] Exchanging code for tokens...');
     const tokens = await exchangeCodeForTokens(code);
 
-    // Fetch Place ID from Google Business Profile
+    // Fetch Place ID from Google Business Profile (best effort; still save OAuth tokens even if GBP lookup fails)
     console.log('[Google OAuth] Fetching Place ID from Business Profile...');
     const businessData = await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken);
-
-    if (!businessData) {
-      return res.redirect(
-        `/settings?error=${encodeURIComponent(
-          'No business locations found. Make sure you have a Google Business Profile.'
-        )}`
-      );
-    }
 
     // Calculate token expiration time
     const expiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
 
     // Build Google review URL from Place ID for the review page
-    const googleReviewUrl = businessData.placeId
+    const googleReviewUrl = businessData?.placeId
       ? `https://search.google.com/local/writereview?placeid=${businessData.placeId}`
       : null;
 
@@ -85,12 +77,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { error: updateError } = await supabaseAdmin
       .from('businesses')
       .update({
-        google_place_id: businessData.placeId,
+        google_place_id: businessData?.placeId || null,
         google_review_url: googleReviewUrl,
         google_oauth_access_token: tokens.accessToken,
-        google_oauth_refresh_token: tokens.refreshToken,
+        ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
         google_oauth_expires_at: expiresAt.toISOString(),
-        google_business_name: businessData.businessName,
+        google_business_name: businessData?.businessName || null,
       })
       .eq('user_id', user.id);
 
@@ -102,12 +94,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     console.log('[Google OAuth] Successfully connected Google Business Profile');
-    console.log('[Google OAuth] Place ID:', businessData.placeId ?? '(none — service-area business)');
+    console.log('[Google OAuth] Place ID:', businessData?.placeId ?? '(none — service-area business)');
 
     // Redirect back to settings with success message
-    const successMsg = businessData.placeId
+    const successMsg = businessData?.placeId
       ? 'Google Business Profile connected successfully!'
-      : 'Google Business Profile connected! No Place ID found — this may be a service-area business. Try refreshing stats or entering your Place ID manually.';
+      : 'Google connected. We saved your account access, but could not auto-detect a GBP location yet. You can still add your Google review URL manually in Settings.';
 
     return res.redirect(
       `/settings?success=${encodeURIComponent(successMsg)}`
