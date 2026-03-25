@@ -335,10 +335,10 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30 px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header Skeleton */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8 animate-pulse">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8 animate-pulse">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="flex-1">
                 <div className="h-10 bg-gray-200 rounded w-1/2 mb-2"></div>
@@ -355,7 +355,7 @@ export default function AdminDashboard() {
           {/* Stats Cards Skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 animate-pulse">
+              <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 animate-pulse">
                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                   <div className="flex-1">
                     <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
@@ -368,13 +368,13 @@ export default function AdminDashboard() {
           </div>
 
           {/* Search Bar Skeleton */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8 animate-pulse">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8 animate-pulse">
             <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
             <div className="h-12 bg-gray-200 rounded"></div>
           </div>
 
           {/* Table Skeleton */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
             <div className="p-6">
               <div className="space-y-4">
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -398,24 +398,24 @@ export default function AdminDashboard() {
         <title>Admin Dashboard - ReviewFlo</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gray-50 px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30 px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl md:text-4xl font-bold text-slate-800">Admin Dashboard</h1>
-                  <span className="bg-slate-800 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Admin Dashboard</h1>
+                  <span className="bg-[#4A3428] text-white text-xs font-bold px-3 py-1 rounded-full">
                     ADMIN
                   </span>
                 </div>
-                <p className="text-slate-600">Manage all ReviewFlo businesses</p>
+                <p className="text-gray-600">Manage all ReviewFlo businesses</p>
               </div>
               <div className="flex gap-3 mt-4 md:mt-0">
                 <Link
                   href="/admin/create-business"
-                  className="bg-slate-800 hover:bg-slate-900 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                  className="bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                 >
                   Create New Business
                 </Link>
@@ -471,44 +471,44 @@ export default function AdminDashboard() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-slate-600 mb-1">Total Businesses</p>
-                  <p className="text-3xl font-bold text-slate-800">{stats.total}</p>
+                  <p className="text-sm text-gray-600 mb-1">Total Businesses</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
                 </div>
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-8 h-8 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#4A3428]/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-8 h-8 text-[#4A3428]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-slate-600 mb-1">Recent Signups (7 days)</p>
-                  <p className="text-3xl font-bold text-slate-800">{stats.recentSignups}</p>
+                  <p className="text-sm text-gray-600 mb-1">Recent Signups (7 days)</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.recentSignups}</p>
                 </div>
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-8 h-8 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#4A3428]/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-8 h-8 text-[#4A3428]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                   </svg>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-slate-600 mb-1">Total Reviews</p>
-                  <p className="text-3xl font-bold text-slate-800">
+                  <p className="text-sm text-gray-600 mb-1">Total Reviews</p>
+                  <p className="text-3xl font-bold text-gray-900">
                     {businesses.reduce((sum, b) => sum + b.reviews_count, 0)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-8 h-8 text-slate-800" fill="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#C9A961]/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-8 h-8 text-[#4A3428]" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
                 </div>
@@ -517,31 +517,31 @@ export default function AdminDashboard() {
           </div>
 
           {/* Early Access Signups */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
-            <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-4">
               Early Access ({earlyAccessSignups.length})
             </h2>
             {earlyAccessSignups.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-slate-50 border-b border-gray-200">
+                  <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Email</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Name</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Business type</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Paid</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">Signed up</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-slate-800 uppercase tracking-wider">Actions</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Email</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Business type</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Paid</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Signed up</th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {earlyAccessSignups.map((row) => (
-                      <tr key={row.id} className="hover:bg-slate-50/80">
+                      <tr key={row.id} className="hover:bg-gray-50/80">
                         <td className="px-4 py-3">
-                          <a href={`mailto:${row.email}`} className="text-slate-800 hover:text-gray-900 hover:underline">{row.email}</a>
+                          <a href={`mailto:${row.email}`} className="text-gray-900 hover:text-[#4A3428] hover:underline">{row.email}</a>
                         </td>
-                        <td className="px-4 py-3 text-slate-600">{row.full_name || '—'}</td>
-                        <td className="px-4 py-3 text-slate-600">{row.business_type || '—'}</td>
+                        <td className="px-4 py-3 text-gray-600">{row.full_name || '—'}</td>
+                        <td className="px-4 py-3 text-gray-600">{row.business_type || '—'}</td>
                         <td className="px-4 py-3">
                           {row.stripe_session_id ? (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">Yes</span>
@@ -549,13 +549,13 @@ export default function AdminDashboard() {
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">No</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-sm text-slate-600">{new Date(row.created_at).toLocaleDateString()}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{new Date(row.created_at).toLocaleDateString()}</td>
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-2">
                             {row.business_id ? (
                               <Link
                                 href={`/admin/businesses/${row.business_id}`}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-medium rounded transition-colors"
                               >
                                 View
                               </Link>
@@ -570,7 +570,7 @@ export default function AdminDashboard() {
                                     businessType: row.business_type || '',
                                   },
                                 }}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
+                                className="inline-flex items-center px-3 py-1.5 text-sm bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-medium rounded transition-colors"
                               >
                                 Create account
                               </Link>
@@ -593,64 +593,64 @@ export default function AdminDashboard() {
                 </table>
               </div>
             ) : (
-              <p className="text-slate-500">No early access signups yet.</p>
+              <p className="text-gray-500">No early access signups yet.</p>
             )}
           </div>
 
           {/* Search Bar */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
-            <h2 className="text-xl font-semibold text-slate-800 tracking-tight mb-4">ReviewFlo Admin Panel</h2>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-4">ReviewFlo Admin Panel</h2>
             <input
               type="text"
               placeholder="Search businesses by name or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-slate-800"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
             />
           </div>
 
           {/* Businesses Table */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-50 border-b border-gray-200">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
                       Business Name
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
                       Owner Email
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
                       Tier
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
                       Created
                     </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-slate-800 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-900 uppercase tracking-wider">
                       Reviews
                     </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-slate-800 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-900 uppercase tracking-wider">
                       Feedback
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-slate-800 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {filteredBusinesses.map((business) => (
-                    <tr key={business.id} className="hover:bg-slate-50/80 transition-colors">
+                    <tr key={business.id} className="hover:bg-gray-50/80 transition-colors">
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-semibold text-slate-800">{business.business_name}</p>
-                          <p className="text-sm text-slate-500">/{business.slug}</p>
+                          <p className="font-semibold text-gray-900">{business.business_name}</p>
+                          <p className="text-sm text-gray-500">/{business.slug}</p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-slate-600">
+                      <td className="px-6 py-4 text-gray-600">
                         <div>
-                          {business.owner_name && <p className="font-medium text-slate-800">{business.owner_name}</p>}
-                          <a href={`mailto:${business.owner_email}`} className="text-slate-600 hover:underline">{business.owner_email}</a>
+                          {business.owner_name && <p className="font-medium text-gray-900">{business.owner_name}</p>}
+                          <a href={`mailto:${business.owner_email}`} className="text-gray-600 hover:underline">{business.owner_email}</a>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -658,14 +658,14 @@ export default function AdminDashboard() {
                           value={business.tier || 'free'}
                           onChange={(e) => handleOverrideTier(business.id, e.target.value as 'free' | 'pro' | 'ai')}
                           disabled={updatingTierId === business.id}
-                          className="text-sm font-medium px-2 py-1.5 rounded border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-[#C9A961] disabled:opacity-50"
+                          className="text-sm font-medium px-2 py-1.5 rounded border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-[#C9A961] disabled:opacity-50"
                         >
                           <option value="free">Free</option>
                           <option value="pro">Pro (testing)</option>
                           <option value="ai">AI (testing)</option>
                         </select>
                       </td>
-                      <td className="px-6 py-4 text-slate-600">
+                      <td className="px-6 py-4 text-gray-600">
                         {new Date(business.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -682,7 +682,7 @@ export default function AdminDashboard() {
                         <div className="flex items-center justify-end gap-2">
                           <Link
                             href={`/admin/businesses/${business.id}`}
-                            className="px-3 py-1 text-sm bg-slate-700 hover:bg-slate-800 text-white font-medium rounded transition-colors"
+                            className="px-3 py-1 text-sm bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-medium rounded transition-colors"
                           >
                             Edit
                           </Link>
@@ -709,7 +709,7 @@ export default function AdminDashboard() {
 
             {filteredBusinesses.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-slate-500">
+                <p className="text-gray-500">
                   {searchQuery ? 'No businesses found matching your search.' : 'No businesses yet.'}
                 </p>
               </div>
@@ -723,7 +723,7 @@ export default function AdminDashboard() {
             rel="noopener noreferrer"
             className="block mt-8 transition-opacity hover:opacity-70"
           >
-            <div className="flex items-center justify-center gap-2 text-slate-500 text-sm">
+            <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
               <span>Powered by</span>
               <div className="relative w-24 h-6">
                 <Image
