@@ -124,6 +124,39 @@ export default async function handler(
       .map(([date, count]) => ({ date, count }))
       .sort((a, b) => a.date.localeCompare(b.date))
 
+    // Get all reviews for the last 30 days
+    const { data: recentReviews } = await supabaseAdmin
+      .from('reviews')
+      .select('created_at')
+      .gte('created_at', thirtyDaysAgo.toISOString())
+
+    // Calculate reviews by day
+    const reviewsByDay: { [key: string]: number } = {}
+
+    // Initialize all days with 0
+    for (let i = 0; i < 30; i++) {
+      const date = new Date()
+      date.setDate(date.getDate() - i)
+      const dateStr = date.toISOString().split('T')[0]
+      reviewsByDay[dateStr] = 0
+    }
+
+    // Count reviews by day
+    if (recentReviews) {
+      recentReviews.forEach((review) => {
+        const reviewDate = new Date(review.created_at)
+        const dateStr = reviewDate.toISOString().split('T')[0]
+        if (reviewsByDay[dateStr] !== undefined) {
+          reviewsByDay[dateStr]++
+        }
+      })
+    }
+
+    // Convert to array and sort by date
+    const reviewsOverTime = Object.entries(reviewsByDay)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date))
+
     return res.status(200).json({
       businesses: businessesWithStats,
       stats: {
@@ -139,6 +172,7 @@ export default async function handler(
           { name: 'AI', value: aiCount },
         ],
         signupsOverTime,
+        reviewsOverTime,
       },
     })
   } catch (error) {

@@ -66,6 +66,7 @@ interface Stats {
 interface ChartData {
   tierDistribution: Array<{ name: string; value: number }>
   signupsOverTime: Array<{ date: string; count: number }>
+  reviewsOverTime: Array<{ date: string; count: number }>
 }
 
 export default function AdminDashboard() {
@@ -78,7 +79,7 @@ export default function AdminDashboard() {
   const [waitlistSignups, setWaitlistSignups] = useState<WaitlistSignup[]>([])
   const [earlyAccessSignups, setEarlyAccessSignups] = useState<EarlyAccessSignup[]>([])
   const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0, interestedInPro: 0, interestedInAI: 0 })
-  const [chartData, setChartData] = useState<ChartData>({ tierDistribution: [], signupsOverTime: [] })
+  const [chartData, setChartData] = useState<ChartData>({ tierDistribution: [], signupsOverTime: [], reviewsOverTime: [] })
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
@@ -161,7 +162,7 @@ export default function AdminDashboard() {
       setBusinesses(data.businesses || [])
       setFilteredBusinesses(data.businesses || [])
       setStats(data.stats || { total: 0, recentSignups: 0, interestedInPro: 0, interestedInAI: 0 })
-      setChartData(data.charts || { tierDistribution: [], signupsOverTime: [] })
+      setChartData(data.charts || { tierDistribution: [], signupsOverTime: [], reviewsOverTime: [] })
 
       // Fetch beta signups via API (uses service role)
       console.time('[Admin] API Fetch Beta Signups')
@@ -544,13 +545,30 @@ export default function AdminDashboard() {
           </div>
 
           {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Signups Over Time Chart */}
+          <div className="space-y-6 mb-8">
+            {/* Activity Over Time - Full Width */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Signups (Last 30 Days)</h3>
-              {chartData.signupsOverTime.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={chartData.signupsOverTime}>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Activity (Last 30 Days)</h3>
+              {(chartData.signupsOverTime.length > 0 || chartData.reviewsOverTime.length > 0) ? (
+                <ResponsiveContainer width="100%" height={350}>
+                  <LineChart data={(() => {
+                    // Merge signups and reviews data by date
+                    const mergedData: { [key: string]: { date: string; signups: number; reviews: number } } = {}
+
+                    chartData.signupsOverTime.forEach(item => {
+                      mergedData[item.date] = { date: item.date, signups: item.count, reviews: 0 }
+                    })
+
+                    chartData.reviewsOverTime.forEach(item => {
+                      if (mergedData[item.date]) {
+                        mergedData[item.date].reviews = item.count
+                      } else {
+                        mergedData[item.date] = { date: item.date, signups: 0, reviews: item.count }
+                      }
+                    })
+
+                    return Object.values(mergedData).sort((a, b) => a.date.localeCompare(b.date))
+                  })()}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                     <XAxis
                       dataKey="date"
@@ -573,24 +591,35 @@ export default function AdminDashboard() {
                         return date.toLocaleDateString()
                       }}
                     />
+                    <Legend />
                     <Line
                       type="monotone"
-                      dataKey="count"
+                      dataKey="signups"
+                      name="New Signups"
                       stroke="#4A3428"
                       strokeWidth={2}
-                      dot={{ fill: '#4A3428', r: 4 }}
-                      activeDot={{ r: 6 }}
+                      dot={{ fill: '#4A3428', r: 3 }}
+                      activeDot={{ r: 5 }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="reviews"
+                      name="Reviews Submitted"
+                      stroke="#C9A961"
+                      strokeWidth={2}
+                      dot={{ fill: '#C9A961', r: 3 }}
+                      activeDot={{ r: 5 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex items-center justify-center h-[300px]">
-                  <p className="text-gray-500">No signup data available</p>
+                <div className="flex items-center justify-center h-[350px]">
+                  <p className="text-gray-500">No activity data available</p>
                 </div>
               )}
             </div>
 
-            {/* Tier Distribution Chart */}
+            {/* Tier Distribution */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Tier Distribution</h3>
               {chartData.tierDistribution.some(item => item.value > 0) ? (
