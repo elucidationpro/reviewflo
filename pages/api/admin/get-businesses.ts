@@ -89,6 +89,41 @@ export default async function handler(
       (b) => b.interested_in_tier === 'ai' && b.notify_on_launch === true
     ).length
 
+    // Calculate tier distribution
+    const freeCount = businessesWithStats.filter((b) => b.tier === 'free').length
+    const proCount = businessesWithStats.filter((b) => b.tier === 'pro').length
+    const aiCount = businessesWithStats.filter((b) => b.tier === 'ai').length
+
+    // Calculate signups over last 30 days
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+    const signupsByDay: { [key: string]: number } = {}
+
+    // Initialize all days with 0
+    for (let i = 0; i < 30; i++) {
+      const date = new Date()
+      date.setDate(date.getDate() - i)
+      const dateStr = date.toISOString().split('T')[0]
+      signupsByDay[dateStr] = 0
+    }
+
+    // Count signups by day
+    businessesWithStats.forEach((b) => {
+      const createdDate = new Date(b.created_at)
+      if (createdDate >= thirtyDaysAgo) {
+        const dateStr = createdDate.toISOString().split('T')[0]
+        if (signupsByDay[dateStr] !== undefined) {
+          signupsByDay[dateStr]++
+        }
+      }
+    })
+
+    // Convert to array and sort by date
+    const signupsOverTime = Object.entries(signupsByDay)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date))
+
     return res.status(200).json({
       businesses: businessesWithStats,
       stats: {
@@ -96,6 +131,14 @@ export default async function handler(
         recentSignups,
         interestedInPro,
         interestedInAI,
+      },
+      charts: {
+        tierDistribution: [
+          { name: 'Free', value: freeCount },
+          { name: 'Pro', value: proCount },
+          { name: 'AI', value: aiCount },
+        ],
+        signupsOverTime,
       },
     })
   } catch (error) {

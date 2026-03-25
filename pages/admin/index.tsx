@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '../../lib/supabase'
 import { checkIsAdmin } from '../../lib/adminAuth'
+import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
 interface Business {
   id: string
@@ -62,6 +63,11 @@ interface Stats {
   interestedInAI: number
 }
 
+interface ChartData {
+  tierDistribution: Array<{ name: string; value: number }>
+  signupsOverTime: Array<{ date: string; count: number }>
+}
+
 export default function AdminDashboard() {
   console.log('[Component] AdminDashboard component loaded and executing')
   const router = useRouter()
@@ -72,6 +78,7 @@ export default function AdminDashboard() {
   const [waitlistSignups, setWaitlistSignups] = useState<WaitlistSignup[]>([])
   const [earlyAccessSignups, setEarlyAccessSignups] = useState<EarlyAccessSignup[]>([])
   const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0, interestedInPro: 0, interestedInAI: 0 })
+  const [chartData, setChartData] = useState<ChartData>({ tierDistribution: [], signupsOverTime: [] })
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
@@ -154,6 +161,7 @@ export default function AdminDashboard() {
       setBusinesses(data.businesses || [])
       setFilteredBusinesses(data.businesses || [])
       setStats(data.stats || { total: 0, recentSignups: 0, interestedInPro: 0, interestedInAI: 0 })
+      setChartData(data.charts || { tierDistribution: [], signupsOverTime: [] })
 
       // Fetch beta signups via API (uses service role)
       console.time('[Admin] API Fetch Beta Signups')
@@ -532,6 +540,94 @@ export default function AdminDashboard() {
                 </div>
                 <p className="text-xs text-gray-500 mt-2">Users waiting for launch</p>
               </div>
+            </div>
+          </div>
+
+          {/* Charts Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Signups Over Time Chart */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Signups (Last 30 Days)</h3>
+              {chartData.signupsOverTime.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={chartData.signupsOverTime}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fill: '#6B7280', fontSize: 12 }}
+                      tickFormatter={(value) => {
+                        const date = new Date(value)
+                        return `${date.getMonth() + 1}/${date.getDate()}`
+                      }}
+                    />
+                    <YAxis tick={{ fill: '#6B7280', fontSize: 12 }} allowDecimals={false} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #E5E7EB',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                      }}
+                      labelFormatter={(value) => {
+                        const date = new Date(value)
+                        return date.toLocaleDateString()
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#4A3428"
+                      strokeWidth={2}
+                      dot={{ fill: '#4A3428', r: 4 }}
+                      activeDot={{ r: 6 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex items-center justify-center h-[300px]">
+                  <p className="text-gray-500">No signup data available</p>
+                </div>
+              )}
+            </div>
+
+            {/* Tier Distribution Chart */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Tier Distribution</h3>
+              {chartData.tierDistribution.some(item => item.value > 0) ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={chartData.tierDistribution}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, value, percent }) =>
+                        value > 0 ? `${name}: ${value} (${(percent * 100).toFixed(0)}%)` : ''
+                      }
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {chartData.tierDistribution.map((entry, index) => {
+                        const colors = ['#4A3428', '#C9A961', '#F5F5DC']
+                        return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                      })}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #E5E7EB',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex items-center justify-center h-[300px]">
+                  <p className="text-gray-500">No tier data available</p>
+                </div>
+              )}
             </div>
           </div>
 

@@ -19,6 +19,7 @@
     "posthog-js": "^1.342.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "recharts": "^3.8.1",
     "resend": "^6.6.0",
     "stripe": "^20.3.1",
     "twilio": "^5.13.0"
