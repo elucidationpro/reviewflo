@@ -80,11 +80,22 @@ export default async function handler(
       (b) => new Date(b.created_at) >= sevenDaysAgo
     ).length
 
+    // Calculate tier demand stats
+    const interestedInPro = businessesWithStats.filter(
+      (b) => b.interested_in_tier === 'pro' && b.notify_on_launch === true
+    ).length
+
+    const interestedInAI = businessesWithStats.filter(
+      (b) => b.interested_in_tier === 'ai' && b.notify_on_launch === true
+    ).length
+
     return res.status(200).json({
       businesses: businessesWithStats,
       stats: {
         total: totalBusinesses,
         recentSignups,
+        interestedInPro,
+        interestedInAI,
       },
     })
   } catch (error) {

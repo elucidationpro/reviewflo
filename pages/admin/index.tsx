@@ -58,6 +58,8 @@ interface EarlyAccessSignup {
 interface Stats {
   total: number
   recentSignups: number
+  interestedInPro: number
+  interestedInAI: number
 }
 
 export default function AdminDashboard() {
@@ -69,7 +71,7 @@ export default function AdminDashboard() {
   const [betaSignups, setBetaSignups] = useState<BetaSignup[]>([])
   const [waitlistSignups, setWaitlistSignups] = useState<WaitlistSignup[]>([])
   const [earlyAccessSignups, setEarlyAccessSignups] = useState<EarlyAccessSignup[]>([])
-  const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0 })
+  const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0, interestedInPro: 0, interestedInAI: 0 })
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
@@ -151,7 +153,7 @@ export default function AdminDashboard() {
 
       setBusinesses(data.businesses || [])
       setFilteredBusinesses(data.businesses || [])
-      setStats(data.stats || { total: 0, recentSignups: 0 })
+      setStats(data.stats || { total: 0, recentSignups: 0, interestedInPro: 0, interestedInAI: 0 })
 
       // Fetch beta signups via API (uses service role)
       console.time('[Admin] API Fetch Beta Signups')
@@ -353,10 +355,10 @@ export default function AdminDashboard() {
           </div>
 
           {/* Stats Cards Skeleton */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 animate-pulse">
-                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-pulse">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex-1">
                     <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
                     <div className="h-8 bg-gray-200 rounded w-16"></div>
@@ -470,8 +472,8 @@ export default function AdminDashboard() {
           )}
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Total Businesses</p>
@@ -485,10 +487,10 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Recent Signups (7 days)</p>
+                  <p className="text-sm text-gray-600 mb-1">Recent Signups (7d)</p>
                   <p className="text-3xl font-bold text-gray-900">{stats.recentSignups}</p>
                 </div>
                 <div className="w-12 h-12 bg-[#4A3428]/10 rounded-lg flex items-center justify-center">
@@ -499,7 +501,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Total Reviews</p>
@@ -512,6 +514,23 @@ export default function AdminDashboard() {
                     <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
                 </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <div className="p-4 bg-[#C9A961]/10 rounded-lg">
+                <p className="text-sm text-gray-600 mb-2">Tier Demand</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-gray-700 uppercase">Pro</span>
+                    <span className="text-lg font-bold text-gray-900">{stats.interestedInPro}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-gray-700 uppercase">AI</span>
+                    <span className="text-lg font-bold text-gray-900">{stats.interestedInAI}</span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Users waiting for launch</p>
               </div>
             </div>
           </div>
