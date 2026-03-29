@@ -631,7 +631,7 @@ export default function AdminDashboard() {
                       cy="50%"
                       labelLine={false}
                       label={({ name, value, percent }) =>
-                        value > 0 ? `${name}: ${value} (${(percent * 100).toFixed(0)}%)` : ''
+                        value > 0 && percent ? `${name}: ${value} (${(percent * 100).toFixed(0)}%)` : ''
                       }
                       outerRadius={100}
                       fill="#8884d8"
