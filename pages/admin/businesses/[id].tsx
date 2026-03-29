@@ -289,9 +289,9 @@ export default function EditBusinessPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3428] mx-auto"></div>
           <p className="text-gray-600 mt-4">Loading...</p>
         </div>
       </div>
@@ -300,10 +300,10 @@ export default function EditBusinessPage() {
 
   if (!business) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30">
         <div className="text-center">
           <p className="text-red-600 text-lg">{error || 'Business not found'}</p>
-          <Link href="/admin" className="text-blue-600 hover:underline mt-4 inline-block">
+          <Link href="/admin" className="text-[#4A3428] hover:underline mt-4 inline-block font-semibold">
             Back to Admin Dashboard
           </Link>
         </div>
@@ -317,33 +317,35 @@ export default function EditBusinessPage() {
         <title>{`Edit ${business.business_name} - Admin Dashboard`}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-6">
             <Link
               href="/admin"
-              className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium mb-4"
+              className="inline-flex items-center text-[#4A3428] hover:text-[#4A3428]/80 font-semibold mb-4"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
               Back to Admin Dashboard
             </Link>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-3">
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Edit Business</h1>
-                  <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">ADMIN</span>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Edit Business</h1>
+                    <span className="bg-[#4A3428] text-white text-xs font-bold px-3 py-1 rounded-full">ADMIN</span>
+                  </div>
+                  <p className="text-gray-600 mt-2">{business.business_name}</p>
                 </div>
-                <p className="text-gray-600 mt-2">{business.business_name}</p>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold rounded-lg transition-colors"
+                >
+                  Logout
+                </button>
               </div>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
-              >
-                Logout
-              </button>
             </div>
           </div>
 
@@ -373,28 +375,28 @@ export default function EditBusinessPage() {
           )}
 
           {/* Stats Card */}
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Business Stats</h2>
-            <div className="grid grid-cols-3 gap-6">
-              <div>
-                <p className="text-gray-600 text-sm">Total Reviews</p>
-                <p className="text-3xl font-bold text-blue-600">{business.reviews_count || 0}</p>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-6">Business Stats</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Total Reviews</p>
+                <p className="text-3xl font-bold text-gray-900">{business.reviews_count || 0}</p>
               </div>
-              <div>
-                <p className="text-gray-600 text-sm">Total Feedback</p>
-                <p className="text-3xl font-bold text-orange-600">{business.feedback_count || 0}</p>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Total Feedback</p>
+                <p className="text-3xl font-bold text-gray-900">{business.feedback_count || 0}</p>
               </div>
-              <div>
-                <p className="text-gray-600 text-sm">Created</p>
-                <p className="text-lg font-semibold text-gray-700">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Created</p>
+                <p className="text-lg font-semibold text-gray-900">
                   {new Date(business.created_at).toLocaleDateString()}
                 </p>
               </div>
             </div>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
               <button
                 onClick={handleResetPassword}
-                className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-lg transition-colors"
+                className="px-4 py-2 bg-[#C9A961] hover:bg-[#C9A961]/90 text-white font-semibold rounded-lg transition-colors"
               >
                 Reset Password
               </button>
@@ -402,14 +404,14 @@ export default function EditBusinessPage() {
                 type="button"
                 onClick={handleClearReviewsFeedback}
                 disabled={isClearingReviewsFeedback || ((business.reviews_count || 0) === 0 && (business.feedback_count || 0) === 0)}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
               >
                 {isClearingReviewsFeedback ? 'Clearing…' : 'Clear all reviews & feedback'}
               </button>
               <Link
                 href={`/${business.slug}`}
                 target="_blank"
-                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors"
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors"
               >
                 View Review Page
               </Link>
@@ -418,8 +420,8 @@ export default function EditBusinessPage() {
 
           {/* Edit Form */}
           <form onSubmit={handleSave} className="space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Business Information</h2>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+              <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-6">Business Information</h2>
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Business Name</label>
@@ -427,7 +429,7 @@ export default function EditBusinessPage() {
                     type="text"
                     value={business.business_name}
                     onChange={(e) => setBusiness({ ...business, business_name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -438,7 +440,7 @@ export default function EditBusinessPage() {
                     value={business.owner_name ?? ''}
                     onChange={(e) => setBusiness({ ...business, owner_name: e.target.value })}
                     placeholder="e.g. Jane Smith"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                   <p className="text-xs text-gray-500 mt-1">Used when emailing this client directly.</p>
                 </div>
@@ -449,7 +451,7 @@ export default function EditBusinessPage() {
                     type="email"
                     value={business.owner_email}
                     onChange={(e) => setBusiness({ ...business, owner_email: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -484,8 +486,8 @@ export default function EditBusinessPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Review Platform URLs</h2>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+              <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-6">Review Platform URLs</h2>
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Google Review URL</label>
@@ -493,7 +495,7 @@ export default function EditBusinessPage() {
                     type="url"
                     value={business.google_review_url || ''}
                     onChange={(e) => setBusiness({ ...business, google_review_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -503,7 +505,7 @@ export default function EditBusinessPage() {
                     type="url"
                     value={business.facebook_review_url || ''}
                     onChange={(e) => setBusiness({ ...business, facebook_review_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -513,7 +515,7 @@ export default function EditBusinessPage() {
                     type="url"
                     value={business.yelp_review_url || ''}
                     onChange={(e) => setBusiness({ ...business, yelp_review_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -523,7 +525,7 @@ export default function EditBusinessPage() {
                     type="url"
                     value={business.nextdoor_review_url || ''}
                     onChange={(e) => setBusiness({ ...business, nextdoor_review_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                   />
                 </div>
               </div>
@@ -532,14 +534,14 @@ export default function EditBusinessPage() {
             <div className="flex justify-end gap-4">
               <Link
                 href="/admin"
-                className="px-8 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+                className="px-8 py-3 border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
+                className="px-8 py-3 bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
               >
                 {isSaving ? 'Saving...' : 'Save Changes'}
               </button>
@@ -548,8 +550,8 @@ export default function EditBusinessPage() {
 
           {/* Review Templates Section */}
           <form onSubmit={handleSaveTemplates} className="space-y-6 mt-6">
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Review Templates</h2>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+              <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-4">Review Templates</h2>
               <p className="text-gray-600 mb-6 text-sm">
                 Customize the review templates that customers will see on the templates page. These help them leave reviews quickly.
               </p>
@@ -572,7 +574,7 @@ export default function EditBusinessPage() {
                     onChange={(e) => setGoogleTemplate(e.target.value)}
                     placeholder="I had an excellent experience with [Business Name]! [They/The service] exceeded my expectations. Highly recommend!"
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
                   />
                   <p className="text-xs text-gray-500 mt-1">Customers will be able to copy and paste this template</p>
                 </div>
@@ -587,7 +589,7 @@ export default function EditBusinessPage() {
                     onChange={(e) => setFacebookTemplate(e.target.value)}
                     placeholder="Just had a great experience with [Business Name]! Professional service and fantastic results. 5 stars! ⭐⭐⭐⭐⭐"
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
                   />
                   <p className="text-xs text-gray-500 mt-1">Customers will be able to copy and paste this template</p>
                 </div>
@@ -602,7 +604,7 @@ export default function EditBusinessPage() {
                     onChange={(e) => setYelpTemplate(e.target.value)}
                     placeholder="5 stars for [Business Name]! Quality work, professional service, and fair pricing. Will definitely use again."
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
                   />
                   <p className="text-xs text-gray-500 mt-1">Customers will be able to copy and paste this template</p>
                 </div>
@@ -615,7 +617,7 @@ export default function EditBusinessPage() {
                   <Link
                     href={`/${business.slug}/templates`}
                     target="_blank"
-                    className="text-blue-600 hover:underline"
+                    className="text-[#4A3428] hover:underline font-medium"
                   >
                     /{business.slug}/templates
                   </Link>
