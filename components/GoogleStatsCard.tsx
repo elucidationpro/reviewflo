@@ -10,8 +10,8 @@ interface Review {
 }
 
 interface Stats {
-  total_reviews: number
-  average_rating: number
+  total_reviews: number | null
+  average_rating: number | null
   recent_reviews: Review[]
   reviews_this_month: number | null
   last_fetched: string
@@ -140,12 +140,12 @@ export default function GoogleStatsCard({ primaryColor }: GoogleStatsCardProps) 
             <div className="p-3 bg-slate-50 rounded-lg">
               <p className="text-xs text-slate-600 uppercase">Avg Rating</p>
               <p className="text-2xl font-bold" style={{ color: primaryColor }}>
-                ⭐ {stats.average_rating.toFixed(1)}
+                ⭐ {(stats.average_rating ?? 0).toFixed(1)}
               </p>
             </div>
             <div className="p-3 bg-slate-50 rounded-lg">
               <p className="text-xs text-slate-600 uppercase">Total Reviews</p>
-              <p className="text-2xl font-bold text-slate-800">{stats.total_reviews}</p>
+              <p className="text-2xl font-bold text-slate-800">{stats.total_reviews ?? 0}</p>
             </div>
             {stats.reviews_this_month != null && (
               <div className="p-3 bg-slate-50 rounded-lg">

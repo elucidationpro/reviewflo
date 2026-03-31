@@ -27,7 +27,7 @@ export function canAccessGoogleStats(tier: Tier | undefined): boolean {
 
 /** Number of template slots based on tier: Free=1, Pro/AI=3 */
 export function getTemplateSlots(tier: Tier | undefined): number {
-  return tier === 'free' ? 1 : 3
+  return (tier === 'pro' || tier === 'ai') ? 3 : 1
 }
 
 /** Whether tier is paid (Pro or AI) */

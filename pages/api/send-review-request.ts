@@ -68,6 +68,7 @@ export default async function handler(
 
     const reviewLink = `${BASE_URL}/${business.slug}`
     const ownerName = business.business_name // Fallback if no separate owner name
+    const trackingToken = crypto.randomUUID()
 
     const { data: insertData, error: insertError } = await supabaseAdmin
       .from('review_requests')
@@ -78,6 +79,7 @@ export default async function handler(
         optional_note: optionalNote?.trim() || null,
         review_link: reviewLink,
         status: 'pending',
+        tracking_token: trackingToken,
       })
       .select('id')
       .single()
@@ -93,6 +95,7 @@ export default async function handler(
       businessName: business.business_name,
       ownerName,
       reviewLink,
+      trackingToken,
       optionalNote: optionalNote?.trim() || null,
     })
 

@@ -700,12 +700,15 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
 
 // --- REVIEW REQUEST EMAILS (Pro tier) ---
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com';
+
 export interface ReviewRequestEmailData {
   customerName: string;
   customerEmail: string;
   businessName: string;
   ownerName: string;
   reviewLink: string;
+  trackingToken?: string | null;
   optionalNote?: string | null;
 }
 
@@ -713,6 +716,16 @@ export async function sendReviewRequestEmail(data: ReviewRequestEmailData) {
   try {
     const noteHtml = data.optionalNote
       ? `<p style="margin: 20px 0; padding: 15px; background: #f8fafc; border-left: 4px solid #94a3b8; border-radius: 4px;">${escapeHtml(data.optionalNote)}</p>`
+      : '';
+
+    // Use tracked link if we have a token, otherwise fall back to direct link
+    const ctaHref = data.trackingToken
+      ? `${BASE_URL}/api/track/click?t=${data.trackingToken}`
+      : data.reviewLink;
+
+    // Tracking pixel fires when the email is opened
+    const trackingPixel = data.trackingToken
+      ? `<img src="${BASE_URL}/api/track/open?t=${data.trackingToken}" width="1" height="1" style="display:block;width:1px;height:1px;border:0;" alt="" />`
       : '';
 
     const html = `
@@ -732,12 +745,13 @@ export async function sendReviewRequestEmail(data: ReviewRequestEmailData) {
           <p>Thanks for choosing ${escapeHtml(data.businessName)}!</p>
           <p>We'd love to hear about your experience. Could you take 30 seconds to share your feedback?</p>
           ${noteHtml}
-          <p><a href="${data.reviewLink}" class="cta">Rate Your Experience →</a></p>
+          <p><a href="${ctaHref}" class="cta">Rate Your Experience →</a></p>
           <p>Your feedback helps us improve and serve you better.</p>
           <p>Thanks,<br>${escapeHtml(data.ownerName)}<br>${escapeHtml(data.businessName)}</p>
           <div class="footer">
             <p>Powered by ReviewFlo</p>
           </div>
+          ${trackingPixel}
         </div>
       </body>
       </html>
@@ -766,10 +780,19 @@ export interface ReviewReminderEmailData {
   customerEmail: string;
   businessName: string;
   reviewLink: string;
+  trackingToken?: string | null;
 }
 
 export async function sendReviewReminderEmail(data: ReviewReminderEmailData) {
   try {
+    const ctaHref = data.trackingToken
+      ? `${BASE_URL}/api/track/click?t=${data.trackingToken}`
+      : data.reviewLink;
+
+    const trackingPixel = data.trackingToken
+      ? `<img src="${BASE_URL}/api/track/open?t=${data.trackingToken}" width="1" height="1" style="display:block;width:1px;height:1px;border:0;" alt="" />`
+      : '';
+
     const html = `
       <!DOCTYPE html>
       <html>
@@ -785,12 +808,13 @@ export async function sendReviewReminderEmail(data: ReviewReminderEmailData) {
         <div class="container">
           <p>Hi ${escapeHtml(data.customerName)},</p>
           <p>Just a quick reminder - we'd still love to hear about your experience with ${escapeHtml(data.businessName)}.</p>
-          <p><a href="${data.reviewLink}" class="cta">Share Your Feedback →</a></p>
+          <p><a href="${ctaHref}" class="cta">Share Your Feedback →</a></p>
           <p>Takes 30 seconds and helps us improve.</p>
           <p>Thanks,<br>${escapeHtml(data.businessName)}</p>
           <div class="footer">
             <p>Powered by ReviewFlo</p>
           </div>
+          ${trackingPixel}
         </div>
       </body>
       </html>

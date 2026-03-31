@@ -1,6 +1,7 @@
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { PenLine, ClipboardList } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
@@ -40,6 +41,7 @@ function getDisplayLogoUrl(b: Business): string | null {
 }
 
 export default function TemplatesPage({ business, templates }: PageProps) {
+  const router = useRouter()
   const displayLogoUrl = getDisplayLogoUrl(business)
   const hasPlatformLinks = !!(business.google_review_url || business.facebook_review_url || business.yelp_review_url || business.nextdoor_review_url)
   const [reviewPath, setReviewPath] = useState<'write_own' | 'use_template' | null>(
@@ -48,6 +50,9 @@ export default function TemplatesPage({ business, templates }: PageProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [copiedTemplate, setCopiedTemplate] = useState(false)
   const [clickedPlatform, setClickedPlatform] = useState<string | null>(null)
+
+  // Tracking token forwarded from the star-rating page
+  const trackingToken = typeof router.query.t === 'string' ? router.query.t : null
 
   const handleTemplateClick = (templateText: string, templateIndex: number) => {
     setSelectedTemplate(templateText)
@@ -82,6 +87,17 @@ export default function TemplatesPage({ business, templates }: PageProps) {
       trackEvent('five_star_to_google', {
         businessId: business.id,
         businessName: business.business_name,
+      })
+    }
+
+    // Record completion in the review request tracking system (fire-and-forget)
+    if (trackingToken) {
+      fetch('/api/track/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: trackingToken, platform: platformName.toLowerCase() }),
+      }).catch(() => {
+        // Silently ignore — never block the customer flow
       })
     }
 

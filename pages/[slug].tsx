@@ -33,6 +33,9 @@ export default function ReviewPage({ business }: PageProps) {
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Tracking token passed via URL from the email click redirect
+  const trackingToken = typeof router.query.t === 'string' ? router.query.t : null
+
   const handleStarClick = async (rating: number) => {
     if (isSubmitting) return
 
@@ -64,10 +67,13 @@ export default function ReviewPage({ business }: PageProps) {
         responseTime,
       })
 
+      // Carry the tracking token forward so templates page can record completion
+      const tokenParam = trackingToken ? `&t=${trackingToken}` : ''
+
       if (rating >= 1 && rating <= 4) {
-        router.push(`/${business.slug}/feedback?rating=${rating}`)
+        router.push(`/${business.slug}/feedback?rating=${rating}${tokenParam}`)
       } else if (rating === 5) {
-        router.push(`/${business.slug}/templates`)
+        router.push(`/${business.slug}/templates?${tokenParam ? `t=${trackingToken}` : ''}`)
       }
     } catch (err) {
       console.error('Error submitting rating:', err)

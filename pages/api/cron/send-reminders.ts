@@ -32,7 +32,7 @@ export default async function handler(
 
     const { data: pending, error } = await supabaseAdmin
       .from('review_requests')
-      .select('id, business_id, customer_name, customer_email, review_link')
+      .select('id, business_id, customer_name, customer_email, review_link, tracking_token')
       .eq('status', 'pending')
       .eq('reminder_sent', false)
       .lt('sent_at', iso)
@@ -57,6 +57,7 @@ export default async function handler(
         customerEmail: req.customer_email,
         businessName,
         reviewLink: req.review_link,
+        trackingToken: req.tracking_token || null,
       })
       if (result.success) {
         await supabaseAdmin
