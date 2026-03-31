@@ -718,15 +718,10 @@ export async function sendReviewRequestEmail(data: ReviewRequestEmailData) {
       ? `<p style="margin: 20px 0; padding: 15px; background: #f8fafc; border-left: 4px solid #94a3b8; border-radius: 4px;">${escapeHtml(data.optionalNote)}</p>`
       : '';
 
-    // Use tracked link if we have a token, otherwise fall back to direct link
+    // Route CTA through click tracker so we know the customer engaged
     const ctaHref = data.trackingToken
       ? `${BASE_URL}/api/track/click?t=${data.trackingToken}`
       : data.reviewLink;
-
-    // Tracking pixel fires when the email is opened
-    const trackingPixel = data.trackingToken
-      ? `<img src="${BASE_URL}/api/track/open?t=${data.trackingToken}" width="1" height="1" style="display:block;width:1px;height:1px;border:0;" alt="" />`
-      : '';
 
     const html = `
       <!DOCTYPE html>
@@ -751,7 +746,6 @@ export async function sendReviewRequestEmail(data: ReviewRequestEmailData) {
           <div class="footer">
             <p>Powered by ReviewFlo</p>
           </div>
-          ${trackingPixel}
         </div>
       </body>
       </html>
@@ -789,10 +783,6 @@ export async function sendReviewReminderEmail(data: ReviewReminderEmailData) {
       ? `${BASE_URL}/api/track/click?t=${data.trackingToken}`
       : data.reviewLink;
 
-    const trackingPixel = data.trackingToken
-      ? `<img src="${BASE_URL}/api/track/open?t=${data.trackingToken}" width="1" height="1" style="display:block;width:1px;height:1px;border:0;" alt="" />`
-      : '';
-
     const html = `
       <!DOCTYPE html>
       <html>
@@ -814,7 +804,6 @@ export async function sendReviewReminderEmail(data: ReviewReminderEmailData) {
           <div class="footer">
             <p>Powered by ReviewFlo</p>
           </div>
-          ${trackingPixel}
         </div>
       </body>
       </html>
