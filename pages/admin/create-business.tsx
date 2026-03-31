@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import { checkIsAdmin } from '../../lib/adminAuth'
+import AdminLayout from '@/components/AdminLayout'
 
 interface FormData {
   businessName: string
@@ -206,12 +207,14 @@ export default function CreateBusinessPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600 mx-auto"></div>
-          <p className="text-gray-600 mt-4">Loading...</p>
+      <AdminLayout onLogout={handleLogout}>
+        <div className="min-h-[50vh] flex items-center justify-center px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3428] mx-auto" />
+            <p className="text-gray-600 mt-4">Loading…</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
@@ -221,34 +224,20 @@ export default function CreateBusinessPage() {
         <title>Create Business - Admin Dashboard</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="mb-6">
+      <AdminLayout onLogout={handleLogout}>
+        <div className="px-4 py-8 max-w-4xl mx-auto">
+          <div className="mb-8">
             <Link
               href="/admin"
-              className="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium mb-4"
+              className="inline-flex items-center text-sm font-semibold text-[#4A3428] hover:underline mb-4"
             >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              Back to Admin Dashboard
+              Back to overview
             </Link>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-3">
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Create New Business</h1>
-                  <span className="bg-gray-800 text-white text-xs font-bold px-3 py-1 rounded-full">ADMIN</span>
-                </div>
-                <p className="text-gray-600 mt-2">Pre-create a fully configured business account</p>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold rounded-lg transition-colors"
-              >
-                Logout
-              </button>
-            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Create new business</h1>
+            <p className="text-gray-600 mt-1">Pre-create a fully configured business account</p>
           </div>
 
           {/* Success Message */}
@@ -558,7 +547,7 @@ export default function CreateBusinessPage() {
             </div>
           </form>
         </div>
-      </div>
+      </AdminLayout>
     </>
   )
 }

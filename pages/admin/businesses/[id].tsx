@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { supabase } from '../../../lib/supabase'
 import { checkIsAdmin } from '../../../lib/adminAuth'
+import AdminLayout from '@/components/AdminLayout'
 
 interface Business {
   id: string
@@ -29,6 +30,8 @@ interface ReviewTemplate {
   template_text: string
 }
 
+type BizTab = 'overview' | 'account' | 'links' | 'templates' | 'danger'
+
 export default function EditBusinessPage() {
   const router = useRouter()
   const { id } = router.query
@@ -45,6 +48,25 @@ export default function EditBusinessPage() {
   const [templateSuccess, setTemplateSuccess] = useState('')
   const [resetPassword, setResetPassword] = useState('')
   const [isClearingReviewsFeedback, setIsClearingReviewsFeedback] = useState(false)
+  const [dangerOpen, setDangerOpen] = useState(false)
+  const [dangerConfirmText, setDangerConfirmText] = useState('')
+
+  const activeTab: BizTab = (() => {
+    const t = router.query.tab
+    if (t === 'overview' || t === 'account' || t === 'links' || t === 'templates' || t === 'danger') return t
+    return 'account'
+  })()
+
+  const goTab = (tab: BizTab) => {
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, tab },
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
 
   useEffect(() => {
     if (id) {
@@ -245,6 +267,56 @@ export default function EditBusinessPage() {
     router.push('/login')
   }
 
+  const navExtra = business ? (
+    <>
+      <button
+        type="button"
+        onClick={() => goTab('overview')}
+        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+          activeTab === 'overview' ? 'bg-[#4A3428]/[0.07] text-[#4A3428]' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+        }`}
+      >
+        Overview
+      </button>
+      <button
+        type="button"
+        onClick={() => goTab('account')}
+        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+          activeTab === 'account' ? 'bg-[#4A3428]/[0.07] text-[#4A3428]' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+        }`}
+      >
+        Account
+      </button>
+      <button
+        type="button"
+        onClick={() => goTab('links')}
+        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+          activeTab === 'links' ? 'bg-[#4A3428]/[0.07] text-[#4A3428]' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+        }`}
+      >
+        Review links
+      </button>
+      <button
+        type="button"
+        onClick={() => goTab('templates')}
+        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+          activeTab === 'templates' ? 'bg-[#4A3428]/[0.07] text-[#4A3428]' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+        }`}
+      >
+        Templates
+      </button>
+      <button
+        type="button"
+        onClick={() => goTab('danger')}
+        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+          activeTab === 'danger' ? 'bg-red-50 text-red-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+        }`}
+      >
+        Danger zone
+      </button>
+    </>
+  ) : null
+
   const handleClearReviewsFeedback = async () => {
     if (!business || !confirm('Clear ALL reviews and feedback for this business? This cannot be undone.')) {
       return
@@ -289,25 +361,29 @@ export default function EditBusinessPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3428] mx-auto"></div>
-          <p className="text-gray-600 mt-4">Loading...</p>
+      <AdminLayout onLogout={handleLogout}>
+        <div className="min-h-[50vh] flex items-center justify-center px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A3428] mx-auto" />
+            <p className="text-gray-600 mt-4">Loading…</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
   if (!business) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30">
-        <div className="text-center">
-          <p className="text-red-600 text-lg">{error || 'Business not found'}</p>
-          <Link href="/admin" className="text-[#4A3428] hover:underline mt-4 inline-block font-semibold">
-            Back to Admin Dashboard
-          </Link>
+      <AdminLayout onLogout={handleLogout}>
+        <div className="min-h-[40vh] flex items-center justify-center px-4">
+          <div className="text-center">
+            <p className="text-red-600 text-lg">{error || 'Business not found'}</p>
+            <Link href="/admin" className="text-[#4A3428] hover:underline mt-4 inline-block font-semibold">
+              Back to overview
+            </Link>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
@@ -317,53 +393,26 @@ export default function EditBusinessPage() {
         <title>{`Edit ${business.business_name} - Admin Dashboard`}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30 py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="mb-6">
+      <AdminLayout onLogout={handleLogout} navExtra={navExtra}>
+        <div className="px-4 py-8 max-w-4xl mx-auto">
+          <div className="mb-8">
             <Link
               href="/admin"
-              className="inline-flex items-center text-[#4A3428] hover:text-[#4A3428]/80 font-semibold mb-4"
+              className="inline-flex items-center text-sm font-semibold text-[#4A3428] hover:underline mb-4"
             >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              Back to Admin Dashboard
+              Back to overview
             </Link>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Edit Business</h1>
-                    <span className="bg-[#4A3428] text-white text-xs font-bold px-3 py-1 rounded-full">ADMIN</span>
-                  </div>
-                  <p className="text-gray-600 mt-2">{business.business_name}</p>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold rounded-lg transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Edit business</h1>
+            <p className="text-gray-600 mt-1">{business.business_name}</p>
           </div>
 
           {/* Success Message */}
           {success && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
               <p className="text-green-800 text-sm">{success}</p>
-            </div>
-          )}
-
-          {/* Reset Password Display */}
-          {resetPassword && (
-            <div className="mb-6 bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6">
-              <h3 className="text-yellow-800 font-bold mb-2">New Password Generated:</h3>
-              <code className="block bg-white p-3 rounded text-red-600 font-mono text-lg font-bold">
-                {resetPassword}
-              </code>
-              <p className="text-yellow-700 text-sm mt-2">Save this password - it won&apos;t be shown again!</p>
             </div>
           )}
 
@@ -374,303 +423,357 @@ export default function EditBusinessPage() {
             </div>
           )}
 
-          {/* Stats Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-6">Business Stats</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Total Reviews</p>
-                <p className="text-3xl font-bold text-gray-900">{business.reviews_count || 0}</p>
-              </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Total Feedback</p>
-                <p className="text-3xl font-bold text-gray-900">{business.feedback_count || 0}</p>
-              </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Created</p>
-                <p className="text-lg font-semibold text-gray-900">
-                  {new Date(business.created_at).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
-              <button
-                onClick={handleResetPassword}
-                className="px-4 py-2 bg-[#C9A961] hover:bg-[#C9A961]/90 text-white font-semibold rounded-lg transition-colors"
-              >
-                Reset Password
-              </button>
-              <button
-                type="button"
-                onClick={handleClearReviewsFeedback}
-                disabled={isClearingReviewsFeedback || ((business.reviews_count || 0) === 0 && (business.feedback_count || 0) === 0)}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
-              >
-                {isClearingReviewsFeedback ? 'Clearing…' : 'Clear all reviews & feedback'}
-              </button>
-              <Link
-                href={`/${business.slug}`}
-                target="_blank"
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors"
-              >
-                View Review Page
-              </Link>
-            </div>
-          </div>
-
-          {/* Edit Form */}
-          <form onSubmit={handleSave} className="space-y-6">
+          {/* ── Tab content ── */}
+          {activeTab === 'overview' && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-              <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-6">Business Information</h2>
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Business Name</label>
-                  <input
-                    type="text"
-                    value={business.business_name}
-                    onChange={(e) => setBusiness({ ...business, business_name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
-                  />
+              <h2 className="text-lg font-semibold text-gray-900 tracking-tight mb-6">At a glance</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Total Reviews</p>
+                  <p className="text-3xl font-bold text-gray-900">{business.reviews_count || 0}</p>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Owner Name</label>
-                  <input
-                    type="text"
-                    value={business.owner_name ?? ''}
-                    onChange={(e) => setBusiness({ ...business, owner_name: e.target.value })}
-                    placeholder="e.g. Jane Smith"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Used when emailing this client directly.</p>
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Total Feedback</p>
+                  <p className="text-3xl font-bold text-gray-900">{business.feedback_count || 0}</p>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Owner Email</label>
-                  <input
-                    type="email"
-                    value={business.owner_email}
-                    onChange={(e) => setBusiness({ ...business, owner_email: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
-                  />
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Created</p>
+                  <p className="text-lg font-semibold text-gray-900">{new Date(business.created_at).toLocaleDateString()}</p>
                 </div>
+              </div>
+              <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
+                <Link
+                  href={`/${business.slug}`}
+                  target="_blank"
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors"
+                >
+                  View review page
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => goTab('account')}
+                  className="px-4 py-2 bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-semibold rounded-lg transition-colors"
+                >
+                  Edit account →
+                </button>
+                <button
+                  type="button"
+                  onClick={() => goTab('links')}
+                  className="px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold rounded-lg transition-colors"
+                >
+                  Review links →
+                </button>
+              </div>
+            </div>
+          )}
 
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Slug (URL)</label>
-                  <input
-                    type="text"
-                    value={business.slug}
-                    disabled
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Slug cannot be changed</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Primary Color</label>
-                  <div className="flex gap-4">
-                    <input
-                      type="color"
-                      value={business.primary_color}
-                      onChange={(e) => setBusiness({ ...business, primary_color: e.target.value })}
-                      className="h-12 w-24 border border-gray-300 rounded-lg"
-                    />
+          {activeTab === 'account' && (
+            <form onSubmit={handleSave} className="space-y-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h2 className="text-lg font-semibold text-gray-900 tracking-tight mb-6">Account</h2>
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Business Name</label>
                     <input
                       type="text"
-                      value={business.primary_color}
-                      onChange={(e) => setBusiness({ ...business, primary_color: e.target.value })}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                      value={business.business_name}
+                      onChange={(e) => setBusiness({ ...business, business_name: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Owner Name</label>
+                    <input
+                      type="text"
+                      value={business.owner_name ?? ''}
+                      onChange={(e) => setBusiness({ ...business, owner_name: e.target.value })}
+                      placeholder="e.g. Jane Smith"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Used when emailing this client directly.</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Owner Email</label>
+                    <input
+                      type="email"
+                      value={business.owner_email}
+                      onChange={(e) => setBusiness({ ...business, owner_email: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Slug (URL)</label>
+                    <input
+                      type="text"
+                      value={business.slug}
+                      disabled
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Slug cannot be changed</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Primary Color</label>
+                    <div className="flex gap-4">
+                      <input
+                        type="color"
+                        value={business.primary_color}
+                        onChange={(e) => setBusiness({ ...business, primary_color: e.target.value })}
+                        className="h-12 w-24 border border-gray-300 rounded-lg"
+                      />
+                      <input
+                        type="text"
+                        value={business.primary_color}
+                        onChange={(e) => setBusiness({ ...business, primary_color: e.target.value })}
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] text-gray-900"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <Link
+                  href="/admin"
+                  className="px-6 py-2.5 border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+                >
+                  Back
+                </Link>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="px-6 py-2.5 bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {isSaving ? 'Saving…' : 'Save'}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {activeTab === 'links' && (
+            <form onSubmit={handleSave} className="space-y-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h2 className="text-lg font-semibold text-gray-900 tracking-tight mb-6">Review links</h2>
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Google Review URL</label>
+                    <input
+                      type="url"
+                      value={business.google_review_url || ''}
+                      onChange={(e) => setBusiness({ ...business, google_review_url: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Facebook Review URL</label>
+                    <input
+                      type="url"
+                      value={business.facebook_review_url || ''}
+                      onChange={(e) => setBusiness({ ...business, facebook_review_url: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Yelp Review URL</label>
+                    <input
+                      type="url"
+                      value={business.yelp_review_url || ''}
+                      onChange={(e) => setBusiness({ ...business, yelp_review_url: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Nextdoor Review URL</label>
+                    <input
+                      type="url"
+                      value={business.nextdoor_review_url || ''}
+                      onChange={(e) => setBusiness({ ...business, nextdoor_review_url: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
                     />
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-              <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-6">Review Platform URLs</h2>
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Google Review URL</label>
-                  <input
-                    type="url"
-                    value={business.google_review_url || ''}
-                    onChange={(e) => setBusiness({ ...business, google_review_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Facebook Review URL</label>
-                  <input
-                    type="url"
-                    value={business.facebook_review_url || ''}
-                    onChange={(e) => setBusiness({ ...business, facebook_review_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Yelp Review URL</label>
-                  <input
-                    type="url"
-                    value={business.yelp_review_url || ''}
-                    onChange={(e) => setBusiness({ ...business, yelp_review_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Nextdoor Review URL</label>
-                  <input
-                    type="url"
-                    value={business.nextdoor_review_url || ''}
-                    onChange={(e) => setBusiness({ ...business, nextdoor_review_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
-                  />
-                </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => goTab('account')}
+                  className="px-6 py-2.5 border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="px-6 py-2.5 bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {isSaving ? 'Saving…' : 'Save'}
+                </button>
               </div>
-            </div>
+            </form>
+          )}
 
-            <div className="flex justify-end gap-4">
-              <Link
-                href="/admin"
-                className="px-8 py-3 border border-gray-200 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="px-8 py-3 bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
-              >
-                {isSaving ? 'Saving...' : 'Save Changes'}
-              </button>
-            </div>
-          </form>
+          {activeTab === 'templates' && (
+            <form onSubmit={handleSaveTemplates} className="space-y-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h2 className="text-lg font-semibold text-gray-900 tracking-tight mb-2">Templates</h2>
+                <p className="text-gray-600 mb-6 text-sm">These show on /{business.slug}/templates</p>
 
-          {/* Review Templates Section */}
-          <form onSubmit={handleSaveTemplates} className="space-y-6 mt-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-              <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-4">Review Templates</h2>
-              <p className="text-gray-600 mb-6 text-sm">
-                Customize the review templates that customers will see on the templates page. These help them leave reviews quickly.
-              </p>
+                {templateSuccess && (
+                  <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-green-800 text-sm">{templateSuccess}</p>
+                  </div>
+                )}
 
-              {/* Template Success Message */}
-              {templateSuccess && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-800 text-sm">{templateSuccess}</p>
-                </div>
-              )}
+                <div className="space-y-6">
+                  <div>
+                    <label htmlFor="googleTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
+                      Template 1
+                    </label>
+                    <textarea
+                      id="googleTemplateEdit"
+                      value={googleTemplate}
+                      onChange={(e) => setGoogleTemplate(e.target.value)}
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
+                    />
+                  </div>
 
-              <div className="space-y-6">
-                <div>
-                  <label htmlFor="googleTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Template 1
-                  </label>
-                  <textarea
-                    id="googleTemplateEdit"
-                    value={googleTemplate}
-                    onChange={(e) => setGoogleTemplate(e.target.value)}
-                    placeholder="I had an excellent experience with [Business Name]! [They/The service] exceeded my expectations. Highly recommend!"
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Customers will be able to copy and paste this template</p>
-                </div>
+                  <div>
+                    <label htmlFor="facebookTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
+                      Template 2
+                    </label>
+                    <textarea
+                      id="facebookTemplateEdit"
+                      value={facebookTemplate}
+                      onChange={(e) => setFacebookTemplate(e.target.value)}
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="facebookTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Template 2
-                  </label>
-                  <textarea
-                    id="facebookTemplateEdit"
-                    value={facebookTemplate}
-                    onChange={(e) => setFacebookTemplate(e.target.value)}
-                    placeholder="Just had a great experience with [Business Name]! Professional service and fantastic results. 5 stars! ⭐⭐⭐⭐⭐"
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Customers will be able to copy and paste this template</p>
+                  <div>
+                    <label htmlFor="yelpTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
+                      Template 3
+                    </label>
+                    <textarea
+                      id="yelpTemplateEdit"
+                      value={yelpTemplate}
+                      onChange={(e) => setYelpTemplate(e.target.value)}
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label htmlFor="yelpTemplateEdit" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Template 3
-                  </label>
-                  <textarea
-                    id="yelpTemplateEdit"
-                    value={yelpTemplate}
-                    onChange={(e) => setYelpTemplate(e.target.value)}
-                    placeholder="5 stars for [Business Name]! Quality work, professional service, and fair pricing. Will definitely use again."
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900 placeholder-gray-400"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Customers will be able to copy and paste this template</p>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Preview</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  This is how customers will see the templates on{' '}
+                <div className="mt-6 pt-6 border-t border-gray-200 flex items-center justify-between gap-3 flex-wrap">
                   <Link
                     href={`/${business.slug}/templates`}
                     target="_blank"
-                    className="text-[#4A3428] hover:underline font-medium"
+                    className="text-sm font-semibold text-[#4A3428] hover:underline"
                   >
-                    /{business.slug}/templates
+                    Preview templates →
                   </Link>
-                </p>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-4">
-                  {googleTemplate && (
-                    <div className="bg-white rounded-lg p-4 border border-gray-300">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-gray-900">Template 1</span>
-                        <span className="text-xs text-gray-500">Copy to paste</span>
-                      </div>
-                      <p className="text-sm text-gray-700">{googleTemplate}</p>
-                    </div>
-                  )}
-                  {facebookTemplate && (
-                    <div className="bg-white rounded-lg p-4 border border-gray-300">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-gray-900">Template 2</span>
-                        <span className="text-xs text-gray-500">Copy to paste</span>
-                      </div>
-                      <p className="text-sm text-gray-700">{facebookTemplate}</p>
-                    </div>
-                  )}
-                  {yelpTemplate && (
-                    <div className="bg-white rounded-lg p-4 border border-gray-300">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-gray-900">Template 3</span>
-                        <span className="text-xs text-gray-500">Copy to paste</span>
-                      </div>
-                      <p className="text-sm text-gray-700">{yelpTemplate}</p>
-                    </div>
-                  )}
-                  {!googleTemplate && !facebookTemplate && !yelpTemplate && (
-                    <p className="text-sm text-gray-500 text-center py-4">
-                      No templates configured. Default templates will be used.
-                    </p>
-                  )}
+                  <button
+                    type="submit"
+                    disabled={isSavingTemplates}
+                    className="px-6 py-2.5 bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSavingTemplates ? 'Saving…' : 'Save'}
+                  </button>
                 </div>
               </div>
+            </form>
+          )}
 
-              <div className="flex justify-end mt-6">
-                <button
-                  type="submit"
-                  disabled={isSavingTemplates}
-                  className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSavingTemplates ? 'Saving Templates...' : 'Save Templates'}
-                </button>
+          {activeTab === 'danger' && (
+            <div className="space-y-6">
+              {resetPassword && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+                  <h3 className="text-yellow-900 font-bold mb-2">New password generated</h3>
+                  <code className="block bg-white p-3 rounded text-red-600 font-mono text-lg font-bold break-all">{resetPassword}</code>
+                  <p className="text-yellow-800 text-sm mt-2">Save this password — it won’t be shown again.</p>
+                </div>
+              )}
+
+              <div className="bg-white rounded-2xl shadow-sm border border-red-100 p-6 md:p-8">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">Danger zone</h2>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Actions here are irreversible. They’re intentionally tucked away to prevent accidents.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setDangerOpen((v) => !v)}
+                    className="px-3 py-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+                  >
+                    {dangerOpen ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+
+                {dangerOpen && (
+                  <div className="mt-6 space-y-6">
+                    <div className="p-4 rounded-xl border border-gray-200 bg-gray-50">
+                      <p className="text-sm font-semibold text-gray-900 mb-1">Confirm you mean it</p>
+                      <p className="text-xs text-gray-600">
+                        Type <span className="font-mono font-bold">{business.slug}</span> to enable destructive actions.
+                      </p>
+                      <input
+                        value={dangerConfirmText}
+                        onChange={(e) => setDangerConfirmText(e.target.value)}
+                        className="mt-3 w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                        placeholder={business.slug}
+                      />
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between p-4 rounded-xl border border-gray-200">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Reset password</p>
+                        <p className="text-xs text-gray-600 mt-0.5">Generates a new password for the owner.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleResetPassword}
+                        disabled={dangerConfirmText.trim() !== business.slug}
+                        className="px-4 py-2 rounded-lg text-sm font-semibold border border-red-200 text-red-700 bg-white hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Reset password…
+                      </button>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between p-4 rounded-xl border border-gray-200">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Clear all reviews &amp; feedback</p>
+                        <p className="text-xs text-gray-600 mt-0.5">Deletes all review + feedback history for this business.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleClearReviewsFeedback}
+                        disabled={
+                          dangerConfirmText.trim() !== business.slug ||
+                          isClearingReviewsFeedback ||
+                          ((business.reviews_count || 0) === 0 && (business.feedback_count || 0) === 0)
+                        }
+                        className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {isClearingReviewsFeedback ? 'Clearing…' : 'Clear data'}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </form>
+          )}
         </div>
-      </div>
+      </AdminLayout>
     </>
   )
 }

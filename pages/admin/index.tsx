@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { supabase } from '../../lib/supabase'
 import { checkIsAdmin } from '../../lib/adminAuth'
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import AdminLayout from '@/components/AdminLayout'
 
 interface Business {
   id: string
@@ -19,41 +20,6 @@ interface Business {
   user_id: string
   tier: 'free' | 'pro' | 'ai'
   admin_override?: boolean
-}
-
-interface BetaSignup {
-  id: string
-  name: string
-  email: string
-  phone: string
-  business_name: string
-  business_type: string
-  challenge: string | null
-  created_at: string
-}
-
-interface WaitlistSignup {
-  id: string
-  email: string
-  business_name: string
-  business_type: string
-  created_at: string
-}
-
-interface EarlyAccessSignup {
-  id: string
-  user_id: string
-  email: string
-  full_name: string | null
-  business_type: string | null
-  customers_per_month: string | null
-  review_asking_frequency: string | null
-  stripe_session_id: string | null
-  business_id: string | null
-  access_start_date: string | null
-  access_end_date: string | null
-  created_at: string
-  updated_at: string
 }
 
 interface Stats {
@@ -75,15 +41,11 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [businesses, setBusinesses] = useState<Business[]>([])
   const [filteredBusinesses, setFilteredBusinesses] = useState<Business[]>([])
-  const [betaSignups, setBetaSignups] = useState<BetaSignup[]>([])
-  const [waitlistSignups, setWaitlistSignups] = useState<WaitlistSignup[]>([])
-  const [earlyAccessSignups, setEarlyAccessSignups] = useState<EarlyAccessSignup[]>([])
   const [stats, setStats] = useState<Stats>({ total: 0, recentSignups: 0, interestedInPro: 0, interestedInAI: 0 })
   const [chartData, setChartData] = useState<ChartData>({ tierDistribution: [], signupsOverTime: [], reviewsOverTime: [] })
   const [searchQuery, setSearchQuery] = useState('')
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
-  const [deletingEarlyAccessId, setDeletingEarlyAccessId] = useState<string | null>(null)
   const [updatingTierId, setUpdatingTierId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -164,49 +126,6 @@ export default function AdminDashboard() {
       setStats(data.stats || { total: 0, recentSignups: 0, interestedInPro: 0, interestedInAI: 0 })
       setChartData(data.charts || { tierDistribution: [], signupsOverTime: [], reviewsOverTime: [] })
 
-      // Fetch beta signups via API (uses service role)
-      console.time('[Admin] API Fetch Beta Signups')
-      const betaResponse = await fetch('/api/admin/get-beta-signups', {
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-      })
-      console.timeEnd('[Admin] API Fetch Beta Signups')
-
-      if (betaResponse.ok) {
-        const betaData = await betaResponse.json()
-        console.log('[Admin] Beta signups received:', betaData.betaSignups?.length || 0)
-        setBetaSignups(betaData.betaSignups || [])
-      } else {
-        console.error('[Admin] Failed to fetch beta signups:', betaResponse.status)
-      }
-
-      // Fetch waitlist signups via API (uses service role)
-      console.time('[Admin] API Fetch Waitlist Signups')
-      const waitlistResponse = await fetch('/api/admin/get-waitlist-signups', {
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-      })
-      console.timeEnd('[Admin] API Fetch Waitlist Signups')
-
-      if (waitlistResponse.ok) {
-        const waitlistData = await waitlistResponse.json()
-        console.log('[Admin] Waitlist signups received:', waitlistData.waitlistSignups?.length || 0)
-        setWaitlistSignups(waitlistData.waitlistSignups || [])
-      } else {
-        console.error('[Admin] Failed to fetch waitlist signups:', waitlistResponse.status)
-      }
-
-      // Fetch early access signups
-      const earlyRes = await fetch('/api/admin/get-early-access', {
-        headers: { 'Authorization': `Bearer ${session.access_token}` },
-      })
-      if (earlyRes.ok) {
-        const earlyData = await earlyRes.json()
-        setEarlyAccessSignups(earlyData.earlyAccessSignups || [])
-      }
-
       console.log('[Admin] Setting isLoading to false - SUCCESS')
       setIsLoading(false)
       console.timeEnd('[Admin] Total Load Time')
@@ -223,42 +142,6 @@ export default function AdminDashboard() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.push('/login')
-  }
-
-  const handleDeleteEarlyAccessSignup = async (signupId: string) => {
-    if (!confirm('Remove this early access signup? This cannot be undone.')) return
-
-    setDeletingEarlyAccessId(signupId)
-    setError('')
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        setError('Session expired. Please refresh.')
-        setDeletingEarlyAccessId(null)
-        return
-      }
-
-      const response = await fetch('/api/admin/delete-early-access-signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ id: signupId }),
-      })
-
-      if (response.ok) {
-        setEarlyAccessSignups(prev => prev.filter(s => s.id !== signupId))
-      } else {
-        const data = await response.json()
-        setError(data.error || 'Failed to remove')
-      }
-    } catch (err) {
-      console.error('Error deleting early access signup:', err)
-      setError('Failed to remove')
-    } finally {
-      setDeletingEarlyAccessId(null)
-    }
   }
 
   const handleOverrideTier = async (businessId: string, newTier: 'free' | 'pro' | 'ai') => {
@@ -346,8 +229,8 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30 px-4 py-8">
-        <div className="max-w-7xl mx-auto">
+      <AdminLayout onLogout={handleLogout}>
+      <div className="px-4 py-8 max-w-7xl mx-auto">
           {/* Header Skeleton */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8 animate-pulse">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -378,28 +261,8 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          {/* Search Bar Skeleton */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8 animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
-            <div className="h-12 bg-gray-200 rounded"></div>
-          </div>
-
-          {/* Table Skeleton */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
-            <div className="p-6">
-              <div className="space-y-4">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="h-12 bg-gray-200 rounded flex-1"></div>
-                    <div className="h-12 bg-gray-200 rounded w-32"></div>
-                    <div className="h-12 bg-gray-200 rounded w-24"></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
@@ -409,35 +272,11 @@ export default function AdminDashboard() {
         <title>Admin Dashboard - ReviewFlo</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-[#F5F5DC]/30 via-white to-[#F5F5DC]/30 px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Admin Dashboard</h1>
-                  <span className="bg-[#4A3428] text-white text-xs font-bold px-3 py-1 rounded-full">
-                    ADMIN
-                  </span>
-                </div>
-                <p className="text-gray-600">Manage all ReviewFlo businesses</p>
-              </div>
-              <div className="flex gap-3 mt-4 md:mt-0">
-                <Link
-                  href="/admin/create-business"
-                  className="bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-                >
-                  Create New Business
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold px-6 py-3 rounded-lg transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
+      <AdminLayout onLogout={handleLogout}>
+        <div className="px-4 py-8 max-w-7xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Overview</h1>
+            <p className="text-gray-600 mt-1">Stats, activity, and all businesses</p>
           </div>
 
           {/* Success Message */}
@@ -660,206 +499,6 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Early Access Signups */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-4">
-              Early Access ({earlyAccessSignups.length})
-            </h2>
-            {earlyAccessSignups.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Email</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Name</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Business type</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Paid</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Signed up</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {earlyAccessSignups.map((row) => (
-                      <tr key={row.id} className="hover:bg-gray-50/80">
-                        <td className="px-4 py-3">
-                          <a href={`mailto:${row.email}`} className="text-gray-900 hover:text-[#4A3428] hover:underline">{row.email}</a>
-                        </td>
-                        <td className="px-4 py-3 text-gray-600">{row.full_name || '—'}</td>
-                        <td className="px-4 py-3 text-gray-600">{row.business_type || '—'}</td>
-                        <td className="px-4 py-3">
-                          {row.stripe_session_id ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">Yes</span>
-                          ) : (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">No</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{new Date(row.created_at).toLocaleDateString()}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex justify-end gap-2">
-                            {row.business_id ? (
-                              <Link
-                                href={`/admin/businesses/${row.business_id}`}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-medium rounded transition-colors"
-                              >
-                                View
-                              </Link>
-                            ) : row.stripe_session_id ? (
-                              <Link
-                                href={{
-                                  pathname: '/admin/create-business',
-                                  query: {
-                                    earlyAccessSignupId: row.id,
-                                    name: row.full_name || '',
-                                    email: row.email,
-                                    businessType: row.business_type || '',
-                                  },
-                                }}
-                                className="inline-flex items-center px-3 py-1.5 text-sm bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-medium rounded transition-colors"
-                              >
-                                Create account
-                              </Link>
-                            ) : (
-                              <span className="text-xs text-gray-400">Paid required</span>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteEarlyAccessSignup(row.id)}
-                              disabled={deletingEarlyAccessId === row.id}
-                              className="inline-flex items-center px-3 py-1.5 text-sm bg-red-600 hover:bg-red-700 text-white font-medium rounded transition-colors disabled:opacity-50"
-                            >
-                              {deletingEarlyAccessId === row.id ? 'Removing…' : 'Remove'}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="text-gray-500">No early access signups yet.</p>
-            )}
-          </div>
-
-          {/* Search Bar */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 tracking-tight mb-4">ReviewFlo Admin Panel</h2>
-            <input
-              type="text"
-              placeholder="Search businesses by name or email..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A961] focus:border-transparent text-gray-900"
-            />
-          </div>
-
-          {/* Businesses Table */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                      Business Name
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                      Owner Email
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                      Tier
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                      Created
-                    </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                      Reviews
-                    </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                      Feedback
-                    </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {filteredBusinesses.map((business) => (
-                    <tr key={business.id} className="hover:bg-gray-50/80 transition-colors">
-                      <td className="px-6 py-4">
-                        <div>
-                          <p className="font-semibold text-gray-900">{business.business_name}</p>
-                          <p className="text-sm text-gray-500">/{business.slug}</p>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-gray-600">
-                        <div>
-                          {business.owner_name && <p className="font-medium text-gray-900">{business.owner_name}</p>}
-                          <a href={`mailto:${business.owner_email}`} className="text-gray-600 hover:underline">{business.owner_email}</a>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <select
-                          value={business.tier || 'free'}
-                          onChange={(e) => handleOverrideTier(business.id, e.target.value as 'free' | 'pro' | 'ai')}
-                          disabled={updatingTierId === business.id}
-                          className="text-sm font-medium px-2 py-1.5 rounded border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-[#C9A961] disabled:opacity-50"
-                        >
-                          <option value="free">Free</option>
-                          <option value="pro">Pro (testing)</option>
-                          <option value="ai">AI (testing)</option>
-                        </select>
-                      </td>
-                      <td className="px-6 py-4 text-gray-600">
-                        {new Date(business.created_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold">
-                          {business.reviews_count}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold">
-                          {business.feedback_count}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <Link
-                            href={`/admin/businesses/${business.id}`}
-                            className="px-3 py-1 text-sm bg-[#4A3428] hover:bg-[#4A3428]/90 text-white font-medium rounded transition-colors"
-                          >
-                            Edit
-                          </Link>
-                          <Link
-                            href={`/${business.slug}`}
-                            target="_blank"
-                            className="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-800 text-white font-medium rounded transition-colors"
-                          >
-                            View
-                          </Link>
-                          <button
-                            onClick={() => handleDeleteBusiness(business.id, business.business_name)}
-                            className="px-3 py-1 text-sm bg-red-600 hover:bg-red-700 text-white font-medium rounded transition-colors"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {filteredBusinesses.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500">
-                  {searchQuery ? 'No businesses found matching your search.' : 'No businesses yet.'}
-                </p>
-              </div>
-            )}
-          </div>
-
           {/* Footer */}
           <a
             href="https://usereviewflo.com"
@@ -880,7 +519,7 @@ export default function AdminDashboard() {
             </div>
           </a>
         </div>
-      </div>
+      </AdminLayout>
     </>
   )
 }
