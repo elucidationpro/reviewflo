@@ -63,9 +63,15 @@ export async function extractPlaceIdFromReviewUrl(
 
       try {
         // Follow the redirect to get the full Maps URL
+        // Use a browser-like User-Agent so Google returns the full Maps URL
         const response = await fetch(url, {
-          redirect: 'follow', // Follow redirects automatically
-          method: 'GET'
+          redirect: 'follow',
+          method: 'GET',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+          }
         });
 
         const finalUrl = response.url;
@@ -89,14 +95,42 @@ export async function extractPlaceIdFromReviewUrl(
       return null;
     }
 
-    // Pattern 3: Google Maps URL with ftid parameter (contains Place ID!)
-    // Example: https://www.google.com/maps/place/...?ftid=0x...:0x...
-    const ftidMatch = url.match(/[?&]ftid=(0x[a-fA-F0-9]+:0x[a-fA-F0-9]+)/);
+    // Pattern 3: Google Maps URL with ftid parameter (contains CID encoded as hex)
+    // Example: https://www.google.com/maps/place/...?ftid=0x42739ea03b45bd5d:0x8f575475ba39efb1
+    // The second hex value (after the colon) is the Google CID (customer ID)
+    // We can resolve this to a Place ID using the Places API cid= parameter
+    const ftidMatch = url.match(/[?&]ftid=0x[a-fA-F0-9]+:(0x[a-fA-F0-9]+)/);
     if (ftidMatch) {
-      const ftid = ftidMatch[1];
-      console.log('[extractPlaceId] Found ftid, attempting to convert to Place ID...');
-      // ftid is a CID, we need to convert it
-      // For now, try using the Google Places API with the business name
+      const cidHex = ftidMatch[1];
+      console.log('[extractPlaceId] Found ftid CID hex:', cidHex);
+
+      const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+      if (!apiKey) {
+        console.error('[extractPlaceId] GOOGLE_PLACES_API_KEY not configured');
+        return null;
+      }
+
+      try {
+        // Convert hex CID to decimal
+        const cidDecimal = BigInt(cidHex).toString();
+        console.log('[extractPlaceId] CID decimal:', cidDecimal);
+
+        const detailsResponse = await fetch(
+          `https://maps.googleapis.com/maps/api/place/details/json?cid=${cidDecimal}&fields=place_id,name&key=${apiKey}`
+        );
+        const detailsData = await detailsResponse.json();
+
+        if (detailsData.status === 'OK' && detailsData.result?.place_id) {
+          const placeId = detailsData.result.place_id;
+          console.log('[extractPlaceId] Resolved CID to Place ID:', placeId, '(', detailsData.result.name, ')');
+          return placeId;
+        } else {
+          console.warn('[extractPlaceId] CID lookup failed:', detailsData.status, detailsData.error_message);
+        }
+      } catch (error) {
+        console.error('[extractPlaceId] CID to Place ID conversion error:', error);
+      }
+
       return null;
     }
 
