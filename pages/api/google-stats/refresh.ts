@@ -62,7 +62,7 @@ export default async function handler(
       try {
         const tokens = await refreshAccessToken(business.google_oauth_refresh_token)
         const gbpResult = await fetchAllReviewsFromBusinessProfile(tokens.accessToken)
-        if (gbpResult && gbpResult.reviews.length >= 0) {
+        if (gbpResult && gbpResult.reviews.length > 0) {
           // Update tokens in DB
           await supabaseAdmin
             .from('businesses')
@@ -117,62 +117,17 @@ export default async function handler(
     let data = await fetchPlaceDetails(placeId)
 
     if (data.status !== 'OK' || !data.result) {
-      const errMsg = data.error_message || 'Failed to fetch place data'
-      if (!PLACE_ID_INVALID.test(errMsg)) {
-        return res.status(400).json({ error: errMsg })
-      }
+      const errMsg = data.error_message || data.status || 'Failed to fetch place data'
+      console.warn('[google-stats/refresh] Places API error for place_id', placeId, ':', data.status, errMsg)
 
-      // Place ID is stale – clear cache and try to get a fresh one
-      await supabaseAdmin
-        .from('businesses')
-        .update({ google_place_id: null })
-        .eq('id', business.id)
-
-      let freshPlaceId: string | null = null
-
-      if (business.google_oauth_refresh_token) {
-        try {
-          const tokens = await refreshAccessToken(business.google_oauth_refresh_token)
-          const profile = await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken)
-          if (profile?.placeId) {
-            freshPlaceId = profile.placeId
-            await supabaseAdmin
-              .from('businesses')
-              .update({
-                google_place_id: profile.placeId,
-                google_oauth_access_token: tokens.accessToken,
-                google_oauth_expires_at: new Date(Date.now() + tokens.expiresIn * 1000).toISOString(),
-              })
-              .eq('id', business.id)
-          }
-        } catch (e) {
-          console.warn('[google-stats/refresh] OAuth refresh failed:', e)
-        }
-      }
-
-      if (!freshPlaceId && business.google_review_url) {
-        freshPlaceId = await extractPlaceIdFromReviewUrl(business.google_review_url)
-        if (freshPlaceId) {
-          await supabaseAdmin
-            .from('businesses')
-            .update({ google_place_id: freshPlaceId })
-            .eq('id', business.id)
-        }
-      }
-
-      if (!freshPlaceId) {
-        return res.status(400).json({
-          error: 'Place ID expired. Reconnect Google Business Profile in Settings, or update your Google Review URL, then try again.'
-        })
-      }
-
-      placeId = freshPlaceId
-      data = await fetchPlaceDetails(placeId)
-      if (data.status !== 'OK' || !data.result) {
-        return res.status(400).json({
-          error: data.error_message || 'Still unable to fetch place data after refresh.'
-        })
-      }
+      // For service-area businesses or other lookup failures: do NOT clear the cached
+      // Place ID and do NOT fall back to URL-based resolution (which can resolve to a
+      // different business via CID). Just surface the error so the user knows to
+      // connect Google Business Profile API instead.
+      return res.status(400).json({
+        error: 'Unable to fetch Google stats via Places API. This business may not be indexed (e.g. service-area business). Connect Google Business Profile for full stats.',
+        status: data.status,
+      })
     }
 
     const result = data.result
