@@ -24,7 +24,6 @@ export default function Document() {
 
         {/* Additional Meta Tags */}
         <meta name="theme-color" content="#4A3428" />
-        <link rel="canonical" href="https://usereviewflo.com" />
 
         {/* Google Analytics (GA4) */}
         <Script

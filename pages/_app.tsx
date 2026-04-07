@@ -8,6 +8,9 @@ import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://usereviewflo.com").replace(/\/$/, "");
+  const canonicalPath = (router.asPath || "/").split("?")[0] || "/";
+  const canonicalUrl = `${baseUrl}${canonicalPath === "/" ? "" : canonicalPath}`;
 
   useEffect(() => {
     // Handle Supabase auth tokens in URL hash (recovery, invite, etc.)
@@ -31,6 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <PostHogProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href={canonicalUrl} />
       </Head>
       <Component {...pageProps} />
     </PostHogProvider>

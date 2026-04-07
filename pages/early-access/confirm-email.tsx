@@ -18,7 +18,7 @@ export default function ConfirmEmailPage() {
     setResendMessage(null);
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const redirectTo = origin.includes('usereviewflo.com')
-      ? 'https://www.usereviewflo.com/early-access/join'
+      ? 'https://usereviewflo.com/early-access/join'
       : `${origin}/early-access/join`;
     const { error } = await supabase.auth.resend({
       type: 'signup',
