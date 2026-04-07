@@ -25,11 +25,9 @@ export default function LoginPage() {
   }, [router.query])
 
   const handleGoogleLogin = () => {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID
-    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google/login-callback`
-    const scope = 'openid profile email https://www.googleapis.com/auth/business.manage'
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`
-    window.location.href = authUrl
+    const base = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '')
+    if (!base) return
+    window.location.href = `${base}/api/auth/google/start?flow=login`
   }
 
   const handleLogin = async (e: React.FormEvent) => {

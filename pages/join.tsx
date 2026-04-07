@@ -406,11 +406,9 @@ fbq('track', 'PageView');`,
                       <button
                         type="button"
                         onClick={() => {
-                          const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID;
-                          const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google/signup-callback`;
-                          const scope = 'openid profile email https://www.googleapis.com/auth/business.manage';
-                          const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
-                          window.location.href = authUrl;
+                          const base = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
+                          if (!base) return;
+                          window.location.href = `${base}/api/auth/google/start?flow=signup`;
                         }}
                         className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-200 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-150 shadow-sm cursor-pointer"
                       >

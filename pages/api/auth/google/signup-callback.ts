@@ -1,6 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import {
+  clearOAuthStateCookie,
+  verifyGoogleOAuthState,
+} from '@/lib/google-oauth-csrf';
+import {
   exchangeCodeForTokens,
   getPlaceIdFromGoogleBusinessProfile,
 } from '../../../../lib/google-business-profile';
@@ -36,15 +40,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { code, error } = req.query;
+    const { code, error, state } = req.query;
 
     if (error) {
       console.error('[Google Signup] Auth error:', error);
+      clearOAuthStateCookie(res);
       return res.redirect(`/join?error=${encodeURIComponent('Google sign-in was cancelled or failed.')}`);
     }
 
     if (!code || typeof code !== 'string') {
+      clearOAuthStateCookie(res);
       return res.redirect(`/join?error=${encodeURIComponent('Missing authorization code')}`);
+    }
+
+    const stateOk = verifyGoogleOAuthState(
+      req,
+      res,
+      typeof state === 'string' ? state : ''
+    );
+    if (!stateOk) {
+      return res.redirect(
+        `/join?error=${encodeURIComponent('Sign-up session expired. Please try again.')}`
+      );
     }
 
     // Exchange code for tokens

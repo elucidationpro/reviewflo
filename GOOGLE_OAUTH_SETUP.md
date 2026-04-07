@@ -112,6 +112,12 @@ npm run dev
 - Make sure you added all redirect URIs to your OAuth client
 - Check that `NEXT_PUBLIC_APP_URL` matches your domain
 
+### Google Cloud “OAuth Overview” warnings (dashboard)
+
+- **`state` parameter / CSRF:** Login and signup now start at `/api/auth/google/start?flow=login` or `flow=signup`, which sets a short-lived cookie and sends `state` to Google; callbacks verify it. Settings → “Connect Google Business Profile” already used `state` (Supabase session token).
+- **Loopback redirects:** If Google warns that your **production** web client allows `http://localhost:...`, either remove localhost URIs from that client and create a **second** OAuth client (same APIs) used only in dev, or accept the warning for a small app.
+- **Cross-Account Protection / incremental authorization:** Optional hardening features; not required for basic sign-in. You can enable or ignore based on Google’s docs unless you have enterprise compliance needs.
+
 ### "Service area businesses not showing"
 - Service area businesses ARE supported!
 - The API returns Place IDs even for businesses without physical addresses
