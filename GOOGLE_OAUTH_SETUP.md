@@ -41,10 +41,21 @@ cd supabase/migrations
 4. Go to **APIs & Services** → **Credentials**
 5. Click **Create Credentials** → **OAuth client ID**
 6. Application type: **Web application**
-7. Add Authorized redirect URIs:
-   - `http://localhost:3000/api/auth/google/callback` (for dev)
-   - `http://localhost:3001/api/auth/google/callback` (for dev)
-   - `https://usereviewflo.com/api/auth/google/callback` (for production)
+7. Add **Authorized redirect URIs** (must match **exactly**, including `www` vs apex and path):
+
+   **Local dev**
+   - `http://localhost:3000/api/auth/google/callback`
+   - `http://localhost:3000/api/auth/google/login-callback`
+   - `http://localhost:3000/api/auth/google/signup-callback`
+   - (Optional) same three paths on `http://localhost:3001` if you use that port
+
+   **Production — add every URI your app can send.**  
+   `NEXT_PUBLIC_APP_URL` is prefixed to these paths in the browser. If production uses **`https://www.usereviewflo.com`**, register:
+   - `https://www.usereviewflo.com/api/auth/google/callback` (Settings → Connect Google Business)
+   - `https://www.usereviewflo.com/api/auth/google/login-callback` (Login with Google)
+   - `https://www.usereviewflo.com/api/auth/google/signup-callback` (Join / signup with Google)
+
+   If you ever set `NEXT_PUBLIC_APP_URL` to the apex domain, also add the same three paths with `https://usereviewflo.com/...`. Google does **not** treat `www` and apex as the same redirect URI.
 8. Click **Create**
 9. Copy the **Client ID** and **Client Secret**
 
