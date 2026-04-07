@@ -2,21 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  async redirects() {
-    return [
-      {
-        source: "/:path*",
-        has: [
-          {
-            type: "host",
-            value: "www.usereviewflo.com",
-          },
-        ],
-        destination: "https://usereviewflo.com/:path*",
-        permanent: true,
-      },
-    ];
-  },
+  // Do not redirect www ↔ apex here. Vercel’s “primary domain” already canonicalizes
+  // hostnames; a second redirect in Next.js can fight it and cause redirect loops.
   async headers() {
     const isDev = process.env.NODE_ENV === 'development';
 
