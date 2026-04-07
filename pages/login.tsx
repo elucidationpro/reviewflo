@@ -25,9 +25,8 @@ export default function LoginPage() {
   }, [router.query])
 
   const handleGoogleLogin = () => {
-    const base = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '')
-    if (!base) return
-    window.location.href = `${base}/api/auth/google/start?flow=login`
+    // Relative URL keeps OAuth on the same host as the tab (localhost, preview, prod).
+    window.location.href = '/api/auth/google/start?flow=login'
   }
 
   const handleLogin = async (e: React.FormEvent) => {

@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getAppBaseUrl } from '@/lib/app-base-url';
 import {
   createOAuthState,
   setOAuthStateCookie,
@@ -19,7 +20,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID;
-  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
+  const baseUrl = getAppBaseUrl(req);
   if (!clientId || !baseUrl) {
     return res.status(500).send('OAuth is not configured');
   }

@@ -33,7 +33,12 @@ interface GoogleLocationsListResponse {
 /**
  * Exchange authorization code for access and refresh tokens
  */
-export async function exchangeCodeForTokens(code: string, mode: 'settings' | 'signup' | 'login' = 'settings') {
+export async function exchangeCodeForTokens(
+  code: string,
+  mode: 'settings' | 'signup' | 'login' = 'settings',
+  /** Must match the host used in /api/auth/google/start (dev: request host). */
+  appBaseUrl?: string
+) {
   const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
   const callbackPath = mode === 'signup'
@@ -41,7 +46,8 @@ export async function exchangeCodeForTokens(code: string, mode: 'settings' | 'si
     : mode === 'login'
       ? '/api/auth/google/login-callback'
       : '/api/auth/google/callback';
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}${callbackPath}`;
+  const base = (appBaseUrl || process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
+  const redirectUri = `${base}${callbackPath}`;
 
   const response = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',

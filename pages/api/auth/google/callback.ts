@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { getAppBaseUrl } from '@/lib/app-base-url';
 import {
   exchangeCodeForTokens,
   getPlaceIdFromGoogleBusinessProfile,
@@ -59,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Exchange authorization code for tokens
     console.log('[Google OAuth] Exchanging code for tokens...');
-    const tokens = await exchangeCodeForTokens(code);
+    const tokens = await exchangeCodeForTokens(code, 'settings', getAppBaseUrl(req));
 
     // Fetch Place ID from Google Business Profile (best effort; still save OAuth tokens even if GBP lookup fails)
     console.log('[Google OAuth] Fetching Place ID from Business Profile...');

@@ -8,6 +8,7 @@ import {
   exchangeCodeForTokens,
   getPlaceIdFromGoogleBusinessProfile,
 } from '../../../../lib/google-business-profile';
+import { getAppBaseUrl } from '@/lib/app-base-url';
 import {
   generateSlugFromBusinessName,
   isReservedSlug,
@@ -63,7 +64,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       );
     }
 
-    const tokens = await exchangeCodeForTokens(code, 'login');
+    const appBase = getAppBaseUrl(req);
+    const tokens = await exchangeCodeForTokens(code, 'login', appBase);
     const accessToken = tokens.accessToken;
 
     // Get Google user profile
@@ -222,8 +224,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       email,
       options: {
         redirectTo: createdNow
-          ? `${process.env.NEXT_PUBLIC_APP_URL}/join/google-confirm`
-          : `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+          ? `${appBase}/join/google-confirm`
+          : `${appBase}/dashboard`,
       },
     });
 

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { getAppBaseUrl } from '@/lib/app-base-url';
 import {
   clearOAuthStateCookie,
   verifyGoogleOAuthState,
@@ -64,8 +65,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       );
     }
 
+    const appBase = getAppBaseUrl(req);
+
     // Exchange code for tokens
-    const tokens = await exchangeCodeForTokens(code, 'signup');
+    const tokens = await exchangeCodeForTokens(code, 'signup', appBase);
 
     // Get Google user profile (name + email)
     const profileRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
@@ -174,7 +177,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         type: 'magiclink',
         email,
         options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+          redirectTo: `${appBase}/dashboard`,
         },
       });
       if (linkError || !linkData?.properties?.action_link) {
@@ -306,7 +309,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       type: 'magiclink',
       email,
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/join/google-confirm`,
+        redirectTo: `${appBase}/join/google-confirm`,
       },
     });
 

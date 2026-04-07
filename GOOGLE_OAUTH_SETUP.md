@@ -59,6 +59,18 @@ cd supabase/migrations
 8. Click **Create**
 9. Copy the **Client ID** and **Client Secret**
 
+### Supabase Auth: allow localhost redirects (required for local Google login)
+
+After Google OAuth, the app uses **Supabase Admin `generateLink`** and redirects the browser to Supabase’s verify URL. Supabase then sends the user to your `redirectTo` URL **only if that URL is allowed**.
+
+1. Open [Supabase Dashboard](https://supabase.com/dashboard) → your project → **Authentication** → **URL Configuration**.
+2. Under **Redirect URLs**, add:
+   - `http://localhost:3000/**`  
+   (Use the same port you run `next dev` on, e.g. `3001` if needed.)
+3. Save.
+
+If this is missing, Supabase falls back to your project **Site URL** (often production), which looks like “Google login sends me to the live site.”
+
 ### 3. Update Environment Variables
 
 Add to `.env.local`:
