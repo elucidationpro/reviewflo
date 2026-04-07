@@ -3,6 +3,14 @@
     {
       "path": "/api/cron/send-reminders",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/fetch-google-stats",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/send-weekly-reports",
+      "schedule": "0 9 * * 1"
     }
   ]
 }

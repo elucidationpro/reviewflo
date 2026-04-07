@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { Menu, X } from 'lucide-react';
 import { trackEvent } from '@/lib/posthog-provider';
 
-type NavVariant = 'marketing' | 'pricing' | 'join-minimal' | 'login-minimal' | 'dashboard';
+type NavVariant = 'marketing' | 'pricing' | 'demo' | 'join-minimal' | 'login-minimal' | 'dashboard';
 
 interface SiteNavProps {
   variant: NavVariant;
@@ -20,7 +20,9 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const isHomeActive = router.pathname === '/';
   const isPricingActive = router.pathname === '/pricing';
+  const isDemoActive = router.pathname === '/demo';
   const isDashboardActive = router.pathname === '/dashboard';
   const isSettingsActive = router.pathname === '/settings';
 
@@ -43,8 +45,8 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
     (
       link:
         | 'home'
-        | 'how-it-works'
         | 'pricing'
+        | 'demo'
         | 'login'
         | 'start-free'
         | 'dashboard'
@@ -67,24 +69,22 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
           closeMobile();
         }
 
-        if (link === 'how-it-works') {
+        if (link === 'home') {
           if (router.pathname === '/') {
-            const el = document.getElementById('how-it-works');
-            if (el) {
-              const headerOffset = 80;
-              const rect = el.getBoundingClientRect();
-              const scrollTop = window.scrollY + rect.top - headerOffset;
-              window.scrollTo({ top: scrollTop, behavior: 'smooth' });
-              return;
-            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            await router.push('/');
           }
-
-          await router.push('/#how-it-works');
           return;
         }
 
         if (link === 'pricing') {
           await router.push('/pricing');
+          return;
+        }
+
+        if (link === 'demo') {
+          await router.push('/demo');
           return;
         }
 
@@ -107,8 +107,6 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
           await router.push('/settings');
           return;
         }
-
-        await router.push('/');
       },
     [closeMobile, router, variant]
   );
@@ -148,13 +146,13 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
   );
 
   const showPrimaryCta =
-    variant === 'marketing' || variant === 'pricing';
+    variant === 'marketing' || variant === 'pricing' || variant === 'demo';
 
   const showDesktopInfoLinks =
-    variant === 'marketing' || variant === 'pricing';
+    variant === 'marketing' || variant === 'pricing' || variant === 'demo';
 
   const showDesktopLogin =
-    variant === 'marketing' || variant === 'pricing' || variant === 'join-minimal';
+    variant === 'marketing' || variant === 'pricing' || variant === 'demo' || variant === 'join-minimal';
 
   const logo = (
     <Link
@@ -258,7 +256,7 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
         <div className={`flex items-center justify-between ${NAV_HEIGHT_CLASS}`}>
           {/* Mobile: menu + logo */}
           <div className="flex items-center gap-3 md:gap-6">
-            {(variant === 'marketing' || variant === 'pricing') && (
+            {(variant === 'marketing' || variant === 'pricing' || variant === 'demo') && (
               <button
                 type="button"
                 onClick={toggleMobile}
@@ -276,11 +274,26 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
             {showDesktopInfoLinks && (
               <nav className="flex items-center gap-6">
                 <Link
-                  href="/#how-it-works"
-                  onClick={handleNavClick('how-it-works', 'desktop')}
-                  className="text-sm font-medium text-gray-600 hover:text-[#4A3428] transition-colors"
+                  href="/"
+                  onClick={handleNavClick('home', 'desktop')}
+                  className={`text-sm font-medium transition-colors ${
+                    isHomeActive
+                      ? 'text-[#4A3428] border-b-2 border-[#C9A961] pb-1'
+                      : 'text-gray-600 hover:text-[#4A3428]'
+                  }`}
                 >
-                  How It Works
+                  Home
+                </Link>
+                <Link
+                  href="/demo"
+                  onClick={handleNavClick('demo', 'desktop')}
+                  className={`text-sm font-medium transition-colors ${
+                    isDemoActive
+                      ? 'text-[#4A3428] border-b-2 border-[#C9A961] pb-1'
+                      : 'text-gray-600 hover:text-[#4A3428]'
+                  }`}
+                >
+                  Demo
                 </Link>
                 <Link
                   href="/pricing"
@@ -333,15 +346,24 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
       </div>
 
       {/* Mobile menu */}
-      {(variant === 'marketing' || variant === 'pricing') && mobileOpen && (
+      {(variant === 'marketing' || variant === 'pricing' || variant === 'demo') && mobileOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white shadow-lg">
           <nav className="max-w-6xl mx-auto px-4 pt-2 pb-4 space-y-1 text-sm font-medium text-gray-700">
             <Link
-              href="/#how-it-works"
-              onClick={handleNavClick('how-it-works', 'mobile')}
+              href="/"
+              onClick={handleNavClick('home', 'mobile')}
+              className={`block rounded-md px-3 py-2 hover:bg-gray-50 ${
+                isHomeActive ? 'font-semibold text-[#4A3428] bg-[#4A3428]/[0.06]' : ''
+              }`}
+            >
+              Home
+            </Link>
+            <Link
+              href="/demo"
+              onClick={handleNavClick('demo', 'mobile')}
               className="block rounded-md px-3 py-2 hover:bg-gray-50"
             >
-              How It Works
+              Demo
             </Link>
             <Link
               href="/pricing"

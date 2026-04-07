@@ -52,6 +52,9 @@ export default function ReviewPreview({
   const [whatHappened, setWhatHappened] = useState('')
   const [howToMakeRight, setHowToMakeRight] = useState('')
   const [wantsContact, setWantsContact] = useState(false)
+  const [contactEmail, setContactEmail] = useState('')
+  const [contactPhone, setContactPhone] = useState('')
+  const [contactError, setContactError] = useState('')
 
   const platforms = [
     { name: 'Google', url: googleReviewUrl },
@@ -84,6 +87,18 @@ export default function ReviewPreview({
     setWhatHappened('')
     setHowToMakeRight('')
     setWantsContact(false)
+    setContactEmail('')
+    setContactPhone('')
+    setContactError('')
+  }
+
+  const submitFeedbackPreview = () => {
+    if (wantsContact && !contactEmail.trim() && !contactPhone.trim()) {
+      setContactError('Please provide an email or phone number so we can reach you.')
+      return
+    }
+    setContactError('')
+    setScreen('thanks')
   }
 
   return (
@@ -407,19 +422,76 @@ export default function ReviewPreview({
                   placeholder="What would make this better for you…"
                 />
               </div>
-              <label className="flex items-center gap-3 cursor-pointer py-0.5">
-                <input
-                  type="checkbox"
-                  checked={wantsContact}
-                  onChange={e => setWantsContact(e.target.checked)}
-                  className="w-4 h-4 rounded cursor-pointer shrink-0"
-                  style={{ accentColor: primaryColor }}
-                />
-                <span className="text-sm text-gray-700">I&apos;d like to be contacted about this</span>
-              </label>
+              <div className="pt-1 border-t border-gray-100">
+                <label className="flex items-center gap-3 cursor-pointer py-1">
+                  <input
+                    type="checkbox"
+                    checked={wantsContact}
+                    onChange={(e) => {
+                      setWantsContact(e.target.checked)
+                      if (!e.target.checked) setContactError('')
+                    }}
+                    className="w-4 h-4 rounded cursor-pointer shrink-0"
+                    style={{ accentColor: primaryColor }}
+                  />
+                  <span className="text-sm text-gray-700">I&apos;d like to be contacted about this</span>
+                </label>
+              </div>
+
+              {wantsContact && (
+                <div className="space-y-3 pl-1 sm:pl-7">
+                  <div>
+                    <label htmlFor="preview-feedback-email" className="block text-xs font-medium text-gray-600 mb-1">
+                      Email <span className="text-gray-400">(optional)</span>
+                    </label>
+                    <input
+                      id="preview-feedback-email"
+                      type="email"
+                      value={contactEmail}
+                      onChange={(e) => {
+                        setContactEmail(e.target.value)
+                        if (contactError) setContactError('')
+                      }}
+                      placeholder="your@email.com"
+                      autoComplete="email"
+                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 placeholder-gray-300 text-sm"
+                      style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="preview-feedback-phone" className="block text-xs font-medium text-gray-600 mb-1">
+                      Phone <span className="text-gray-400">(optional)</span>
+                    </label>
+                    <input
+                      id="preview-feedback-phone"
+                      type="tel"
+                      value={contactPhone}
+                      onChange={(e) => {
+                        setContactPhone(e.target.value)
+                        if (contactError) setContactError('')
+                      }}
+                      placeholder="(555) 123-4567"
+                      autoComplete="tel"
+                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 placeholder-gray-300 text-sm"
+                      style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400">Provide at least one contact method</p>
+                </div>
+              )}
+
+              {contactError && (
+                <div className="flex items-start gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl">
+                  <svg className="w-4 h-4 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                  </svg>
+                  <p className="text-red-700 text-xs leading-snug">{contactError}</p>
+                </div>
+              )}
+
               <button
                 type="button"
-                onClick={() => setScreen('thanks')}
+                onClick={submitFeedbackPreview}
                 style={{ backgroundColor: primaryColor }}
                 className="w-full text-white font-semibold py-3.5 px-4 text-sm rounded-xl transition-opacity active:opacity-80 cursor-pointer"
               >
@@ -459,6 +531,23 @@ export default function ReviewPreview({
                 ? "We'll be in touch soon to make things right."
                 : 'We appreciate you taking the time to share your experience.'}
             </p>
+            {wantsContact && (contactEmail.trim() || contactPhone.trim()) && (
+              <div className="mt-5 text-left rounded-xl border border-blue-100 bg-blue-50/80 px-4 py-3">
+                <p className="text-xs font-semibold text-blue-900 mb-2">Contact details shared</p>
+                {contactEmail.trim() && (
+                  <p className="text-sm text-blue-900">
+                    <span className="text-blue-700/80">Email: </span>
+                    <span className="break-all">{contactEmail.trim()}</span>
+                  </p>
+                )}
+                {contactPhone.trim() && (
+                  <p className={`text-sm text-blue-900 ${contactEmail.trim() ? 'mt-1' : ''}`}>
+                    <span className="text-blue-700/80">Phone: </span>
+                    {contactPhone.trim()}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         )}
         {screen === 'thanks' && showReviewfloBranding && (

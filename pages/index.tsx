@@ -5,6 +5,7 @@ import { CheckCircle, Clock, Shield, Star, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Head from 'next/head';
 import Script from 'next/script';
+import Link from 'next/link';
 import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
 
@@ -374,8 +375,18 @@ export default function LandingPage() {
           <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2 text-center">
             How ReviewFlo Works
           </h2>
-          <p className="text-sm sm:text-lg text-gray-600 mb-8 sm:mb-12 text-center max-w-2xl mx-auto">
+          <p className="text-sm sm:text-lg text-gray-600 mb-4 sm:mb-5 text-center max-w-2xl mx-auto">
             A simple 3-step flow that turns happy customers into public 5-star reviews.
+          </p>
+          <p className="text-sm text-gray-600 mb-8 sm:mb-12 text-center max-w-xl mx-auto">
+            Want to see the customer experience first?{' '}
+            <Link
+              href="/demo"
+              className="font-semibold text-[#4A3428] underline decoration-[#C9A961]/70 underline-offset-2 hover:decoration-[#4A3428]"
+            >
+              Try the interactive demo
+            </Link>
+            .
           </p>
 
           <div className="grid md:grid-cols-3 gap-6 sm:gap-8 relative">
