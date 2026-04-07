@@ -35,8 +35,11 @@ export default function SiteFooter() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
           <div>
-            <Link href="/" className="inline-block mb-3">
+            <Link href="/" className="relative inline-block mb-3">
               <img src="/images/reviewflo-logo.svg" alt="ReviewFlo" className="h-8 w-auto" />
+              <span className="absolute -top-1 -right-3 text-[10px] sm:text-xs text-[#4A3428]">
+                ™
+              </span>
             </Link>
             <p className="text-sm text-gray-600 max-w-xs mb-4">
               Stop bad reviews before they go public. Simple review management for small service businesses.

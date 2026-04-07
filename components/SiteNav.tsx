@@ -165,9 +165,6 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
         alt="ReviewFlo"
         className="h-8 sm:h-10 w-auto"
       />
-      <span className="absolute -top-1 -right-3 text-[10px] sm:text-xs text-[#4A3428]">
-        ™
-      </span>
     </Link>
   );
 
@@ -199,9 +196,6 @@ export function SiteNav({ variant, businessName, onLogout }: SiteNavProps) {
                   alt="ReviewFlo"
                   className="h-7 sm:h-10 w-auto"
                 />
-                <span className="absolute -top-1 -right-3 text-[10px] sm:text-xs text-[#4A3428]">
-                  ™
-                </span>
               </Link>
               <nav className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm font-medium text-slate-600">
                 <Link

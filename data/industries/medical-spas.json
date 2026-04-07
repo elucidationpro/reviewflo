@@ -1,0 +1,120 @@
+{
+  "slug": "medical-spas",
+  "industryName": "Medical Spas",
+  "targetKeyword": "medical spa review management",
+  "seo": {
+    "title": "Medical Spa Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your medspa. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/medical-spas"
+  },
+  "h1": "Review Management for Medical Spas",
+  "hero": {
+    "heading": "Review Management Built for Medical Spas",
+    "subheading": "Clients care about privacy. ReviewFlo helps you ask for Google reviews without putting treatments in the spotlight.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for medical spas"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Medical Spa Faces",
+    "items": [
+      {
+        "heading": "Clients don't want to publicize cosmetic procedures",
+        "body": "A Botox client isn't posting about their treatment publicly — even if they loved it. Privacy is the default."
+      },
+      {
+        "heading": "One bad outcome review wipes out months of good ones",
+        "body": "One frustrated client can leave a public 1-star that sits at the top. You need a way to catch issues privately first."
+      },
+      {
+        "heading": "You're competing against clinics with $20k marketing budgets",
+        "body": "Big groups can push reviews with paid tools and big teams. You need a simple system that runs without extra work."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Medspas",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after checkout",
+        "body": "Text or email a ReviewFlo link right after the appointment."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Medspas Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Built for the medspa client relationship",
+        "body": "Your requests can focus on the experience, not the treatment."
+      },
+      {
+        "heading": "Catch complaints before they go public",
+        "body": "Unhappy clients can message you privately instead of posting publicly."
+      },
+      {
+        "heading": "More reviews without awkward asks",
+        "body": "Send requests by text or email after each appointment. It’s consistent and easy to repeat."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will medspa clients actually leave reviews for cosmetic procedures?",
+        "a": "Yes — when asked the right way. Templates can focus on the experience (staff, environment, results) instead of the specific treatment."
+      },
+      {
+        "q": "What happens when a client is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "How is this different from Podium or Birdeye?",
+        "a": "Same core flow: send requests, route unhappy clients to private feedback, and guide happy clients to Google. ReviewFlo is built for small medspa teams."
+      },
+      {
+        "q": "Does this work with our booking software?",
+        "a": "You can send requests manually, or use the API to connect booking platforms."
+      },
+      {
+        "q": "Can I use this across multiple locations?",
+        "a": "Yes. The AI plan supports multiple locations with separate dashboards and links."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Day Spas", "href": "/for/day-spas" },
+      { "label": "Dermatology Clinics", "href": "/for/dermatology-clinics" },
+      { "label": "Cosmetic Dentistry", "href": "/for/cosmetic-dentistry" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Medspa Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}
