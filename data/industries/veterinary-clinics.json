@@ -1,0 +1,138 @@
+{
+  "slug": "veterinary-clinics",
+  "industryName": "Veterinary Clinics",
+  "targetKeyword": "veterinary review management",
+  "seo": {
+    "title": "Veterinary Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your vet clinic. Route upset pet owners to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/veterinary-clinics"
+  },
+  "h1": "Review Management for Veterinary Clinics",
+  "hero": {
+    "heading": "Review Management Built for Veterinary Clinics",
+    "subheading": "Pet owners are emotional and busy. ReviewFlo helps you ask for feedback without putting clinical details in the spotlight.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for veterinary clinics"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Veterinary Clinic Faces",
+    "items": [
+      {
+        "heading": "Grief and fear show up as one-star rants",
+        "body": "Hard outcomes become public reviews written in the heat of the moment."
+      },
+      {
+        "heading": "Happy wellness visits rarely get written up",
+        "body": "Routine care feels unremarkable to clients even when your team did great work."
+      },
+      {
+        "heading": "Front desk staff cannot debrief every checkout",
+        "body": "The lobby is loud and the next patient is waiting."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Vet Clinics",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Veterinary Clinics Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask after the visit, not during stress",
+        "body": "Send a link when things are calmer, focused on care and communication."
+      },
+      {
+        "heading": "Private outlet before public damage",
+        "body": "Give upset owners a path to your team first."
+      },
+      {
+        "heading": "Built for small practices",
+        "body": "No enterprise sales process. Start with manual sends."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "How do we ask without sharing medical details?",
+        "a": "Keep requests about the visit experience. Owners choose what they post publicly."
+      },
+      {
+        "q": "What happens after a difficult case?",
+        "a": "Owners can still rate privately so you hear the story before it is on Google."
+      },
+      {
+        "q": "Do we need software integration?",
+        "a": "No. Email and text are enough to begin."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same feedback routing at pricing suited to independent clinics."
+      },
+      {
+        "q": "Multiple doctors?",
+        "a": "You can use one clinic link or expand when you need per-provider tracking."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Mobile Vet Services",
+        "href": "/for/mobile-vet-services"
+      },
+      {
+        "label": "Pet Boarding",
+        "href": "/for/pet-boarding"
+      },
+      {
+        "label": "Dental Practices",
+        "href": "/for/dental-practices"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Veterinary Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "tanning-salons",
+  "industryName": "Tanning Salons",
+  "targetKeyword": "tanning salon review management",
+  "seo": {
+    "title": "Tanning Salon Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your tanning salon. Route unhappy clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/tanning-salons"
+  },
+  "h1": "Review Management for Tanning Salons",
+  "hero": {
+    "heading": "Review Management Built for Tanning Salons",
+    "subheading": "Color develops after clients leave. ReviewFlo asks the next day when they see the tone they wanted.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for tanning salons"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Tanning Salon Faces",
+    "items": [
+      {
+        "heading": "Results show up hours later",
+        "body": "They walk out unsure and forget to post when it looks right."
+      },
+      {
+        "heading": "Orange panic posts spread in stories",
+        "body": "Bad blends become screenshots before you can fix them."
+      },
+      {
+        "heading": "Front desk turnover breaks consistency",
+        "body": "Some staff mention reviews, most do not."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Tanning Salons",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Tanning Salons Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Time the ask after color settles",
+        "body": "Send when they text you a happy mirror pic."
+      },
+      {
+        "heading": "Private first for burns or streaks",
+        "body": "Solve mishaps before they star you down."
+      },
+      {
+        "heading": "Spray and bed businesses",
+        "body": "Same simple link for both services."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients review tanning?",
+        "a": "Yes, when the glow lands and the ask is easy."
+      },
+      {
+        "q": "What about membership plans?",
+        "a": "Send after standout visits, not every single session."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without franchise salon pricing."
+      },
+      {
+        "q": "Teen policies?",
+        "a": "Follow local rules. Reviews still reflect guardian experiences."
+      },
+      {
+        "q": "Mobile spray?",
+        "a": "Text after appointments the same as in-studio."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Hair Salons",
+        "href": "/for/hair-salons"
+      },
+      {
+        "label": "Nail Salons",
+        "href": "/for/nail-salons"
+      },
+      {
+        "label": "Makeup Artists",
+        "href": "/for/makeup-artists"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Tanning Salon Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

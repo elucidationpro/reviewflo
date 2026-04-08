@@ -1,0 +1,138 @@
+{
+  "slug": "hvac-repair",
+  "industryName": "HVAC Repair",
+  "targetKeyword": "HVAC review management",
+  "seo": {
+    "title": "HVAC Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your HVAC business. Route unhappy customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/hvac-repair"
+  },
+  "h1": "Review Management for HVAC Repair",
+  "hero": {
+    "heading": "Review Management Built for HVAC Repair",
+    "subheading": "Emergency calls and seasonal rushes leave little time to follow up. ReviewFlo sends the ask by text or email so you do not rely on memory.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for HVAC contractors"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every HVAC Business Faces",
+    "items": [
+      {
+        "heading": "Happy jobs end with a paid invoice, not a review",
+        "body": "Customers move on with their day. Google never hears about the great service."
+      },
+      {
+        "heading": "One botched install review can tank local trust",
+        "body": "Searchers skim stars first. A harsh headline stops the phone from ringing."
+      },
+      {
+        "heading": "Crews are in attics and crawl spaces, not marketing meetings",
+        "body": "There is no one whose job is to chase reviews after every ticket."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for HVAC Companies",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why HVAC Companies Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Works after the job is done",
+        "body": "Send the link when the work is complete and the house is cooling again."
+      },
+      {
+        "heading": "Private channel for angry customers",
+        "body": "Cooling off happens in your inbox first, not on your public profile."
+      },
+      {
+        "heading": "Same flow for service and installs",
+        "body": "One link for your whole team, whether it was a quick repair or a full replacement."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will customers leave reviews for HVAC work?",
+        "a": "Yes, when the ask is easy and arrives right after a comfortable home again."
+      },
+      {
+        "q": "What if someone is upset about a bill?",
+        "a": "They can rate low and message you privately so you can explain or adjust before it goes public."
+      },
+      {
+        "q": "Can my techs send the link from the truck?",
+        "a": "Yes. Text or email works from any phone. No special app required for the basics."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same review routing idea at a price built for small shops, not enterprise rollouts."
+      },
+      {
+        "q": "Multiple trucks or locations?",
+        "a": "Yes. Scale up on the plan that fits as you add crews."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Plumbing Services",
+        "href": "/for/plumbing-services"
+      },
+      {
+        "label": "Electricians",
+        "href": "/for/electricians"
+      },
+      {
+        "label": "Handyman Services",
+        "href": "/for/handyman-services"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More HVAC Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

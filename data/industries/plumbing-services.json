@@ -1,0 +1,138 @@
+{
+  "slug": "plumbing-services",
+  "industryName": "Plumbing Services",
+  "targetKeyword": "plumbing review management",
+  "seo": {
+    "title": "Plumbing Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your plumbing business. Route unhappy customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/plumbing-services"
+  },
+  "h1": "Review Management for Plumbing Services",
+  "hero": {
+    "heading": "Review Management Built for Plumbing Services",
+    "subheading": "After you stop the leak, customers want to move on. ReviewFlo helps you ask while the relief is still fresh.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for plumbing companies"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Plumbing Business Faces",
+    "items": [
+      {
+        "heading": "Great service disappears down the drain",
+        "body": "The job feels done to them the moment water runs clear. Reviews rarely cross their mind."
+      },
+      {
+        "heading": "Emergency pricing draws angry public posts",
+        "body": "Sticker shock shows up as a one-star rant where everyone can see it."
+      },
+      {
+        "heading": "Dispatch and field techs do not share one follow-up habit",
+        "body": "Some techs ask. Some forget. Your Google profile reflects that inconsistency."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Plumbers",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Plumbers Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Timed right after the fix",
+        "body": "Send the request when payment is collected, not a week later when they forgot your name."
+      },
+      {
+        "heading": "Give upset customers a direct line",
+        "body": "Private feedback gives you a chance to make it right before a public slam."
+      },
+      {
+        "heading": "One simple process for the whole crew",
+        "body": "Same link for every truck so quality shows up online the way it does in person."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Do homeowners actually review plumbers?",
+        "a": "Yes, when you make it one tap after a stressful problem is solved."
+      },
+      {
+        "q": "What about after-hours emergency calls?",
+        "a": "Send the link the next morning when heads are cooler. The flow still works."
+      },
+      {
+        "q": "Can I use this without a CRM?",
+        "a": "Yes. Manual sending is enough to start."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing for happy versus unhappy customers. ReviewFlo keeps pricing small-business friendly."
+      },
+      {
+        "q": "Multiple service areas?",
+        "a": "You can run separate links per territory on higher tiers when you need that."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "HVAC Repair",
+        "href": "/for/hvac-repair"
+      },
+      {
+        "label": "Electricians",
+        "href": "/for/electricians"
+      },
+      {
+        "label": "Handyman Services",
+        "href": "/for/handyman-services"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Plumbing Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "carpet-cleaning",
+  "industryName": "Carpet Cleaning",
+  "targetKeyword": "carpet cleaning review management",
+  "seo": {
+    "title": "Carpet Cleaning Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your carpet cleaning business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/carpet-cleaning"
+  },
+  "h1": "Review Management for Carpet Cleaning",
+  "hero": {
+    "heading": "Review Management Built for Carpet Cleaning",
+    "subheading": "Dry carpets mean a job well done — and customers already thinking about dinner. ReviewFlo sends the ask before the van drives away.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for carpet cleaners"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Carpet Cleaning Business Faces",
+    "items": [
+      {
+        "heading": "Stains that return become one-star stories",
+        "body": "Customers notice wicking after you are gone."
+      },
+      {
+        "heading": "Happy jobs feel routine",
+        "body": "Clean carpet is the expectation, not a highlight reel."
+      },
+      {
+        "heading": "Techs haul gear, not marketing scripts",
+        "body": "Nobody closes with a review reminder on every house."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Carpet Cleaners",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Carpet Cleaners Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send right after payment",
+        "body": "Catch the moment they are relieved the room smells fresh."
+      },
+      {
+        "heading": "Private first if spots come back",
+        "body": "You hear about it before Google does."
+      },
+      {
+        "heading": "Simple for owner-operators",
+        "body": "Works from one phone in the truck."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Do homeowners leave reviews for carpet cleaning?",
+        "a": "Yes, especially after pet or kid messes that finally feel handled."
+      },
+      {
+        "q": "What if drying takes hours?",
+        "a": "Send the ask next day when they can confirm the result."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without a monthly bill built for big brands."
+      },
+      {
+        "q": "Commercial accounts?",
+        "a": "Send to the site contact who booked the job."
+      },
+      {
+        "q": "Add-on upsells?",
+        "a": "Still one review flow. Satisfaction is what matters."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Pressure Washing",
+        "href": "/for/pressure-washing"
+      },
+      {
+        "label": "Window Cleaning",
+        "href": "/for/window-cleaning"
+      },
+      {
+        "label": "House Cleaning",
+        "href": "/for/house-cleaning"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Carpet Cleaning Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "tutoring-services",
+  "industryName": "Tutoring Services",
+  "targetKeyword": "tutoring review management",
+  "seo": {
+    "title": "Tutoring Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your tutoring business. Route upset families to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/tutoring-services"
+  },
+  "h1": "Review Management for Tutoring Services",
+  "hero": {
+    "heading": "Review Management Built for Tutoring Services",
+    "subheading": "Progress is gradual. ReviewFlo asks after report cards or test wins families actually celebrate.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for tutors"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Tutor Faces",
+    "items": [
+      {
+        "heading": "Slow gains feel invisible week to week",
+        "body": "Parents stop noticing steady effort."
+      },
+      {
+        "heading": "Grades still slip sometimes",
+        "body": "Disappointment hits your profile, not just the student."
+      },
+      {
+        "heading": "Privacy matters for kids",
+        "body": "Public praise can feel uncomfortable."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Tutors",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Tutors Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after measurable wins",
+        "body": "Ask when scores or confidence clearly move."
+      },
+      {
+        "heading": "Private first for scheduling or billing issues",
+        "body": "Family stress stays direct."
+      },
+      {
+        "heading": "Online and in-person",
+        "body": "Email and text both work."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we ask without revealing student details?",
+        "a": "Yes. Keep public language about communication and support."
+      },
+      {
+        "q": "What if parents disagree on progress?",
+        "a": "Private feedback opens a conversation before public conflict."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at independent-educator pricing."
+      },
+      {
+        "q": "Group classes?",
+        "a": "Send after sessions that felt especially helpful."
+      },
+      {
+        "q": "Test prep?",
+        "a": "Time asks after score releases families care about."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Music Lessons",
+        "href": "/for/music-lessons"
+      },
+      {
+        "label": "Dance Studios",
+        "href": "/for/dance-studios"
+      },
+      {
+        "label": "Martial Arts Schools",
+        "href": "/for/martial-arts-schools"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Tutoring Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

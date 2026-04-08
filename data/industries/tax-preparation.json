@@ -1,0 +1,138 @@
+{
+  "slug": "tax-preparation",
+  "industryName": "Tax Preparation",
+  "targetKeyword": "tax preparer review management",
+  "seo": {
+    "title": "Tax Prep Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your tax preparation business. Route upset clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/tax-preparation"
+  },
+  "h1": "Review Management for Tax Preparation",
+  "hero": {
+    "heading": "Review Management Built for Tax Preparation",
+    "subheading": "Seasonal rushes end in refunds or bills. ReviewFlo asks after filing when clients still understand the outcome.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for tax preparers"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Tax Preparer Faces",
+    "items": [
+      {
+        "heading": "Relief or shock, then silence",
+        "body": "Clients vanish after April whether they owe or get money back."
+      },
+      {
+        "heading": "Refund delays feel personal",
+        "body": "IRS timelines become your fault online."
+      },
+      {
+        "heading": "Privacy limits what you can celebrate publicly",
+        "body": "Big wins are confidential."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Tax Preparers",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Tax Preparers Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after signature",
+        "body": "Ask when the return is filed and emotions are still fresh."
+      },
+      {
+        "heading": "Private first for fee or mistake disputes",
+        "body": "Sensitive money topics stay direct."
+      },
+      {
+        "heading": "Seasonal offices",
+        "body": "Simple tools that fit pop-up shops."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we ask without sharing client data?",
+        "a": "Yes. Public asks should focus on responsiveness and clarity, not numbers."
+      },
+      {
+        "q": "What if someone owes unexpectedly?",
+        "a": "Private feedback lets you walk through next steps before a public rant."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at independent-preparer pricing."
+      },
+      {
+        "q": "Remote filings?",
+        "a": "Email the link after secure delivery of the return."
+      },
+      {
+        "q": "Audit support?",
+        "a": "Keep reviews about communication, not outcomes you cannot promise."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Accounting Firms",
+        "href": "/for/accounting-firms"
+      },
+      {
+        "label": "Law Offices",
+        "href": "/for/law-offices"
+      },
+      {
+        "label": "Financial Advisors",
+        "href": "/for/financial-advisors"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Tax Prep Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "pet-boarding",
+  "industryName": "Pet Boarding",
+  "targetKeyword": "pet boarding review management",
+  "seo": {
+    "title": "Pet Boarding Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your pet boarding facility. Route upset owners to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/pet-boarding"
+  },
+  "h1": "Review Management for Pet Boarding",
+  "hero": {
+    "heading": "Review Management Built for Pet Boarding",
+    "subheading": "Pickup day is emotional. ReviewFlo asks after tails wag and leashes clip, while relief is still high.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for pet boarding"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Pet Boarding Business Faces",
+    "items": [
+      {
+        "heading": "Happy reunions do not mean Google opens",
+        "body": "Owners just want to get home."
+      },
+      {
+        "heading": "Coughs and scrapes become public crises",
+        "body": "Kennel cough fears show up as angry stars."
+      },
+      {
+        "heading": "Front desk rush at holidays",
+        "body": "Nobody has time to coach reviews during check-in chaos."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Pet Boarding Facilities",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Pet Boarding Facilities Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after pickup",
+        "body": "Catch owners when pups look healthy and tired."
+      },
+      {
+        "heading": "Private first for injury or illness notes",
+        "body": "Serious issues deserve a direct line."
+      },
+      {
+        "heading": "Works for daycare and overnight",
+        "body": "Same link for different stay types."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will owners review boarding?",
+        "a": "Yes, especially after long trips where they trusted you with family."
+      },
+      {
+        "q": "What about vaccine requirements?",
+        "a": "Private feedback helps if someone feels turned away unfairly."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at kennel-scale pricing."
+      },
+      {
+        "q": "Multiple locations?",
+        "a": "Add dashboards when you expand."
+      },
+      {
+        "q": "Webcams?",
+        "a": "Reviews can mention peace of mind without promising video quality."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Pet Sitting",
+        "href": "/for/pet-sitting"
+      },
+      {
+        "label": "Dog Grooming",
+        "href": "/for/dog-grooming"
+      },
+      {
+        "label": "Veterinary Clinics",
+        "href": "/for/veterinary-clinics"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Pet Boarding Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

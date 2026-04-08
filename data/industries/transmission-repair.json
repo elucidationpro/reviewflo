@@ -1,0 +1,138 @@
+{
+  "slug": "transmission-repair",
+  "industryName": "Transmission Repair",
+  "targetKeyword": "transmission repair review management",
+  "seo": {
+    "title": "Transmission Repair Review Software | ReviewFlo",
+    "description": "Get more Google reviews for your transmission shop. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/transmission-repair"
+  },
+  "h1": "Review Management for Transmission Repair",
+  "hero": {
+    "heading": "Review Management Built for Transmission Repair",
+    "subheading": "Big bills make emotions run hot. ReviewFlo asks after the test drive proves the fix.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for transmission shops"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Transmission Shop Faces",
+    "items": [
+      {
+        "heading": "Sticker shock is the default story",
+        "body": "Customers fear they are being upsold."
+      },
+      {
+        "heading": "Comebacks feel like betrayal",
+        "body": "A shudder returns and trust breaks in public."
+      },
+      {
+        "heading": "Shop jargon confuses non-mechanics",
+        "body": "Misunderstanding becomes a one-star paragraph."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Transmission Shops",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Transmission Shops Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after road test approval",
+        "body": "Ask when they feel the shift points."
+      },
+      {
+        "heading": "Private first for warranty comebacks",
+        "body": "Give techs room to diagnose before Google hears it."
+      },
+      {
+        "heading": "Specialists welcome",
+        "body": "No big marketing department required."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review transmission work?",
+        "a": "Yes, after scary drivability problems finally feel solved."
+      },
+      {
+        "q": "What about rebuild versus replace?",
+        "a": "Private feedback helps you explain options before anger posts."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at independent-shop pricing."
+      },
+      {
+        "q": "Fleet accounts?",
+        "a": "Send to the fleet manager who approved the work."
+      },
+      {
+        "q": "Towing partners?",
+        "a": "Reviews should still be about your shop’s service."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Auto Repair Shops",
+        "href": "/for/auto-repair-shops"
+      },
+      {
+        "label": "Collision Repair",
+        "href": "/for/collision-repair"
+      },
+      {
+        "label": "Mobile Mechanics",
+        "href": "/for/mobile-mechanics"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Transmission Repair Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

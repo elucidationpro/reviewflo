@@ -1,0 +1,138 @@
+{
+  "slug": "phone-repair",
+  "industryName": "Phone Repair",
+  "targetKeyword": "phone repair review management",
+  "seo": {
+    "title": "Phone Repair Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your phone repair shop. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/phone-repair"
+  },
+  "h1": "Review Management for Phone Repair",
+  "hero": {
+    "heading": "Review Management Built for Phone Repair",
+    "subheading": "A working screen feels normal in minutes. ReviewFlo asks right after the handoff when relief is still sharp.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for phone repair shops"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Phone Repair Shop Faces",
+    "items": [
+      {
+        "heading": "Fixed phones stop feeling special fast",
+        "body": "Customers tuck devices away and move on."
+      },
+      {
+        "heading": "Data loss fears explode into one-stars",
+        "body": "Even warnings cannot calm panic after the fact."
+      },
+      {
+        "heading": "Mall kiosks are loud and fast",
+        "body": "Nobody pauses for a review speech."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Phone Repair Shops",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Phone Repair Shops Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send before they walk away",
+        "body": "Text right after the device powers on."
+      },
+      {
+        "heading": "Private first for repeat failures",
+        "body": "Comebacks get handled before public posts."
+      },
+      {
+        "heading": "Small counters",
+        "body": "Phone-only workflow works."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review phone repair?",
+        "a": "Yes, after cracked screens that blocked work or travel."
+      },
+      {
+        "q": "What about warranty void warnings?",
+        "a": "Private feedback helps if expectations were unclear."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at kiosk-scale pricing."
+      },
+      {
+        "q": "Mail-in repairs?",
+        "a": "Send when tracking shows delivery back to the customer."
+      },
+      {
+        "q": "Apple versus Android?",
+        "a": "Same flow; parts availability may affect mood."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Computer Repair",
+        "href": "/for/computer-repair"
+      },
+      {
+        "label": "Auto Detailing Shops",
+        "href": "/for/auto-detailing-shops"
+      },
+      {
+        "label": "Locksmith Services",
+        "href": "/for/locksmith-services"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Phone Repair Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

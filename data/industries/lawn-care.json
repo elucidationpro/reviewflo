@@ -1,0 +1,138 @@
+{
+  "slug": "lawn-care",
+  "industryName": "Lawn Care and Landscaping",
+  "targetKeyword": "lawn care review management",
+  "seo": {
+    "title": "Lawn Care Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your lawn or landscaping business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/lawn-care"
+  },
+  "h1": "Review Management for Lawn Care and Landscaping",
+  "hero": {
+    "heading": "Review Management Built for Lawn Care and Landscaping",
+    "subheading": "Crews finish a property and roll to the next job. ReviewFlo sends the ask before homeowners move on with their weekend.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for lawn and landscape companies"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Lawn Care Business Faces",
+    "items": [
+      {
+        "heading": "A tidy yard looks “just expected”",
+        "body": "Good work blends in. Nobody thinks to praise mowing online."
+      },
+      {
+        "heading": "Weather and seasonality make reviews spike or stall",
+        "body": "Busy stretches mean zero follow-up. Slow weeks feel scary on cash flow."
+      },
+      {
+        "heading": "One missed edge becomes a neighborhood warning",
+        "body": "Local groups amplify small complaints fast."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Lawn Care Companies",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Lawn Care Companies Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Text after the crew leaves",
+        "body": "Catch homeowners while they still see the stripes."
+      },
+      {
+        "heading": "Private line for damage or billing disputes",
+        "body": "Solve sprinkler hits or invoice issues before they star you down."
+      },
+      {
+        "heading": "Routes full of stops, inbox still simple",
+        "body": "Owners send in batches if that fits the day."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review seasonal work?",
+        "a": "Yes, right after a visit that made the yard obviously better."
+      },
+      {
+        "q": "What about HOA or city complaints?",
+        "a": "Private feedback helps you hear the story before it escalates publicly."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same review routing without a price built for national franchises."
+      },
+      {
+        "q": "Commercial and residential?",
+        "a": "Use the same flow per job contact."
+      },
+      {
+        "q": "Multiple crews?",
+        "a": "Start with one company link and split later if needed."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Pressure Washing",
+        "href": "/for/pressure-washing"
+      },
+      {
+        "label": "Gutter Cleaning",
+        "href": "/for/gutter-cleaning"
+      },
+      {
+        "label": "Window Cleaning",
+        "href": "/for/window-cleaning"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Lawn Care Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

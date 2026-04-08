@@ -1,0 +1,138 @@
+{
+  "slug": "locksmith-services",
+  "industryName": "Locksmith Services",
+  "targetKeyword": "locksmith review management",
+  "seo": {
+    "title": "Locksmith Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your locksmith business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/locksmith-services"
+  },
+  "h1": "Review Management for Locksmith Services",
+  "hero": {
+    "heading": "Review Management Built for Locksmith Services",
+    "subheading": "Lockouts are emotional. ReviewFlo asks after keys work again while gratitude is still sharp.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for locksmiths"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Locksmith Faces",
+    "items": [
+      {
+        "heading": "Relief makes people forget to post",
+        "body": "They just want to get inside."
+      },
+      {
+        "heading": "Price disputes after midnight go straight online",
+        "body": "Emergency rates feel unfair in the moment."
+      },
+      {
+        "heading": "Van routes leave no lobby moment",
+        "body": "There is no counter to leave a card."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Locksmiths",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Locksmiths Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Text right after entry",
+        "body": "Strike while the door is open and moods are calm."
+      },
+      {
+        "heading": "Private first for billing shock",
+        "body": "Explain travel or after-hours fees before a star rating."
+      },
+      {
+        "heading": "Built for mobile work",
+        "body": "Phone-only workflows are fine."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will customers review locksmiths?",
+        "a": "Yes, after stressful lockouts that ended calmly."
+      },
+      {
+        "q": "What if they dispute damage?",
+        "a": "Private feedback lets you document and respond without a public fight."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without national-chain pricing."
+      },
+      {
+        "q": "Automotive vs residential?",
+        "a": "Same link. They review the service they received."
+      },
+      {
+        "q": "Franchise territories?",
+        "a": "Start local. Expand links when you add shops."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Garage Door Repair",
+        "href": "/for/garage-door-repair"
+      },
+      {
+        "label": "Handyman Services",
+        "href": "/for/handyman-services"
+      },
+      {
+        "label": "Window Cleaning",
+        "href": "/for/window-cleaning"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Locksmith Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

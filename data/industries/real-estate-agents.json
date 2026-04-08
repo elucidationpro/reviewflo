@@ -1,0 +1,138 @@
+{
+  "slug": "real-estate-agents",
+  "industryName": "Real Estate Agents",
+  "targetKeyword": "real estate agent review management",
+  "seo": {
+    "title": "Real Estate Agent Review Software | ReviewFlo",
+    "description": "Get more Google reviews for your real estate business. Route upset clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/real-estate-agents"
+  },
+  "h1": "Review Management for Real Estate Agents",
+  "hero": {
+    "heading": "Review Management Built for Real Estate Agents",
+    "subheading": "Closing day is busy. ReviewFlo asks after keys change hands while gratitude still runs high.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for real estate agents"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Agent Faces",
+    "items": [
+      {
+        "heading": "Closings end in a blur of signatures",
+        "body": "Clients rush to movers, not Google."
+      },
+      {
+        "heading": "Deals that die become public blame",
+        "body": "Financing falls through and stars fall with them."
+      },
+      {
+        "heading": "You cannot share most success stories",
+        "body": "Privacy limits what you can showcase."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Real Estate Agents",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Agents Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after closing",
+        "body": "Catch buyers and sellers when the stress lifts."
+      },
+      {
+        "heading": "Private first for commission or inspection fights",
+        "body": "Money disputes stay direct."
+      },
+      {
+        "heading": "Teams or solo",
+        "body": "Same link for your brand."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we ask both sides of a deal?",
+        "a": "Yes, with separate timing so asks feel appropriate to each party."
+      },
+      {
+        "q": "What if a deal cancels?",
+        "a": "Private feedback helps you repair trust before public posts."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without brokerage enterprise pricing."
+      },
+      {
+        "q": "Rentals versus sales?",
+        "a": "Pick moments after smooth move-ins or closings."
+      },
+      {
+        "q": "Referral rules?",
+        "a": "Follow your broker’s policies on incentives for reviews."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Mortgage Brokers",
+        "href": "/for/mortgage-brokers"
+      },
+      {
+        "label": "Law Offices",
+        "href": "/for/law-offices"
+      },
+      {
+        "label": "Insurance Agents",
+        "href": "/for/insurance-agents"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Real Estate Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

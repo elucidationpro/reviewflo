@@ -1,0 +1,138 @@
+{
+  "slug": "mobile-mechanics",
+  "industryName": "Mobile Mechanics",
+  "targetKeyword": "mobile mechanic review management",
+  "seo": {
+    "title": "Mobile Mechanic Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your mobile mechanic business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/mobile-mechanics"
+  },
+  "h1": "Review Management for Mobile Mechanics",
+  "hero": {
+    "heading": "Review Management Built for Mobile Mechanics",
+    "subheading": "You fix cars at curbs and office lots. ReviewFlo sends the ask by text right after the keys go back.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for mobile mechanics"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Mobile Mechanic Faces",
+    "items": [
+      {
+        "heading": "No waiting room wall for a QR code",
+        "body": "The transaction ends in a parking space."
+      },
+      {
+        "heading": "Diagnostic surprises turn into angry stars",
+        "body": "Sticker shock becomes a permanent one-star story."
+      },
+      {
+        "heading": "You are already driving to the next job",
+        "body": "There is no front desk to hand off follow-up."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Mobile Mechanics",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Mobile Mechanics Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Text-first flow",
+        "body": "Meet customers where they already message you."
+      },
+      {
+        "heading": "Private first for disputes",
+        "body": "Billing fights get a direct line before they hit Google."
+      },
+      {
+        "heading": "Priced for one van",
+        "body": "No enterprise bundle required."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Does this work for roadside jobs?",
+        "a": "Send when the car is running again and payment is settled."
+      },
+      {
+        "q": "What if a part fails later?",
+        "a": "Private feedback still gives you a thread to resolve warranty issues calmly."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same happy versus unhappy routing at small-business pricing."
+      },
+      {
+        "q": "Fleet clients?",
+        "a": "You can still send per job if you have a contact on site."
+      },
+      {
+        "q": "Multiple techs?",
+        "a": "Start with one business link and split later if needed."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Auto Repair Shops",
+        "href": "/for/auto-repair-shops"
+      },
+      {
+        "label": "Oil Change Services",
+        "href": "/for/oil-change-services"
+      },
+      {
+        "label": "Tire Shops",
+        "href": "/for/tire-shops"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Mobile Mechanic Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "dry-cleaning",
+  "industryName": "Dry Cleaning and Laundry",
+  "targetKeyword": "dry cleaning review management",
+  "seo": {
+    "title": "Dry Cleaning Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your dry cleaning business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/dry-cleaning"
+  },
+  "h1": "Review Management for Dry Cleaning and Laundry",
+  "hero": {
+    "heading": "Review Management Built for Dry Cleaning and Laundry",
+    "subheading": "Clean clothes feel expected, not exciting. ReviewFlo asks after pickups when turnaround still felt fast.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for dry cleaners"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Dry Cleaner Faces",
+    "items": [
+      {
+        "heading": "Perfect presses rarely become posts",
+        "body": "Customers assume that is the job."
+      },
+      {
+        "heading": "Lost buttons and stains become public crises",
+        "body": "Wardrobe disasters hit emotionally."
+      },
+      {
+        "heading": "Counters are rush-hour loud",
+        "body": "Nobody hears a review pitch over the conveyor."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Dry Cleaners",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Dry Cleaners Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after pickup",
+        "body": "Text when the ticket closes."
+      },
+      {
+        "heading": "Private first for damage claims",
+        "body": "Resolve before stars fall."
+      },
+      {
+        "heading": "Retail counters",
+        "body": "Works from a tablet or phone."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review dry cleaning?",
+        "a": "Yes, after wedding gowns, suits, and rush saves."
+      },
+      {
+        "q": "What about lost garments?",
+        "a": "Private feedback opens a traceable thread before public panic."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at neighborhood-shop pricing."
+      },
+      {
+        "q": "Delivery routes?",
+        "a": "Send when bags return clean."
+      },
+      {
+        "q": "Eco solvents?",
+        "a": "Reviews can mention care and smell without chemical claims."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Tailoring and Alterations",
+        "href": "/for/tailoring-alterations"
+      },
+      {
+        "label": "Wedding Venues",
+        "href": "/for/wedding-venues"
+      },
+      {
+        "label": "Hotels",
+        "href": "/for/hotels"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Dry Cleaning Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

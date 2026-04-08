@@ -1,0 +1,138 @@
+{
+  "slug": "dog-grooming",
+  "industryName": "Dog Grooming",
+  "targetKeyword": "dog grooming review management",
+  "seo": {
+    "title": "Dog Grooming Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your grooming salon. Route unhappy pet parents to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/dog-grooming"
+  },
+  "h1": "Review Management for Dog Grooming",
+  "hero": {
+    "heading": "Review Management Built for Dog Grooming",
+    "subheading": "Pet parents love their dogs and still forget to review. ReviewFlo sends a quick ask after pickup when they are happiest.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for dog groomers"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Dog Grooming Business Faces",
+    "items": [
+      {
+        "heading": "A great groom ends with a wagging tail, not a Google click",
+        "body": "Customers are juggling leashes and schedules. Reviews are an afterthought."
+      },
+      {
+        "heading": "One bad haircut review mentions the dog by name",
+        "body": "Emotional posts spread fast in local pet groups and on your public profile."
+      },
+      {
+        "heading": "Your groomers are focused on animals, not follow-up campaigns",
+        "body": "There is no marketing person tracking who already got an ask."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Dog Groomers",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Dog Groomers Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Strike right after pickup",
+        "body": "Send the link when they pay and praise the cut, not days later."
+      },
+      {
+        "heading": "Private space for sensitive complaints",
+        "body": "Worried pet parents can vent to you first."
+      },
+      {
+        "heading": "Works for salons and small shops",
+        "body": "Same simple flow whether you have one table or a busy floor."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will pet parents review a groom?",
+        "a": "Yes, when the ask is easy and hits the moment they are relieved and happy."
+      },
+      {
+        "q": "What if someone blames us for a skin issue?",
+        "a": "They can message you privately so you can review notes and respond without a public fight."
+      },
+      {
+        "q": "Can reception send the texts?",
+        "a": "Yes. Anyone with the link can send it from a phone or computer."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same idea at a price meant for independent salons."
+      },
+      {
+        "q": "Multiple groomers under one brand?",
+        "a": "Yes. Start with one shop link and expand when you need separate tracking."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Mobile Dog Grooming",
+        "href": "/for/mobile-dog-grooming"
+      },
+      {
+        "label": "Pet Boarding",
+        "href": "/for/pet-boarding"
+      },
+      {
+        "label": "Veterinary Clinics",
+        "href": "/for/veterinary-clinics"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Dog Grooming Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

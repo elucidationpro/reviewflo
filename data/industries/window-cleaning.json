@@ -1,0 +1,138 @@
+{
+  "slug": "window-cleaning",
+  "industryName": "Window Cleaning",
+  "targetKeyword": "window cleaning review management",
+  "seo": {
+    "title": "Window Cleaning Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your window cleaning business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/window-cleaning"
+  },
+  "h1": "Review Management for Window Cleaning",
+  "hero": {
+    "heading": "Review Management Built for Window Cleaning",
+    "subheading": "Sparkling glass is obvious in person and invisible online unless someone posts. ReviewFlo asks right after you pack the squeegee.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for window cleaners"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Window Cleaning Business Faces",
+    "items": [
+      {
+        "heading": "Clean windows feel like table stakes",
+        "body": "Customers expect clarity, not a reason to rave."
+      },
+      {
+        "heading": "Streaks show up in sunlight hours later",
+        "body": "Frustration lands online after you have left."
+      },
+      {
+        "heading": "High ladders make small talk about reviews unlikely",
+        "body": "The job ends when the hose is rolled."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Window Cleaners",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Window Cleaners Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send before you drive away",
+        "body": "Catch them while the shine is obvious."
+      },
+      {
+        "heading": "Private first if a pane scratched",
+        "body": "Accidents get handled quietly when possible."
+      },
+      {
+        "heading": "Residential and storefront",
+        "body": "Same link for homeowners and managers."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review window cleaning?",
+        "a": "Yes, after big spring cleans or post-construction dust."
+      },
+      {
+        "q": "What if they notice issues later?",
+        "a": "Private feedback opens a thread for a touch-up visit."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without franchise-level pricing."
+      },
+      {
+        "q": "Route-based days?",
+        "a": "Batch-send at night if that fits your workflow."
+      },
+      {
+        "q": "Pure water systems?",
+        "a": "Customers still review the experience, not the gear."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Pressure Washing",
+        "href": "/for/pressure-washing"
+      },
+      {
+        "label": "Gutter Cleaning",
+        "href": "/for/gutter-cleaning"
+      },
+      {
+        "label": "Lawn Care and Landscaping",
+        "href": "/for/lawn-care"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Window Cleaning Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

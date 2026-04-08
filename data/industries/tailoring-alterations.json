@@ -1,0 +1,138 @@
+{
+  "slug": "tailoring-alterations",
+  "industryName": "Tailoring and Alterations",
+  "targetKeyword": "tailor review management",
+  "seo": {
+    "title": "Tailor Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your tailoring business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/tailoring-alterations"
+  },
+  "h1": "Review Management for Tailoring and Alterations",
+  "hero": {
+    "heading": "Review Management Built for Tailoring and Alterations",
+    "subheading": "Fits are personal. ReviewFlo asks after fittings when the mirror finally feels right.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for tailors"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Tailor Faces",
+    "items": [
+      {
+        "heading": "A perfect hem feels like “fixed,” not “wow”",
+        "body": "Customers forget the panic they arrived with."
+      },
+      {
+        "heading": "Wedding timelines amplify stress",
+        "body": "One late stitch becomes a public story."
+      },
+      {
+        "heading": "Pins and fittings need focus, not marketing",
+        "body": "There is no natural pitch at the mirror."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Tailors",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Tailors Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after final pickup",
+        "body": "Ask when they try the finished piece on."
+      },
+      {
+        "heading": "Private first for rework",
+        "body": "Fit issues stay direct."
+      },
+      {
+        "heading": "Solo shops welcome",
+        "body": "Phone-based flow."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review tailors?",
+        "a": "Yes, after events where fit mattered in photos."
+      },
+      {
+        "q": "What about rush fees?",
+        "a": "Private feedback helps if pricing felt unclear."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at boutique pricing."
+      },
+      {
+        "q": "Bridal parties?",
+        "a": "Send after the last dress walks."
+      },
+      {
+        "q": "Suit chains?",
+        "a": "Same link for each location when you want one profile."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Dry Cleaning and Laundry",
+        "href": "/for/dry-cleaning"
+      },
+      {
+        "label": "Wedding Venues",
+        "href": "/for/wedding-venues"
+      },
+      {
+        "label": "Makeup Artists",
+        "href": "/for/makeup-artists"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Tailoring Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

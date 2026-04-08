@@ -1,0 +1,138 @@
+{
+  "slug": "makeup-artists",
+  "industryName": "Makeup Artists",
+  "targetKeyword": "makeup artist review management",
+  "seo": {
+    "title": "Makeup Artist Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your makeup artistry business. Route unhappy clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/makeup-artists"
+  },
+  "h1": "Review Management for Makeup Artists",
+  "hero": {
+    "heading": "Review Management Built for Makeup Artists",
+    "subheading": "Weddings and shoots end in a whirlwind. ReviewFlo sends the ask when photos still feel magical.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for makeup artists"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Makeup Artist Faces",
+    "items": [
+      {
+        "heading": "The day moves on without a pause",
+        "body": "Clients rush to photos, not Google."
+      },
+      {
+        "heading": "Lighting differences create doubt",
+        "body": "Looks that seemed perfect indoors read wrong in camera later."
+      },
+      {
+        "heading": "You are packing brushes, not follow-up scripts",
+        "body": "There is no desk after an on-site job."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Makeup Artists",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Makeup Artists Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Text after the event",
+        "body": "Send when they still love the mirror moment."
+      },
+      {
+        "heading": "Private first for allergy or color fixes",
+        "body": "Sensitive issues stay between you."
+      },
+      {
+        "heading": "Bridal and editorial",
+        "body": "Same link for any booking type."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients review makeup artists?",
+        "a": "Yes, especially after emotional events where they felt confident."
+      },
+      {
+        "q": "What about trials?",
+        "a": "Send after the trial they booked the wedding from."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at indie pricing."
+      },
+      {
+        "q": "Agency teams?",
+        "a": "Start with one brand link per lead artist."
+      },
+      {
+        "q": "Travel fees?",
+        "a": "Private feedback helps if pricing felt unclear."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Wedding Venues",
+        "href": "/for/wedding-venues"
+      },
+      {
+        "label": "Hair Salons",
+        "href": "/for/hair-salons"
+      },
+      {
+        "label": "Event Venues",
+        "href": "/for/event-venues"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Makeup Artist Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "financial-advisors",
+  "industryName": "Financial Advisors",
+  "targetKeyword": "financial advisor review management",
+  "seo": {
+    "title": "Financial Advisor Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your financial advisory practice. Route upset clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/financial-advisors"
+  },
+  "h1": "Review Management for Financial Advisors",
+  "hero": {
+    "heading": "Review Management Built for Financial Advisors",
+    "subheading": "Markets swing. ReviewFlo asks after planning sessions when clients feel heard, not after quarterly noise.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for financial advisors"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Financial Advisor Faces",
+    "items": [
+      {
+        "heading": "Performance is not yours to promise",
+        "body": "Down markets spark blame even when plans were sound."
+      },
+      {
+        "heading": "Privacy limits what you can share",
+        "body": "Most client stories stay confidential."
+      },
+      {
+        "heading": "Good advice feels invisible in calm years",
+        "body": "Steady portfolios do not trigger gratitude posts."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Financial Advisors",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Financial Advisors Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask about communication, not returns",
+        "body": "Templates can focus on clarity and follow-through."
+      },
+      {
+        "heading": "Private first for fee or risk disputes",
+        "body": "Serious concerns reach you before Google."
+      },
+      {
+        "heading": "RIAs and independents",
+        "body": "No massive marketing suite required."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can advisors ask for reviews under SEC rules?",
+        "a": "Marketing rules are strict. Keep testimonials compliant with your regulator and firm policy."
+      },
+      {
+        "q": "What about performance complaints?",
+        "a": "Private feedback opens dialogue before public harm."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing architecture sized for boutique practices."
+      },
+      {
+        "q": "Prospects searching Google?",
+        "a": "Ethical, compliant reviews still help people find a human advisor."
+      },
+      {
+        "q": "Team practices?",
+        "a": "Start with one brand link and expand later."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Insurance Agents",
+        "href": "/for/insurance-agents"
+      },
+      {
+        "label": "Mortgage Brokers",
+        "href": "/for/mortgage-brokers"
+      },
+      {
+        "label": "Accounting Firms",
+        "href": "/for/accounting-firms"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Financial Advisor Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

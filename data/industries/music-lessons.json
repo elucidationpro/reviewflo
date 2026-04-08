@@ -1,0 +1,138 @@
+{
+  "slug": "music-lessons",
+  "industryName": "Music Lessons",
+  "targetKeyword": "music lessons review management",
+  "seo": {
+    "title": "Music Lessons Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your music lesson studio. Route upset families to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/music-lessons"
+  },
+  "h1": "Review Management for Music Lessons",
+  "hero": {
+    "heading": "Review Management Built for Music Lessons",
+    "subheading": "Practice weeks blur together. ReviewFlo asks after recitals or breakthroughs that parents actually notice.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for music teachers"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Music Teacher Faces",
+    "items": [
+      {
+        "heading": "Progress is noisy and nonlinear",
+        "body": "Parents expect straight lines. Music does not work that way."
+      },
+      {
+        "heading": "Recital nerves create emotional posts",
+        "body": "Stage fright becomes your fault online."
+      },
+      {
+        "heading": "Makeup lessons complicate schedules",
+        "body": "Calendar fights spill into stars."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Music Schools",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Music Teachers Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after performances",
+        "body": "Catch pride when it is highest."
+      },
+      {
+        "heading": "Private first for policy or fee disputes",
+        "body": "Studio rules stay direct."
+      },
+      {
+        "heading": "Home studios or schools",
+        "body": "Same simple link."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will parents review music teachers?",
+        "a": "Yes, especially after concerts and auditions."
+      },
+      {
+        "q": "What about quitting students?",
+        "a": "Private feedback helps you learn before public venting."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at studio-scale pricing."
+      },
+      {
+        "q": "Virtual lessons?",
+        "a": "Send after calls that ended with clear homework."
+      },
+      {
+        "q": "Instrument rentals?",
+        "a": "Keep reviews about teaching, not retail."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Dance Studios",
+        "href": "/for/dance-studios"
+      },
+      {
+        "label": "Tutoring Services",
+        "href": "/for/tutoring-services"
+      },
+      {
+        "label": "Martial Arts Schools",
+        "href": "/for/martial-arts-schools"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Music Lesson Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

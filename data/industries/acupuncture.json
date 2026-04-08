@@ -1,0 +1,138 @@
+{
+  "slug": "acupuncture",
+  "industryName": "Acupuncture",
+  "targetKeyword": "acupuncture review management",
+  "seo": {
+    "title": "Acupuncture Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your acupuncture practice. Route upset clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/acupuncture"
+  },
+  "h1": "Review Management for Acupuncture",
+  "hero": {
+    "heading": "Review Management Built for Acupuncture",
+    "subheading": "Relief can be subtle. ReviewFlo helps you ask after visits when clients notice sleep or pain changes.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for acupuncture clinics"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Acupuncturist Faces",
+    "items": [
+      {
+        "heading": "Subtle results do not scream “review me”",
+        "body": "Clients may feel better without connecting it to a post."
+      },
+      {
+        "heading": "Needle anxiety shows up as harsh words",
+        "body": "First visits overwhelm some people."
+      },
+      {
+        "heading": "Quiet rooms are not places for sales pitches",
+        "body": "Front desk time is minimal."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Acupuncturists",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Acupuncturists Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after a course milestone",
+        "body": "Ask when they report clear change."
+      },
+      {
+        "heading": "Private first for concerns about treatment",
+        "body": "Sensitive topics land with you, not Google."
+      },
+      {
+        "heading": "Built for solo practitioners",
+        "body": "No enterprise rollouts."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we ask without making medical claims?",
+        "a": "Yes. Focus on communication, comfort, and scheduling."
+      },
+      {
+        "q": "What if results vary?",
+        "a": "Private feedback helps you adjust plans before public frustration."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at indie-clinic pricing."
+      },
+      {
+        "q": "Insurance confusion?",
+        "a": "Private messages help clarify bills before stars tank."
+      },
+      {
+        "q": "Herbal add-ons?",
+        "a": "Keep public asks about the overall visit experience."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Chiropractors",
+        "href": "/for/chiropractors"
+      },
+      {
+        "label": "Massage Therapy",
+        "href": "/for/massage-therapy"
+      },
+      {
+        "label": "Nutrition Coaching",
+        "href": "/for/nutrition-coaching"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Acupuncture Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

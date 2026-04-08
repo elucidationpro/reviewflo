@@ -1,0 +1,138 @@
+{
+  "slug": "electricians",
+  "industryName": "Electricians",
+  "targetKeyword": "electrician review management",
+  "seo": {
+    "title": "Electrician Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your electrical business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/electricians"
+  },
+  "h1": "Review Management for Electricians",
+  "hero": {
+    "heading": "Review Management Built for Electricians",
+    "subheading": "Power back on feels like relief, not a photo moment. ReviewFlo sends the ask once the panel is safe and the invoice is paid.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for electricians"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Electrician Faces",
+    "items": [
+      {
+        "heading": "Good work hides behind walls",
+        "body": "Customers do not see the craftsmanship."
+      },
+      {
+        "heading": "Estimate versus invoice fights blow up online",
+        "body": "Surprise costs turn into angry stars."
+      },
+      {
+        "heading": "Emergency calls end with exhaustion, not marketing",
+        "body": "Nobody wants a speech after a late-night outage."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Electricians",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Electricians Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after the job is closed",
+        "body": "Text or email when the lights stay on."
+      },
+      {
+        "heading": "Private channel for code or permit worries",
+        "body": "Serious concerns reach you first."
+      },
+      {
+        "heading": "Built for small shops",
+        "body": "No enterprise pitch required."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Do homeowners review electricians?",
+        "a": "Yes, especially after scary outages or remodels."
+      },
+      {
+        "q": "What about commercial jobs?",
+        "a": "Send to the site contact who experienced your crew."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same feedback routing at trade-friendly pricing."
+      },
+      {
+        "q": "Service van teams?",
+        "a": "One business link keeps things simple."
+      },
+      {
+        "q": "Can I send for maintenance plans?",
+        "a": "Yes. After a tune-up that prevented a problem is a strong moment."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "HVAC Repair",
+        "href": "/for/hvac-repair"
+      },
+      {
+        "label": "Plumbing Services",
+        "href": "/for/plumbing-services"
+      },
+      {
+        "label": "Handyman Services",
+        "href": "/for/handyman-services"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Electrician Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

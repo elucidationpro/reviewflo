@@ -1,0 +1,138 @@
+{
+  "slug": "pet-sitting",
+  "industryName": "Pet Sitting",
+  "targetKeyword": "pet sitting review management",
+  "seo": {
+    "title": "Pet Sitting Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your pet sitting business. Route upset clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/pet-sitting"
+  },
+  "h1": "Review Management for Pet Sitting",
+  "hero": {
+    "heading": "Review Management Built for Pet Sitting",
+    "subheading": "Keys and trust are intimate. ReviewFlo asks after sits when photos still feel reassuring.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for pet sitters"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Pet Sitter Faces",
+    "items": [
+      {
+        "heading": "Quiet success leaves nothing to post",
+        "body": "No drama reads as “nothing happened,” not five stars."
+      },
+      {
+        "heading": "Home access issues explode emotionally",
+        "body": "Alarms, accidents, and neighbors become public stories."
+      },
+      {
+        "heading": "Solo sitters lack a closing desk",
+        "body": "You leave the house as tired as the pets."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Pet Sitters",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Pet Sitters Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after the final visit report",
+        "body": "Ask when your summary still feels fresh."
+      },
+      {
+        "heading": "Private first for property or pet concerns",
+        "body": "Sensitive topics stay direct."
+      },
+      {
+        "heading": "Independent contractors",
+        "body": "Simple tools without agency fees."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients review sitters?",
+        "a": "Yes, when travel was stressful and their home felt safe."
+      },
+      {
+        "q": "What about key mishaps?",
+        "a": "Private feedback gives room to fix before public blame."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at solo-business pricing."
+      },
+      {
+        "q": "Rover or platform overlap?",
+        "a": "Google still matters for direct bookings. This helps your Business Profile."
+      },
+      {
+        "q": "Overnight vs drop-ins?",
+        "a": "Pick the moment after the longest stretch of care."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Dog Walking",
+        "href": "/for/dog-walking"
+      },
+      {
+        "label": "Pet Boarding",
+        "href": "/for/pet-boarding"
+      },
+      {
+        "label": "Mobile Dog Grooming",
+        "href": "/for/mobile-dog-grooming"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Pet Sitting Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

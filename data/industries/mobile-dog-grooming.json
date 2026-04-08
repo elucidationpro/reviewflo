@@ -1,0 +1,138 @@
+{
+  "slug": "mobile-dog-grooming",
+  "industryName": "Mobile Dog Grooming",
+  "targetKeyword": "mobile dog grooming review management",
+  "seo": {
+    "title": "Mobile Dog Grooming Review Software | ReviewFlo",
+    "description": "Get more Google reviews for your mobile grooming van. Route unhappy clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/mobile-dog-grooming"
+  },
+  "h1": "Review Management for Mobile Dog Grooming",
+  "hero": {
+    "heading": "Review Management Built for Mobile Dog Grooming",
+    "subheading": "You meet clients at the curb and drive away. ReviewFlo catches them by text before the next stop.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for mobile groomers"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Mobile Groomer Faces",
+    "items": [
+      {
+        "heading": "The appointment ends in a driveway, not at a front desk",
+        "body": "There is no natural moment at a counter to ask for a review."
+      },
+      {
+        "heading": "Routing and traffic make every day unpredictable",
+        "body": "Follow-up slips when you are already late to the next house."
+      },
+      {
+        "heading": "Van breakdowns and no-shows show up as angry reviews",
+        "body": "Stressful days become one-star stories that stay visible for years."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Mobile Groomers",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Mobile Groomers Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Text-based asks that fit van life",
+        "body": "Send from your phone as soon as the dog is handed back."
+      },
+      {
+        "heading": "Catch heat before it hits Google",
+        "body": "Private feedback gives you room to reschedule or explain."
+      },
+      {
+        "heading": "No shop computer required",
+        "body": "Everything works from the devices you already carry."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Does this work if I only have a phone?",
+        "a": "Yes. Text and email links are enough."
+      },
+      {
+        "q": "What if I serve multiple cities?",
+        "a": "Your Google Business Profile still benefits from steady reviews tied to your service area."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing for happy versus unhappy clients without enterprise pricing."
+      },
+      {
+        "q": "Can I brand the link to my van business?",
+        "a": "You control the messaging customers see when they open the flow."
+      },
+      {
+        "q": "What about bad weather cancellations?",
+        "a": "Send the ask after successful visits. Skip the automation on days you pause service."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Dog Grooming",
+        "href": "/for/dog-grooming"
+      },
+      {
+        "label": "Pet Sitting",
+        "href": "/for/pet-sitting"
+      },
+      {
+        "label": "Mobile Auto Detailing",
+        "href": "/for/mobile-auto-detailing"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Mobile Grooming Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

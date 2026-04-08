@@ -1,0 +1,138 @@
+{
+  "slug": "martial-arts-schools",
+  "industryName": "Martial Arts Schools",
+  "targetKeyword": "martial arts review management",
+  "seo": {
+    "title": "Martial Arts School Review Software | ReviewFlo",
+    "description": "Get more Google reviews for your martial arts school. Route upset families to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/martial-arts-schools"
+  },
+  "h1": "Review Management for Martial Arts Schools",
+  "hero": {
+    "heading": "Review Management Built for Martial Arts Schools",
+    "subheading": "Belts take months. ReviewFlo asks after tests and tournaments when pride still shows on faces.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for martial arts schools"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Martial Arts School Faces",
+    "items": [
+      {
+        "heading": "Discipline feels normal after a few weeks",
+        "body": "Parents stop noticing daily coaching wins."
+      },
+      {
+        "heading": "Sparring injuries spark fear posts",
+        "body": "Even minor bumps feel huge online."
+      },
+      {
+        "heading": "Contract and belt-test tension runs high",
+        "body": "Money and rank stress boil over in reviews."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Martial Arts Schools",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Martial Arts Schools Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after promotions",
+        "body": "Catch families when pride is loud."
+      },
+      {
+        "heading": "Private first for safety or bullying concerns",
+        "body": "Serious issues reach instructors first."
+      },
+      {
+        "heading": "Kids and adults",
+        "body": "Same flow across programs."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will parents review dojos?",
+        "a": "Yes, especially after tournaments and character wins you coached."
+      },
+      {
+        "q": "What about cancellations?",
+        "a": "Private feedback helps you explain policies before public anger."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at owner-operator pricing."
+      },
+      {
+        "q": "Multiple disciplines?",
+        "a": "One brand link works until you need separate tracking."
+      },
+      {
+        "q": "After-school pickup chaos?",
+        "a": "Send later that evening when homes are calm."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Dance Studios",
+        "href": "/for/dance-studios"
+      },
+      {
+        "label": "Personal Training",
+        "href": "/for/personal-training"
+      },
+      {
+        "label": "Tutoring Services",
+        "href": "/for/tutoring-services"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Martial Arts Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

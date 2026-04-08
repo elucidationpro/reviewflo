@@ -1,0 +1,138 @@
+{
+  "slug": "yoga-studios",
+  "industryName": "Yoga Studios",
+  "targetKeyword": "yoga studio review management",
+  "seo": {
+    "title": "Yoga Studio Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your yoga studio. Route unhappy members to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/yoga-studios"
+  },
+  "h1": "Review Management for Yoga Studios",
+  "hero": {
+    "heading": "Review Management Built for Yoga Studios",
+    "subheading": "Students roll up their mats and rush to work. ReviewFlo helps you ask while class energy is still high.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for yoga studios"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Yoga Studio Faces",
+    "items": [
+      {
+        "heading": "Regulars love class but never think to review",
+        "body": "Habit feels normal, not noteworthy."
+      },
+      {
+        "heading": "One crowded class review blames the room temperature",
+        "body": "Petty complaints read loud on a small business profile."
+      },
+      {
+        "heading": "Teachers rotate and messaging gets inconsistent",
+        "body": "Some mention reviews at closing, most do not."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Yoga Studios",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Yoga Studios Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Email or text after class packs",
+        "body": "Reach people who already gave you their contact info."
+      },
+      {
+        "heading": "Private space for safety or injury concerns",
+        "body": "Serious issues reach you first."
+      },
+      {
+        "heading": "Works for boutique studios",
+        "body": "Priced for small teams, not big gym chains."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will members review a studio they already love?",
+        "a": "Often, once you make it one tap and time it after a great class."
+      },
+      {
+        "q": "What about intro offers?",
+        "a": "Send after someone finishes a trial they enjoyed, not mid-series."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same feedback routing without a contract built for franchises."
+      },
+      {
+        "q": "Multiple locations?",
+        "a": "Add locations on higher tiers when you need separate dashboards."
+      },
+      {
+        "q": "Do teachers need accounts?",
+        "a": "No. Front desk or owners can send the link."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Pilates Studios",
+        "href": "/for/pilates-studios"
+      },
+      {
+        "label": "Personal Training",
+        "href": "/for/personal-training"
+      },
+      {
+        "label": "Massage Therapy",
+        "href": "/for/massage-therapy"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Yoga Studio Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

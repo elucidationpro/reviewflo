@@ -1,0 +1,138 @@
+{
+  "slug": "event-venues",
+  "industryName": "Event Venues",
+  "targetKeyword": "event venue review management",
+  "seo": {
+    "title": "Event Venue Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your event venue. Route unhappy clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/event-venues"
+  },
+  "h1": "Review Management for Event Venues",
+  "hero": {
+    "heading": "Review Management Built for Event Venues",
+    "subheading": "Load-out is chaos. ReviewFlo asks planners and hosts after the event when memories are still loud.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for event venues"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Event Venue Faces",
+    "items": [
+      {
+        "heading": "Success looks like an empty room",
+        "body": "Everyone leaves fast when the night ends."
+      },
+      {
+        "heading": "Vendor blame games hit your Google profile",
+        "body": "Catering and AV issues name your building."
+      },
+      {
+        "heading": "Sales teams move to the next contract",
+        "body": "Follow-up on past events is inconsistent."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Event Venues",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Event Venues Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send to the signing contact",
+        "body": "Ask the planner who knows the full story."
+      },
+      {
+        "heading": "Private first for damage or billing disputes",
+        "body": "Resolve before public stars."
+      },
+      {
+        "heading": "Corporate and social",
+        "body": "Same flow for galas and birthdays."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will companies review venues?",
+        "a": "Yes, especially after smooth logistics on tight timelines."
+      },
+      {
+        "q": "What if an event cancels?",
+        "a": "Private feedback helps you handle deposits before public fights."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at pricing for independent venues."
+      },
+      {
+        "q": "Multiple rooms?",
+        "a": "One brand link works until you need per-space tracking."
+      },
+      {
+        "q": "Alcohol service?",
+        "a": "Reviews should focus on staff professionalism and safety."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Wedding Venues",
+        "href": "/for/wedding-venues"
+      },
+      {
+        "label": "Hotels",
+        "href": "/for/hotels"
+      },
+      {
+        "label": "Vacation Rentals",
+        "href": "/for/vacation-rentals"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Event Venue Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

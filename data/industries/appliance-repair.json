@@ -1,0 +1,138 @@
+{
+  "slug": "appliance-repair",
+  "industryName": "Appliance Repair",
+  "targetKeyword": "appliance repair review management",
+  "seo": {
+    "title": "Appliance Repair Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your appliance repair business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/appliance-repair"
+  },
+  "h1": "Review Management for Appliance Repair",
+  "hero": {
+    "heading": "Review Management Built for Appliance Repair",
+    "subheading": "Cold food and clean clothes feel normal again fast. ReviewFlo asks before customers move on with their week.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for appliance repair"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Appliance Repair Business Faces",
+    "items": [
+      {
+        "heading": "Fixed appliances stop being top of mind",
+        "body": "Relief fades into routine."
+      },
+      {
+        "heading": "Parts delays explode into public anger",
+        "body": "Waiting on a board feels like your fault to homeowners."
+      },
+      {
+        "heading": "Dispatch windows frustrate busy families",
+        "body": "Lateness shows up as stars before you explain traffic."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Appliance Repair Techs",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Appliance Repair Shops Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send when the cycle runs",
+        "body": "Ask after you prove the fix on site."
+      },
+      {
+        "heading": "Private first for repeat failures",
+        "body": "Second visits need calm conversation first."
+      },
+      {
+        "heading": "Owner-operators welcome",
+        "body": "No big software stack."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Do people review appliance repair?",
+        "a": "Yes, after high-stress breakdowns that you solved the same day."
+      },
+      {
+        "q": "What about warranty parts?",
+        "a": "Private feedback helps you explain timelines before they vent online."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing model without franchise contracts."
+      },
+      {
+        "q": "Commercial kitchens?",
+        "a": "Send to the manager who lost service hours."
+      },
+      {
+        "q": "Brands you do not service?",
+        "a": "Reviews are still about your service experience."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Handyman Services",
+        "href": "/for/handyman-services"
+      },
+      {
+        "label": "HVAC Repair",
+        "href": "/for/hvac-repair"
+      },
+      {
+        "label": "Plumbing Services",
+        "href": "/for/plumbing-services"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Appliance Repair Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

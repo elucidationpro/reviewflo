@@ -1,0 +1,138 @@
+{
+  "slug": "permanent-makeup",
+  "industryName": "Permanent Makeup",
+  "targetKeyword": "permanent makeup review management",
+  "seo": {
+    "title": "Permanent Makeup Review Software | ReviewFlo",
+    "description": "Get more Google reviews for your PMU studio. Route unhappy clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/permanent-makeup"
+  },
+  "h1": "Review Management for Permanent Makeup",
+  "hero": {
+    "heading": "Review Management Built for Permanent Makeup",
+    "subheading": "Brows and lips heal in stages. ReviewFlo asks after touch-ups when results match the mirror.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for PMU artists"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every PMU Artist Faces",
+    "items": [
+      {
+        "heading": "Healing phases confuse clients",
+        "body": "Color shifts before it settles, and panic posts follow."
+      },
+      {
+        "heading": "One asymmetry photo spreads fast",
+        "body": "Social screenshots hurt before you can respond."
+      },
+      {
+        "heading": "Touch-up scheduling strains trust",
+        "body": "Gaps between visits leave room for regret."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for PMU Artists",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why PMU Artists Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask after healed results",
+        "body": "Time the request when pigment looks true."
+      },
+      {
+        "heading": "Private first for regret or color fear",
+        "body": "Sensitive conversations start with you."
+      },
+      {
+        "heading": "Built for solo artists",
+        "body": "Simple tools, no big agency stack."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients review cosmetic procedures?",
+        "a": "Yes, when you ask after they love the healed look."
+      },
+      {
+        "q": "What about touch-up policies?",
+        "a": "Private feedback helps you explain timelines before public complaints."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at studio-friendly pricing."
+      },
+      {
+        "q": "Licensing concerns?",
+        "a": "Keep public language about experience, not medical outcomes."
+      },
+      {
+        "q": "Photos?",
+        "a": "Never require clients to post images publicly."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Estheticians",
+        "href": "/for/estheticians"
+      },
+      {
+        "label": "Eyebrow and Lash Studios",
+        "href": "/for/eyebrow-lash-studios"
+      },
+      {
+        "label": "Medical Spas",
+        "href": "/for/medical-spas"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More PMU Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

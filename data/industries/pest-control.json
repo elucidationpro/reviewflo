@@ -1,0 +1,138 @@
+{
+  "slug": "pest-control",
+  "industryName": "Pest Control",
+  "targetKeyword": "pest control review management",
+  "seo": {
+    "title": "Pest Control Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your pest control company. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/pest-control"
+  },
+  "h1": "Review Management for Pest Control",
+  "hero": {
+    "heading": "Review Management Built for Pest Control",
+    "subheading": "Quiet homes do not remind people to review. ReviewFlo asks after service when relief is strongest.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for pest control businesses"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Pest Control Business Faces",
+    "items": [
+      {
+        "heading": "No bugs means no mental trigger to post",
+        "body": "Silence feels like success, not a reason to open Google."
+      },
+      {
+        "heading": "Comebacks and callbacks spark angry posts",
+        "body": "Customers assume the problem is gone for good."
+      },
+      {
+        "heading": "Technicians are in crawl spaces, not sales mode",
+        "body": "Review coaching is not part of the route sheet."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Pest Control Companies",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Pest Control Companies Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask after treatment",
+        "body": "Send when you close the ticket on site or by text follow-up."
+      },
+      {
+        "heading": "Private channel for safety or pet concerns",
+        "body": "Sensitive issues land in your inbox first."
+      },
+      {
+        "heading": "Works for residential routes",
+        "body": "No fancy integrations required."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will customers review pest control?",
+        "a": "Yes, especially after infestations that disrupted sleep."
+      },
+      {
+        "q": "What if pests return between visits?",
+        "a": "Private feedback gives you a thread to schedule retreatment before a public slam."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same happy versus unhappy routing at small-business pricing."
+      },
+      {
+        "q": "Commercial kitchens?",
+        "a": "Send to the manager who signs the work order."
+      },
+      {
+        "q": "Seasonal spikes?",
+        "a": "Send more requests when volume is high; the flow stays the same."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Lawn Care and Landscaping",
+        "href": "/for/lawn-care"
+      },
+      {
+        "label": "Handyman Services",
+        "href": "/for/handyman-services"
+      },
+      {
+        "label": "Plumbing Services",
+        "href": "/for/plumbing-services"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Pest Control Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

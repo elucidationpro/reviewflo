@@ -1,0 +1,138 @@
+{
+  "slug": "dance-studios",
+  "industryName": "Dance Studios",
+  "targetKeyword": "dance studio review management",
+  "seo": {
+    "title": "Dance Studio Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your dance studio. Route upset families to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/dance-studios"
+  },
+  "h1": "Review Management for Dance Studios",
+  "hero": {
+    "heading": "Review Management Built for Dance Studios",
+    "subheading": "Seasons end in showcases. ReviewFlo asks after performances while costumes still feel electric.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for dance studios"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Dance Studio Faces",
+    "items": [
+      {
+        "heading": "Weekly class feels routine",
+        "body": "Families forget to cheer the basics."
+      },
+      {
+        "heading": "Casting drama goes public fast",
+        "body": "Roles and solos spark emotional posts."
+      },
+      {
+        "heading": "Lobby chaos leaves no closing moment",
+        "body": "Parents grab shoes and sprint."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Dance Studios",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Dance Studios Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after shows",
+        "body": "Strike while applause is fresh."
+      },
+      {
+        "heading": "Private first for bullying or body concerns",
+        "body": "Sensitive topics land with you first."
+      },
+      {
+        "heading": "Youth and adult programs",
+        "body": "Same link across ages."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will parents review dance studios?",
+        "a": "Yes, especially after recitals and first competitions."
+      },
+      {
+        "q": "What about costume fees?",
+        "a": "Private feedback helps before public fights about costs."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without franchise studio pricing."
+      },
+      {
+        "q": "Multiple locations?",
+        "a": "Add dashboards as you grow."
+      },
+      {
+        "q": "Comp teams?",
+        "a": "Time asks after healthy wins and supportive coaching moments."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Music Lessons",
+        "href": "/for/music-lessons"
+      },
+      {
+        "label": "Martial Arts Schools",
+        "href": "/for/martial-arts-schools"
+      },
+      {
+        "label": "Yoga Studios",
+        "href": "/for/yoga-studios"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Dance Studio Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

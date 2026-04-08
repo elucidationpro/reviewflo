@@ -1,0 +1,138 @@
+{
+  "slug": "law-offices",
+  "industryName": "Law Offices",
+  "targetKeyword": "law firm review management",
+  "seo": {
+    "title": "Law Firm Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your law office. Route upset clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/law-offices"
+  },
+  "h1": "Review Management for Law Offices",
+  "hero": {
+    "heading": "Review Management Built for Law Offices",
+    "subheading": "Cases are sensitive. ReviewFlo helps you ask for feedback that respects confidentiality and bar rules.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for law offices"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Law Office Faces",
+    "items": [
+      {
+        "heading": "Wins are often confidential",
+        "body": "You cannot advertise most victories."
+      },
+      {
+        "heading": "Losses feel personal",
+        "body": "Emotional clients post heat, not facts."
+      },
+      {
+        "heading": "Ethics rules limit marketing language",
+        "body": "Boilerplate review scripts do not fit."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Law Firms",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Law Offices Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask about service, not outcomes",
+        "body": "Templates can focus on communication and clarity."
+      },
+      {
+        "heading": "Private first for fee or strategy disputes",
+        "body": "Hard conversations stay privileged-friendly when you respond directly."
+      },
+      {
+        "heading": "Solo and small partnerships",
+        "body": "Simple setup without a marketing department."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can lawyers ethically ask for Google reviews?",
+        "a": "Rules vary by jurisdiction. Keep asks truthful and avoid promising results."
+      },
+      {
+        "q": "What about negative outcomes?",
+        "a": "Private feedback gives clients a first step before public venting."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing model sized for small practices."
+      },
+      {
+        "q": "Referral-heavy practices?",
+        "a": "Google still matters for people searching cold."
+      },
+      {
+        "q": "Multiple practice areas?",
+        "a": "One firm link works until you need separate tracking."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Real Estate Agents",
+        "href": "/for/real-estate-agents"
+      },
+      {
+        "label": "Tax Preparation",
+        "href": "/for/tax-preparation"
+      },
+      {
+        "label": "Accounting Firms",
+        "href": "/for/accounting-firms"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Law Office Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

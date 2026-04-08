@@ -1,0 +1,138 @@
+{
+  "slug": "auto-detailing-shops",
+  "industryName": "Auto Detailing Shops",
+  "targetKeyword": "auto detailing review management",
+  "seo": {
+    "title": "Auto Detailing Shop Review Software | ReviewFlo",
+    "description": "Get more Google reviews for your detailing shop. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/auto-detailing-shops"
+  },
+  "h1": "Review Management for Auto Detailing Shops",
+  "hero": {
+    "heading": "Review Management Built for Auto Detailing Shops",
+    "subheading": "Shine sells in person. ReviewFlo asks before keys leave the counter while paint still pops.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for detailing shops"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Detailing Shop Faces",
+    "items": [
+      {
+        "heading": "Clean cars feel normal by dinner",
+        "body": "Owners forget the swirl marks you removed."
+      },
+      {
+        "heading": "Interior damage claims spike emotions",
+        "body": "Accusations hit fast online."
+      },
+      {
+        "heading": "Bays run back-to-back",
+        "body": "Nobody has a quiet moment to mention reviews."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Detailing Shops",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Detailing Shops Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send at vehicle delivery",
+        "body": "Text right after walk-around approval."
+      },
+      {
+        "heading": "Private first for scratch disputes",
+        "body": "Document calmly before public posts."
+      },
+      {
+        "heading": "Retail and high-end",
+        "body": "Same flow for daily drivers and exotics."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review detailing?",
+        "a": "Yes, after paint correction and interior rescues."
+      },
+      {
+        "q": "What about ceramic coating cure times?",
+        "a": "Send after final inspection, not mid-cure confusion."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at shop-scale pricing."
+      },
+      {
+        "q": "Mobile versus fixed location?",
+        "a": "Mobile Auto Detailing has its own page; shops can still mirror the flow."
+      },
+      {
+        "q": "Fleet accounts?",
+        "a": "Send to the manager who approved the work."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Mobile Auto Detailing",
+        "href": "/for/mobile-auto-detailing"
+      },
+      {
+        "label": "Car Wash Services",
+        "href": "/for/mobile-car-wash"
+      },
+      {
+        "label": "Tire Shops",
+        "href": "/for/tire-shops"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Detailing Shop Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "estheticians",
+  "industryName": "Estheticians",
+  "targetKeyword": "esthetician review management",
+  "seo": {
+    "title": "Esthetician Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your esthetics practice. Route unhappy clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/estheticians"
+  },
+  "h1": "Review Management for Estheticians",
+  "hero": {
+    "heading": "Review Management Built for Estheticians",
+    "subheading": "Glow is personal. ReviewFlo helps you ask after facials when skin looks its calmest.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for estheticians"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Esthetician Faces",
+    "items": [
+      {
+        "heading": "Great skin looks “normal” to clients",
+        "body": "They forget how irritated they felt last month."
+      },
+      {
+        "heading": "Breakouts after treatments spark fear posts",
+        "body": "Purge weeks feel like your fault online."
+      },
+      {
+        "heading": "Rooms are quiet and time is tight",
+        "body": "Retail upsell already feels delicate. Reviews rarely get mentioned."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Estheticians",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Estheticians Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after checkout",
+        "body": "Catch the post-facial calm."
+      },
+      {
+        "heading": "Private first for reactions",
+        "body": "Redness and allergies deserve a direct line."
+      },
+      {
+        "heading": "Works solo or small suites",
+        "body": "No enterprise onboarding."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we ask without promising results?",
+        "a": "Yes. Focus asks on care, cleanliness, and education."
+      },
+      {
+        "q": "What if a peel goes wrong?",
+        "a": "Private feedback lets you triage before public panic."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at pricing meant for suite renters."
+      },
+      {
+        "q": "Product sales?",
+        "a": "Reviews should reflect service, not a SKU."
+      },
+      {
+        "q": "Male clients?",
+        "a": "Same flow. Comfort still matters."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Day Spas",
+        "href": "/for/day-spas"
+      },
+      {
+        "label": "Dermatology Clinics",
+        "href": "/for/dermatology-clinics"
+      },
+      {
+        "label": "Permanent Makeup",
+        "href": "/for/permanent-makeup"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Esthetician Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

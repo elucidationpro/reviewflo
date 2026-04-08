@@ -1,0 +1,138 @@
+{
+  "slug": "garage-door-repair",
+  "industryName": "Garage Door Repair",
+  "targetKeyword": "garage door repair review management",
+  "seo": {
+    "title": "Garage Door Repair Review Software | ReviewFlo",
+    "description": "Get more Google reviews for your garage door business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/garage-door-repair"
+  },
+  "h1": "Review Management for Garage Door Repair",
+  "hero": {
+    "heading": "Review Management Built for Garage Door Repair",
+    "subheading": "A quiet door is easy to ignore. ReviewFlo asks right after a smooth open and close when relief is real.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for garage door companies"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Garage Door Business Faces",
+    "items": [
+      {
+        "heading": "No squeak means no memory",
+        "body": "Customers stop thinking about the door the moment it works."
+      },
+      {
+        "heading": "Safety springs make emotions run hot",
+        "body": "Price shocks and urgency show up as angry reviews."
+      },
+      {
+        "heading": "Install days are long and loud",
+        "body": "Nobody wants a marketing speech over compressor noise."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Garage Door Companies",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Garage Door Companies Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after the test cycle",
+        "body": "Ask when they hear the difference."
+      },
+      {
+        "heading": "Private first for balance or sensor issues",
+        "body": "Callbacks start as messages, not public fights."
+      },
+      {
+        "heading": "Works for service and installs",
+        "body": "Same link for repairs or new doors."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review garage door work?",
+        "a": "Yes, especially after emergencies or noisy problems finally stop."
+      },
+      {
+        "q": "What about warranty callbacks?",
+        "a": "Private feedback helps you schedule fixes before frustration posts."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same happy versus unhappy routing at contractor-friendly pricing."
+      },
+      {
+        "q": "Commercial bay doors?",
+        "a": "Send to the facilities contact who felt the downtime."
+      },
+      {
+        "q": "Multiple trucks?",
+        "a": "One brand link keeps things simple at first."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Handyman Services",
+        "href": "/for/handyman-services"
+      },
+      {
+        "label": "Locksmith Services",
+        "href": "/for/locksmith-services"
+      },
+      {
+        "label": "Appliance Repair",
+        "href": "/for/appliance-repair"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Garage Door Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

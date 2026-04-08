@@ -1,0 +1,138 @@
+{
+  "slug": "gutter-cleaning",
+  "industryName": "Gutter Cleaning",
+  "targetKeyword": "gutter cleaning review management",
+  "seo": {
+    "title": "Gutter Cleaning Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your gutter cleaning business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/gutter-cleaning"
+  },
+  "h1": "Review Management for Gutter Cleaning",
+  "hero": {
+    "heading": "Review Management Built for Gutter Cleaning",
+    "subheading": "Flowing downspouts are invisible wins. ReviewFlo sends the ask before homeowners go back inside.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for gutter cleaners"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Gutter Cleaning Business Faces",
+    "items": [
+      {
+        "heading": "Preventative work feels optional to customers",
+        "body": "They do not see the disaster you avoided."
+      },
+      {
+        "heading": "Overflow after a storm becomes your fault online",
+        "body": "Timing and weather make emotions spike."
+      },
+      {
+        "heading": "Ladder days are exhausting",
+        "body": "Crews skip follow-up when backs are sore."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Gutter Cleaners",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Gutter Cleaners Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after the downspout test",
+        "body": "Catch them while water runs clear."
+      },
+      {
+        "heading": "Private first for landscape damage",
+        "body": "Resolve ladder scrapes quietly when possible."
+      },
+      {
+        "heading": "Seasonal spikes",
+        "body": "Batch sends after busy fall weeks."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Do homeowners review gutter cleaning?",
+        "a": "Yes, after scary overflows or visible debris piles."
+      },
+      {
+        "q": "What if leaves fall right after?",
+        "a": "Private feedback opens a conversation about maintenance plans."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at small-crew pricing."
+      },
+      {
+        "q": "Commercial buildings?",
+        "a": "Send to the property manager who approved the work."
+      },
+      {
+        "q": "Roof walking?",
+        "a": "Customers still review communication and cleanup."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Window Cleaning",
+        "href": "/for/window-cleaning"
+      },
+      {
+        "label": "Pressure Washing",
+        "href": "/for/pressure-washing"
+      },
+      {
+        "label": "Lawn Care and Landscaping",
+        "href": "/for/lawn-care"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Gutter Cleaning Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

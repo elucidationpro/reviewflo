@@ -1,0 +1,138 @@
+{
+  "slug": "dog-walking",
+  "industryName": "Dog Walking",
+  "targetKeyword": "dog walking review management",
+  "seo": {
+    "title": "Dog Walking Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your dog walking business. Route upset clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/dog-walking"
+  },
+  "h1": "Review Management for Dog Walking",
+  "hero": {
+    "heading": "Review Management Built for Dog Walking",
+    "subheading": "Daily walks blur together. ReviewFlo asks after standout weeks when owners notice calmer dogs.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for dog walkers"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Dog Walker Faces",
+    "items": [
+      {
+        "heading": "Routine feels invisible",
+        "body": "Clients stop noticing great consistency."
+      },
+      {
+        "heading": "Leash incidents become public fast",
+        "body": "Scuffles and slips turn into screenshots."
+      },
+      {
+        "heading": "You are mid-route, not marketing",
+        "body": "There is no lobby to mention reviews."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Dog Walkers",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Dog Walkers Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Weekly or monthly cadence",
+        "body": "Send after stretches where communication was clear."
+      },
+      {
+        "heading": "Private first for access or behavior issues",
+        "body": "Solve problems before stars fall."
+      },
+      {
+        "heading": "Solo walkers welcome",
+        "body": "Phone-based workflow."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will owners review walkers?",
+        "a": "Yes, when reliability mattered during busy work weeks."
+      },
+      {
+        "q": "What about pack walks?",
+        "a": "Private feedback helps if compatibility was an issue."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without franchise pet-brand pricing."
+      },
+      {
+        "q": "Bad weather?",
+        "a": "Send after stretches where you still showed up."
+      },
+      {
+        "q": "Keys and codes?",
+        "a": "Private messages first if security felt shaky."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Pet Sitting",
+        "href": "/for/pet-sitting"
+      },
+      {
+        "label": "Dog Grooming",
+        "href": "/for/dog-grooming"
+      },
+      {
+        "label": "Pet Boarding",
+        "href": "/for/pet-boarding"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Dog Walking Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

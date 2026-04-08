@@ -1,0 +1,138 @@
+{
+  "slug": "rv-parks-campgrounds",
+  "industryName": "RV Parks and Campgrounds",
+  "targetKeyword": "RV park review management",
+  "seo": {
+    "title": "RV Park Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your RV park or campground. Route upset guests to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/rv-parks-campgrounds"
+  },
+  "h1": "Review Management for RV Parks and Campgrounds",
+  "hero": {
+    "heading": "Review Management Built for RV Parks and Campgrounds",
+    "subheading": "Guests roll in tired and roll out early. ReviewFlo asks after quiet nights when the stay still feels fresh.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for RV parks and campgrounds"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every RV Park Faces",
+    "items": [
+      {
+        "heading": "Happy campers drive away at sunrise",
+        "body": "Checkout is a wave, not a conversation."
+      },
+      {
+        "heading": "Noise and neighbor feuds become your stars",
+        "body": "One loud weekend defines your profile."
+      },
+      {
+        "heading": "Staff juggle late arrivals and maintenance",
+        "body": "Nobody has time to coach reviews at the gate."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for RV Parks",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why RV Parks Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Email or text after checkout",
+        "body": "Catch road travelers when service is still clear."
+      },
+      {
+        "heading": "Private first for hookup or refund fights",
+        "body": "Site issues get handled before public venting."
+      },
+      {
+        "heading": "Seasonal peaks",
+        "body": "Batch sends after busy holiday weeks."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will travelers review campgrounds?",
+        "a": "Yes, especially after long drives and standout hospitality."
+      },
+      {
+        "q": "What about weather complaints?",
+        "a": "Private feedback will not change the sky, but it helps you respond before stars fall."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without hotel-chain pricing."
+      },
+      {
+        "q": "Long-term guests?",
+        "a": "Pick milestones so asks do not feel repetitive."
+      },
+      {
+        "q": "Multiple parks?",
+        "a": "Add locations on higher tiers."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Motels",
+        "href": "/for/motels"
+      },
+      {
+        "label": "Vacation Rentals",
+        "href": "/for/vacation-rentals"
+      },
+      {
+        "label": "Bed and Breakfasts",
+        "href": "/for/bed-and-breakfasts"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More RV Park Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

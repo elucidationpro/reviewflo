@@ -1,0 +1,138 @@
+{
+  "slug": "mobile-vet-services",
+  "industryName": "Mobile Vet Services",
+  "targetKeyword": "mobile vet review management",
+  "seo": {
+    "title": "Mobile Vet Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your mobile vet practice. Route upset pet owners to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/mobile-vet-services"
+  },
+  "h1": "Review Management for Mobile Vet Services",
+  "hero": {
+    "heading": "Review Management Built for Mobile Vet Services",
+    "subheading": "Home visits end at the curb. ReviewFlo texts after exams when pets are settling again.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for mobile veterinarians"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Mobile Vet Faces",
+    "items": [
+      {
+        "heading": "Quiet relief does not trigger reviews",
+        "body": "Calmer pets at home still feel ordinary to owners."
+      },
+      {
+        "heading": "Parking and access issues get emotional",
+        "body": "HOA rules and gate codes spark public fights."
+      },
+      {
+        "heading": "Solo routes leave no front desk",
+        "body": "Follow-up slips between driveways."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Mobile Vets",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Mobile Vets Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after the visit summary",
+        "body": "Ask when instructions are still clear."
+      },
+      {
+        "heading": "Private first for outcomes and cost",
+        "body": "Hard news deserves a direct line."
+      },
+      {
+        "heading": "House-call workflow",
+        "body": "Text-first fits your day."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we stay compliant on public asks?",
+        "a": "Yes. Focus on communication, timing, and compassion."
+      },
+      {
+        "q": "What about emergencies you redirect?",
+        "a": "Private feedback helps you explain referrals before anger posts."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at mobile-practice pricing."
+      },
+      {
+        "q": "Coverage area limits?",
+        "a": "Reviews still help nearby owners find you."
+      },
+      {
+        "q": "Pharmacy delivery?",
+        "a": "Keep public language about service, not specific drugs."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Veterinary Clinics",
+        "href": "/for/veterinary-clinics"
+      },
+      {
+        "label": "Pet Boarding",
+        "href": "/for/pet-boarding"
+      },
+      {
+        "label": "Dog Walking",
+        "href": "/for/dog-walking"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Mobile Vet Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "computer-repair",
+  "industryName": "Computer Repair",
+  "targetKeyword": "computer repair review management",
+  "seo": {
+    "title": "Computer Repair Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your computer repair business. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/computer-repair"
+  },
+  "h1": "Review Management for Computer Repair",
+  "hero": {
+    "heading": "Review Management Built for Computer Repair",
+    "subheading": "Deadlines loom when machines fail. ReviewFlo asks after boot-up when coffee can wait again.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for computer repair"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Computer Repair Shop Faces",
+    "items": [
+      {
+        "heading": "Working PCs feel unremarkable",
+        "body": "Relief fades into normal fast."
+      },
+      {
+        "heading": "Data loss panic hits your stars",
+        "body": "Backups are everyone’s regret after the fact."
+      },
+      {
+        "heading": "Bench time is opaque to customers",
+        "body": "Waiting without updates breeds harsh posts."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Computer Repair Shops",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Computer Repair Shops Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after successful pickup",
+        "body": "Ask when files open and fans spin quietly."
+      },
+      {
+        "heading": "Private first for repeat issues",
+        "body": "Give techs room before public blame."
+      },
+      {
+        "heading": "Home and business clients",
+        "body": "Same link for both."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will businesses review IT help?",
+        "a": "Yes, after outages that threatened payroll or client work."
+      },
+      {
+        "q": "What about remote support?",
+        "a": "Send after sessions that ended with a clear fix."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without MSP enterprise pricing."
+      },
+      {
+        "q": "Mac and PC?",
+        "a": "Customers review your service, not the OS."
+      },
+      {
+        "q": "Parts delays?",
+        "a": "Private feedback helps you communicate supply issues early."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Phone Repair",
+        "href": "/for/phone-repair"
+      },
+      {
+        "label": "Tutoring Services",
+        "href": "/for/tutoring-services"
+      },
+      {
+        "label": "Appliance Repair",
+        "href": "/for/appliance-repair"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Computer Repair Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

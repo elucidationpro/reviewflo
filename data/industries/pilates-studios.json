@@ -1,0 +1,138 @@
+{
+  "slug": "pilates-studios",
+  "industryName": "Pilates Studios",
+  "targetKeyword": "pilates studio review management",
+  "seo": {
+    "title": "Pilates Studio Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your Pilates studio. Route unhappy clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/pilates-studios"
+  },
+  "h1": "Review Management for Pilates Studios",
+  "hero": {
+    "heading": "Review Management Built for Pilates Studios",
+    "subheading": "Clients notice posture changes before they think about Google. ReviewFlo catches them after sessions that feel transformative.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for Pilates studios"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Pilates Studio Faces",
+    "items": [
+      {
+        "heading": "Progress is slow and private",
+        "body": "Wins do not always feel like a story worth posting."
+      },
+      {
+        "heading": "Equipment and class-size gripes go straight online",
+        "body": "Frustration about reformer spacing shows up in stars."
+      },
+      {
+        "heading": "Instructors vary in how they close class",
+        "body": "Your brand voice drifts from room to room."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Pilates Studios",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Pilates Studios Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Consistent ask after checkout",
+        "body": "Same link no matter who taught."
+      },
+      {
+        "heading": "Private feedback for billing or injury worries",
+        "body": "Hard conversations start with you."
+      },
+      {
+        "heading": "Built for small studios",
+        "body": "No enterprise upsell to get started."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Do clients review boutique fitness?",
+        "a": "Yes, especially after a package milestone or visible progress."
+      },
+      {
+        "q": "What if someone complains about pricing?",
+        "a": "They can message you privately before airing it in public."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at pricing meant for owner-led studios."
+      },
+      {
+        "q": "Reformer vs mat programs?",
+        "a": "One flow works for both. Timing matters more than modality."
+      },
+      {
+        "q": "Can I send monthly?",
+        "a": "You choose the cadence. Many studios send after standout sessions."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Yoga Studios",
+        "href": "/for/yoga-studios"
+      },
+      {
+        "label": "Personal Training",
+        "href": "/for/personal-training"
+      },
+      {
+        "label": "Physical Therapy",
+        "href": "/for/physical-therapy"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Pilates Studio Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

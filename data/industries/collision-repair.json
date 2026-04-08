@@ -1,0 +1,138 @@
+{
+  "slug": "collision-repair",
+  "industryName": "Collision Repair",
+  "targetKeyword": "collision repair review management",
+  "seo": {
+    "title": "Collision Repair Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your collision shop. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/collision-repair"
+  },
+  "h1": "Review Management for Collision Repair",
+  "hero": {
+    "heading": "Review Management Built for Collision Repair",
+    "subheading": "Insurance timelines drag. ReviewFlo asks when keys are back and paint finally matches.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for collision repair shops"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Collision Shop Faces",
+    "items": [
+      {
+        "heading": "Stress starts at the tow truck",
+        "body": "Customers are already shaken before they meet you."
+      },
+      {
+        "heading": "Supplement delays feel like broken promises",
+        "body": "Waiting weeks turns into angry posts."
+      },
+      {
+        "heading": "Quality issues show up in sunlight later",
+        "body": "Overspray and blend lines become public photos."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Body Shops",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Body Shops Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send at delivery, not at drop-off",
+        "body": "Ask when the car looks right in their hands."
+      },
+      {
+        "heading": "Private first for rental and supplement fights",
+        "body": "Insurance stress gets a direct line."
+      },
+      {
+        "heading": "DRP or independent",
+        "body": "Same simple flow."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will customers review body work?",
+        "a": "Yes, after repairs that made the car feel whole again."
+      },
+      {
+        "q": "What if insurance drags?",
+        "a": "Private feedback helps you communicate delays before stars fall."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without MSO enterprise pricing."
+      },
+      {
+        "q": "Total losses?",
+        "a": "Send only after emotional closure on the outcome."
+      },
+      {
+        "q": "OEM parts debates?",
+        "a": "Private messages help before public arguments."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Windshield Repair",
+        "href": "/for/windshield-repair"
+      },
+      {
+        "label": "Auto Repair Shops",
+        "href": "/for/auto-repair-shops"
+      },
+      {
+        "label": "Tire Shops",
+        "href": "/for/tire-shops"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Collision Repair Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

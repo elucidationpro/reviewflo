@@ -1,0 +1,138 @@
+{
+  "slug": "nutrition-coaching",
+  "industryName": "Nutrition Coaching",
+  "targetKeyword": "nutrition coach review management",
+  "seo": {
+    "title": "Nutrition Coach Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your nutrition coaching practice. Route upset clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/nutrition-coaching"
+  },
+  "h1": "Review Management for Nutrition Coaching",
+  "hero": {
+    "heading": "Review Management Built for Nutrition Coaching",
+    "subheading": "Habit change is slow. ReviewFlo helps you ask after measurable wins clients actually notice.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for nutrition coaches"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Nutrition Coach Faces",
+    "items": [
+      {
+        "heading": "Progress feels private",
+        "body": "Clients may not want to talk about weight or food online."
+      },
+      {
+        "heading": "Plateaus create blame",
+        "body": "Slow weeks turn into sharp reviews."
+      },
+      {
+        "heading": "Group programs make feedback noisy",
+        "body": "One unhappy voice echoes louder than quiet successes."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Nutrition Coaches",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Nutrition Coaches Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask after wins you both agree on",
+        "body": "Energy, labs, or habits—pick the milestone."
+      },
+      {
+        "heading": "Private first for sensitive body topics",
+        "body": "Hard conversations stay direct."
+      },
+      {
+        "heading": "Works for virtual and in-person",
+        "body": "Email and text fit remote coaching."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we stay within scope of practice?",
+        "a": "Yes. Public asks can highlight communication and support, not medical treatment."
+      },
+      {
+        "q": "What if a client disagrees with macros?",
+        "a": "Private feedback lets you adjust before a public rant."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without gym-chain pricing."
+      },
+      {
+        "q": "Courses vs 1:1?",
+        "a": "Send after modules that landed well."
+      },
+      {
+        "q": "Supplement sales?",
+        "a": "Keep reviews about coaching service, not product claims."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Personal Training",
+        "href": "/for/personal-training"
+      },
+      {
+        "label": "Medical Spas",
+        "href": "/for/medical-spas"
+      },
+      {
+        "label": "Acupuncture",
+        "href": "/for/acupuncture"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Nutrition Coaching Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

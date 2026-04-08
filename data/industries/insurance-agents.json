@@ -1,0 +1,138 @@
+{
+  "slug": "insurance-agents",
+  "industryName": "Insurance Agents",
+  "targetKeyword": "insurance agent review management",
+  "seo": {
+    "title": "Insurance Agent Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your insurance agency. Route upset clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/insurance-agents"
+  },
+  "h1": "Review Management for Insurance Agents",
+  "hero": {
+    "heading": "Review Management Built for Insurance Agents",
+    "subheading": "Claims and renewals spike emotions. ReviewFlo asks after helpful service when coverage still feels clear.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for insurance agents"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Insurance Agent Faces",
+    "items": [
+      {
+        "heading": "Quiet years mean no reviews",
+        "body": "No claims feels like nothing to post about."
+      },
+      {
+        "heading": "Denied claims become public crusades",
+        "body": "Anger targets the agent first."
+      },
+      {
+        "heading": "Rate hikes feel personal",
+        "body": "Market forces read like betrayal on Google."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Insurance Agents",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Insurance Agents Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send after education-heavy moments",
+        "body": "Ask when you helped someone understand coverage."
+      },
+      {
+        "heading": "Private first for claim stress",
+        "body": "Give clients a direct line before stars fall."
+      },
+      {
+        "heading": "Independent agencies",
+        "body": "Simple tools for small teams."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we ask without promising coverage?",
+        "a": "Yes. Highlight responsiveness and explanations, not outcomes."
+      },
+      {
+        "q": "What about carrier complaints?",
+        "a": "Private feedback helps you coach before public blame lands on you."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at agency-friendly pricing."
+      },
+      {
+        "q": "Personal and commercial lines?",
+        "a": "Same flow; timing matters more than product."
+      },
+      {
+        "q": "Compliance?",
+        "a": "Follow state rules on testimonials and incentives."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Financial Advisors",
+        "href": "/for/financial-advisors"
+      },
+      {
+        "label": "Real Estate Agents",
+        "href": "/for/real-estate-agents"
+      },
+      {
+        "label": "Mortgage Brokers",
+        "href": "/for/mortgage-brokers"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Insurance Agent Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "eyebrow-lash-studios",
+  "industryName": "Eyebrow and Lash Studios",
+  "targetKeyword": "lash studio review management",
+  "seo": {
+    "title": "Lash & Brow Studio Review Software | ReviewFlo",
+    "description": "Get more Google reviews for your lash or brow studio. Route unhappy clients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/eyebrow-lash-studios"
+  },
+  "h1": "Review Management for Eyebrow and Lash Studios",
+  "hero": {
+    "heading": "Review Management Built for Eyebrow and Lash Studios",
+    "subheading": "Clients love the mirror moment but rarely open Google afterward. ReviewFlo sends a quick ask after the appointment.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for lash and brow studios"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Lash Studio Faces",
+    "items": [
+      {
+        "heading": "Great fills do not automatically become five stars",
+        "body": "Clients snap selfies for themselves, not for your Business Profile."
+      },
+      {
+        "heading": "One allergic reaction review names your tech",
+        "body": "Sensitive skin issues turn emotional fast in public comments."
+      },
+      {
+        "heading": "Back-to-back bookings leave no time to coach reviews",
+        "body": "The room resets and the next client is already waiting."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Brow and Lash Studios",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Lash Studios Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask right after the reveal",
+        "body": "Send when they are still excited at checkout."
+      },
+      {
+        "heading": "Private path for irritation or timing issues",
+        "body": "Upset clients message you before venting online."
+      },
+      {
+        "heading": "Simple for solo artists and small teams",
+        "body": "No enterprise stack required."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients review semi-permanent work?",
+        "a": "Yes, when you ask soon after the visit and keep it about their experience."
+      },
+      {
+        "q": "What about patch tests?",
+        "a": "If someone reacts, private feedback gives you space to document and respond."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing for happy versus unhappy clients at indie-studio pricing."
+      },
+      {
+        "q": "Multiple stylists?",
+        "a": "Start with one studio link and add structure as you grow."
+      },
+      {
+        "q": "Can we text from the front desk?",
+        "a": "Yes. Share the same link from any phone."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Hair Salons",
+        "href": "/for/hair-salons"
+      },
+      {
+        "label": "Nail Salons",
+        "href": "/for/nail-salons"
+      },
+      {
+        "label": "Estheticians",
+        "href": "/for/estheticians"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Lash Studio Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

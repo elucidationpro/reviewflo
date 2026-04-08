@@ -1,0 +1,138 @@
+{
+  "slug": "oil-change-services",
+  "industryName": "Oil Change Services",
+  "targetKeyword": "oil change review management",
+  "seo": {
+    "title": "Oil Change Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your oil change shop. Route upset customers to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/oil-change-services"
+  },
+  "h1": "Review Management for Oil Change Services",
+  "hero": {
+    "heading": "Review Management Built for Oil Change Services",
+    "subheading": "Quick stops mean quick exits. ReviewFlo texts after the sticker goes on the windshield.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for oil change shops"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Oil Change Shop Faces",
+    "items": [
+      {
+        "heading": "Fast service means fast forget",
+        "body": "Customers grab keys and leave."
+      },
+      {
+        "heading": "Upsell confusion turns into one-stars",
+        "body": "Filter and fluid lines on the invoice spark anger."
+      },
+      {
+        "heading": "Bays are loud and lines are long",
+        "body": "Nobody wants a speech about Google in the waiting room."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Oil Change Shops",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Oil Change Shops Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Send before they drive off",
+        "body": "Text right after payment prints."
+      },
+      {
+        "heading": "Private first for damage claims",
+        "body": "Dipstick disputes stay direct."
+      },
+      {
+        "heading": "Fleet and retail",
+        "body": "Same link for managers and individuals."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review oil changes?",
+        "a": "Yes, when service was fast, honest, and easy to book."
+      },
+      {
+        "q": "What if wait time was long?",
+        "a": "Private feedback lets you explain staffing before a public rant."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without dealership-level pricing."
+      },
+      {
+        "q": "Franchise locations?",
+        "a": "Start per shop when you need separate dashboards."
+      },
+      {
+        "q": "Synthetic upsells?",
+        "a": "Keep reviews about overall trust, not a single SKU."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Tire Shops",
+        "href": "/for/tire-shops"
+      },
+      {
+        "label": "Auto Repair Shops",
+        "href": "/for/auto-repair-shops"
+      },
+      {
+        "label": "Mobile Mechanics",
+        "href": "/for/mobile-mechanics"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Oil Change Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

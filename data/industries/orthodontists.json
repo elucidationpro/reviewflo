@@ -1,0 +1,138 @@
+{
+  "slug": "orthodontists",
+  "industryName": "Orthodontists",
+  "targetKeyword": "orthodontist review management",
+  "seo": {
+    "title": "Orthodontist Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your orthodontic practice. Route upset patients to private feedback first. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/orthodontists"
+  },
+  "h1": "Review Management for Orthodontists",
+  "hero": {
+    "heading": "Review Management Built for Orthodontists",
+    "subheading": "Treatment runs for months or years. ReviewFlo helps you ask at wins like debonds and clear aligner milestones.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for orthodontic practices"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Orthodontist Faces",
+    "items": [
+      {
+        "heading": "Long treatments normalize your office",
+        "body": "Patients stop noticing how good the routine feels."
+      },
+      {
+        "heading": "Discomfort weeks spark harsh posts",
+        "body": "Wire changes and new trays create temporary anger."
+      },
+      {
+        "heading": "Parents and teens disagree in public reviews",
+        "body": "Family tension shows up as stars."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Orthodontic Practices",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Orthodontists Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask after visible wins",
+        "body": "Send when braces come off or scans look great."
+      },
+      {
+        "heading": "Private first for missed appointments or fees",
+        "body": "Office policy fights start in your inbox."
+      },
+      {
+        "heading": "HIPAA-aware habits",
+        "body": "Focus on experience, not clinical specifics."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we ask minors’ families for reviews?",
+        "a": "Send to the parent or guardian who can consent to post publicly."
+      },
+      {
+        "q": "What if treatment runs long?",
+        "a": "Private feedback helps you reset expectations before frustration posts."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing without hospital-network pricing."
+      },
+      {
+        "q": "Multiple locations?",
+        "a": "Supported on higher tiers."
+      },
+      {
+        "q": "Aligner brands?",
+        "a": "Keep asks about your team’s communication and scheduling."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Dental Practices",
+        "href": "/for/dental-practices"
+      },
+      {
+        "label": "Cosmetic Dentistry",
+        "href": "/for/cosmetic-dentistry"
+      },
+      {
+        "label": "Medical Spas",
+        "href": "/for/medical-spas"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Orthodontic Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

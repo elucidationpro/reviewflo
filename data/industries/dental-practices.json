@@ -1,0 +1,138 @@
+{
+  "slug": "dental-practices",
+  "industryName": "Dental Practices",
+  "targetKeyword": "dental practice review management",
+  "seo": {
+    "title": "Dental Practice Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your dental office. Route unhappy patients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/dental-practices"
+  },
+  "h1": "Review Management for Dental Practices",
+  "hero": {
+    "heading": "Review Management Built for Dental Practices",
+    "subheading": "Patients compare practices online before they book. ReviewFlo helps you collect steady Google reviews without awkward in-chair asks.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for dental practices"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Dental Practice Faces",
+    "items": [
+      {
+        "heading": "One bad review outweighs dozens of quiet happy patients",
+        "body": "People read Google before they choose a dentist. A single frustrated review can dominate what strangers see."
+      },
+      {
+        "heading": "HIPAA makes public praise feel risky for patients",
+        "body": "Even happy patients may not want treatment details online. Generic review asks often get ignored."
+      },
+      {
+        "heading": "Front desk staff are already slammed at checkout",
+        "body": "There is no extra time to coach every patient on how to leave a review."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Dental Practices",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link right after the appointment or job."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Dental Practices Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask after the visit, not during treatment",
+        "body": "Send a text or email link when checkout is done, so the ask does not interrupt care."
+      },
+      {
+        "heading": "Catch complaints before they go public",
+        "body": "Low ratings route to private feedback so you can respond without a public flame war."
+      },
+      {
+        "heading": "Steady requests without a marketing team",
+        "body": "The same simple flow after every appointment. No complicated setup."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Can we ask for reviews in a HIPAA-conscious way?",
+        "a": "Yes. Focus requests on the visit experience and avoid clinical details. Patients choose what they share publicly."
+      },
+      {
+        "q": "What happens when a patient is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going straight to Google."
+      },
+      {
+        "q": "Do we need to integrate with our practice management software?",
+        "a": "No. You can send requests manually, or use the API when you are ready."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow: requests, private feedback for unhappy clients, Google for happy ones. ReviewFlo is priced for small practices."
+      },
+      {
+        "q": "Does this work for multiple locations?",
+        "a": "Yes. The AI plan supports multiple locations with separate dashboards and links."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      {
+        "label": "Orthodontists",
+        "href": "/for/orthodontists"
+      },
+      {
+        "label": "Cosmetic Dentistry",
+        "href": "/for/cosmetic-dentistry"
+      },
+      {
+        "label": "Medical Spas",
+        "href": "/for/medical-spas"
+      }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Dental Practice Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}
