@@ -1,0 +1,120 @@
+{
+  "slug": "personal-training",
+  "industryName": "Personal Trainers & Gym Studios",
+  "targetKeyword": "personal trainer review management",
+  "seo": {
+    "title": "Personal Trainer Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your training business or gym studio. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/personal-training"
+  },
+  "h1": "Review Management for Personal Trainers & Gym Studios",
+  "hero": {
+    "heading": "Review Management Built for Personal Trainers & Gym Studios",
+    "subheading": "A great session doesn’t always turn into a Google review. ReviewFlo helps you follow up after the workout.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for trainers and studios"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Trainer & Studio Faces",
+    "items": [
+      {
+        "heading": "Clients leave tired, not thinking about stars",
+        "body": "They’re thinking about food and recovery, not your listing."
+      },
+      {
+        "heading": "Coaching friction can go public fast",
+        "body": "When someone feels judged or mismatched, they post before they talk to you."
+      },
+      {
+        "heading": "Asking at the end of class feels awkward",
+        "body": "You want energy on the floor, not a pitch."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Trainers & Studios",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the session",
+        "body": "Text or email a ReviewFlo link when class ends or they check out."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Trainers & Studios Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits a packed schedule",
+        "body": "Send the link right after the appointment."
+      },
+      {
+        "heading": "Catches issues before they hit Google",
+        "body": "Private feedback gives you a chance to make it right first."
+      },
+      {
+        "heading": "Same link for members and drop-ins",
+        "body": "One simple follow-up after every visit."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients leave reviews for gyms or training?",
+        "a": "Yes, when you ask right after a session they enjoyed."
+      },
+      {
+        "q": "What if someone is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do we need gym management software?",
+        "a": "No. You can send requests manually by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small businesses."
+      },
+      {
+        "q": "Can I use this for a team of coaches?",
+        "a": "Yes. Start with one link and add structure as you grow."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Massage Therapy", "href": "/for/massage-therapy" },
+      { "label": "Chiropractors", "href": "/for/chiropractors" },
+      { "label": "Tattoo Studios", "href": "/for/tattoo-studios" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Training & Studio Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

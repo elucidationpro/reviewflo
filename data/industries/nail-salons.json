@@ -1,0 +1,120 @@
+{
+  "slug": "nail-salons",
+  "industryName": "Nail Salons",
+  "targetKeyword": "nail salon review management",
+  "seo": {
+    "title": "Nail Salon Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your nail salon. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/nail-salons"
+  },
+  "h1": "Review Management for Nail Salons",
+  "hero": {
+    "heading": "Review Management Built for Nail Salons",
+    "subheading": "Clients love the set, then leave without thinking about Google. ReviewFlo helps you follow up after the appointment.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for nail salons"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Nail Salon Faces",
+    "items": [
+      {
+        "heading": "A perfect mani doesn’t always become a review",
+        "body": "They’re already planning their week, not your Google listing."
+      },
+      {
+        "heading": "One bad experience can show up first",
+        "body": "A single public complaint can shape how new clients choose a salon."
+      },
+      {
+        "heading": "Asking at the table feels awkward",
+        "body": "Techs are focused on service, not chasing stars."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Nail Salons",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after checkout",
+        "body": "Text or email a ReviewFlo link when they pay and leave."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Nail Salons Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits a busy nail desk",
+        "body": "Send the link right after checkout, before they walk out."
+      },
+      {
+        "heading": "Catches issues before they go public",
+        "body": "Private feedback gives you a chance to fix problems first."
+      },
+      {
+        "heading": "Same flow for every tech",
+        "body": "One link your whole team can use after every appointment."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients leave reviews for nail appointments?",
+        "a": "Yes, when you ask right after the visit while it’s fresh."
+      },
+      {
+        "q": "What if someone is unhappy with their nails?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do we need booking software?",
+        "a": "No. You can send requests manually by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small salons."
+      },
+      {
+        "q": "Can we use this across multiple locations?",
+        "a": "Yes. Use separate links per location so feedback stays organized."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Hair Salons", "href": "/for/hair-salons" },
+      { "label": "Lash Studios & Estheticians", "href": "/for/lash-studios" },
+      { "label": "Massage Therapy", "href": "/for/massage-therapy" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Nail Salon Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

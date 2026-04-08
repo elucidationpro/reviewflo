@@ -1,0 +1,121 @@
+{
+  "slug": "motels",
+  "industryName": "Motels",
+  "targetKeyword": "motel review management",
+  "seo": {
+    "title": "Motel Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your motel. Route unhappy guests to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/motels"
+  },
+  "h1": "Review Management for Motels",
+  "hero": {
+    "heading": "Review Management Built for Motels",
+    "subheading": "Guests decide fast, and reviews drive bookings. ReviewFlo helps you follow up right after checkout.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for motels and boutique stays"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Motel Faces",
+    "items": [
+      {
+        "heading": "Most happy guests don’t leave a review",
+        "body": "If the stay was fine, they just leave and move on."
+      },
+      {
+        "heading": "One bad review can hurt occupancy",
+        "body": "A single 1-star can sit at the top and change who books."
+      },
+      {
+        "heading": "Issues should be handled privately first",
+        "body": "Guests will post when they feel ignored."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Motels",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after checkout",
+        "body": "Text or email a ReviewFlo link after the guest checks out."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star guests go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Motels Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits the front desk flow",
+        "body": "Send review requests during or right after checkout."
+      },
+      {
+        "heading": "Protects your listing",
+        "body": "Private feedback gives you a chance to fix issues before they go public."
+      },
+      {
+        "heading": "Works for one property or many",
+        "body": "Use one link per location and keep feedback organized."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Does this work for short stays and one-night guests?",
+        "a": "Yes. The best time to ask is right after checkout while the stay is fresh."
+      },
+      {
+        "q": "What happens if a guest is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do guests need an app or login?",
+        "a": "No. It’s a simple link by text or email."
+      },
+      {
+        "q": "How is this different from Podium or Birdeye?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small teams."
+      },
+      {
+        "q": "Can I use this across multiple locations?",
+        "a": "Yes. Use separate links per location so feedback stays organized."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Hotels", "href": "/for/hotels" },
+      { "label": "Vacation Rentals", "href": "/for/vacation-rentals" },
+      { "label": "Bed and Breakfasts", "href": "/for/bed-and-breakfasts" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Motel Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}
+

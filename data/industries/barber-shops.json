@@ -1,0 +1,121 @@
+{
+  "slug": "barber-shops",
+  "industryName": "Barber Shops",
+  "targetKeyword": "barber shop review management",
+  "seo": {
+    "title": "Barber Shop Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your barbershop. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/barber-shops"
+  },
+  "h1": "Review Management for Barber Shops",
+  "hero": {
+    "heading": "Review Management Built for Barber Shops",
+    "subheading": "Most clients don’t think to leave a review after a great cut. ReviewFlo helps you ask at the right time, without feeling pushy.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for barber shops"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Barber Shop Faces",
+    "items": [
+      {
+        "heading": "Happy clients leave with a fade, not a review",
+        "body": "They’re already thinking about their next stop. Reviews aren’t top of mind."
+      },
+      {
+        "heading": "One bad review can scare off walk-ins",
+        "body": "A single 1-star can sit at the top and change how new clients choose."
+      },
+      {
+        "heading": "Asking in the chair feels awkward",
+        "body": "Most barbers don’t want to interrupt the vibe to ask for a review."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Barber Shops",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the appointment",
+        "body": "Text or email a ReviewFlo link when they’re checking out."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Barber Shops Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Keeps the shop vibe intact",
+        "body": "Requests go out after the cut, not mid-conversation."
+      },
+      {
+        "heading": "Catches issues before they hit Google",
+        "body": "Unhappy clients can tell you directly so you can make it right."
+      },
+      {
+        "heading": "Works for walk-ins and regulars",
+        "body": "Send the same link every time, whether it’s a new client or a weekly regular."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients actually leave reviews for a haircut?",
+        "a": "Yes, when you make it easy and ask right after the appointment."
+      },
+      {
+        "q": "What happens if someone is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do I need special software or a POS integration?",
+        "a": "No. You can send requests manually by text or email, and start immediately."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small shops."
+      },
+      {
+        "q": "Can I use this for multiple barbers or chairs?",
+        "a": "Yes. You can use one shop link, and scale up as your team grows."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Hair Salons", "href": "/for/hair-salons" },
+      { "label": "Mobile Auto Detailing", "href": "/for/mobile-auto-detailing" },
+      { "label": "Auto Repair Shops", "href": "/for/auto-repair-shops" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Barber Shop Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}
+

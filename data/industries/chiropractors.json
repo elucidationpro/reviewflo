@@ -1,0 +1,120 @@
+{
+  "slug": "chiropractors",
+  "industryName": "Chiropractors",
+  "targetKeyword": "chiropractor review management",
+  "seo": {
+    "title": "Chiropractor Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your chiropractic practice. Route unhappy patients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/chiropractors"
+  },
+  "h1": "Review Management for Chiropractors",
+  "hero": {
+    "heading": "Review Management Built for Chiropractors",
+    "subheading": "Patients feel better after an adjustment, but they don’t always think to review. ReviewFlo helps you follow up after the visit.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for chiropractic practices"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Chiropractor Faces",
+    "items": [
+      {
+        "heading": "Relief doesn’t always become a review",
+        "body": "They’re already thinking about work and errands, not Google."
+      },
+      {
+        "heading": "Expectations around pain and progress can spark public posts",
+        "body": "When someone feels let down, they may post before they call."
+      },
+      {
+        "heading": "Front desk time is already tight",
+        "body": "Staff are checking out the next patient, not chasing reviews."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Chiropractors",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after checkout",
+        "body": "Text or email a ReviewFlo link when the visit ends."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star patients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Chiropractors Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits a busy front desk",
+        "body": "Send the link right after checkout, every visit."
+      },
+      {
+        "heading": "Private feedback first",
+        "body": "You can address concerns before they become public reviews."
+      },
+      {
+        "heading": "One link for the whole practice",
+        "body": "Same follow-up whether it’s a new patient or maintenance care."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will patients leave reviews for chiropractic care?",
+        "a": "Yes, when you ask right after a good visit while it’s fresh."
+      },
+      {
+        "q": "What if someone is unhappy with their care?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do patients need an app?",
+        "a": "No. It’s a link by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small practices."
+      },
+      {
+        "q": "Can we use this at multiple locations?",
+        "a": "Yes. Use separate links per location if needed."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Massage Therapy", "href": "/for/massage-therapy" },
+      { "label": "Personal Training", "href": "/for/personal-training" },
+      { "label": "Medical Spas", "href": "/for/medical-spas" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Chiropractic Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

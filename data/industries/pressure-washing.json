@@ -1,0 +1,120 @@
+{
+  "slug": "pressure-washing",
+  "industryName": "Pressure & Soft Washing",
+  "targetKeyword": "pressure washing review management",
+  "seo": {
+    "title": "Pressure Washing Review Management | ReviewFlo",
+    "description": "Get more Google reviews for your pressure or soft washing business. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/pressure-washing"
+  },
+  "h1": "Review Management for Pressure & Soft Washing",
+  "hero": {
+    "heading": "Review Management Built for Pressure & Soft Washing",
+    "subheading": "The job looks great in person, but clients don’t always say it online. ReviewFlo helps you follow up after the wash.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for pressure and soft washing crews"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Pressure Washing Business Faces",
+    "items": [
+      {
+        "heading": "A clean driveway doesn’t mean a Google review",
+        "body": "They’re on to the next chore, not your listing."
+      },
+      {
+        "heading": "Streaks and overspray can go public fast",
+        "body": "When results miss expectations, people post before they call."
+      },
+      {
+        "heading": "Crews don’t have time to ask at the truck",
+        "body": "You’re packing up and heading to the next job."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Pressure & Soft Washing",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the job",
+        "body": "Text or email a ReviewFlo link when you finish or invoice."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Pressure & Soft Washing Businesses Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits route-based work",
+        "body": "Send the link from your phone right after the wash."
+      },
+      {
+        "heading": "Catches complaints before they hit Google",
+        "body": "Private feedback gives you a chance to make it right first."
+      },
+      {
+        "heading": "Same link every property",
+        "body": "No extra setup per neighborhood."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will homeowners leave reviews for washing?",
+        "a": "Yes, when you ask right after a job they’re happy with."
+      },
+      {
+        "q": "What if they’re unhappy with the result?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do I need CRM software?",
+        "a": "No. You can send requests manually by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small operators."
+      },
+      {
+        "q": "Does this work for soft washing and pressure washing?",
+        "a": "Yes. The follow-up is the same after any completed job."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "House Cleaning", "href": "/for/house-cleaning" },
+      { "label": "Pool Service", "href": "/for/pool-service" },
+      { "label": "Mobile Auto Detailing", "href": "/for/mobile-auto-detailing" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Pressure Washing Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

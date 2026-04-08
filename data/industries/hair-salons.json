@@ -1,0 +1,121 @@
+{
+  "slug": "hair-salons",
+  "industryName": "Hair Salons",
+  "targetKeyword": "hair salon review management",
+  "seo": {
+    "title": "Hair Salon Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your hair salon. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/hair-salons"
+  },
+  "h1": "Review Management for Hair Salons",
+  "hero": {
+    "heading": "Review Management Built for Hair Salons",
+    "subheading": "A great appointment doesn’t always turn into a Google review. ReviewFlo helps you follow up after the visit, without awkward asks.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for hair salons"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Hair Salon Faces",
+    "items": [
+      {
+        "heading": "Happy clients leave glowing, then forget",
+        "body": "They’re thinking about dinner plans and their next appointment, not reviews."
+      },
+      {
+        "heading": "Color and cut issues show up publicly",
+        "body": "If someone feels disappointed, they’ll post before they reach out."
+      },
+      {
+        "heading": "Stylists don’t want to ask in the chair",
+        "body": "It can feel salesy, especially with new clients."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Hair Salons",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the appointment",
+        "body": "Text or email a ReviewFlo link after they check out."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Hair Salons Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Protects your stylist’s reputation",
+        "body": "Private feedback gives you a chance to fix issues before they go public."
+      },
+      {
+        "heading": "Keeps requests consistent",
+        "body": "Use the same link after every appointment, across your whole team."
+      },
+      {
+        "heading": "Fits a front-desk checkout flow",
+        "body": "Send the request right after the service, while it’s fresh."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients leave reviews for hair appointments?",
+        "a": "Yes, especially when you ask right after the appointment."
+      },
+      {
+        "q": "What if someone is unhappy with their hair?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do we need a booking system integration?",
+        "a": "No. You can start by sending requests manually by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small salons."
+      },
+      {
+        "q": "Can I use this across multiple stylists?",
+        "a": "Yes. Start with one link for the salon and scale as you grow."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Barber Shops", "href": "/for/barber-shops" },
+      { "label": "Medical Spas", "href": "/for/medical-spas" },
+      { "label": "Mobile Auto Detailing", "href": "/for/mobile-auto-detailing" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Hair Salon Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}
+

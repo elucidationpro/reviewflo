@@ -1,0 +1,120 @@
+{
+  "slug": "pool-service",
+  "industryName": "Pool Service Companies",
+  "targetKeyword": "pool service review management",
+  "seo": {
+    "title": "Pool Service Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your pool service company. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/pool-service"
+  },
+  "h1": "Review Management for Pool Service Companies",
+  "hero": {
+    "heading": "Review Management Built for Pool Service Companies",
+    "subheading": "Clear water doesn’t always show up as a review. ReviewFlo helps you follow up after the visit.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for pool service companies"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Pool Service Company Faces",
+    "items": [
+      {
+        "heading": "Routine stops don’t feel review-worthy",
+        "body": "If the pool looks fine, homeowners move on without thinking."
+      },
+      {
+        "heading": "Chemistry and timing issues blow up online",
+        "body": "Green water or missed visits can turn into public 1-stars."
+      },
+      {
+        "heading": "Techs don’t want to ask at the gate",
+        "body": "They’re focused on equipment and the next stop."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Pool Service Companies",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the visit",
+        "body": "Text or email a ReviewFlo link when the service is done."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Pool Service Companies Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits weekly routes",
+        "body": "Send the same link after every stop."
+      },
+      {
+        "heading": "Protects your reputation on tough weeks",
+        "body": "Private feedback helps you fix issues before they go public."
+      },
+      {
+        "heading": "Works for owner-operators and small crews",
+        "body": "No extra software required to start."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will homeowners leave reviews for pool service?",
+        "a": "Yes, when you ask right after a visit they’re happy with."
+      },
+      {
+        "q": "What if someone is unhappy with the water or service?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do I need a pool software integration?",
+        "a": "No. You can send requests manually by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small local businesses."
+      },
+      {
+        "q": "Can I use this for multiple trucks?",
+        "a": "Yes. Start with one link and organize by location as you grow."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Pressure Washing", "href": "/for/pressure-washing" },
+      { "label": "House Cleaning", "href": "/for/house-cleaning" },
+      { "label": "Mobile Auto Detailing", "href": "/for/mobile-auto-detailing" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Pool Service Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

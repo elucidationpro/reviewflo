@@ -1,0 +1,120 @@
+{
+  "slug": "house-cleaning",
+  "industryName": "House Cleaning & Maid Services",
+  "targetKeyword": "house cleaning review management",
+  "seo": {
+    "title": "House Cleaning Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your cleaning or maid service. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/house-cleaning"
+  },
+  "h1": "Review Management for House Cleaning & Maid Services",
+  "hero": {
+    "heading": "Review Management Built for House Cleaning & Maid Services",
+    "subheading": "A spotless home doesn’t always turn into a Google review. ReviewFlo helps you follow up after the job.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for cleaners and maid services"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Cleaning Service Faces",
+    "items": [
+      {
+        "heading": "Clients notice a clean home, not your listing",
+        "body": "They move on with their day unless something goes wrong."
+      },
+      {
+        "heading": "Missed spots turn into public complaints",
+        "body": "Expectations are high, and frustration shows up online fast."
+      },
+      {
+        "heading": "Crews don’t want to ask for stars at the door",
+        "body": "It feels awkward when everyone’s rushing to the next job."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Cleaning Services",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the clean",
+        "body": "Text or email a ReviewFlo link when you finish or invoice."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Cleaning Services Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits recurring and one-time cleans",
+        "body": "Same follow-up after every visit."
+      },
+      {
+        "heading": "Protects your reputation on tough days",
+        "body": "Private feedback helps you fix issues before they go public."
+      },
+      {
+        "heading": "Works for owner-operators and small teams",
+        "body": "One link your crew can use without extra software."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will homeowners leave reviews for cleaning?",
+        "a": "Yes, especially when you ask right after a job they’re happy with."
+      },
+      {
+        "q": "What if a client is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do I need scheduling software?",
+        "a": "No. You can send requests manually by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small local businesses."
+      },
+      {
+        "q": "Can I use this for multiple crews?",
+        "a": "Yes. Start with one link and add structure as you grow."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Pressure Washing", "href": "/for/pressure-washing" },
+      { "label": "Pool Service", "href": "/for/pool-service" },
+      { "label": "Mobile Pet Groomers", "href": "/for/mobile-pet-groomers" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Cleaning Service Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -262,7 +262,7 @@ export default function IndustryLandingPage({ industry }: { industry: IndustryDa
             <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2 text-center">
               {normalized.howItWorks.sectionHeading}
             </h2>
-            <div className="mt-8 grid md:grid-cols-3 gap-6 sm:gap-8 relative">
+            <div className="grid md:grid-cols-3 gap-6 sm:gap-8 relative mt-8">
               <div className="hidden md:block absolute top-10 left-[calc(16.67%+1.5rem)] right-[calc(16.67%+1.5rem)] h-px bg-[#C9A961]/30 z-0" />
               {normalized.howItWorks.steps.map((step, idx) => (
                 <div
@@ -285,6 +285,15 @@ export default function IndustryLandingPage({ industry }: { industry: IndustryDa
                 </div>
               ))}
             </div>
+            <p className="text-sm text-gray-600 mt-8 sm:mt-12 text-center max-w-xl mx-auto">
+              <Link
+                href="/demo"
+                className="font-semibold text-[#4A3428] underline decoration-[#C9A961]/70 underline-offset-2 hover:decoration-[#4A3428]"
+              >
+                Try the interactive demo
+              </Link>
+              .
+            </p>
           </div>
         </section>
 

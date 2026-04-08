@@ -1,0 +1,120 @@
+{
+  "slug": "tattoo-studios",
+  "industryName": "Tattoo Studios",
+  "targetKeyword": "tattoo studio review management",
+  "seo": {
+    "title": "Tattoo Studio Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your tattoo studio. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/tattoo-studios"
+  },
+  "h1": "Review Management for Tattoo Studios",
+  "hero": {
+    "heading": "Review Management Built for Tattoo Studios",
+    "subheading": "Great ink doesn’t always show up online. ReviewFlo helps you follow up after the session without pressure.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for tattoo studios"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Tattoo Studio Faces",
+    "items": [
+      {
+        "heading": "Clients love the piece, then leave",
+        "body": "They’re thinking about aftercare, not Google."
+      },
+      {
+        "heading": "Healing and expectations can spark public posts",
+        "body": "When something feels off, frustration can show up online first."
+      },
+      {
+        "heading": "Asking at the table feels wrong mid-session",
+        "body": "Artists need focus on the work, not a pitch."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Tattoo Studios",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the session",
+        "body": "Text or email a ReviewFlo link when you wrap up and aftercare is explained."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Tattoo Studios Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Respects the appointment flow",
+        "body": "Requests go out after the session, not during."
+      },
+      {
+        "heading": "Private feedback first",
+        "body": "You can address concerns before they become public reviews."
+      },
+      {
+        "heading": "One link for the whole shop",
+        "body": "Same follow-up after every visit."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients leave reviews for tattoos?",
+        "a": "Yes, when you ask after a good session and keep it simple."
+      },
+      {
+        "q": "What if someone is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do clients need an app?",
+        "a": "No. It’s a link by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small studios."
+      },
+      {
+        "q": "Can I use this at multiple locations?",
+        "a": "Yes. Use separate links per location if needed."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Barber Shops", "href": "/for/barber-shops" },
+      { "label": "Personal Training", "href": "/for/personal-training" },
+      { "label": "Hair Salons", "href": "/for/hair-salons" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Tattoo Studio Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

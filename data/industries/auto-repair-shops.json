@@ -1,0 +1,121 @@
+{
+  "slug": "auto-repair-shops",
+  "industryName": "Auto Repair Shops",
+  "targetKeyword": "auto repair shop review management",
+  "seo": {
+    "title": "Auto Repair Shop Review Management | ReviewFlo",
+    "description": "Get more Google reviews for your auto repair shop. Route unhappy customers to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/auto-repair-shops"
+  },
+  "h1": "Review Management for Auto Repair Shops",
+  "hero": {
+    "heading": "Review Management Built for Auto Repair Shops",
+    "subheading": "Car repairs come with stress and money conversations. ReviewFlo helps you follow up after the job, and catch issues privately first.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for auto repair shops"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Auto Repair Shop Faces",
+    "items": [
+      {
+        "heading": "Clients only review when they’re upset",
+        "body": "If the car runs fine, they move on. Complaints get posted."
+      },
+      {
+        "heading": "Pricing misunderstandings turn into 1-stars",
+        "body": "Even honest work can look suspicious when the bill surprises them."
+      },
+      {
+        "heading": "A bad review creates trust issues fast",
+        "body": "New customers read reviews to decide who they can trust with their car."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Auto Repair Shops",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after pickup",
+        "body": "Text or email a ReviewFlo link when the customer picks up the vehicle."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Auto Repair Shops Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Protects your reputation when things get tense",
+        "body": "Private feedback gives you a chance to fix issues before they go public."
+      },
+      {
+        "heading": "Fits your pickup and invoice workflow",
+        "body": "Send the request right after the job closes."
+      },
+      {
+        "heading": "Helps reviews match the quality of your work",
+        "body": "Happy customers get an easy path to leave a review."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will customers leave reviews for repairs?",
+        "a": "Yes, especially after a job that went smoothly and solved the problem."
+      },
+      {
+        "q": "What happens if someone is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do I need an SMS system or shop software integration?",
+        "a": "No. You can send requests manually by text or email and start immediately."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small shops."
+      },
+      {
+        "q": "Can I use this across multiple bays or locations?",
+        "a": "Yes. Use separate links per location so feedback stays organized."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Mobile Auto Detailing", "href": "/for/mobile-auto-detailing" },
+      { "label": "Motels", "href": "/for/motels" },
+      { "label": "Barber Shops", "href": "/for/barber-shops" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Auto Repair Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}
+

@@ -1,0 +1,120 @@
+{
+  "slug": "massage-therapy",
+  "industryName": "Massage Therapists",
+  "targetKeyword": "massage therapy review management",
+  "seo": {
+    "title": "Massage Therapy Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your massage practice. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/massage-therapy"
+  },
+  "h1": "Review Management for Massage Therapists",
+  "hero": {
+    "heading": "Review Management Built for Massage Therapists",
+    "subheading": "Clients float out relaxed, not thinking about reviews. ReviewFlo helps you follow up after the session.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for massage therapists"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Massage Therapist Faces",
+    "items": [
+      {
+        "heading": "Relief doesn’t always turn into a Google review",
+        "body": "They’re already thinking about their next stop."
+      },
+      {
+        "heading": "Pressure or discomfort can spark public posts",
+        "body": "When expectations miss, frustration can show up online first."
+      },
+      {
+        "heading": "Asking at checkout can feel salesy",
+        "body": "You want calm closure, not a pitch."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Massage Therapists",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the session",
+        "body": "Text or email a ReviewFlo link when they check out."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Massage Therapists Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Respects the session flow",
+        "body": "Requests go out after the massage, not during."
+      },
+      {
+        "heading": "Private feedback first",
+        "body": "You can address concerns before they become public reviews."
+      },
+      {
+        "heading": "One link for solo or small practices",
+        "body": "Same follow-up after every appointment."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients leave reviews for massage?",
+        "a": "Yes, when you ask right after the session while it’s fresh."
+      },
+      {
+        "q": "What if someone didn’t like the pressure?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do clients need an app?",
+        "a": "No. It’s a simple link by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small practices."
+      },
+      {
+        "q": "Can I use this at multiple locations?",
+        "a": "Yes. Use separate links per location if needed."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Chiropractors", "href": "/for/chiropractors" },
+      { "label": "Personal Training", "href": "/for/personal-training" },
+      { "label": "Medical Spas", "href": "/for/medical-spas" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Massage Therapy Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}
