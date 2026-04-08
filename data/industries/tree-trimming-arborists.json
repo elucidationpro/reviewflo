@@ -1,0 +1,120 @@
+{
+  "slug": "tree-trimming-arborists",
+  "industryName": "Tree Trimming and Arborists",
+  "targetKeyword": "tree service review management",
+  "seo": {
+    "title": "Tree Service Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your tree care business. Route upset customers to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/tree-trimming-arborists"
+  },
+  "h1": "Review Management for Tree Trimming and Arborists",
+  "hero": {
+    "heading": "Review Management Built for Tree Trimming and Arborists",
+    "subheading": "Safe yards look calm when you leave. ReviewFlo texts after chipper day when homeowners still hear the difference.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for tree care companies"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Tree Care Company Faces",
+    "items": [
+      {
+        "heading": "Preventative work is invisible",
+        "body": "Customers forget the limb that could have crushed the garage."
+      },
+      {
+        "heading": "Storm damage emotions run hot",
+        "body": "Triage days turn into harsh posts when expectations clash."
+      },
+      {
+        "heading": "Crews work aloft, not on follow-up",
+        "body": "Nobody hands a review card from a bucket truck."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Arborists",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after job closeout",
+        "body": "Text or email a ReviewFlo link when the yard is clear and the invoice is paid."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Tree Care Companies Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask after the last chip loads",
+        "body": "Catch relief while debris is still fresh in mind."
+      },
+      {
+        "heading": "Private first for property damage worries",
+        "body": "Solve lawn and roof concerns before public stars."
+      },
+      {
+        "heading": "Trimming and removals",
+        "body": "Same flow for maintenance and emergencies."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will homeowners review tree work?",
+        "a": "Yes, after storms, hazard removals, and overdue trims that opened the canopy."
+      },
+      {
+        "q": "What about city or utility delays?",
+        "a": "Private feedback helps you explain waits before anger posts."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at crew-scale pricing."
+      },
+      {
+        "q": "Plant health care?",
+        "a": "Send after visits where treatment plans felt clear."
+      },
+      {
+        "q": "Crane jobs?",
+        "a": "Customers review communication and cleanup, not equipment size."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Lawn Care and Landscaping", "href": "/for/lawn-care" },
+      { "label": "Fence Installation", "href": "/for/fence-installation" },
+      { "label": "Pressure Washing", "href": "/for/pressure-washing" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Tree Service Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

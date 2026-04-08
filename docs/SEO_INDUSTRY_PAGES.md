@@ -200,12 +200,8 @@ reference implementation for format and tone.
 | dog-walking | Dog Walking |
 | mobile-vet-services | Mobile Vet Services |
 | tax-preparation | Tax Preparation |
-| accounting-firms | Accounting Firms |
 | law-offices | Law Offices |
 | real-estate-agents | Real Estate Agents |
-| mortgage-brokers | Mortgage Brokers |
-| insurance-agents | Insurance Agents |
-| financial-advisors | Financial Advisors |
 | phone-repair | Phone Repair |
 | computer-repair | Computer Repair |
 | tutoring-services | Tutoring Services |
@@ -216,6 +212,16 @@ reference implementation for format and tone.
 | tailoring-alterations | Tailoring and Alterations |
 | mobile-car-wash | Mobile Car Wash |
 | auto-detailing-shops | Auto Detailing Shops |
+| painting-contractors | Painting Contractors |
+| roofing-contractors | Roofing Contractors |
+| moving-companies | Moving Companies |
+| photography-studios | Photography Studios |
+| flooring-installation | Flooring Installation |
+| home-inspection-services | Home Inspection Services |
+| fence-installation | Fence Installation |
+| tree-trimming-arborists | Tree Trimming and Arborists |
+
+**Canonical merges (old URLs 301 redirect):** `lash-studios` → `eyebrow-lash-studios`; `pool-service` → `pool-cleaning`; `mobile-pet-groomers` → `mobile-dog-grooming`. **Retired verticals** (redirect to related pages): accounting, mortgage, insurance, and financial-advisor industry pages were removed as low-fit for ReviewFlo; old URLs redirect in `next.config.ts`.
 
 ---
 

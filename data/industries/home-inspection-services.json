@@ -1,0 +1,120 @@
+{
+  "slug": "home-inspection-services",
+  "industryName": "Home Inspection Services",
+  "targetKeyword": "home inspector review management",
+  "seo": {
+    "title": "Home Inspection Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your home inspection business. Route upset clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/home-inspection-services"
+  },
+  "h1": "Review Management for Home Inspection Services",
+  "hero": {
+    "heading": "Review Management Built for Home Inspection Services",
+    "subheading": "Reports are long and deadlines are tight. ReviewFlo asks after delivery when buyers and agents still remember your walk-through.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for home inspectors"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Home Inspector Faces",
+    "items": [
+      {
+        "heading": "Missed items surface months later",
+        "body": "Anger lands on your Google profile even when the issue was hidden."
+      },
+      {
+        "heading": "Neutral reports feel forgettable",
+        "body": "No drama reads like “nothing special,” not five stars."
+      },
+      {
+        "heading": "Agents rush to the next showing",
+        "body": "Nobody closes with a review ask at the driveway."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Home Inspectors",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after report delivery",
+        "body": "Text or email a ReviewFlo link when the PDF is in their inbox."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Home Inspectors Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask before closing day noise",
+        "body": "Send while your summary is still the main topic."
+      },
+      {
+        "heading": "Private first for report disputes",
+        "body": "Serious concerns reach you before public fights."
+      },
+      {
+        "heading": "Buyers and investors",
+        "body": "Same flow for first homes and rentals."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients review inspectors?",
+        "a": "Yes, when you made a stressful purchase feel clearer."
+      },
+      {
+        "q": "What about liability limits?",
+        "a": "Keep public asks about communication and thoroughness, not guarantees."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at solo-inspector pricing."
+      },
+      {
+        "q": "Radon and mold add-ons?",
+        "a": "Send after the full package they booked."
+      },
+      {
+        "q": "Agent referrals?",
+        "a": "Reviews still help your own Business Profile when buyers search you."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Real Estate Agents", "href": "/for/real-estate-agents" },
+      { "label": "Roofing Contractors", "href": "/for/roofing-contractors" },
+      { "label": "Moving Companies", "href": "/for/moving-companies" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Home Inspection Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

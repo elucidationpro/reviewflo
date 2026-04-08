@@ -1,0 +1,120 @@
+{
+  "slug": "flooring-installation",
+  "industryName": "Flooring Installation",
+  "targetKeyword": "flooring installation review management",
+  "seo": {
+    "title": "Flooring Install Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your flooring business. Route unhappy customers to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/flooring-installation"
+  },
+  "h1": "Review Management for Flooring Installation",
+  "hero": {
+    "heading": "Review Management Built for Flooring Installation",
+    "subheading": "New floors feel normal once furniture is back. ReviewFlo asks after final walk-through when the sheen still impresses.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for flooring installers"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Flooring Installer Faces",
+    "items": [
+      {
+        "heading": "Flat, quiet rooms do not scream “review me”",
+        "body": "Comfort feels like expectation, not a story."
+      },
+      {
+        "heading": "Height and transition fights turn emotional",
+        "body": "Trim gaps and squeaks become public photos fast."
+      },
+      {
+        "heading": "Crews stack jobs back-to-back",
+        "body": "Nobody pauses for marketing when the next house is waiting."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Flooring Installers",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after completion",
+        "body": "Text or email a ReviewFlo link when the job is signed off."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Flooring Installers Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask at walk-through",
+        "body": "Send when they approve transitions and cleanup."
+      },
+      {
+        "heading": "Private first for moisture or product issues",
+        "body": "Warranty stress lands with you before stars."
+      },
+      {
+        "heading": "Retail and direct",
+        "body": "Same flow whether you work for a showroom or your own brand."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will homeowners review flooring work?",
+        "a": "Yes, after remodels where rooms finally feel finished."
+      },
+      {
+        "q": "What about acclimation delays?",
+        "a": "Private feedback helps you explain schedules before public blame."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at small-crew pricing."
+      },
+      {
+        "q": "Commercial jobs?",
+        "a": "Send to the manager who signed the punch list."
+      },
+      {
+        "q": "Carpet versus hard surface?",
+        "a": "Customers review your service and communication, not the SKU."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Painting Contractors", "href": "/for/painting-contractors" },
+      { "label": "Handyman Services", "href": "/for/handyman-services" },
+      { "label": "Home Inspection Services", "href": "/for/home-inspection-services" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Flooring Installation Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

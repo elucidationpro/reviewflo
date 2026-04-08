@@ -1,0 +1,120 @@
+{
+  "slug": "painting-contractors",
+  "industryName": "Painting Contractors",
+  "targetKeyword": "painting contractor review management",
+  "seo": {
+    "title": "Painting Contractor Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your painting business. Route unhappy customers to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/painting-contractors"
+  },
+  "h1": "Review Management for Painting Contractors",
+  "hero": {
+    "heading": "Review Management Built for Painting Contractors",
+    "subheading": "A smooth finish looks obvious in person and forgettable online. ReviewFlo sends the ask right after walk-through when the color still feels fresh.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for painting contractors"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Painting Contractor Faces",
+    "items": [
+      {
+        "heading": "Great prep disappears once furniture is back",
+        "body": "Homeowners stop noticing clean lines the moment the room feels normal again."
+      },
+      {
+        "heading": "Touch-up disputes blow up after you have left",
+        "body": "Lighting changes and missed spots become one-star stories days later."
+      },
+      {
+        "heading": "Crews roll to the next job without a desk moment",
+        "body": "Nobody closes with a review reminder when the ladder is already packed."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Painting Contractors",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after walk-through",
+        "body": "Text or email a ReviewFlo link when the job is signed off."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Painting Contractors Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask after the final look",
+        "body": "Send when they approve the finish, not a week later when memory fades."
+      },
+      {
+        "heading": "Private first for drips and color mismatch",
+        "body": "Comebacks get handled before public stars."
+      },
+      {
+        "heading": "Interior and exterior crews",
+        "body": "Same link for residential repaints and exterior teams."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will homeowners review painters?",
+        "a": "Yes, especially after big color changes and exterior jobs that boosted curb appeal."
+      },
+      {
+        "q": "What if touch-ups are needed?",
+        "a": "Private feedback opens a thread before frustration hits Google."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing for happy versus unhappy clients at contractor-friendly pricing."
+      },
+      {
+        "q": "Commercial and residential?",
+        "a": "Send to the person who signed off on the work."
+      },
+      {
+        "q": "Subcontractors on site?",
+        "a": "One company link keeps messaging consistent."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Pressure Washing", "href": "/for/pressure-washing" },
+      { "label": "Flooring Installation", "href": "/for/flooring-installation" },
+      { "label": "Handyman Services", "href": "/for/handyman-services" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Painting Contractor Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

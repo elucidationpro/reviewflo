@@ -108,7 +108,7 @@
     "items": [
       { "label": "Medical Spas", "href": "/for/medical-spas" },
       { "label": "Cosmetic Dentistry", "href": "/for/cosmetic-dentistry" },
-      { "label": "Lash Studios & Estheticians", "href": "/for/lash-studios" }
+      { "label": "Eyebrow and Lash Studios", "href": "/for/eyebrow-lash-studios" }
     ]
   },
   "finalCta": {

@@ -1,0 +1,120 @@
+{
+  "slug": "roofing-contractors",
+  "industryName": "Roofing Contractors",
+  "targetKeyword": "roofing contractor review management",
+  "seo": {
+    "title": "Roofing Contractor Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your roofing company. Route upset homeowners to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/roofing-contractors"
+  },
+  "h1": "Review Management for Roofing Contractors",
+  "hero": {
+    "heading": "Review Management Built for Roofing Contractors",
+    "subheading": "A dry roof feels like relief, not a photo op. ReviewFlo asks after final inspection when homeowners still remember the leak.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for roofing contractors"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Roofing Contractor Faces",
+    "items": [
+      {
+        "heading": "High tickets make emotions run hot",
+        "body": "Insurance, supplements, and delays feel personal before anyone opens Google."
+      },
+      {
+        "heading": "Quiet roofs do not remind people to post",
+        "body": "Once the leak stops, life moves on."
+      },
+      {
+        "heading": "Storm chasers poison trust in your whole market",
+        "body": "Homeowners lump every roofer into the same story."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Roofing Contractors",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after final walk-through",
+        "body": "Text or email a ReviewFlo link when the job is complete and payment is settled."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Roofing Contractors Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask after punch list sign-off",
+        "body": "Send when gutters run clean and debris is gone."
+      },
+      {
+        "heading": "Private first for leak callbacks",
+        "body": "Warranty issues reach you before public panic."
+      },
+      {
+        "heading": "Storm season scale",
+        "body": "Batch sends when crews are slammed without adding headcount."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will homeowners review roofers?",
+        "a": "Yes, after scary leaks and insurance stress that finally felt handled."
+      },
+      {
+        "q": "What about supplement delays?",
+        "a": "Private feedback helps you explain timelines before stars tank."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing model sized for local roofing crews, not national call centers."
+      },
+      {
+        "q": "Commercial roofs?",
+        "a": "Send to the facility contact who approved the closeout."
+      },
+      {
+        "q": "Multiple crews?",
+        "a": "Start with one brand link and split later if you need per-crew tracking."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Gutter Cleaning", "href": "/for/gutter-cleaning" },
+      { "label": "Home Inspection Services", "href": "/for/home-inspection-services" },
+      { "label": "Pressure Washing", "href": "/for/pressure-washing" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Roofing Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -116,16 +116,16 @@
   "relatedIndustries": {
     "items": [
       {
-        "label": "Mortgage Brokers",
-        "href": "/for/mortgage-brokers"
-      },
-      {
         "label": "Law Offices",
         "href": "/for/law-offices"
       },
       {
-        "label": "Insurance Agents",
-        "href": "/for/insurance-agents"
+        "label": "Home Inspection Services",
+        "href": "/for/home-inspection-services"
+      },
+      {
+        "label": "Moving Companies",
+        "href": "/for/moving-companies"
       }
     ]
   },

@@ -1,0 +1,120 @@
+{
+  "slug": "photography-studios",
+  "industryName": "Photography Studios",
+  "targetKeyword": "photography studio review management",
+  "seo": {
+    "title": "Photo Studio Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your photography business. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/photography-studios"
+  },
+  "h1": "Review Management for Photography Studios",
+  "hero": {
+    "heading": "Review Management Built for Photography Studios",
+    "subheading": "Galleries go out days later. ReviewFlo asks right after the session or wedding weekend when excitement still runs high.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for photographers"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Photography Studio Faces",
+    "items": [
+      {
+        "heading": "Delivery lag kills the urge to post",
+        "body": "By the time edits land, clients have moved on with life."
+      },
+      {
+        "heading": "One bad edit review names you personally",
+        "body": "Style disagreements read like character attacks online."
+      },
+      {
+        "heading": "You are packing gear, not follow-up campaigns",
+        "body": "There is no lobby after an on-location shoot."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Photography Studios",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the shoot or preview",
+        "body": "Text or email a ReviewFlo link when the experience is still fresh."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Photographers Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask before galleries ship",
+        "body": "Catch sentiment while the hug after the last dance still matters."
+      },
+      {
+        "heading": "Private first for refunds or reshoots",
+        "body": "Hard conversations stay direct."
+      },
+      {
+        "heading": "Wedding, portrait, and brand",
+        "body": "Same simple link for every booking type."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will clients review photographers?",
+        "a": "Yes, when the ask lands close to the emotional peak of the day."
+      },
+      {
+        "q": "What about delivery delays?",
+        "a": "Private feedback helps you reset expectations before public anger."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at indie pricing, not wedding-venue enterprise contracts."
+      },
+      {
+        "q": "Second shooters?",
+        "a": "One brand link per studio keeps messaging consistent."
+      },
+      {
+        "q": "Model releases?",
+        "a": "Reviews are about the experience, not sharing images publicly."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Wedding Venues", "href": "/for/wedding-venues" },
+      { "label": "Makeup Artists", "href": "/for/makeup-artists" },
+      { "label": "Event Venues", "href": "/for/event-venues" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Photography Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

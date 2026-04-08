@@ -1,0 +1,120 @@
+{
+  "slug": "moving-companies",
+  "industryName": "Moving Companies",
+  "targetKeyword": "moving company review management",
+  "seo": {
+    "title": "Moving Company Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your moving company. Route upset customers to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/moving-companies"
+  },
+  "h1": "Review Management for Moving Companies",
+  "hero": {
+    "heading": "Review Management Built for Moving Companies",
+    "subheading": "Move day ends in exhaustion. ReviewFlo texts after the last box lands while relief still outweighs fatigue.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for moving companies"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Moving Company Faces",
+    "items": [
+      {
+        "heading": "Customers collapse on the couch, not on Google",
+        "body": "Unpacking eats the whole week. Reviews are not on their mind."
+      },
+      {
+        "heading": "One scratched heirloom becomes a public crusade",
+        "body": "Stress and money turn small damage into headline reviews."
+      },
+      {
+        "heading": "Crews are off to the next truck, not follow-up calls",
+        "body": "Dispatch is busy. Nobody closes with a review script at the curb."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Moving Companies",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after unload",
+        "body": "Text or email a ReviewFlo link when the truck is empty and paperwork is signed."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Moving Companies Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Strike before memory fades",
+        "body": "Send the same night or next morning while the move is still vivid."
+      },
+      {
+        "heading": "Private first for damage claims",
+        "body": "Photos and frustration reach you before a public flame."
+      },
+      {
+        "heading": "Local and long-distance",
+        "body": "Same flow for hourly crews and interstate jobs."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will people review movers?",
+        "a": "Yes, after stressful days where your crew stayed calm and careful."
+      },
+      {
+        "q": "What if something breaks?",
+        "a": "Private feedback opens a claims path before anger hits Google."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at pricing built for independent movers, not national van lines."
+      },
+      {
+        "q": "Packing services?",
+        "a": "Send after the service they booked, whether labor-only or full pack."
+      },
+      {
+        "q": "Corporate relocations?",
+        "a": "Ask the employee who experienced the crew, not only HR."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Real Estate Agents", "href": "/for/real-estate-agents" },
+      { "label": "Home Inspection Services", "href": "/for/home-inspection-services" },
+      { "label": "Fence Installation", "href": "/for/fence-installation" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Moving Company Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

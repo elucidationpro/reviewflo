@@ -1,0 +1,120 @@
+{
+  "slug": "fence-installation",
+  "industryName": "Fence Installation",
+  "targetKeyword": "fence installation review management",
+  "seo": {
+    "title": "Fence Installation Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your fence company. Route upset customers to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/fence-installation"
+  },
+  "h1": "Review Management for Fence Installation",
+  "hero": {
+    "heading": "Review Management Built for Fence Installation",
+    "subheading": "A straight fence feels like the default once dogs stop testing it. ReviewFlo asks right after walk-through when the line still looks sharp.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for fence installers"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Fence Company Faces",
+    "items": [
+      {
+        "heading": "Privacy feels invisible once it works",
+        "body": "Homeowners forget how loud the old gap felt."
+      },
+      {
+        "heading": "HOA and neighbor fights go public fast",
+        "body": "Height and boundary stress turns emotional online."
+      },
+      {
+        "heading": "Crews move to the next post hole",
+        "body": "There is no office moment to mention reviews."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Fence Installers",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after final walk-through",
+        "body": "Text or email a ReviewFlo link when the gate latches clean."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they send feedback to you privately."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Fence Installers Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Ask at completion",
+        "body": "Send when they test the latch and like the sight lines."
+      },
+      {
+        "heading": "Private first for property line issues",
+        "body": "Disputes stay direct before stars fall."
+      },
+      {
+        "heading": "Wood, vinyl, and chain link",
+        "body": "Same link for every crew."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will homeowners review fence work?",
+        "a": "Yes, after pets and kids finally have a safe yard."
+      },
+      {
+        "q": "What about permit delays?",
+        "a": "Private feedback helps you explain city timelines before blame posts."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same routing at local-contractor pricing."
+      },
+      {
+        "q": "Commercial fencing?",
+        "a": "Send to the site contact who approved the job."
+      },
+      {
+        "q": "Winter installs?",
+        "a": "Time asks after weather-safe completion."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Lawn Care and Landscaping", "href": "/for/lawn-care" },
+      { "label": "Tree Trimming and Arborists", "href": "/for/tree-trimming-arborists" },
+      { "label": "Handyman Services", "href": "/for/handyman-services" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Fence Installation Reviews Today",
+    "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

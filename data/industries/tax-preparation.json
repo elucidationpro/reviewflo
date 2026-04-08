@@ -116,16 +116,16 @@
   "relatedIndustries": {
     "items": [
       {
-        "label": "Accounting Firms",
-        "href": "/for/accounting-firms"
-      },
-      {
         "label": "Law Offices",
         "href": "/for/law-offices"
       },
       {
-        "label": "Financial Advisors",
-        "href": "/for/financial-advisors"
+        "label": "Dental Practices",
+        "href": "/for/dental-practices"
+      },
+      {
+        "label": "Real Estate Agents",
+        "href": "/for/real-estate-agents"
       }
     ]
   },

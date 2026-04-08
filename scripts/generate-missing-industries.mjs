@@ -1,6 +1,9 @@
 /**
  * One-off generator for missing data/industries/*.json files from SEO master list.
  * Run: node scripts/generate-missing-industries.mjs
+ *
+ * Does not include retired verticals (accounting, mortgage, insurance, financial advisor)
+ * or newer trades added as standalone JSON (painting, roofing, moving, etc.).
  */
 import fs from 'fs';
 import path from 'path';
@@ -3280,87 +3283,11 @@ const SEEDS = [
       },
     ],
     related: [
-      { label: 'Accounting Firms', slug: 'accounting-firms' },
       { label: 'Law Offices', slug: 'law-offices' },
-      { label: 'Financial Advisors', slug: 'financial-advisors' },
+      { label: 'Dental Practices', slug: 'dental-practices' },
+      { label: 'Real Estate Agents', slug: 'real-estate-agents' },
     ],
     finalHeading: 'Start Getting More Tax Prep Reviews Today',
-  },
-  {
-    slug: 'accounting-firms',
-    industryName: 'Accounting Firms',
-    plural: 'Accounting Firms',
-    targetKeyword: 'accounting firm review management',
-    seoTitle: 'Accounting Firm Review Management Software | ReviewFlo',
-    seoDesc:
-      'Get more Google reviews for your accounting firm. Route upset clients to private feedback first. Free forever, no credit card required.',
-    h1: 'Review Management for Accounting Firms',
-    heroHeading: 'Review Management Built for Accounting Firms',
-    subheading:
-      'Monthly close is invisible work. ReviewFlo asks after deadlines when clients notice clean books.',
-    socialProof: 'Built for accounting firms',
-    painSection: 'The Review Problem Every Accounting Firm Faces',
-    painItems: [
-      {
-        heading: 'Good books feel like table stakes',
-        body: 'Clients expect accuracy without thinking to post.',
-      },
-      {
-        heading: 'Tax surprises become personal attacks',
-        body: 'Owes and penalties land on your stars.',
-      },
-      {
-        heading: 'Advisory relationships are private',
-        body: 'You cannot showcase most wins.',
-      },
-    ],
-    benefitsSection: 'Why Accounting Firms Choose ReviewFlo',
-    benefitItems: [
-      {
-        heading: 'Quarterly or annual milestones',
-        body: 'Send after closes that felt painless.',
-      },
-      {
-        heading: 'Private first for fee or scope fights',
-        body: 'Contracts get tense before Google hears it.',
-      },
-      {
-        heading: 'Small firms',
-        body: 'No enterprise procurement required.',
-      },
-      {
-        heading: '$270/month cheaper than Podium',
-        body: 'Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan.',
-      },
-    ],
-    faqItems: [
-      {
-        q: 'Can CPAs ask for reviews ethically?',
-        a: 'Yes. Highlight communication, deadlines, and clarity—never confidential results.',
-      },
-      {
-        q: 'What about client conflicts?',
-        a: 'Private feedback channels help before public damage.',
-      },
-      {
-        q: 'How is this different from Podium?',
-        a: 'Same routing without national-firm pricing.',
-      },
-      {
-        q: 'Bookkeeping-only clients?',
-        a: 'Same flow after months of on-time reporting.',
-      },
-      {
-        q: 'Industry niches?',
-        a: 'Reviews still reflect trust in your niche expertise.',
-      },
-    ],
-    related: [
-      { label: 'Tax Preparation', slug: 'tax-preparation' },
-      { label: 'Law Offices', slug: 'law-offices' },
-      { label: 'Mortgage Brokers', slug: 'mortgage-brokers' },
-    ],
-    finalHeading: 'Start Getting More Accounting Firm Reviews Today',
   },
   {
     slug: 'law-offices',
@@ -3434,7 +3361,7 @@ const SEEDS = [
     related: [
       { label: 'Real Estate Agents', slug: 'real-estate-agents' },
       { label: 'Tax Preparation', slug: 'tax-preparation' },
-      { label: 'Accounting Firms', slug: 'accounting-firms' },
+      { label: 'Dental Practices', slug: 'dental-practices' },
     ],
     finalHeading: 'Start Getting More Law Office Reviews Today',
   },
@@ -3508,239 +3435,11 @@ const SEEDS = [
       },
     ],
     related: [
-      { label: 'Mortgage Brokers', slug: 'mortgage-brokers' },
       { label: 'Law Offices', slug: 'law-offices' },
-      { label: 'Insurance Agents', slug: 'insurance-agents' },
+      { label: 'Home Inspection Services', slug: 'home-inspection-services' },
+      { label: 'Moving Companies', slug: 'moving-companies' },
     ],
     finalHeading: 'Start Getting More Real Estate Reviews Today',
-  },
-  {
-    slug: 'mortgage-brokers',
-    industryName: 'Mortgage Brokers',
-    plural: 'Mortgage Brokers',
-    targetKeyword: 'mortgage broker review management',
-    seoTitle: 'Mortgage Broker Review Management Software | ReviewFlo',
-    seoDesc:
-      'Get more Google reviews for your mortgage brokerage. Route upset clients to private feedback first. Free forever, no credit card required.',
-    h1: 'Review Management for Mortgage Brokers',
-    heroHeading: 'Review Management Built for Mortgage Brokers',
-    subheading:
-      'Rate volatility keeps everyone on edge. ReviewFlo asks after funding when the stress finally breaks.',
-    socialProof: 'Built for mortgage brokers',
-    painSection: 'The Review Problem Every Mortgage Broker Faces',
-    painItems: [
-      {
-        heading: 'Relief feels like luck, not your work',
-        body: 'Clients credit the market as much as you.',
-      },
-      {
-        heading: 'Underwriting delays become personal attacks',
-        body: 'Timelines you do not control still hit your stars.',
-      },
-      {
-        heading: 'Numbers are private',
-        body: 'You cannot share most success stories.',
-      },
-    ],
-    benefitsSection: 'Why Mortgage Brokers Choose ReviewFlo',
-    benefitItems: [
-      {
-        heading: 'Send at clear-to-close or funding',
-        body: 'Ask when keys or refi savings feel real.',
-      },
-      {
-        heading: 'Private first for surprise fees or denials',
-        body: 'Hard news gets a direct line.',
-      },
-      {
-        heading: 'Loan officers and small shops',
-        body: 'No enterprise stack.',
-      },
-      {
-        heading: '$270/month cheaper than Podium',
-        body: 'Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan.',
-      },
-    ],
-    faqItems: [
-      {
-        q: 'Can we ask without discussing loan details?',
-        a: 'Yes. Focus on communication, education, and responsiveness.',
-      },
-      {
-        q: 'What if rates move after lock?',
-        a: 'Private feedback helps you explain before public anger.',
-      },
-      {
-        q: 'How is this different from Podium?',
-        a: 'Same routing at broker-scale pricing.',
-      },
-      {
-        q: 'Refi versus purchase?',
-        a: 'Pick milestones that match each journey.',
-      },
-      {
-        q: 'Compliance?',
-        a: 'Follow your regulator’s marketing rules on testimonials.',
-      },
-    ],
-    related: [
-      { label: 'Real Estate Agents', slug: 'real-estate-agents' },
-      { label: 'Insurance Agents', slug: 'insurance-agents' },
-      { label: 'Financial Advisors', slug: 'financial-advisors' },
-    ],
-    finalHeading: 'Start Getting More Mortgage Broker Reviews Today',
-  },
-  {
-    slug: 'insurance-agents',
-    industryName: 'Insurance Agents',
-    plural: 'Insurance Agents',
-    targetKeyword: 'insurance agent review management',
-    seoTitle: 'Insurance Agent Review Management Software | ReviewFlo',
-    seoDesc:
-      'Get more Google reviews for your insurance agency. Route upset clients to private feedback first. Free forever, no credit card required.',
-    h1: 'Review Management for Insurance Agents',
-    heroHeading: 'Review Management Built for Insurance Agents',
-    subheading:
-      'Claims and renewals spike emotions. ReviewFlo asks after helpful service when coverage still feels clear.',
-    socialProof: 'Built for insurance agents',
-    painSection: 'The Review Problem Every Insurance Agent Faces',
-    painItems: [
-      {
-        heading: 'Quiet years mean no reviews',
-        body: 'No claims feels like nothing to post about.',
-      },
-      {
-        heading: 'Denied claims become public crusades',
-        body: 'Anger targets the agent first.',
-      },
-      {
-        heading: 'Rate hikes feel personal',
-        body: 'Market forces read like betrayal on Google.',
-      },
-    ],
-    benefitsSection: 'Why Insurance Agents Choose ReviewFlo',
-    benefitItems: [
-      {
-        heading: 'Send after education-heavy moments',
-        body: 'Ask when you helped someone understand coverage.',
-      },
-      {
-        heading: 'Private first for claim stress',
-        body: 'Give clients a direct line before stars fall.',
-      },
-      {
-        heading: 'Independent agencies',
-        body: 'Simple tools for small teams.',
-      },
-      {
-        heading: '$270/month cheaper than Podium',
-        body: 'Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan.',
-      },
-    ],
-    faqItems: [
-      {
-        q: 'Can we ask without promising coverage?',
-        a: 'Yes. Highlight responsiveness and explanations, not outcomes.',
-      },
-      {
-        q: 'What about carrier complaints?',
-        a: 'Private feedback helps you coach before public blame lands on you.',
-      },
-      {
-        q: 'How is this different from Podium?',
-        a: 'Same routing at agency-friendly pricing.',
-      },
-      {
-        q: 'Personal and commercial lines?',
-        a: 'Same flow; timing matters more than product.',
-      },
-      {
-        q: 'Compliance?',
-        a: 'Follow state rules on testimonials and incentives.',
-      },
-    ],
-    related: [
-      { label: 'Financial Advisors', slug: 'financial-advisors' },
-      { label: 'Real Estate Agents', slug: 'real-estate-agents' },
-      { label: 'Mortgage Brokers', slug: 'mortgage-brokers' },
-    ],
-    finalHeading: 'Start Getting More Insurance Agent Reviews Today',
-  },
-  {
-    slug: 'financial-advisors',
-    industryName: 'Financial Advisors',
-    plural: 'Financial Advisors',
-    targetKeyword: 'financial advisor review management',
-    seoTitle: 'Financial Advisor Review Management Software | ReviewFlo',
-    seoDesc:
-      'Get more Google reviews for your financial advisory practice. Route upset clients to private feedback first. Free forever, no credit card required.',
-    h1: 'Review Management for Financial Advisors',
-    heroHeading: 'Review Management Built for Financial Advisors',
-    subheading:
-      'Markets swing. ReviewFlo asks after planning sessions when clients feel heard, not after quarterly noise.',
-    socialProof: 'Built for financial advisors',
-    painSection: 'The Review Problem Every Financial Advisor Faces',
-    painItems: [
-      {
-        heading: 'Performance is not yours to promise',
-        body: 'Down markets spark blame even when plans were sound.',
-      },
-      {
-        heading: 'Privacy limits what you can share',
-        body: 'Most client stories stay confidential.',
-      },
-      {
-        heading: 'Good advice feels invisible in calm years',
-        body: 'Steady portfolios do not trigger gratitude posts.',
-      },
-    ],
-    benefitsSection: 'Why Financial Advisors Choose ReviewFlo',
-    benefitItems: [
-      {
-        heading: 'Ask about communication, not returns',
-        body: 'Templates can focus on clarity and follow-through.',
-      },
-      {
-        heading: 'Private first for fee or risk disputes',
-        body: 'Serious concerns reach you before Google.',
-      },
-      {
-        heading: 'RIAs and independents',
-        body: 'No massive marketing suite required.',
-      },
-      {
-        heading: '$270/month cheaper than Podium',
-        body: 'Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan.',
-      },
-    ],
-    faqItems: [
-      {
-        q: 'Can advisors ask for reviews under SEC rules?',
-        a: 'Marketing rules are strict. Keep testimonials compliant with your regulator and firm policy.',
-      },
-      {
-        q: 'What about performance complaints?',
-        a: 'Private feedback opens dialogue before public harm.',
-      },
-      {
-        q: 'How is this different from Podium?',
-        a: 'Same routing architecture sized for boutique practices.',
-      },
-      {
-        q: 'Prospects searching Google?',
-        a: 'Ethical, compliant reviews still help people find a human advisor.',
-      },
-      {
-        q: 'Team practices?',
-        a: 'Start with one brand link and expand later.',
-      },
-    ],
-    related: [
-      { label: 'Insurance Agents', slug: 'insurance-agents' },
-      { label: 'Mortgage Brokers', slug: 'mortgage-brokers' },
-      { label: 'Accounting Firms', slug: 'accounting-firms' },
-    ],
-    finalHeading: 'Start Getting More Financial Advisor Reviews Today',
   },
   {
     slug: 'phone-repair',

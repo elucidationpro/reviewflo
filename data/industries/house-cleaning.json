@@ -107,8 +107,8 @@
   "relatedIndustries": {
     "items": [
       { "label": "Pressure Washing", "href": "/for/pressure-washing" },
-      { "label": "Pool Service", "href": "/for/pool-service" },
-      { "label": "Mobile Pet Groomers", "href": "/for/mobile-pet-groomers" }
+      { "label": "Pool Cleaning", "href": "/for/pool-cleaning" },
+      { "label": "Mobile Dog Grooming", "href": "/for/mobile-dog-grooming" }
     ]
   },
   "finalCta": {
