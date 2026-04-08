@@ -1,0 +1,120 @@
+{
+  "slug": "mobile-car-wash",
+  "industryName": "Mobile Car Wash",
+  "targetKeyword": "mobile car wash review management",
+  "seo": {
+    "title": "Mobile Car Wash Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your mobile car wash. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/mobile-car-wash"
+  },
+  "h1": "Review Management for Mobile Car Wash",
+  "hero": {
+    "heading": "Review Management Built for Mobile Car Wash",
+    "subheading": "A clean car doesn’t always become a Google review. ReviewFlo helps you follow up right after the wash.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for mobile car washes"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Mobile Car Wash Faces",
+    "items": [
+      {
+        "heading": "Clients drive off without reviewing",
+        "body": "They’re onto the next errand, not your listing."
+      },
+      {
+        "heading": "One bad job can sit at the top",
+        "body": "Missed spots or damage can turn into a public 1-star fast."
+      },
+      {
+        "heading": "You’re moving lot to lot",
+        "body": "There’s no lobby moment to ask for a review."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Mobile Car Wash",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after the wash",
+        "body": "Text or email a ReviewFlo link when you finish."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star clients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Mobile Car Washes Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Built for routes",
+        "body": "Send the link from your phone right after each stop."
+      },
+      {
+        "heading": "Catches complaints before Google",
+        "body": "Private feedback gives you a chance to make it right first."
+      },
+      {
+        "heading": "Same link every wash",
+        "body": "No extra setup per customer."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will customers leave reviews for a car wash?",
+        "a": "Yes, when you ask right after a job they’re happy with."
+      },
+      {
+        "q": "What if someone is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do I need a POS integration?",
+        "a": "No. You can send requests manually by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small operators."
+      },
+      {
+        "q": "Does this pair with mobile detailing?",
+        "a": "Yes. Same follow-up flow after any mobile service."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Mobile Auto Detailing", "href": "/for/mobile-auto-detailing" },
+      { "label": "Pressure Washing", "href": "/for/pressure-washing" },
+      { "label": "Auto Repair Shops", "href": "/for/auto-repair-shops" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Mobile Car Wash Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

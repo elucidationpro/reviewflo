@@ -1,0 +1,120 @@
+{
+  "slug": "cosmetic-dentistry",
+  "industryName": "Cosmetic Dentistry",
+  "targetKeyword": "cosmetic dentistry review management",
+  "seo": {
+    "title": "Cosmetic Dentistry Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your cosmetic dental practice. Route unhappy patients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/cosmetic-dentistry"
+  },
+  "h1": "Review Management for Cosmetic Dentistry",
+  "hero": {
+    "heading": "Review Management Built for Cosmetic Dentistry",
+    "subheading": "Great outcomes don’t always turn into Google reviews. ReviewFlo helps you follow up after visits without pressure.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for cosmetic dental practices"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Cosmetic Dental Practice Faces",
+    "items": [
+      {
+        "heading": "Patients leave happy and forget to review",
+        "body": "They’re back to work and family, not your listing."
+      },
+      {
+        "heading": "Cost and expectations can fuel public posts",
+        "body": "When someone feels let down, they may post before they call you."
+      },
+      {
+        "heading": "Asking chairside feels uncomfortable",
+        "body": "You want focus on care, not a pitch."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Cosmetic Dentistry",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after checkout",
+        "body": "Text or email a ReviewFlo link when the visit ends."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star patients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Cosmetic Dental Practices Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits checkout at the desk",
+        "body": "Send the link right after the appointment."
+      },
+      {
+        "heading": "Private feedback first",
+        "body": "You can address concerns before they become public reviews."
+      },
+      {
+        "heading": "One link for the practice",
+        "body": "Same follow-up after cosmetic and routine visits."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will patients leave reviews for cosmetic dental work?",
+        "a": "Yes, when you ask right after a visit they’re happy with."
+      },
+      {
+        "q": "What if someone is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do patients need an app?",
+        "a": "No. It’s a link by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small practices."
+      },
+      {
+        "q": "Can we use this at multiple locations?",
+        "a": "Yes. Use separate links per location if needed."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Medical Spas", "href": "/for/medical-spas" },
+      { "label": "Dermatology Clinics", "href": "/for/dermatology-clinics" },
+      { "label": "Hair Salons", "href": "/for/hair-salons" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Cosmetic Dentistry Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

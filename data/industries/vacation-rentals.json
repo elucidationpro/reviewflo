@@ -1,0 +1,120 @@
+{
+  "slug": "vacation-rentals",
+  "industryName": "Vacation Rentals",
+  "targetKeyword": "vacation rental review management",
+  "seo": {
+    "title": "Vacation Rental Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your vacation rental. Route unhappy guests to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/vacation-rentals"
+  },
+  "h1": "Review Management for Vacation Rentals",
+  "hero": {
+    "heading": "Review Management Built for Vacation Rentals",
+    "subheading": "A great stay doesn’t always become a review. ReviewFlo helps you follow up after checkout.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for vacation rentals"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Vacation Rental Faces",
+    "items": [
+      {
+        "heading": "Guests leave town without reviewing",
+        "body": "They’re on to the next trip, not your listing."
+      },
+      {
+        "heading": "One bad stay can sit at the top",
+        "body": "Cleaning, keys, or accuracy issues can show up online fast."
+      },
+      {
+        "heading": "You’re not there to ask in person",
+        "body": "Remote hosting means no natural moment at the door."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Vacation Rentals",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after checkout",
+        "body": "Text or email a ReviewFlo link when the stay ends."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star guests go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Vacation Rentals Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Built for remote hosts",
+        "body": "Follow up by text or email after every stay."
+      },
+      {
+        "heading": "Private feedback first",
+        "body": "You can address issues before they become public reviews."
+      },
+      {
+        "heading": "Same link for every booking",
+        "body": "Drop it into your checkout message or guest guide."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will guests leave reviews for short-term rentals?",
+        "a": "Yes, when you ask right after checkout while the stay is fresh."
+      },
+      {
+        "q": "What if a guest is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do guests need an app?",
+        "a": "No. It’s a link by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small operators."
+      },
+      {
+        "q": "Can I use this for multiple properties?",
+        "a": "Yes. Use separate links per property if you want feedback organized by unit."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Hotels", "href": "/for/hotels" },
+      { "label": "Motels", "href": "/for/motels" },
+      { "label": "Bed and Breakfasts", "href": "/for/bed-and-breakfasts" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Vacation Rental Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "slug": "dermatology-clinics",
+  "industryName": "Dermatology Clinics",
+  "targetKeyword": "dermatology clinic review management",
+  "seo": {
+    "title": "Dermatology Clinic Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your dermatology practice. Route unhappy patients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/dermatology-clinics"
+  },
+  "h1": "Review Management for Dermatology Clinics",
+  "hero": {
+    "heading": "Review Management Built for Dermatology Clinics",
+    "subheading": "Patients may not think to review after a visit. ReviewFlo helps you follow up after appointments with a simple link.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for dermatology practices"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Dermatology Clinic Faces",
+    "items": [
+      {
+        "heading": "Routine visits don’t feel review-worthy",
+        "body": "If everything went fine, patients move on without thinking."
+      },
+      {
+        "heading": "Clinical outcomes can spark public frustration",
+        "body": "When expectations miss, people may post before they call the office."
+      },
+      {
+        "heading": "Front desk time is already stretched",
+        "body": "Staff are checking in the next patient, not chasing reviews."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Dermatology Clinics",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after checkout",
+        "body": "Text or email a ReviewFlo link when the visit ends."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star patients go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Dermatology Clinics Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits front-desk checkout",
+        "body": "Send the link right after the appointment."
+      },
+      {
+        "heading": "Private feedback first",
+        "body": "Concerns can go to your team before they become public reviews."
+      },
+      {
+        "heading": "One link for the practice",
+        "body": "Same follow-up whether it’s a new patient or follow-up care."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will patients leave reviews for dermatology visits?",
+        "a": "Yes, when you ask right after a visit they’re satisfied with."
+      },
+      {
+        "q": "What if a patient is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do patients need an app?",
+        "a": "No. It’s a link by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small practices."
+      },
+      {
+        "q": "Can we use this at multiple locations?",
+        "a": "Yes. Use separate links per location if needed."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Medical Spas", "href": "/for/medical-spas" },
+      { "label": "Cosmetic Dentistry", "href": "/for/cosmetic-dentistry" },
+      { "label": "Lash Studios & Estheticians", "href": "/for/lash-studios" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Dermatology Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

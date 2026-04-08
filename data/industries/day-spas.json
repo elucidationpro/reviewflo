@@ -1,0 +1,120 @@
+{
+  "slug": "day-spas",
+  "industryName": "Day Spas",
+  "targetKeyword": "day spa review management",
+  "seo": {
+    "title": "Day Spa Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your day spa. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/day-spas"
+  },
+  "h1": "Review Management for Day Spas",
+  "hero": {
+    "heading": "Review Management Built for Day Spas",
+    "subheading": "Guests leave relaxed, not thinking about Google. ReviewFlo helps you follow up after the visit.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for day spas"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every Day Spa Faces",
+    "items": [
+      {
+        "heading": "A great visit doesn’t always become a review",
+        "body": "They’re already planning the rest of their day."
+      },
+      {
+        "heading": "Service issues can show up publicly first",
+        "body": "When expectations miss, frustration can land online before you hear about it."
+      },
+      {
+        "heading": "Therapists don’t want to ask mid-treatment",
+        "body": "The room should feel calm, not like a sales pitch."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Day Spas",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after checkout",
+        "body": "Text or email a ReviewFlo link when they pay and leave."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star guests go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why Day Spas Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits checkout at the desk",
+        "body": "Send the link right after the appointment."
+      },
+      {
+        "heading": "Private feedback first",
+        "body": "You can address concerns before they become public reviews."
+      },
+      {
+        "heading": "One link for your whole team",
+        "body": "Same follow-up after every service."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will spa guests leave reviews?",
+        "a": "Yes, when you ask right after checkout while the visit is fresh."
+      },
+      {
+        "q": "What if someone is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do guests need an app?",
+        "a": "No. It’s a link by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small businesses."
+      },
+      {
+        "q": "How does this relate to medspa-style services?",
+        "a": "Same follow-up flow. You control what you ask and when."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Medical Spas", "href": "/for/medical-spas" },
+      { "label": "Massage Therapy", "href": "/for/massage-therapy" },
+      { "label": "Hair Salons", "href": "/for/hair-salons" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More Day Spa Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}

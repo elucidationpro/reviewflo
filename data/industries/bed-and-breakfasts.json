@@ -1,0 +1,120 @@
+{
+  "slug": "bed-and-breakfasts",
+  "industryName": "Bed and Breakfasts",
+  "targetKeyword": "bed and breakfast review management",
+  "seo": {
+    "title": "Bed & Breakfast Review Management Software | ReviewFlo",
+    "description": "Get more Google reviews for your B&B. Route unhappy guests to private feedback before it hits Google. Free forever, no credit card required.",
+    "canonicalUrl": "https://reviewflo.com/for/bed-and-breakfasts"
+  },
+  "h1": "Review Management for Bed and Breakfasts",
+  "hero": {
+    "heading": "Review Management Built for Bed and Breakfasts",
+    "subheading": "Guests remember the stay, but they don’t always think to review. ReviewFlo helps you follow up after checkout.",
+    "cta": {
+      "label": "Start Free — No Credit Card",
+      "href": "/signup"
+    },
+    "stats": [
+      { "value": "$0", "label": "free plan available" },
+      { "value": "$19/mo", "label": "ReviewFlo Pro" },
+      { "value": "$289/mo", "label": "Podium" }
+    ],
+    "callout": "$270/month cheaper than Podium."
+  },
+  "socialProof": {
+    "text": "Built for bed and breakfasts"
+  },
+  "painPoints": {
+    "sectionHeading": "The Review Problem Every B&B Faces",
+    "items": [
+      {
+        "heading": "A lovely stay doesn’t always become a review",
+        "body": "Guests head home and move on with their week."
+      },
+      {
+        "heading": "One off night can define your profile",
+        "body": "Breakfast timing, noise, or room issues can show up online first."
+      },
+      {
+        "heading": "You’re hosting, not selling reviews",
+        "body": "Asking at the table can feel out of place."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionHeading": "How ReviewFlo Works for Bed and Breakfasts",
+    "steps": [
+      {
+        "title": "Step 1 — Send the link after checkout",
+        "body": "Text or email a ReviewFlo link when guests leave."
+      },
+      {
+        "title": "Step 2 — 1–4 stars goes to you privately",
+        "body": "If they’re unhappy, they message you instead of posting publicly."
+      },
+      {
+        "title": "Step 3 — 5-star guests go straight to Google",
+        "body": "If they’re happy, they’re guided to leave a Google review."
+      }
+    ]
+  },
+  "benefits": {
+    "sectionHeading": "Why B&Bs Choose ReviewFlo",
+    "items": [
+      {
+        "heading": "Fits a small property workflow",
+        "body": "Send the link right after checkout."
+      },
+      {
+        "heading": "Private feedback first",
+        "body": "You can address concerns before they become public reviews."
+      },
+      {
+        "heading": "Same link every stay",
+        "body": "No complicated setup for a small team."
+      },
+      {
+        "heading": "$270/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+      }
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Will B&B guests leave reviews?",
+        "a": "Yes, when you ask right after checkout while the stay is fresh."
+      },
+      {
+        "q": "What if someone is unhappy?",
+        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
+      },
+      {
+        "q": "Do guests need an app?",
+        "a": "No. It’s a link by text or email."
+      },
+      {
+        "q": "How is this different from Podium?",
+        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small properties."
+      },
+      {
+        "q": "Can I use this if I only have a few rooms?",
+        "a": "Yes. One link is enough to get started."
+      }
+    ]
+  },
+  "relatedIndustries": {
+    "items": [
+      { "label": "Motels", "href": "/for/motels" },
+      { "label": "Hotels", "href": "/for/hotels" },
+      { "label": "Vacation Rentals", "href": "/for/vacation-rentals" }
+    ]
+  },
+  "finalCta": {
+    "heading": "Start Getting More B&B Reviews Today",
+    "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
+    "buttonLabel": "Start Free — No Credit Card",
+    "buttonHref": "/signup"
+  }
+}
