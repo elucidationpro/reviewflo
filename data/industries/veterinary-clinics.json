@@ -13,7 +13,7 @@
     "subheading": "Pet owners are emotional and busy. ReviewFlo helps you ask for feedback without putting clinical details in the spotlight.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
       {
@@ -133,6 +133,6 @@
     "heading": "Start Getting More Veterinary Reviews Today",
     "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

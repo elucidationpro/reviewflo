@@ -13,12 +13,21 @@
     "subheading": "Safe yards look calm when you leave. ReviewFlo texts after chipper day when homeowners still hear the difference.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
-      { "value": "$0", "label": "free plan available" },
-      { "value": "$19/mo", "label": "ReviewFlo Pro" },
-      { "value": "$289/mo", "label": "Podium" }
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
     ],
     "callout": "$270/month cheaper than Podium."
   },
@@ -106,15 +115,24 @@
   },
   "relatedIndustries": {
     "items": [
-      { "label": "Lawn Care and Landscaping", "href": "/for/lawn-care" },
-      { "label": "Fence Installation", "href": "/for/fence-installation" },
-      { "label": "Pressure Washing", "href": "/for/pressure-washing" }
+      {
+        "label": "Lawn Care and Landscaping",
+        "href": "/for/lawn-care"
+      },
+      {
+        "label": "Fence Installation",
+        "href": "/for/fence-installation"
+      },
+      {
+        "label": "Pressure Washing",
+        "href": "/for/pressure-washing"
+      }
     ]
   },
   "finalCta": {
     "heading": "Start Getting More Tree Service Reviews Today",
     "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

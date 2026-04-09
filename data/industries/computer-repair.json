@@ -13,7 +13,7 @@
     "subheading": "Deadlines loom when machines fail. ReviewFlo asks after boot-up when coffee can wait again.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
       {
@@ -133,6 +133,6 @@
     "heading": "Start Getting More Computer Repair Reviews Today",
     "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

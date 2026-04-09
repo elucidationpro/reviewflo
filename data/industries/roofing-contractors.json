@@ -13,12 +13,21 @@
     "subheading": "A dry roof feels like relief, not a photo op. ReviewFlo asks after final inspection when homeowners still remember the leak.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
-      { "value": "$0", "label": "free plan available" },
-      { "value": "$19/mo", "label": "ReviewFlo Pro" },
-      { "value": "$289/mo", "label": "Podium" }
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
     ],
     "callout": "$270/month cheaper than Podium."
   },
@@ -106,15 +115,24 @@
   },
   "relatedIndustries": {
     "items": [
-      { "label": "Gutter Cleaning", "href": "/for/gutter-cleaning" },
-      { "label": "Home Inspection Services", "href": "/for/home-inspection-services" },
-      { "label": "Pressure Washing", "href": "/for/pressure-washing" }
+      {
+        "label": "Gutter Cleaning",
+        "href": "/for/gutter-cleaning"
+      },
+      {
+        "label": "Home Inspection Services",
+        "href": "/for/home-inspection-services"
+      },
+      {
+        "label": "Pressure Washing",
+        "href": "/for/pressure-washing"
+      }
     ]
   },
   "finalCta": {
     "heading": "Start Getting More Roofing Reviews Today",
     "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

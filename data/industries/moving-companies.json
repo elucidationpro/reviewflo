@@ -13,12 +13,21 @@
     "subheading": "Move day ends in exhaustion. ReviewFlo texts after the last box lands while relief still outweighs fatigue.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
-      { "value": "$0", "label": "free plan available" },
-      { "value": "$19/mo", "label": "ReviewFlo Pro" },
-      { "value": "$289/mo", "label": "Podium" }
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
     ],
     "callout": "$270/month cheaper than Podium."
   },
@@ -106,15 +115,24 @@
   },
   "relatedIndustries": {
     "items": [
-      { "label": "Real Estate Agents", "href": "/for/real-estate-agents" },
-      { "label": "Home Inspection Services", "href": "/for/home-inspection-services" },
-      { "label": "Fence Installation", "href": "/for/fence-installation" }
+      {
+        "label": "Real Estate Agents",
+        "href": "/for/real-estate-agents"
+      },
+      {
+        "label": "Home Inspection Services",
+        "href": "/for/home-inspection-services"
+      },
+      {
+        "label": "Fence Installation",
+        "href": "/for/fence-installation"
+      }
     ]
   },
   "finalCta": {
     "heading": "Start Getting More Moving Company Reviews Today",
     "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

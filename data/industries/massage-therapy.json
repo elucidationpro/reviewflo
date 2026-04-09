@@ -13,12 +13,21 @@
     "subheading": "Clients float out relaxed, not thinking about reviews. ReviewFlo helps you follow up after the session.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
-      { "value": "$0", "label": "free plan available" },
-      { "value": "$19/mo", "label": "ReviewFlo Pro" },
-      { "value": "$289/mo", "label": "Podium" }
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
     ],
     "callout": "$270/month cheaper than Podium."
   },
@@ -106,15 +115,24 @@
   },
   "relatedIndustries": {
     "items": [
-      { "label": "Chiropractors", "href": "/for/chiropractors" },
-      { "label": "Personal Training", "href": "/for/personal-training" },
-      { "label": "Medical Spas", "href": "/for/medical-spas" }
+      {
+        "label": "Chiropractors",
+        "href": "/for/chiropractors"
+      },
+      {
+        "label": "Personal Training",
+        "href": "/for/personal-training"
+      },
+      {
+        "label": "Medical Spas",
+        "href": "/for/medical-spas"
+      }
     ]
   },
   "finalCta": {
     "heading": "Start Getting More Massage Therapy Reviews Today",
     "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

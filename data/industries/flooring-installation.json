@@ -13,12 +13,21 @@
     "subheading": "New floors feel normal once furniture is back. ReviewFlo asks after final walk-through when the sheen still impresses.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
-      { "value": "$0", "label": "free plan available" },
-      { "value": "$19/mo", "label": "ReviewFlo Pro" },
-      { "value": "$289/mo", "label": "Podium" }
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
     ],
     "callout": "$270/month cheaper than Podium."
   },
@@ -106,15 +115,24 @@
   },
   "relatedIndustries": {
     "items": [
-      { "label": "Painting Contractors", "href": "/for/painting-contractors" },
-      { "label": "Handyman Services", "href": "/for/handyman-services" },
-      { "label": "Home Inspection Services", "href": "/for/home-inspection-services" }
+      {
+        "label": "Painting Contractors",
+        "href": "/for/painting-contractors"
+      },
+      {
+        "label": "Handyman Services",
+        "href": "/for/handyman-services"
+      },
+      {
+        "label": "Home Inspection Services",
+        "href": "/for/home-inspection-services"
+      }
     ]
   },
   "finalCta": {
     "heading": "Start Getting More Flooring Installation Reviews Today",
     "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

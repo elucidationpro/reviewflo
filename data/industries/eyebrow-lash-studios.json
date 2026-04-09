@@ -13,7 +13,7 @@
     "subheading": "Clients love the mirror moment but rarely open Google afterward. ReviewFlo sends a quick ask after the appointment.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
       {
@@ -133,6 +133,6 @@
     "heading": "Start Getting More Lash Studio Reviews Today",
     "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

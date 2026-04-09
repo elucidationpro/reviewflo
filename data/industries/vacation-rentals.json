@@ -13,12 +13,21 @@
     "subheading": "A great stay doesn’t always become a review. ReviewFlo helps you follow up after checkout.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
-      { "value": "$0", "label": "free plan available" },
-      { "value": "$19/mo", "label": "ReviewFlo Pro" },
-      { "value": "$289/mo", "label": "Podium" }
+      {
+        "value": "$0",
+        "label": "free plan available"
+      },
+      {
+        "value": "$19/mo",
+        "label": "ReviewFlo Pro"
+      },
+      {
+        "value": "$289/mo",
+        "label": "Podium"
+      }
     ],
     "callout": "$270/month cheaper than Podium."
   },
@@ -106,15 +115,24 @@
   },
   "relatedIndustries": {
     "items": [
-      { "label": "Hotels", "href": "/for/hotels" },
-      { "label": "Motels", "href": "/for/motels" },
-      { "label": "Bed and Breakfasts", "href": "/for/bed-and-breakfasts" }
+      {
+        "label": "Hotels",
+        "href": "/for/hotels"
+      },
+      {
+        "label": "Motels",
+        "href": "/for/motels"
+      },
+      {
+        "label": "Bed and Breakfasts",
+        "href": "/for/bed-and-breakfasts"
+      }
     ]
   },
   "finalCta": {
     "heading": "Start Getting More Vacation Rental Reviews Today",
     "subheading": "Free forever. No credit card. Your first request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

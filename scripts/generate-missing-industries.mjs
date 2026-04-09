@@ -64,7 +64,7 @@ function buildIndustry(seed) {
     hero: {
       heading: heroHeading,
       subheading,
-      cta: { label: 'Start Free — No Credit Card', href: '/signup' },
+      cta: { label: 'Start Free — No Credit Card', href: '/join' },
       stats: [
         { value: '$0', label: 'free plan available' },
         { value: '$19/mo', label: 'ReviewFlo Pro' },
@@ -91,7 +91,7 @@ function buildIndustry(seed) {
       subheading:
         'Free forever. No credit card. Your first review request goes out in under 5 minutes.',
       buttonLabel: 'Start Free — No Credit Card',
-      buttonHref: '/signup',
+      buttonHref: '/join',
     },
   };
 }

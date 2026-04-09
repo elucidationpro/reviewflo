@@ -13,7 +13,7 @@
     "subheading": "You meet clients at the curb and drive away. ReviewFlo catches them by text before the next stop.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
       {
@@ -133,6 +133,6 @@
     "heading": "Start Getting More Mobile Grooming Reviews Today",
     "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }

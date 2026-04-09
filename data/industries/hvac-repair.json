@@ -13,7 +13,7 @@
     "subheading": "Emergency calls and seasonal rushes leave little time to follow up. ReviewFlo sends the ask by text or email so you do not rely on memory.",
     "cta": {
       "label": "Start Free — No Credit Card",
-      "href": "/signup"
+      "href": "/join"
     },
     "stats": [
       {
@@ -133,6 +133,6 @@
     "heading": "Start Getting More HVAC Reviews Today",
     "subheading": "Free forever. No credit card. Your first review request goes out in under 5 minutes.",
     "buttonLabel": "Start Free — No Credit Card",
-    "buttonHref": "/signup"
+    "buttonHref": "/join"
   }
 }
