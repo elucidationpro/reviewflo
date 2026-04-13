@@ -14,6 +14,10 @@ import {
   isReservedSlug,
   normalizeSlugForValidation,
 } from '../../../../lib/slug-utils';
+import {
+  magicLandingRedirectTo,
+  setMagicNextCookie,
+} from '@/lib/magic-link-landing';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -116,20 +120,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const ensureBusinessAndLinkGoogle = async (userId: string) => {
       const { data: business } = await supabaseAdmin
         .from('businesses')
-        .select('id')
+        .select('id, google_place_id, google_review_url')
         .eq('user_id', userId)
         .single();
 
       const expiresAt = new Date(Date.now() + tokens.expiresIn * 1000).toISOString();
+      const mergedPlaceId = inferredPlaceId ?? business?.google_place_id ?? null;
       const googleReviewUrl = inferredPlaceId
         ? `https://search.google.com/local/writereview?placeid=${inferredPlaceId}`
-        : null;
+        : business?.google_review_url ?? null;
 
       if (business?.id) {
         await supabaseAdmin
           .from('businesses')
           .update({
-            google_place_id: inferredPlaceId,
+            google_place_id: mergedPlaceId,
             google_review_url: googleReviewUrl,
             google_oauth_access_token: accessToken,
             ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
@@ -218,14 +223,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     await ensureBusinessAndLinkGoogle(user.id);
 
+    const magicNext = createdNow ? 'google-confirm' : 'dashboard';
+    setMagicNextCookie(res, magicNext);
+
     // Generate a magic link to sign the user in
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',
       email,
       options: {
-        redirectTo: createdNow
-          ? `${appBase}/join/google-confirm`
-          : `${appBase}/dashboard`,
+        redirectTo: magicLandingRedirectTo(appBase, magicNext),
       },
     });
 

@@ -67,9 +67,10 @@ After Google OAuth, the app uses **Supabase Admin `generateLink`** and redirects
 2. Under **Redirect URLs**, add:
    - `http://localhost:3000/**`  
    (Use the same port you run `next dev` on, e.g. `3001` if needed.)
+   - Production: `https://your-domain.com/**` (must cover `/auth/magic-landing` — that page finishes the magic link and sends users to the dashboard.)
 3. Save.
 
-If this is missing, Supabase falls back to your project **Site URL** (often production), which looks like “Google login sends me to the live site.”
+If this is missing, Supabase falls back to your project **Site URL** (often just `/`). The app sets a short-lived cookie during Google OAuth and will still send you to `/auth/magic-landing` when possible, but you should allow the redirect URL so users land on the right page in one step.
 
 ### 3. Update Environment Variables
 

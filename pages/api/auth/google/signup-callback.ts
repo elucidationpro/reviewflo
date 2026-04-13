@@ -15,6 +15,10 @@ import {
   normalizeSlugForValidation,
 } from '../../../../lib/slug-utils';
 import { sendAdminNotification } from '@/lib/email-service';
+import {
+  magicLandingRedirectTo,
+  setMagicNextCookie,
+} from '@/lib/magic-link-landing';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -103,7 +107,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const expiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
       let { data: business } = await supabaseAdmin
         .from('businesses')
-        .select('id')
+        .select('id, google_place_id, google_review_url')
         .eq('user_id', existing.id)
         .single();
 
@@ -160,11 +164,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .single();
         business = createdBusiness || null;
       } else {
+        const mergedPlaceId = placeId ?? business.google_place_id ?? null;
+        const mergedReviewUrl = placeId
+          ? `https://search.google.com/local/writereview?placeid=${placeId}`
+          : business.google_review_url;
         await supabaseAdmin
           .from('businesses')
           .update({
-            google_place_id: placeId,
-            google_review_url: googleReviewUrl,
+            google_place_id: mergedPlaceId,
+            google_review_url: mergedReviewUrl,
             google_oauth_access_token: tokens.accessToken,
             ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
             google_oauth_expires_at: expiresAt.toISOString(),
@@ -173,11 +181,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .eq('id', business.id);
       }
 
+      setMagicNextCookie(res, 'dashboard');
       const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
         type: 'magiclink',
         email,
         options: {
-          redirectTo: `${appBase}/dashboard`,
+          redirectTo: magicLandingRedirectTo(appBase, 'dashboard'),
         },
       });
       if (linkError || !linkData?.properties?.action_link) {
@@ -304,12 +313,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('[Google Signup] Admin notification failed:', adminErr);
     }
 
+    setMagicNextCookie(res, 'google-confirm');
     // Generate a magic link to sign the user in and send them to the confirm page
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',
       email,
       options: {
-        redirectTo: `${appBase}/join/google-confirm`,
+        redirectTo: magicLandingRedirectTo(appBase, 'google-confirm'),
       },
     });
 

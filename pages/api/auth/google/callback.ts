@@ -69,21 +69,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Calculate token expiration time
     const expiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
 
-    // Build Google review URL from Place ID for the review page
-    const googleReviewUrl = businessData?.placeId
-      ? `https://search.google.com/local/writereview?placeid=${businessData.placeId}`
-      : null;
+    const { data: existingBusiness } = await supabaseAdmin
+      .from('businesses')
+      .select('google_place_id, google_review_url, google_business_name')
+      .eq('user_id', user.id)
+      .single();
+
+    const newPlaceId = businessData?.placeId ?? null;
+    const mergedPlaceId = newPlaceId ?? existingBusiness?.google_place_id ?? null;
+    const googleReviewUrl = newPlaceId
+      ? `https://search.google.com/local/writereview?placeid=${newPlaceId}`
+      : existingBusiness?.google_review_url ?? null;
+    const mergedBusinessName =
+      businessData?.businessName ?? existingBusiness?.google_business_name ?? null;
 
     // Store tokens, Place ID, and review URL in database
     const { error: updateError } = await supabaseAdmin
       .from('businesses')
       .update({
-        google_place_id: businessData?.placeId || null,
+        google_place_id: mergedPlaceId,
         google_review_url: googleReviewUrl,
         google_oauth_access_token: tokens.accessToken,
         ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
         google_oauth_expires_at: expiresAt.toISOString(),
-        google_business_name: businessData?.businessName || null,
+        google_business_name: mergedBusinessName,
       })
       .eq('user_id', user.id);
 

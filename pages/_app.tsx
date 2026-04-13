@@ -26,7 +26,23 @@ export default function App({ Component, pageProps }: AppProps) {
         router.replace(`/update-password${window.location.hash}`);
         return;
       }
-      // Other types (invite, etc.) can be handled here if needed
+
+      // Google OAuth → magic link: if redirectTo isn't allowlisted, Supabase falls back to Site URL (/).
+      // Session tokens still arrive in the hash; rf_magic_next was set by the OAuth callback.
+      if (
+        access_token &&
+        type === 'magiclink' &&
+        router.pathname === '/' &&
+        /(?:^|; )rf_magic_next=/.test(document.cookie)
+      ) {
+        const match = document.cookie.match(/(?:^|; )rf_magic_next=([^;]+)/);
+        const raw = match?.[1]?.trim();
+        const next = raw === 'google-confirm' ? 'google-confirm' : 'dashboard';
+        document.cookie = 'rf_magic_next=; Path=/; Max-Age=0';
+        window.location.replace(
+          `${window.location.origin}/auth/magic-landing?next=${next}${window.location.hash}`
+        );
+      }
     }
   }, [router.pathname]); // Only depend on pathname, not entire router object
 
