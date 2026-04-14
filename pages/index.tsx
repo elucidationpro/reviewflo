@@ -25,6 +25,9 @@ const PAUSE_DEFAULT_MS = 1400;
 const TYPE_SPEED_MS = 80;
 const DELETE_SPEED_MS = 45;
 
+const SEE_IT_SCREENSHOT_IMG_CLASS =
+  'block w-full h-auto max-w-xl mx-auto rounded-xl transition-transform duration-300 ease-out group-hover:-translate-y-1';
+
 function useTypewriter(words: string[]) {
   const [displayText, setDisplayText] = useState('');
   const [wordIndex, setWordIndex] = useState(0);
@@ -445,136 +448,111 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* See It In Action Section */}
+      {/* See It In Action — screenshots: public/images/see-it-action/ */}
       <section id="see-it-in-action" className="py-12 sm:py-16 bg-gray-50/50">
-        <div ref={actionStepsRef} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div ref={actionStepsRef} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* Section header — slides up on enter */}
           <div className="action-header text-center mb-8 sm:mb-12">
             <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">
               See It In Action
             </h2>
             <p className="text-sm text-gray-500 max-w-xl mx-auto">
-              Here&apos;s exactly what your customers will see
+              One tap tells you who&rsquo;s happy. Happy customers go straight to Google. Unhappy ones go to you—privately.
             </p>
           </div>
 
-          {/* Step 1: image LEFT → slides from left */}
-          <div className="action-step mb-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
+          <div className="action-step mb-14 sm:mb-16 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
             <div className="action-step-img w-full md:w-1/2 group">
               <Image
-                src="/images/sq-rating-page.png"
-                alt="Customer rating screen"
-                width={400}
-                height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
+                src="/images/see-it-action/review-link.png"
+                alt="Review platform choice: Google, Facebook, or your review links"
+                width={1970}
+                height={1868}
+                sizes="(min-width: 768px) min(50vw, 36rem), 100vw"
+                className={SEE_IT_SCREENSHOT_IMG_CLASS}
               />
             </div>
             <div className="action-step-text w-full md:w-1/2">
               <span className="action-step-badge inline-block px-3 py-1 bg-[#E8DCC8] text-[#4A3428] text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
-                Step 1
+                Step 1 · Rate
               </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Customer Rates
+                Customer taps a star
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Your customer receives your link and sees this simple 1-5 star rating screen. One click, takes 5 seconds.
+                Your review link opens to a single screen: “How was your experience?” No login, no friction—just a star rating in seconds. What happens next depends on what they choose.
               </p>
             </div>
           </div>
 
-          {/* Step 2a: image RIGHT → slides from right */}
-          <div className="action-step mb-12 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
+          <div className="action-step mb-14 sm:mb-16 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
             <div className="action-step-img-right w-full md:w-1/2 group">
               <Image
-                src="/images/sq-feedback-page.png"
-                alt="Private feedback form"
-                width={400}
-                height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
+                src="/images/see-it-action/5-stars-no-templates.png"
+                alt="Five-star rating confirmation—choose where to leave a review"
+                width={1970}
+                height={1868}
+                sizes="(min-width: 768px) min(50vw, 36rem), 100vw"
+                className={SEE_IT_SCREENSHOT_IMG_CLASS}
               />
             </div>
             <div className="action-step-text w-full md:w-1/2">
-              <span className="action-step-badge inline-block px-3 py-1 bg-[#FEE2E2] text-red-700 text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
-                Step 2a — Unhappy
+              <span className="action-step-badge inline-block px-3 py-1 bg-[#DCFCE7] text-green-800 text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
+                If 5 stars → Review platform
               </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                If They&apos;re Unhappy (1-4 stars)
+                Happy customers pick a platform
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                They see a private feedback form where they can tell you what went wrong. You get an email. Nothing goes public. You can fix it.
+                A 5-star tap sends them to choose Google, Facebook, or any link you&rsquo;ve set up—then straight into that site&rsquo;s review flow. No extra steps.
               </p>
             </div>
           </div>
 
-          {/* Step 2b: image LEFT → slides from left */}
-          <div className="action-step mb-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
+          <div className="action-step mb-14 sm:mb-16 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
             <div className="action-step-img w-full md:w-1/2 group">
               <Image
-                src="/images/sq-templates-page.png"
-                alt="Template selection"
-                width={400}
-                height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
+                src="/images/see-it-action/feedback.png"
+                alt="Private feedback form for lower star ratings"
+                width={1970}
+                height={1868}
+                sizes="(min-width: 768px) min(50vw, 36rem), 100vw"
+                className={SEE_IT_SCREENSHOT_IMG_CLASS}
               />
             </div>
             <div className="action-step-text w-full md:w-1/2">
-              <span className="action-step-badge inline-block px-3 py-1 bg-[#DCFCE7] text-green-700 text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
-                Step 2b — Happy
+              <span className="action-step-badge inline-block px-3 py-1 bg-[#FEE2E2] text-red-800 text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
+                If 1–4 stars → Private feedback
               </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                If They&apos;re Happy (5 stars)
+                Unhappy customers go to you, not Google
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                They choose to write their own review or use a pre-written template. Templates make it effortless.
+                A 1–4 star rating quietly redirects to a private feedback form instead of a public review site. You get the full story by email and can fix it before it ever reaches Google.
               </p>
             </div>
           </div>
 
-          {/* Step 3: image RIGHT → slides from right */}
-          <div className="action-step mb-12 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
+          <div className="action-step mb-0 flex flex-col-reverse md:flex-row-reverse items-center gap-6 md:gap-10">
             <div className="action-step-img-right w-full md:w-1/2 group">
               <Image
-                src="/images/sq-platform-page.png"
-                alt="Platform selection screen"
-                width={400}
-                height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
-              />
-            </div>
-            <div className="action-step-text w-full md:w-1/2">
-              <span className="action-step-badge inline-block px-3 py-1 bg-[#E8DCC8] text-[#4A3428] text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
-                Step 3
-              </span>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Choose Platform
-              </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Customer picks Google, Facebook, or Yelp. One click and they&apos;re there.
-              </p>
-            </div>
-          </div>
-
-          {/* Final Result: image LEFT → slides from left */}
-          <div className="action-step mb-0 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
-            <div className="action-step-img w-full md:w-1/2 group">
-              <Image
-                src="/images/sq-google-review.png"
-                alt="5-star Google review"
-                width={400}
-                height={400}
-                className="w-full max-w-sm mx-auto rounded-lg shadow-md border border-gray-200 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl"
+                src="/images/see-it-action/google-review.png"
+                alt="Google Maps review screen—customer posts a public review"
+                width={1970}
+                height={1868}
+                sizes="(min-width: 768px) min(50vw, 36rem), 100vw"
+                className={SEE_IT_SCREENSHOT_IMG_CLASS}
               />
             </div>
             <div className="action-step-text w-full md:w-1/2">
               <span className="action-step-badge inline-block px-3 py-1 bg-[#C9A961] text-white text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
-                ★ Result
+                The result → More 5-star reviews
               </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                A Public 5-Star Review
+                Your rating climbs, your reputation stays clean
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                The template copies to their clipboard. Google opens. They paste and post. Done in under a minute.
+                Happy customers land on Google and write their review. Unhappy ones land with you. Over time your public rating rises while bad experiences get handled privately.
               </p>
             </div>
           </div>
