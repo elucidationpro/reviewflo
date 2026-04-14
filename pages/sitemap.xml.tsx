@@ -3,7 +3,8 @@ import { getBlogPost } from '@/lib/blog-posts'
 import { getPublishedSlugs } from '@/lib/blog-schedule'
 import { getIndustrySlugs } from '@/lib/industries'
 
-const SITE = 'https://usereviewflo.com'
+// IMPORTANT: this should match the primary canonical domain.
+const SITE = 'https://reviewflo.com'
 
 /**
  * Public, fixed routes (Pages Router) — excludes dynamic [slug], admin, dashboard, and API routes.
@@ -19,11 +20,7 @@ const STATIC_PATHS: string[] = [
   '/qualify',
   '/survey',
   '/feedback',
-  '/login',
-  '/signup',
   '/join',
-  '/reset-password',
-  '/update-password',
   '/blog',
   '/early-access',
   '/early-access/join',
