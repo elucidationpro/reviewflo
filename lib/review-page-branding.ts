@@ -2,6 +2,11 @@
  * Customer-facing review pages: accent color and footer (ReviewFlo vs white-label).
  */
 
+export type ReviewFloWhiteLabel = {
+  brandName: string
+  brandColor?: string | null
+}
+
 export function getReviewAccentColor(business: {
   primary_color: string
   white_label_enabled?: boolean | null
@@ -14,7 +19,7 @@ export function getReviewAccentColor(business: {
 }
 
 export type ResolvedReviewFooter = {
-  whiteLabel: { brandName: string; brandColor: string | null } | null
+  whiteLabel: ReviewFloWhiteLabel | null
   showReviewFloBranding: boolean
 }
 
