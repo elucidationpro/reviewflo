@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabase'
 import ReviewFloFooter from '../components/ReviewFloFooter'
 import { trackEvent } from '../lib/posthog-provider'
+import { getReviewAccentColor, resolvePublicReviewFooter } from '../lib/review-page-branding'
 
 interface Business {
   id: string
@@ -16,6 +17,9 @@ interface Business {
   show_reviewflo_branding?: boolean
   show_business_name?: boolean
   logo_url?: string | null
+  white_label_enabled?: boolean
+  custom_brand_name?: string | null
+  custom_brand_color?: string | null
 }
 
 interface PageProps {
@@ -28,6 +32,8 @@ function getDisplayLogoUrl(b: Business): string | null {
 
 export default function ReviewPage({ business }: PageProps) {
   const router = useRouter()
+  const accentColor = getReviewAccentColor(business)
+  const footer = resolvePublicReviewFooter(business)
   const displayLogoUrl = getDisplayLogoUrl(business)
   const [selectedRating, setSelectedRating] = useState<number | null>(null)
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
@@ -91,14 +97,14 @@ export default function ReviewPage({ business }: PageProps) {
         <meta property="og:title" content={`${business.business_name} - Share Your Experience`} />
         <meta property="og:description" content="How was your recent experience? We'd love to hear your feedback." />
         <meta property="og:url" content={`https://usereviewflo.com/${business.slug}`} />
-        <meta property="og:image" content="https://usereviewflo.com/api/og-feedback" />
+        <meta property="og:image" content={`https://usereviewflo.com/api/og-business?name=${encodeURIComponent(business.business_name)}${displayLogoUrl ? `&logo=${encodeURIComponent(displayLogoUrl)}` : ''}`} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:type" content="image/png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${business.business_name} - Share Your Experience`} />
         <meta name="twitter:description" content="How was your recent experience? We'd love to hear your feedback." />
-        <meta name="twitter:image" content="https://usereviewflo.com/api/og-feedback" />
+        <meta name="twitter:image" content={`https://usereviewflo.com/api/og-business?name=${encodeURIComponent(business.business_name)}${displayLogoUrl ? `&logo=${encodeURIComponent(displayLogoUrl)}` : ''}`} />
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
@@ -122,7 +128,7 @@ export default function ReviewPage({ business }: PageProps) {
             {business.show_business_name !== false && (
               <h1
                 className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold text-center tracking-tight mb-1"
-                style={{ color: business.primary_color }}
+                style={{ color: accentColor }}
               >
                 {business.business_name}
               </h1>
@@ -146,8 +152,8 @@ export default function ReviewPage({ business }: PageProps) {
                 >
                   <svg
                     className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 transition-colors duration-150"
-                    fill={star <= displayRating ? business.primary_color : 'none'}
-                    stroke={star <= displayRating ? business.primary_color : '#CBD5E1'}
+                    fill={star <= displayRating ? accentColor : 'none'}
+                    stroke={star <= displayRating ? accentColor : '#CBD5E1'}
                     strokeWidth="1.5"
                     viewBox="0 0 24 24"
                   >
@@ -166,7 +172,7 @@ export default function ReviewPage({ business }: PageProps) {
               <div className="text-center h-8 flex flex-col items-center justify-center gap-1.5">
                 <div
                   className="w-5 h-5 rounded-full border-2 border-gray-100 animate-spin"
-                  style={{ borderTopColor: business.primary_color }}
+                  style={{ borderTopColor: accentColor }}
                 />
                 <p className="text-gray-400 text-xs md:text-sm lg:text-base">Saving…</p>
               </div>
@@ -188,7 +194,10 @@ export default function ReviewPage({ business }: PageProps) {
                 Privacy
               </Link>
             </div>
-            <ReviewFloFooter showBranding={business.show_reviewflo_branding !== false || business.tier === 'free'} />
+            <ReviewFloFooter
+              whiteLabel={footer.whiteLabel}
+              showBranding={footer.showReviewFloBranding}
+            />
           </div>
 
         </div>
