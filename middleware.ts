@@ -1,8 +1,11 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-const PRIMARY_HOST = 'reviewflo.com';
-const LEGACY_HOSTS = new Set(['usereviewflo.com', 'www.usereviewflo.com']);
+// Canonicalize hosts that should land on this Vercel project.
+// NOTE: `reviewflo.com` is not currently attached to this Vercel project, so redirecting to it
+// can send users to a different site depending on DNS/Vercel domain assignment.
+const PRIMARY_HOST = 'usereviewflo.com';
+const LEGACY_HOSTS = new Set(['www.usereviewflo.com']);
 
 export function middleware(req: NextRequest) {
   const host = req.nextUrl.hostname.toLowerCase();
