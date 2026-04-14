@@ -26,6 +26,12 @@ const supabaseAdmin = createClient(
   { auth: { autoRefreshToken: false, persistSession: false } }
 );
 
+type BusinessLite = {
+  id: string
+  google_place_id: string | null
+  google_review_url: string | null
+}
+
 /**
  * OAuth callback for "Sign up with Google".
  *
@@ -105,11 +111,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // If account exists, treat signup as login and link GBP data.
     if (existing) {
       const expiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
-      let { data: business } = await supabaseAdmin
+      const { data: fetchedBusiness } = await supabaseAdmin
         .from('businesses')
         .select('id, google_place_id, google_review_url')
         .eq('user_id', existing.id)
         .single();
+      let business: BusinessLite | null = (fetchedBusiness as BusinessLite | null) ?? null;
 
       if (!business?.id) {
         let baseSlug = generateSlugFromBusinessName(businessName) || 'my-business';
@@ -147,6 +154,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             slug,
             primary_color: '#3B82F6',
             logo_url: null,
+            skip_template_choice: true,
             google_review_url: googleReviewUrl,
             google_place_id: placeId,
             google_oauth_access_token: tokens.accessToken,
@@ -160,9 +168,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             tier: 'free',
             launch_discount_eligible: true,
           })
-          .select('id')
+          .select('id, google_place_id, google_review_url')
           .single();
-        business = createdBusiness || null;
+        business = (createdBusiness as BusinessLite | null) ?? null;
       } else {
         const mergedPlaceId = placeId ?? business.google_place_id ?? null;
         const mergedReviewUrl = placeId
@@ -253,6 +261,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         slug,
         primary_color: '#3B82F6',
         logo_url: null,
+        skip_template_choice: true,
         google_review_url: googleReviewUrl,
         google_place_id: placeId,
         google_oauth_access_token: tokens.accessToken,
