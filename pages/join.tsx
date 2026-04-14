@@ -330,15 +330,13 @@ fbq('track', 'PageView');`,
                     </div>
                     <h3 className="text-base font-semibold text-gray-900 mb-1">Send Your Link</h3>
                     <p className="text-gray-600 text-sm mb-4">Text or email your ReviewFlo link after each job.</p>
-                    <div className="w-full max-w-[280px] rounded-lg overflow-hidden border border-gray-200 shadow-sm transition-shadow duration-200 hover:shadow-md">
-                      <Image
-                        src="/images/sq-rating-page.png"
-                        alt="Customer rating screen"
-                        width={400}
-                        height={400}
-                        className="w-full h-auto"
-                      />
-                    </div>
+                    <Image
+                      src="/images/see-it-action/review-link.png"
+                      alt="Customer rating screen"
+                      width={1970}
+                      height={1868}
+                      className="block w-full h-auto max-w-[280px] mx-auto rounded-xl"
+                    />
                   </div>
 
                   {/* Card 2 */}
@@ -353,15 +351,13 @@ fbq('track', 'PageView');`,
                     </div>
                     <h3 className="text-base font-semibold text-gray-900 mb-1">Smart Routing</h3>
                     <p className="text-gray-600 text-sm mb-4">1–4 stars = private feedback. 5 stars = easy Google review.</p>
-                    <div className="w-full max-w-[280px] rounded-lg overflow-hidden border border-gray-200 shadow-sm transition-shadow duration-200 hover:shadow-md">
-                      <Image
-                        src="/images/sq-templates-page.png"
-                        alt="Review template selection"
-                        width={400}
-                        height={400}
-                        className="w-full h-auto"
-                      />
-                    </div>
+                    <Image
+                      src="/images/see-it-action/5-stars-no-templates.png"
+                      alt="Five-star rating — choose a review platform"
+                      width={1970}
+                      height={1868}
+                      className="block w-full h-auto max-w-[280px] mx-auto rounded-xl"
+                    />
                   </div>
 
                   {/* Card 3 */}
@@ -376,15 +372,13 @@ fbq('track', 'PageView');`,
                     </div>
                     <h3 className="text-base font-semibold text-gray-900 mb-1">Get Results</h3>
                     <p className="text-gray-600 text-sm mb-4">Fix issues privately. Collect more 5-star reviews. Zero manual work.</p>
-                    <div className="w-full max-w-[280px] rounded-lg overflow-hidden border border-gray-200 shadow-sm transition-shadow duration-200 hover:shadow-md">
-                      <Image
-                        src="/images/sq-google-review.png"
-                        alt="5-star Google review"
-                        width={400}
-                        height={400}
-                        className="w-full h-auto"
-                      />
-                    </div>
+                    <Image
+                      src="/images/see-it-action/google-review.png"
+                      alt="5-star Google review"
+                      width={1970}
+                      height={1868}
+                      className="block w-full h-auto max-w-[280px] mx-auto rounded-xl"
+                    />
                   </div>
                 </div>
               </div>
