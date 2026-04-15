@@ -50,11 +50,19 @@ interface GoogleStats {
   }
 }
 
+interface PosthogConversions {
+  conversionRate: number
+  uniquePersons: number
+  platformBreakdown: { google: number; facebook: number; yelp: number; nextdoor: number }
+  source: 'posthog' | 'database'
+}
+
 interface DashboardData {
   businessName: string
   tier: string
   funnel: FunnelData
   googleStats: GoogleStats | null
+  posthogConversions: PosthogConversions
 }
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -91,6 +99,19 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }
       <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
       {subtitle && <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>}
     </div>
+  )
+}
+
+function InfoDot({ text }: { text: string }) {
+  return (
+    <span className="group/tip relative inline-flex items-center ml-1 cursor-help">
+      <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+      </svg>
+      <span className="invisible group-hover/tip:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-52 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-lg z-10 pointer-events-none">
+        {text}
+      </span>
+    </span>
   )
 }
 
@@ -233,15 +254,18 @@ export default function AnalyticsDashboard() {
                 {/* KPI strip */}
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                   {[
-                    { label: 'Sent', value: data.funnel.sent, sub: null },
-                    { label: 'Opened', value: data.funnel.opened, sub: `${data.funnel.openRate}%` },
-                    { label: 'Clicked', value: data.funnel.clicked, sub: data.funnel.opened > 0 ? `${data.funnel.clickRate}% of opened` : null },
-                    { label: 'Completed', value: data.funnel.completed, sub: `${data.funnel.completionRate}% of sent` },
-                    { label: 'Posted', value: data.funnel.posted, sub: 'Estimated' },
+                    { label: 'Sent', value: data.funnel.sent, sub: null, tip: null },
+                    { label: 'Opened', value: data.funnel.opened, sub: `${data.funnel.openRate}%`, tip: 'Percentage of review requests that were opened by the recipient.' },
+                    { label: 'Clicked', value: data.funnel.clicked, sub: data.funnel.opened > 0 ? `${data.funnel.clickRate}% of opened` : null, tip: 'Percentage of openers who tapped through to your rating page link.' },
+                    { label: 'Completed', value: data.funnel.completed, sub: `${data.funnel.completionRate}% of sent`, tip: 'Percentage of sent requests where the customer completed the review flow in our system.' },
+                    { label: 'Posted', value: data.funnel.posted, sub: 'Estimated', tip: null },
                   ].map((item) => (
                     <div key={item.label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center">
                       <div className="text-2xl font-bold text-gray-900">{item.value}</div>
-                      <div className="text-xs font-medium text-gray-500 mt-1">{item.label}</div>
+                      <div className="text-xs font-medium text-gray-500 mt-1 flex items-center justify-center">
+                        {item.label}
+                        {item.tip && <InfoDot text={item.tip} />}
+                      </div>
                       {item.sub && <div className="text-xs text-gray-400 mt-0.5">{item.sub}</div>}
                     </div>
                   ))}
@@ -285,6 +309,42 @@ export default function AnalyticsDashboard() {
                     <Link href="/dashboard" className="mt-2 inline-block text-sm font-medium" style={{ color: primaryColor }}>
                       Send your first request →
                     </Link>
+                  </div>
+                )}
+
+                {/* PostHog conversion card */}
+                {data.posthogConversions && (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-semibold text-gray-700 flex items-center">
+                        Platform Conversions
+                        <InfoDot text="Unique customers who clicked Google, Facebook, or another review platform — tracked directly by PostHog for the most accurate count." />
+                      </span>
+                      <span className="text-sm font-semibold text-emerald-700">
+                        {data.posthogConversions.conversionRate}% conversion
+                      </span>
+                    </div>
+                    <div className="h-3 bg-emerald-100 rounded-full overflow-hidden mb-4">
+                      <div
+                        className="h-full rounded-full bg-emerald-500 transition-all duration-700"
+                        style={{ width: `${Math.min(data.posthogConversions.conversionRate, 100)}%` }}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                      {(['google', 'facebook', 'yelp', 'nextdoor'] as const).map((plat) => {
+                        const count = data.posthogConversions.platformBreakdown[plat]
+                        if (plat !== 'google' && count === 0) return null
+                        return (
+                          <div key={plat} className="bg-white rounded-xl p-2.5 border border-emerald-100">
+                            <div className="text-lg font-bold text-gray-900">{count}</div>
+                            <div className="text-xs text-gray-500 capitalize">{plat}</div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    {data.posthogConversions.source === 'database' && (
+                      <p className="text-xs text-gray-400 italic mt-3">Using system data — PostHog not available</p>
+                    )}
                   </div>
                 )}
 
