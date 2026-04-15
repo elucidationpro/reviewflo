@@ -332,7 +332,7 @@ export default function AnalyticsDashboard() {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
                       {(['google', 'facebook', 'yelp', 'nextdoor'] as const).map((plat) => {
-                        const count = data.posthogConversions.platformBreakdown[plat]
+                        const count = data.posthogConversions!.platformBreakdown[plat]
                         if (plat !== 'google' && count === 0) return null
                         return (
                           <div key={plat} className="bg-white rounded-xl p-2.5 border border-emerald-100">
@@ -342,7 +342,7 @@ export default function AnalyticsDashboard() {
                         )
                       })}
                     </div>
-                    {data.posthogConversions.source === 'database' && (
+                    {data.posthogConversions!.source === 'database' && (
                       <p className="text-xs text-gray-400 italic mt-3">Using system data — PostHog not available</p>
                     )}
                   </div>
