@@ -60,7 +60,9 @@ export default function GoogleConfirmPage() {
       }
 
       setOwnerName(business.owner_name || '');
-      setBusinessName(business.business_name || '');
+      // Don't pre-fill the fallback placeholder name — force the user to type their real business name
+      const loadedName = business.business_name || '';
+      setBusinessName(loadedName === 'My Business' ? '' : loadedName);
       setGoogleReviewUrl(business.google_review_url || null);
       setHasPlaceId(!!business.google_place_id);
       setLoading(false);
@@ -193,6 +195,7 @@ export default function GoogleConfirmPage() {
                     type="text"
                     value={businessName}
                     onChange={(e) => setBusinessName(e.target.value)}
+                    placeholder="e.g. Smith's Plumbing Co."
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961] text-gray-900 outline-none transition-colors"
                     required
                   />

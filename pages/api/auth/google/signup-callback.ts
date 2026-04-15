@@ -99,8 +99,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Fetch GBP data (business name + Place ID)
     const gbpData = await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken);
-    // When GBP fails: use individual's name for owner, let them fill business name on confirm
-    const businessName = gbpData?.businessName || 'My Business';
+    // When GBP fails: leave blank so the confirm page forces the user to enter their real name
+    const businessName = gbpData?.businessName || '';
     const placeId = gbpData?.placeId || null;
 
     // Build Google review URL if we have a Place ID
