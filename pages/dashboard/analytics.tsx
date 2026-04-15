@@ -62,7 +62,7 @@ interface DashboardData {
   tier: string
   funnel: FunnelData
   googleStats: GoogleStats | null
-  posthogConversions: PosthogConversions
+  posthogConversions: PosthogConversions | null
 }
 
 // ── Helpers ───────────────────────────────────────────────────
