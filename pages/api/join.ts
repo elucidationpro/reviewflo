@@ -153,6 +153,7 @@ export default async function handler(
       slug: normalizedSlug,
       primary_color: '#3B82F6',
       logo_url: null,
+      skip_template_choice: true,
       google_review_url: null,
       facebook_review_url: null,
       yelp_review_url: null,
