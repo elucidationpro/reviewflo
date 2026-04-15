@@ -156,6 +156,11 @@ export default function LandingPage() {
         <meta property="og:title" content="ReviewFlo - Get More 5-Star Google Reviews Automatically" />
         <meta property="og:description" content="Get more 5-star Google reviews automatically. Catch unhappy customers privately before they post. Simple review management for small service businesses." />
         <meta property="og:image" content="https://usereviewflo.com/images/reviewflo-og-image.png" />
+        <meta property="og:image:secure_url" content="https://usereviewflo.com/images/reviewflo-og-image.png" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="ReviewFlo - Get more 5-star Google reviews automatically" />
         <meta property="og:site_name" content="ReviewFlo" />
 
         {/* Twitter Card */}
@@ -164,6 +169,7 @@ export default function LandingPage() {
         <meta name="twitter:title" content="ReviewFlo - Get More 5-Star Google Reviews Automatically" />
         <meta name="twitter:description" content="Get more 5-star Google reviews automatically. Catch unhappy customers privately before they post. Simple review management for small service businesses." />
         <meta name="twitter:image" content="https://usereviewflo.com/images/reviewflo-twitter-image.png" />
+        <meta name="twitter:image:alt" content="ReviewFlo - Get more 5-star Google reviews automatically" />
 
         {/* Viewport and Mobile */}
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
