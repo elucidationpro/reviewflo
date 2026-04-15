@@ -649,7 +649,7 @@ export default function AdminAnalytics() {
                       <Th col="ratingTapsTotal" label="Stars" title="Star taps on public page (period)" />
                       <Th col="ratingTapsFiveStar" label="5\u2605" title="Five-star taps (period)" />
                       <Th col="privateFeedbackCount" label="Priv" title="Private feedback submissions (period)" />
-                      <Th col="fiveStarSharePct" label="5\u2605%" title="5\u2605 \u00F7 all star taps in period" />
+                      <Th col="fiveStarSharePct" label="Conv%" title="Platform clicks \u00F7 all star taps \u2014 overall funnel conversion rate" />
                       <Th
                         col="platformClicksTotal"
                         label={conversionsSource === 'posthog' ? 'Conv (PH)' : 'Conv'}
@@ -714,8 +714,15 @@ export default function AdminAnalytics() {
                         <td className="px-3 py-3 text-stone-700 tabular-nums">{biz.ratingTapsTotal}</td>
                         <td className="px-3 py-3 text-amber-700 font-semibold tabular-nums">{biz.ratingTapsFiveStar}</td>
                         <td className="px-3 py-3 text-stone-600 tabular-nums">{biz.privateFeedbackCount}</td>
-                        <td className="px-3 py-3 text-stone-600 tabular-nums">
-                          {biz.fiveStarSharePct !== null ? `${biz.fiveStarSharePct}%` : '\u2014'}
+                        <td className="px-3 py-3 tabular-nums" title="Platform clicks \u00F7 all star taps in this period">
+                          {(() => {
+                            const pct = biz.ratingTapsTotal > 0
+                              ? Math.round((biz.platformClicksTotal / biz.ratingTapsTotal) * 100)
+                              : null
+                            return pct !== null
+                              ? <span className={pct >= 20 ? 'text-emerald-600 font-semibold' : 'text-stone-600'}>{pct}%</span>
+                              : <span className="text-stone-400">{'\u2014'}</span>
+                          })()}
                         </td>
                         <td
                           className="px-3 py-3 text-emerald-700 font-semibold tabular-nums"
