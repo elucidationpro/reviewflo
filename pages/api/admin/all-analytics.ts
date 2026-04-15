@@ -10,6 +10,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { isAdminUser } from '../../../lib/adminAuth'
+import {
+  fetchPosthogPlatformConversions,
+  fetchPosthogCustomerFlowAvgRatings,
+} from '../../../lib/posthog-conversions-query'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -61,18 +65,60 @@ export default async function handler(
     const allBusinesses = businesses || []
     const businessIds = allBusinesses.map((b) => b.id)
 
-    // ── Get review request stats per business ─────────────────────
-    const { data: allRequests } = await supabaseAdmin
-      .from('review_requests')
-      .select('business_id, status')
-      .in('business_id', businessIds)
-      .gte('sent_at', startIso)
+    // ── Customer rating page activity (reviews / feedback rows) ──
+    let periodReviews: { business_id: string; star_rating: number | null }[] | null = []
+    let periodFeedback: { business_id: string }[] | null = []
+    let allRequests: { business_id: string; status: string; platform_selected: string | null }[] | null = []
 
-    const requestsByBusiness: Record<string, typeof allRequests> = {}
-    ;(allRequests || []).forEach((r) => {
+    if (businessIds.length > 0) {
+      const reviewsRes = await supabaseAdmin
+        .from('reviews')
+        .select('business_id, star_rating')
+        .in('business_id', businessIds)
+        .gte('created_at', startIso)
+      periodReviews = reviewsRes.data
+
+      const feedbackRes = await supabaseAdmin
+        .from('feedback')
+        .select('business_id')
+        .in('business_id', businessIds)
+        .gte('created_at', startIso)
+      periodFeedback = feedbackRes.data
+
+      const requestsRes = await supabaseAdmin
+        .from('review_requests')
+        .select('business_id, status, platform_selected')
+        .in('business_id', businessIds)
+        .gte('sent_at', startIso)
+      allRequests = requestsRes.data
+    }
+
+    type ReviewRow = { business_id: string; star_rating: number | null }
+    type FeedbackRow = { business_id: string }
+
+    const ratingsByBusiness: Record<string, ReviewRow[]> = {}
+    ;(periodReviews ?? []).forEach((row) => {
+      if (!ratingsByBusiness[row.business_id]) ratingsByBusiness[row.business_id] = []
+      ratingsByBusiness[row.business_id]!.push(row as ReviewRow)
+    })
+
+    const feedbackByBusiness: Record<string, number> = {}
+    ;(periodFeedback ?? []).forEach((row: FeedbackRow) => {
+      feedbackByBusiness[row.business_id] = (feedbackByBusiness[row.business_id] || 0) + 1
+    })
+
+    const requestsByBusiness: Record<string, NonNullable<typeof allRequests>> = {}
+    ;(allRequests ?? []).forEach((r) => {
       if (!requestsByBusiness[r.business_id]) requestsByBusiness[r.business_id] = []
       requestsByBusiness[r.business_id]!.push(r)
     })
+
+    const [posthog, posthogFlowRatings] = await Promise.all([
+      fetchPosthogPlatformConversions(startIso),
+      fetchPosthogCustomerFlowAvgRatings(startIso),
+    ])
+    const usePosthog = posthog !== null
+    const usePosthogFlowRatings = posthogFlowRatings !== null
 
     // ── Get latest Google snapshots per business ──────────────────
     const { data: snapshots } = await supabaseAdmin
@@ -122,7 +168,55 @@ export default async function handler(
       const reqs = requestsByBusiness[biz.id] || []
       const sent = reqs.length
       const completed = reqs.filter((r) => r.status === 'completed').length
+      // Admin "Email conv%": dashboard review requests marked completed ÷ sent (same window)
       const conversionRate = sent > 0 ? Math.round((completed / sent) * 100) : 0
+
+      const ratingRows = ratingsByBusiness[biz.id] || []
+      const ratingTapsTotal = ratingRows.length
+      const ratingTapsFiveStar = ratingRows.filter(
+        (row) => Number(row.star_rating) === 5
+      ).length
+      const ratingTapsLowStar = ratingRows.filter(
+        (row) => row.star_rating != null && Number(row.star_rating) >= 1 && Number(row.star_rating) <= 4
+      ).length
+
+      const privateFeedbackCount = feedbackByBusiness[biz.id] || 0
+
+      // Admin "Conversions": DB = completed review_requests + platform; optional PostHog = uniq persons platform_selected
+      const completedReqs = reqs.filter((r) => r.status === 'completed')
+      let platformGoogle = completedReqs.filter(
+        (r) => (r.platform_selected || '').toLowerCase() === 'google'
+      ).length
+      let platformFacebook = completedReqs.filter(
+        (r) => (r.platform_selected || '').toLowerCase() === 'facebook'
+      ).length
+      let platformYelp = completedReqs.filter(
+        (r) => (r.platform_selected || '').toLowerCase() === 'yelp'
+      ).length
+      let platformNextdoor = completedReqs.filter(
+        (r) => (r.platform_selected || '').toLowerCase() === 'nextdoor'
+      ).length
+      let platformClicksTotal =
+        platformGoogle + platformFacebook + platformYelp + platformNextdoor
+
+      if (usePosthog && posthog) {
+        platformClicksTotal = posthog.uniquePersons[biz.id] ?? 0
+        const br = posthog.breakdown[biz.id]
+        if (br) {
+          platformGoogle = br.google
+          platformFacebook = br.facebook
+          platformYelp = br.yelp
+          platformNextdoor = br.nextdoor
+        } else {
+          platformGoogle = 0
+          platformFacebook = 0
+          platformYelp = 0
+          platformNextdoor = 0
+        }
+      }
+
+      const fiveStarSharePct =
+        ratingTapsTotal > 0 ? Math.round((ratingTapsFiveStar / ratingTapsTotal) * 100) : null
 
       const snap = latestSnapshotByBusiness[biz.id]
       const revSummary = summaryByBusiness[biz.id]
@@ -133,6 +227,11 @@ export default async function handler(
         ? Math.round(((googleRevenue - monthlyCost) / monthlyCost) * 100)
         : null
 
+      const flowRow = posthogFlowRatings?.[biz.id]
+      const customerFlowAvgRating =
+        flowRow != null ? Math.round(flowRow.avgRating * 10) / 10 : null
+      const customerFlowUniqueRaters = flowRow != null ? flowRow.uniqueRaters : null
+
       return {
         businessId: biz.id,
         businessName: biz.business_name,
@@ -142,6 +241,23 @@ export default async function handler(
         requestsSent: sent,
         requestsCompleted: completed,
         conversionRate,
+        // Customer-facing page (same window): star taps + private feedback
+        ratingTapsTotal,
+        ratingTapsFiveStar,
+        ratingTapsLowStar,
+        privateFeedbackCount,
+        // Tracked completions (email flow with token → /api/track/complete)
+        platformClicksTotal,
+        platformGoogle,
+        platformFacebook,
+        platformYelp,
+        platformNextdoor,
+        /** % of period rating taps that were 5★ (public page); null if none */
+        fiveStarSharePct,
+        /** PostHog: avg of first customer_responded rating per person in window (1–5) */
+        customerFlowAvgRating,
+        /** PostHog: distinct persons counted in customerFlowAvgRating */
+        customerFlowUniqueRaters,
         // Google
         currentRating: snap?.average_rating ?? null,
         totalReviews: snap?.total_reviews ?? null,
@@ -171,6 +287,10 @@ export default async function handler(
         : 0,
       totalGoogleRevenue: analytics.reduce((s, a) => s + a.googleRevenue, 0),
       businessesWithGoogleConnected: analytics.filter((a) => a.hasGoogleConnected).length,
+      totalRatingTaps: analytics.reduce((s, a) => s + a.ratingTapsTotal, 0),
+      totalFiveStarTaps: analytics.reduce((s, a) => s + a.ratingTapsFiveStar, 0),
+      totalPrivateFeedback: analytics.reduce((s, a) => s + a.privateFeedbackCount, 0),
+      totalTrackedPlatformClicks: analytics.reduce((s, a) => s + a.platformClicksTotal, 0),
     }
 
     return res.status(200).json({
@@ -178,6 +298,10 @@ export default async function handler(
       aggregates,
       dateRange: { days, startDate: startIso },
       generatedAt: new Date().toISOString(),
+      /** When set, Conversions column uses PostHog uniq(person) on platform_selected; else DB review_requests */
+      conversionsSource: usePosthog ? 'posthog' : 'database',
+      /** When set, Flow ★ uses PostHog customer_responded (one rating per person per window) */
+      flowRatingSource: usePosthogFlowRatings ? 'posthog' : null,
     })
   } catch (err) {
     console.error('[admin/all-analytics] Error:', err)
