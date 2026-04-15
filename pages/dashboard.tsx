@@ -65,6 +65,8 @@ export default function DashboardPage() {
   const [hasTrackedUpgradeCardView, setHasTrackedUpgradeCardView] = useState(false)
   const [showSendModal, setShowSendModal] = useState(false)
   const [refetchRequestsTrigger, setRefetchRequestsTrigger] = useState(0)
+  const [conversionRate, setConversionRate] = useState<number | null>(null)
+  const [funnelSent, setFunnelSent] = useState<number>(0)
 
   useEffect(() => {
     checkAuthAndFetchData()
@@ -195,6 +197,25 @@ export default function DashboardPage() {
   useEffect(() => {
     handleTrackUpgradeCardViewed()
   }, [handleTrackUpgradeCardViewed])
+
+  useEffect(() => {
+    if (!business) return
+    ;(async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) return
+        const res = await fetch('/api/analytics/dashboard-data?days=30', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        if (!res.ok) return
+        const json = await res.json()
+        setConversionRate(json.posthogConversions?.conversionRate ?? null)
+        setFunnelSent(json.funnel?.sent ?? 0)
+      } catch {
+        // silent — conversion rate stays null (shown as —)
+      }
+    })()
+  }, [business])
 
   const handlePricingClick = () => {
     if (business) trackEvent('pricing_viewed_from_dashboard', { businessId: business.id, source: 'dashboard' })
@@ -382,6 +403,13 @@ export default function DashboardPage() {
                     <Link href="/feedback" className="text-xs text-[#4A3428] font-semibold hover:underline">View →</Link>
                   )}
                 </div>
+              </div>
+              <div className="p-3 bg-gray-50 rounded-xl">
+                <p className="text-xs text-gray-500 mb-0.5">Conversion Rate</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {conversionRate !== null && funnelSent > 0 ? `${conversionRate}%` : '—'}
+                </p>
+                <p className="text-xs text-gray-400">clicked a review platform</p>
               </div>
             </div>
           </Card>
