@@ -224,3 +224,78 @@ export async function fetchPosthogCustomerFlowAvgRatings(
     return null
   }
 }
+
+/**
+ * Fetch platform_selected events for a single business.
+ * Returns unique person count and per-platform event counts.
+ */
+export async function fetchPosthogConversionsForBusiness(
+  businessId: string,
+  startIso: string
+): Promise<{ uniquePersons: number; platformBreakdown: PlatformBreakdown } | null> {
+  const apiKey = process.env.POSTHOG_PERSONAL_API_KEY
+  const projectId = process.env.POSTHOG_PROJECT_ID
+  const base = posthogApiBase()
+  if (!apiKey || !projectId || !base) return null
+
+  const escapedStart = startIso.replace(/'/g, "\\'")
+  const escapedBid = businessId.replace(/'/g, "\\'")
+
+  const uniqQuery = `
+    SELECT
+      uniqExact(person_id) AS conversions
+    FROM events
+    WHERE event = 'platform_selected'
+      AND timestamp >= parseDateTimeBestEffort('${escapedStart}')
+      AND timestamp <= now()
+      AND toString(properties.businessId) = '${escapedBid}'
+  `
+
+  const breakdownQuery = `
+    SELECT
+      lower(toString(properties.platform)) AS plat,
+      count() AS cnt
+    FROM events
+    WHERE event = 'platform_selected'
+      AND timestamp >= parseDateTimeBestEffort('${escapedStart}')
+      AND timestamp <= now()
+      AND toString(properties.businessId) = '${escapedBid}'
+    GROUP BY plat
+  `
+
+  try {
+    const [uniqJson, brJson] = await Promise.all([
+      posthogHogqlQuery(uniqQuery, 'client_analytics_conversions_uniq'),
+      posthogHogqlQuery(breakdownQuery, 'client_analytics_conversions_breakdown'),
+    ])
+    if (!uniqJson || !brJson) return null
+
+    const uniqTable = parseHogqlTable(uniqJson)
+    const brTable = parseHogqlTable(brJson)
+
+    let uniquePersons = 0
+    const cIdx = colIndex(uniqTable.columns, 'conversions')
+    if (cIdx >= 0 && uniqTable.rows.length > 0) {
+      uniquePersons = Number(uniqTable.rows[0][cIdx] ?? 0)
+    }
+
+    const platformBreakdown: PlatformBreakdown = { google: 0, facebook: 0, yelp: 0, nextdoor: 0 }
+    const platB = colIndex(brTable.columns, 'plat')
+    const cntB = colIndex(brTable.columns, 'cnt')
+    if (platB >= 0 && cntB >= 0) {
+      for (const row of brTable.rows) {
+        const plat = String(row[platB] ?? '').toLowerCase()
+        const cnt = Number(row[cntB] ?? 0)
+        if (plat === 'google') platformBreakdown.google += cnt
+        else if (plat === 'facebook') platformBreakdown.facebook += cnt
+        else if (plat === 'yelp') platformBreakdown.yelp += cnt
+        else if (plat === 'nextdoor') platformBreakdown.nextdoor += cnt
+      }
+    }
+
+    return { uniquePersons, platformBreakdown }
+  } catch (e) {
+    console.warn('[posthog-client-conversions] failed', e)
+    return null
+  }
+}
