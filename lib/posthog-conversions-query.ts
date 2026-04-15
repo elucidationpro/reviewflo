@@ -238,6 +238,11 @@ export async function fetchPosthogConversionsForBusiness(
   const base = posthogApiBase()
   if (!apiKey || !projectId || !base) return null
 
+  if (!/^[a-zA-Z0-9_-]+$/.test(businessId)) {
+    console.warn('[posthog-client-conversions] invalid businessId format, skipping query')
+    return null
+  }
+
   const escapedStart = startIso.replace(/'/g, "\\'")
   const escapedBid = businessId.replace(/'/g, "\\'")
 
