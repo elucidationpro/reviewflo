@@ -117,10 +117,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return `${baseSlug.slice(0, 24)}-${Date.now().toString().slice(-5)}`;
     };
 
+    let businessNeedsConfirm = false;
+
     const ensureBusinessAndLinkGoogle = async (userId: string) => {
       const { data: business } = await supabaseAdmin
         .from('businesses')
-        .select('id, google_place_id, google_review_url')
+        .select('id, google_place_id, google_review_url, business_name')
         .eq('user_id', userId)
         .single();
 
@@ -131,6 +133,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         : business?.google_review_url ?? null;
 
       if (business?.id) {
+        // Flag for redirect: no name yet or still has the fallback placeholder
+        const name = business.business_name || '';
+        if (!name || name === 'My Business') businessNeedsConfirm = true;
+
         await supabaseAdmin
           .from('businesses')
           .update({
@@ -156,6 +162,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           slug,
           primary_color: '#3B82F6',
           logo_url: null,
+          skip_template_choice: true,
           google_review_url: googleReviewUrl,
           google_place_id: inferredPlaceId,
           google_oauth_access_token: accessToken,
@@ -223,7 +230,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     await ensureBusinessAndLinkGoogle(user.id);
 
-    const magicNext = createdNow ? 'google-confirm' : 'dashboard';
+    const magicNext = (createdNow || businessNeedsConfirm) ? 'google-confirm' : 'dashboard';
     setMagicNextCookie(res, magicNext);
 
     // Generate a magic link to sign the user in
