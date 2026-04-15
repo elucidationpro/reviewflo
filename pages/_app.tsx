@@ -5,12 +5,14 @@ import { PostHogProvider } from "@/lib/posthog-provider";
 import LaunchBanner from "@/components/LaunchBanner";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import Script from "next/script";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://usereviewflo.com").replace(/\/$/, "");
   const canonicalPath = (router.asPath || "/").split("?")[0] || "/";
   const canonicalUrl = `${baseUrl}${canonicalPath === "/" ? "" : canonicalPath}`;
+  const googleAdsConversionId = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID?.trim();
 
   useEffect(() => {
     // Handle Supabase auth tokens in URL hash (recovery, invite, etc.)
@@ -52,6 +54,22 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="canonical" href={canonicalUrl} />
       </Head>
+      {googleAdsConversionId ? (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(googleAdsConversionId)}`}
+            strategy="afterInteractive"
+          />
+          <Script id="google-ads-gtag-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
+              window.gtag('js', new Date());
+              window.gtag('config', '${googleAdsConversionId}');
+            `}
+          </Script>
+        </>
+      ) : null}
       <Component {...pageProps} />
     </PostHogProvider>
   );

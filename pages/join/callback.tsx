@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Script from 'next/script';
 import { supabase } from '../../lib/supabase';
+import { fireGoogleAdsSignupConversion } from '../../lib/google-ads';
 
 /**
  * Client-side callback for magic link signup.
@@ -77,6 +78,9 @@ export default function JoinCallbackPage() {
           setStatus('error');
           return;
         }
+
+        // Google Ads conversion: successful signup completed
+        fireGoogleAdsSignupConversion();
 
         // Fire Meta Pixel CompleteRegistration (required for ad conversion tracking)
         if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {

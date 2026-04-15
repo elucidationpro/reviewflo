@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import { fireGoogleAdsSignupConversion } from '@/lib/google-ads'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -62,6 +63,7 @@ export default function SignupPage() {
       const data = await response.json()
 
       if (data.success) {
+        fireGoogleAdsSignupConversion()
         // Redirect to login with success message
         router.push('/login?signup=success')
       } else {

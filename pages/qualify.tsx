@@ -9,6 +9,7 @@ import { trackEvent } from '@/lib/posthog-provider';
 import { generateSlugFromBusinessName, isValidSlug, isReservedSlug, normalizeSlugForValidation } from '@/lib/slug-utils';
 import { supabase } from '@/lib/supabase';
 import ComingSoonTierModal from '@/components/ComingSoonTierModal';
+import { fireGoogleAdsSignupConversion } from '@/lib/google-ads';
 
 type Step = 'form' | 'tier' | 'preview' | 'editing' | 'success';
 type TierChoice = 'free' | 'pro' | 'ai';
@@ -317,6 +318,8 @@ export default function QualifyPage() {
           tier: 'free',
           interested_in_tier: selectedTier === 'free' ? null : selectedTier,
         });
+        // Google Ads conversion: account created successfully
+        fireGoogleAdsSignupConversion();
         if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
           const eventId = `reg_${Date.now()}_${Math.random().toString(36).slice(2)}`;
           (window as any).fbq('track', 'CompleteRegistration', {
