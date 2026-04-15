@@ -9,6 +9,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { canAccessGoogleStats } from '../../../lib/tier-permissions'
+import { fetchPosthogConversionsForBusiness } from '../../../lib/posthog-conversions-query'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -60,11 +61,15 @@ export default async function handler(
     const startDateStr = startDate.toISOString().split('T')[0]
 
     // ── 1. Review Funnel ─────────────────────────────────────────
-    const { data: requests } = await supabaseAdmin
-      .from('review_requests')
-      .select('status, platform_selected, opened_at, clicked_at')
-      .eq('business_id', business.id)
-      .gte('sent_at', startIso)
+    const [requestsResult, posthogResult] = await Promise.all([
+      supabaseAdmin
+        .from('review_requests')
+        .select('status, platform_selected, opened_at, clicked_at')
+        .eq('business_id', business.id)
+        .gte('sent_at', startIso),
+      fetchPosthogConversionsForBusiness(business.id, startIso),
+    ])
+    const { data: requests } = requestsResult
 
     const allRequests = requests || []
     const funnelSent = allRequests.length
@@ -99,6 +104,23 @@ export default async function handler(
       completionRate: funnelSent > 0 ? Math.round((funnelCompleted / funnelSent) * 100) : 0,
       platformBreakdown: platformCounts,
     }
+
+    // ── 1b. PostHog Conversions ──────────────────────────────────
+    const posthogConversions = posthogResult !== null
+      ? {
+          conversionRate: funnelSent > 0
+            ? Math.round((posthogResult.uniquePersons / funnelSent) * 100)
+            : 0,
+          uniquePersons: posthogResult.uniquePersons,
+          platformBreakdown: posthogResult.platformBreakdown,
+          source: 'posthog' as const,
+        }
+      : {
+          conversionRate: funnel.completionRate,
+          uniquePersons: funnelCompleted,
+          platformBreakdown: { google: 0, facebook: 0, yelp: 0, nextdoor: 0 },
+          source: 'database' as const,
+        }
 
     // ── 2. Google Stats (snapshots + current) ────────────────────
     let googleStats = null
@@ -222,6 +244,7 @@ export default async function handler(
       googleStats,
       revenue: revenueData,
       roi,
+      posthogConversions,
       generatedAt: new Date().toISOString(),
     })
   } catch (err) {
