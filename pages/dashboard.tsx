@@ -12,6 +12,7 @@ import ReviewRequestsList from '@/components/ReviewRequestsList'
 import GoogleStatsCard from '@/components/GoogleStatsCard'
 import AppLayout from '@/components/AppLayout'
 import { canSendFromDashboard, canAccessGoogleStats } from '../lib/tier-permissions'
+import { consumeGoogleAdsSignupConversionFromQuery } from '@/lib/google-ads'
 
 interface Business {
   id: string
@@ -72,6 +73,15 @@ export default function DashboardPage() {
     checkAuthAndFetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (!router.isReady) return
+    const { hadNewSignupParam } = consumeGoogleAdsSignupConversionFromQuery(router.query)
+    if (hadNewSignupParam) {
+      router.replace('/dashboard', undefined, { shallow: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady, router.query.new_signup])
 
   const checkAuthAndFetchData = async () => {
     try {
