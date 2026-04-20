@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import ReviewFloFooter from '../../components/ReviewFloFooter'
 import { trackEvent } from '../../lib/posthog-provider'
+import { getReviewAccentColor, resolvePublicReviewFooter } from '../../lib/review-page-branding'
 
 interface Business {
   id: string
@@ -14,6 +15,9 @@ interface Business {
   show_reviewflo_branding?: boolean
   show_business_name?: boolean
   logo_url?: string | null
+  white_label_enabled?: boolean
+  custom_brand_name?: string | null
+  custom_brand_color?: string | null
 }
 
 interface PageProps {
@@ -26,6 +30,8 @@ function getDisplayLogoUrl(b: Business): string | null {
 }
 
 export default function FeedbackPage({ business, rating }: PageProps) {
+  const accentColor = getReviewAccentColor(business)
+  const footer = resolvePublicReviewFooter(business)
   const displayLogoUrl = getDisplayLogoUrl(business)
   const [whatHappened, setWhatHappened] = useState('')
   const [howToMakeRight, setHowToMakeRight] = useState('')
@@ -126,11 +132,11 @@ export default function FeedbackPage({ business, rating }: PageProps) {
             {/* Success Icon */}
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
-              style={{ backgroundColor: `${business.primary_color}15` }}
+              style={{ backgroundColor: `${accentColor}15` }}
             >
               <svg
                 className="w-8 h-8"
-                style={{ color: business.primary_color }}
+                style={{ color: accentColor }}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -157,7 +163,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
               <span>·</span>
               <Link href="/terms#privacy" className="hover:text-gray-500 transition-colors">Privacy</Link>
             </div>
-            <ReviewFloFooter showBranding={business.tier === 'free' || business.show_reviewflo_branding !== false} />
+            <ReviewFloFooter whiteLabel={footer.whiteLabel} showBranding={footer.showReviewFloBranding} />
           </div>
         </div>
       </div>
@@ -185,7 +191,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
           {business.show_business_name !== false && (
             <h1
               className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-center tracking-tight mb-1"
-              style={{ color: business.primary_color }}
+              style={{ color: accentColor }}
             >
               {business.business_name}
             </h1>
@@ -217,7 +223,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                 placeholder="Please describe your experience…"
                 rows={4}
                 className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none text-gray-900 placeholder-gray-300 text-sm lg:text-base"
-                style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
+                style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
                 required
               />
             </div>
@@ -234,7 +240,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                 placeholder="What would make this better for you…"
                 rows={4}
                 className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none text-gray-900 placeholder-gray-300 text-sm lg:text-base"
-                style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
+                style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
                 required
               />
             </div>
@@ -247,7 +253,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                   checked={wantsContact}
                   onChange={(e) => setWantsContact(e.target.checked)}
                   className="w-4 h-4 rounded cursor-pointer shrink-0"
-                  style={{ accentColor: business.primary_color }}
+                  style={{ accentColor: accentColor }}
                 />
                 <span className="text-sm text-gray-700">
                   I&apos;d like to be contacted about this
@@ -270,7 +276,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                     placeholder="your@email.com"
                     autoComplete="email"
                     className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 placeholder-gray-300 text-sm"
-                    style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
+                    style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
                   />
                 </div>
 
@@ -286,7 +292,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
                     placeholder="(555) 123-4567"
                     autoComplete="tel"
                     className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 placeholder-gray-300 text-sm"
-                    style={{ '--tw-ring-color': business.primary_color } as React.CSSProperties}
+                    style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
                   />
                 </div>
 
@@ -299,7 +305,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
               type="submit"
               disabled={isSubmitting}
               style={{
-                backgroundColor: business.primary_color,
+                backgroundColor: accentColor,
                 touchAction: 'manipulation',
               } as React.CSSProperties}
               className="w-full text-white font-semibold py-3.5 lg:py-4 px-6 text-sm lg:text-base rounded-xl transition-opacity duration-150 disabled:opacity-50 disabled:cursor-not-allowed active:opacity-80 cursor-pointer"
@@ -326,7 +332,7 @@ export default function FeedbackPage({ business, rating }: PageProps) {
             <span>·</span>
             <Link href="/terms#privacy" className="hover:text-gray-500 transition-colors">Privacy</Link>
           </div>
-          <ReviewFloFooter showBranding={business.tier === 'free' || business.show_reviewflo_branding !== false} />
+          <ReviewFloFooter whiteLabel={footer.whiteLabel} showBranding={footer.showReviewFloBranding} />
         </div>
 
       </div>

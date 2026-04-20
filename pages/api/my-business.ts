@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
+import { getMaxBusinessLocations } from '../../lib/tier-permissions'
+import { pickPrimaryBusinessRow, sortLocationSummaries } from '../../lib/business-account'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -12,17 +14,27 @@ const supabaseAdmin = createClient(
   }
 )
 
+const BUSINESS_SELECT =
+  'id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, business_type, parent_business_id, created_at'
+
+const BUSINESS_SELECT_LEGACY =
+  'id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, business_type, created_at'
+
+type BusinessRow = import('../../lib/business-account').BusinessRowWithParent & {
+  tier?: string | null
+  business_name?: string | null
+  slug?: string | null
+  [key: string]: unknown
+}
+
 /**
- * Returns the business for the logged-in user.
- * If user_id lookup fails (e.g. auth account was recreated), finds by owner_email
- * and auto-updates user_id so future lookups work. Prevents "No Business Found" issues.
+ * Returns the primary business for the logged-in user and all locations in the account.
+ * If user_id lookup fails, finds by owner_email and auto-updates user_id.
  */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // This endpoint is user-specific (Authorization header), so it must never be cached
-  // by the browser/CDN, otherwise we can get 304 responses with no body.
   res.setHeader('Cache-Control', 'no-store, max-age=0')
   res.setHeader('Pragma', 'no-cache')
   res.setHeader('Expires', '0')
@@ -46,52 +58,87 @@ export default async function handler(
       return res.status(401).json({ error: 'Unauthorized' })
     }
 
-    // Only select columns that actually exist in the database.
-    // Do NOT add speculative future columns here — they'll break every lookup
-    // until the DB migration runs.
-    const BUSINESS_SELECT = 'id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, business_type'
+    let rows: BusinessRow[] = []
+    const fetchRows = async (select: string) =>
+      supabaseAdmin.from('businesses').select(select).eq('user_id', user.id)
 
-    // First try: find by user_id (normal case)
-    const { data: byUserId, error: byUserIdError } = await supabaseAdmin
-      .from('businesses')
-      .select(BUSINESS_SELECT)
-      .eq('user_id', user.id)
-      .single()
-
-    if (byUserIdError) {
-      console.error('[my-business] user_id lookup error:', byUserIdError.message, byUserIdError.code)
-    }
-    if (!byUserIdError && byUserId) {
-      return res.status(200).json({ business: byUserId })
+    let { data: rowsByUser, error: userErr } = await fetchRows(BUSINESS_SELECT)
+    if (userErr && /parent_business_id|column|does not exist/i.test(String(userErr.message || ''))) {
+      const legacy = await fetchRows(BUSINESS_SELECT_LEGACY)
+      rowsByUser = legacy.data
+      userErr = legacy.error
     }
 
-    // Second try: find by owner_email and fix the link (auto-heal)
-    if (!user.email) {
-      return res.status(200).json({ business: null })
+    if (userErr) {
+      console.error('[my-business] user_id lookup error:', userErr.message, userErr.code)
     }
 
-    const emailTrimmed = user.email.trim().toLowerCase()
-    const { data: match, error: emailError } = await supabaseAdmin
-      .from('businesses')
-      .select(BUSINESS_SELECT)
-      .ilike('owner_email', emailTrimmed)
-      .limit(1)
-      .maybeSingle()
+    rows = (rowsByUser || []) as unknown as BusinessRow[]
 
-    if (emailError) {
-      console.error('[my-business] owner_email lookup error:', emailError)
+    if (!rows.length && user.email) {
+      const emailTrimmed = user.email.trim().toLowerCase()
+      const emailFetch = await supabaseAdmin
+        .from('businesses')
+        .select(BUSINESS_SELECT)
+        .ilike('owner_email', emailTrimmed)
+      let byEmail = emailFetch.data as unknown as BusinessRow[] | null
+      let emailError = emailFetch.error
+      if (emailError && /parent_business_id|column|does not exist/i.test(String(emailError.message || ''))) {
+        const leg = await supabaseAdmin
+          .from('businesses')
+          .select(BUSINESS_SELECT_LEGACY)
+          .ilike('owner_email', emailTrimmed)
+        byEmail = leg.data as unknown as BusinessRow[] | null
+        emailError = leg.error
+      }
+
+      if (emailError) {
+        console.error('[my-business] owner_email lookup error:', emailError)
+      }
+      if (byEmail?.length) {
+        await supabaseAdmin
+          .from('businesses')
+          .update({ user_id: user.id })
+          .ilike('owner_email', emailTrimmed)
+        let healed = (await supabaseAdmin.from('businesses').select(BUSINESS_SELECT).eq('user_id', user.id))
+          .data as unknown as BusinessRow[] | null
+        if (!healed) {
+          healed = (await supabaseAdmin.from('businesses').select(BUSINESS_SELECT_LEGACY).eq('user_id', user.id))
+            .data as unknown as BusinessRow[] | null
+        }
+        rows = healed || []
+      }
     }
-    if (!match) {
-      return res.status(200).json({ business: null })
+
+    if (!rows.length) {
+      return res.status(200).json({ business: null, locations: [], maxLocations: 1 })
     }
 
-    // Update user_id so future lookups by user_id succeed
-    await supabaseAdmin
-      .from('businesses')
-      .update({ user_id: user.id })
-      .eq('id', match.id)
+    const primary = pickPrimaryBusinessRow(rows)
+    if (!primary) {
+      return res.status(200).json({ business: null, locations: [], maxLocations: 1 })
+    }
 
-    return res.status(200).json({ business: match })
+    const tier = (primary.tier as 'free' | 'pro' | 'ai' | undefined) || 'free'
+    const maxLocations = getMaxBusinessLocations(tier)
+
+    const summaries = rows.map((r) => ({
+      id: String(r.id),
+      business_name: String(r.business_name ?? ''),
+      slug: String(r.slug ?? ''),
+      is_primary: r.id === primary.id,
+    }))
+
+    const ordered = [
+      summaries.find((s) => s.is_primary)!,
+      ...sortLocationSummaries(summaries.filter((s) => !s.is_primary)),
+    ]
+
+    return res.status(200).json({
+      business: primary,
+      locations: ordered,
+      maxLocations,
+    })
   } catch (error) {
     console.error('[my-business] Unexpected error:', error)
     return res.status(500).json({ error: 'Internal server error' })

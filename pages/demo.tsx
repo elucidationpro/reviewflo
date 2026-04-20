@@ -18,6 +18,9 @@ export default function DemoPage() {
   const [primaryColor, setPrimaryColor] = useState('#4A3428')
   const [showBusinessName, setShowBusinessName] = useState(true)
   const [useDefaultTemplates, setUseDefaultTemplates] = useState(true)
+  const [whiteLabelDemo, setWhiteLabelDemo] = useState(false)
+  const [whiteLabelBrandName, setWhiteLabelBrandName] = useState('')
+  const [whiteLabelBrandColor, setWhiteLabelBrandColor] = useState('#C9A961')
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const logoObjectUrlRef = useRef<string | null>(null)
 
@@ -28,8 +31,26 @@ export default function DemoPage() {
 
   const previewKey = useMemo(
     () =>
-      [businessName, primaryColor, showBusinessName, useDefaultTemplates, logoUrl ?? ''].join('|'),
-    [businessName, primaryColor, showBusinessName, useDefaultTemplates, logoUrl]
+      [
+        businessName,
+        primaryColor,
+        showBusinessName,
+        useDefaultTemplates,
+        logoUrl ?? '',
+        whiteLabelDemo,
+        whiteLabelBrandName,
+        whiteLabelBrandColor,
+      ].join('|'),
+    [
+      businessName,
+      primaryColor,
+      showBusinessName,
+      useDefaultTemplates,
+      logoUrl,
+      whiteLabelDemo,
+      whiteLabelBrandName,
+      whiteLabelBrandColor,
+    ]
   )
 
   const onLogoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,6 +211,70 @@ export default function DemoPage() {
                       />
                     </button>
                   </label>
+
+                  <div className="border-t border-gray-100 pt-5 space-y-3">
+                    <label className="flex items-center justify-between gap-4 cursor-pointer">
+                      <div>
+                        <span className="text-sm font-medium text-gray-800 block">White-label footer</span>
+                        <span className="text-xs text-gray-500">
+                          Preview “Powered by your brand” instead of ReviewFlo (AI tier on real pages)
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={whiteLabelDemo}
+                        onClick={() => setWhiteLabelDemo((v) => !v)}
+                        className={`relative inline-flex h-7 w-12 shrink-0 rounded-full transition-colors ${
+                          whiteLabelDemo ? 'bg-[#4A3428]' : 'bg-gray-200'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform mt-1 ${
+                            whiteLabelDemo ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </label>
+                    {whiteLabelDemo && (
+                      <>
+                        <div>
+                          <label htmlFor="demo-wl-name" className="block text-xs font-medium text-gray-600 mb-1">
+                            Brand name in footer
+                          </label>
+                          <input
+                            id="demo-wl-name"
+                            type="text"
+                            value={whiteLabelBrandName}
+                            onChange={(e) => setWhiteLabelBrandName(e.target.value)}
+                            placeholder={businessName.trim() || 'Your Business'}
+                            className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="demo-wl-color" className="block text-xs font-medium text-gray-600 mb-1">
+                            Footer / accent color
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              id="demo-wl-color"
+                              type="color"
+                              value={/^#[0-9A-Fa-f]{6}$/i.test(whiteLabelBrandColor) ? whiteLabelBrandColor : '#C9A961'}
+                              onChange={(e) => setWhiteLabelBrandColor(e.target.value)}
+                              className="h-9 w-14 rounded-lg border border-gray-200 cursor-pointer bg-white"
+                              aria-label="White-label color"
+                            />
+                            <input
+                              type="text"
+                              value={whiteLabelBrandColor}
+                              onChange={(e) => setWhiteLabelBrandColor(e.target.value)}
+                              className="flex-1 min-w-0 px-3 py-2 border border-gray-200 rounded-xl text-sm font-mono"
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -206,12 +291,15 @@ export default function DemoPage() {
                 primaryColor={primaryColor}
                 logoUrl={logoUrl}
                 showBusinessName={showBusinessName}
-                showReviewfloBranding
+                showReviewfloBranding={!whiteLabelDemo}
+                whiteLabelEnabled={whiteLabelDemo}
+                whiteLabelBrandName={whiteLabelBrandName.trim() || null}
+                whiteLabelBrandColor={whiteLabelDemo ? whiteLabelBrandColor : null}
                 googleReviewUrl={DEMO_PLACEHOLDER_URLS.google}
                 facebookReviewUrl={DEMO_PLACEHOLDER_URLS.facebook}
                 yelpReviewUrl={DEMO_PLACEHOLDER_URLS.yelp}
                 nextdoorReviewUrl={null}
-                skipTemplateChoice={false}
+                skipTemplateChoice
                 templates={templates}
               />
             </section>

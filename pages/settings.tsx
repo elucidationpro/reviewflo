@@ -7,6 +7,8 @@ import { trackEvent } from '../lib/posthog-provider'
 import { canAccessMultiPlatform, canRemoveBranding, getTemplateSlots, canAccessGoogleStats, canUseWhiteLabel } from '../lib/tier-permissions'
 import AppLayout from '@/components/AppLayout'
 import ReviewPreview from '@/components/ReviewPreview'
+import AITemplateGenerator from '../components/AITemplateGenerator'
+import AIReviewResponseGenerator from '../components/AIReviewResponseGenerator'
 
 interface Business {
   id: string
@@ -29,6 +31,7 @@ interface Business {
   white_label_enabled?: boolean
   custom_logo_url?: string | null
   custom_brand_name?: string | null
+  custom_brand_color?: string | null
 }
 
 interface ReviewTemplate {
@@ -311,13 +314,15 @@ export default function SettingsPage() {
   const [planError, setPlanError] = useState('')
   const [showManualGoogle, setShowManualGoogle] = useState(false)
   const [activeSection, setActiveSection] = useState<'branding' | 'links' | 'flow' | 'plan' | 'sms' | 'crm' | 'ai-features'>('branding')
+  const [showAITemplateGenerator, setShowAITemplateGenerator] = useState(false)
+  const [showAIReviewResponseGenerator, setShowAIReviewResponseGenerator] = useState(false)
 
   const [businessData, setBusinessData] = useState<Business>({
     id: '',
     business_name: '',
     primary_color: '#3B82F6',
     logo_url: '',
-    skip_template_choice: false,
+    skip_template_choice: true,
     google_review_url: '',
     facebook_review_url: '',
     yelp_review_url: '',
@@ -333,6 +338,7 @@ export default function SettingsPage() {
     white_label_enabled: false,
     custom_logo_url: '',
     custom_brand_name: '',
+    custom_brand_color: '',
   })
 
   const [templates, setTemplates] = useState<ReviewTemplate[]>([
@@ -360,19 +366,33 @@ export default function SettingsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) {
           router.push('/login')
+          return
+        }
+
+        const myBusinessRes = await fetch('/api/my-business', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        const myBusinessPayload = await myBusinessRes.json().catch(() => ({})) as {
+          business?: { id: string } | null
+        }
+
+        if (!myBusinessRes.ok || !myBusinessPayload.business?.id) {
+          console.error('Error fetching primary business:', myBusinessPayload)
+          setError('Failed to load business data')
+          setIsLoading(false)
           return
         }
 
         const { data: business, error: businessError } = await supabase
           .from('businesses')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('id', myBusinessPayload.business.id)
           .single()
 
-        if (businessError) {
+        if (businessError || !business) {
           console.error('Error fetching business:', businessError)
           setError('Failed to load business data')
           setIsLoading(false)
@@ -384,7 +404,7 @@ export default function SettingsPage() {
           business_name: business.business_name,
           primary_color: business.primary_color || '#3B82F6',
           logo_url: business.logo_url || '',
-          skip_template_choice: business.skip_template_choice ?? false,
+          skip_template_choice: business.skip_template_choice ?? true,
           google_review_url: business.google_review_url || '',
           facebook_review_url: business.facebook_review_url || '',
           yelp_review_url: business.yelp_review_url || '',
@@ -400,6 +420,7 @@ export default function SettingsPage() {
           white_label_enabled: business.white_label_enabled ?? false,
           custom_logo_url: business.custom_logo_url || '',
           custom_brand_name: business.custom_brand_name || '',
+          custom_brand_color: business.custom_brand_color || '',
         })
 
         if (business.google_review_url) setShowManualGoogle(true)
@@ -512,6 +533,7 @@ export default function SettingsPage() {
           googlePlaceId: businessData.google_place_id || null,
           whiteLabelEnabled: businessData.white_label_enabled,
           customBrandName: businessData.custom_brand_name || null,
+          customBrandColor: businessData.custom_brand_color?.trim() || null,
         }),
       })
 
@@ -673,7 +695,7 @@ export default function SettingsPage() {
         hasGoogleLink={!!(businessData.google_review_url && businessData.google_review_url.trim())}
         hasFacebookLink={!!(businessData.facebook_review_url && businessData.facebook_review_url.trim())}
         hasCustomColor={!!hasCustomColor}
-        hasEditedTemplates={!businessData.skip_template_choice}
+        hasEditedTemplates={businessData.skip_template_choice !== false}
       />
 
       <div className="px-6 py-8">
@@ -823,7 +845,7 @@ export default function SettingsPage() {
                           <Field
                             label="Custom brand name"
                             htmlFor="customBrandName"
-                            help="Display name when white-label is on (defaults to your business name)."
+                            help="Shown in the footer as “Powered by …” (defaults to your business name if empty)."
                           >
                             <input
                               type="text"
@@ -833,6 +855,31 @@ export default function SettingsPage() {
                               className={inputCls}
                               placeholder={businessData.business_name || 'Your business name'}
                             />
+                          </Field>
+                          <Field
+                            label="Footer accent color (optional)"
+                            htmlFor="customBrandColor"
+                            help="Used for the custom brand name in the footer and for buttons/stars when white-label is on. Leave blank to use your main brand color."
+                          >
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="color"
+                                id="customBrandColor"
+                                value={businessData.custom_brand_color?.match(/^#[0-9A-Fa-f]{6}$/) ? businessData.custom_brand_color : '#4A3428'}
+                                onChange={(e) =>
+                                  setBusinessData({ ...businessData, custom_brand_color: e.target.value })
+                                }
+                                className="h-10 w-14 rounded-lg border border-gray-200 cursor-pointer bg-white shrink-0"
+                                aria-label="White-label accent color"
+                              />
+                              <input
+                                type="text"
+                                value={businessData.custom_brand_color || ''}
+                                onChange={(e) => setBusinessData({ ...businessData, custom_brand_color: e.target.value })}
+                                className={`${inputCls} flex-1 min-w-0 font-mono text-sm`}
+                                placeholder="#4A3428 (optional)"
+                              />
+                            </div>
                           </Field>
                         </>
                       )}
@@ -1010,12 +1057,7 @@ export default function SettingsPage() {
                       checked={!businessData.skip_template_choice}
                       onChange={() => setBusinessData({ ...businessData, skip_template_choice: !businessData.skip_template_choice })}
                       label="Show review templates"
-                      description="Customers can pick a pre-written template or write their own. Turning this off sends them straight to your Google link."
-                      badge={
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          Recommended
-                        </span>
-                      }
+                      description="When on, customers can pick a pre-written template or write their own before opening your review link. When off, they go straight to your review platforms after 5 stars."
                     />
                   </Card>
 
@@ -1259,71 +1301,62 @@ export default function SettingsPage() {
               {/* ══ AI FEATURES (AI Tier) ══ */}
               {activeSection === 'ai-features' && (
                 <>
-                  <Card title="AI-Powered Features">
+                  <Card title="AI Template Generator">
                     <div className="space-y-4">
-                      <div className="p-4 bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-xl">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-[#C9A961]/20 flex items-center justify-center shrink-0">
-                            <svg className="w-4 h-4 text-[#4A3428]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-gray-900 mb-1">Feature Coming Soon</p>
-                            <p className="text-xs text-gray-600 leading-relaxed">
-                              AI features will be available when the AI tier launches in May 2026. Get AI-generated review drafts for customers and AI-powered responses to reviews.
-                            </p>
-                          </div>
-                        </div>
+                      <p className="text-sm text-gray-600">
+                        Generate personalized review request templates using AI. Create custom messages for email or SMS based on your business type and preferred tone.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowAITemplateGenerator(true)}
+                        className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Generate AI Template
+                      </button>
+                    </div>
+                  </Card>
+
+                  <Card title="AI Review Response Generator">
+                    <div className="space-y-4">
+                      <p className="text-sm text-gray-600">
+                        Generate professional responses to customer reviews using AI. Perfect for responding to Google reviews quickly and professionally.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowAIReviewResponseGenerator(true)}
+                        className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                        Generate Review Response
+                      </button>
+                    </div>
+                  </Card>
+
+                  <Card title="Usage Tips">
+                    <div className="space-y-3 text-sm text-gray-600">
+                      <div className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-indigo-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p><strong>Templates:</strong> Use AI to create personalized review request messages for different channels (email/SMS)</p>
                       </div>
-
-                      <Toggle
-                        id="aiReviewDrafts"
-                        checked={false}
-                        onChange={() => {}}
-                        label="AI Review Drafts"
-                        description="Suggest AI-generated review text to customers based on keywords they select. Makes it easier for customers to leave detailed, positive reviews."
-                      />
-
-                      <Toggle
-                        id="aiReviewResponses"
-                        checked={false}
-                        onChange={() => {}}
-                        label="AI Review Responses"
-                        description="Generate professional, personalized responses to customer reviews automatically. Review and edit before posting."
-                      />
-
-                      <Field
-                        label="Response Tone"
-                        htmlFor="responseTone"
-                        help="How should AI-generated responses sound?"
-                      >
-                        <select
-                          id="responseTone"
-                          disabled
-                          className={`${inputCls} opacity-50 cursor-not-allowed`}
-                        >
-                          <option>Professional</option>
-                          <option>Friendly</option>
-                          <option>Casual</option>
-                          <option>Formal</option>
-                        </select>
-                      </Field>
-
-                      <Field
-                        label="Business Type"
-                        htmlFor="businessType"
-                        help="Helps AI understand your industry for better responses"
-                      >
-                        <input
-                          type="text"
-                          id="businessType"
-                          value=""
-                          disabled
-                          className={`${inputCls} opacity-50 cursor-not-allowed`}
-                          placeholder="e.g., HVAC, Plumbing, Landscaping, Auto Repair"
-                        />
-                      </Field>
+                      <div className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-indigo-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p><strong>Responses:</strong> Generate professional replies to customer reviews based on rating and content</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-indigo-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p><strong>Review & Edit:</strong> All AI-generated content can be customized before using</p>
+                      </div>
                     </div>
                   </Card>
                 </>
@@ -1442,12 +1475,35 @@ export default function SettingsPage() {
               nextdoorReviewUrl={businessData.nextdoor_review_url || null}
               skipTemplateChoice={businessData.skip_template_choice}
               showReviewfloBranding={businessData.show_reviewflo_branding}
+              whiteLabelEnabled={!!businessData.white_label_enabled && canUseWhiteLabel(businessData.tier)}
+              whiteLabelBrandName={businessData.custom_brand_name || null}
+              whiteLabelBrandColor={businessData.custom_brand_color || null}
               templates={templates}
             />
           </div>
 
         </div>{/* end main row */}
       </div>
+
+      {/* AI Modal Components */}
+      <AITemplateGenerator
+        open={showAITemplateGenerator}
+        onClose={() => setShowAITemplateGenerator(false)}
+        onUseTemplate={(template) => {
+          // Copy to clipboard
+          navigator.clipboard.writeText(template);
+          setShowAITemplateGenerator(false);
+        }}
+      />
+      <AIReviewResponseGenerator
+        open={showAIReviewResponseGenerator}
+        onClose={() => setShowAIReviewResponseGenerator(false)}
+        onUseResponse={(response) => {
+          // Copy to clipboard
+          navigator.clipboard.writeText(response);
+          setShowAIReviewResponseGenerator(false);
+        }}
+      />
     </AppLayout>
   )
 }

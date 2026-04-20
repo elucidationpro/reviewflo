@@ -64,6 +64,7 @@ export default async function handler(
       slug: slug,
       primary_color: '#3B82F6',
       logo_url: null,
+      skip_template_choice: true,
       google_review_url: null,
       facebook_review_url: null,
       yelp_review_url: null,
@@ -132,9 +133,9 @@ export default async function handler(
       })
       .eq('email', email);
 
-    // Redirect to dashboard
+    // Redirect to dashboard (new_signup=1 for one-time Google Ads conversion on client)
     console.log('[verify-magic-link] Setup complete, redirecting to dashboard');
-    return res.redirect('/dashboard');
+    return res.redirect('/dashboard?new_signup=1');
 
   } catch (error) {
     console.error('[verify-magic-link] Unexpected error:', error);

@@ -54,3 +54,23 @@ export function canUseAIFeatures(tier: Tier | undefined): boolean {
 export function canUseWhiteLabel(tier: Tier | undefined): boolean {
   return tier === 'ai'
 }
+
+/**
+ * Max businesses rows (locations) per account: primary + children share one user_id.
+ * Free: 1 · Pro: 3 · AI: 15
+ */
+export function getMaxBusinessLocations(tier: Tier | undefined): number {
+  if (tier === 'ai') return 15
+  if (tier === 'pro') return 3
+  return 1
+}
+
+/** Pro/AI can add extra location rows; Free cannot */
+export function canUseMultipleLocations(tier: Tier | undefined): boolean {
+  return tier === 'pro' || tier === 'ai'
+}
+
+/** Monthly token budget for AI generation: free/pro = 0 (no AI access), ai = 50_000 */
+export function getMonthlyTokenLimit(tier: Tier | undefined): number {
+  return tier === 'ai' ? 50_000 : 0
+}

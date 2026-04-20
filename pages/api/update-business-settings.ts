@@ -104,24 +104,48 @@ export default async function handler(
     if (updateError) {
       console.error('Error updating business settings:', updateError)
       const errMsg = (updateError as { message?: string }).message || String(updateError)
-      // If column doesn't exist (migration not run), retry without columns that may not exist yet
       const isColumnError = /does not exist|undefined column|column.*not found|schema cache/i.test(errMsg)
+      const whiteLabelKeys = ['white_label_enabled', 'custom_logo_url', 'custom_brand_name', 'custom_brand_color'] as const
+      const hadSkipTemplateInRequest = Object.prototype.hasOwnProperty.call(updateData, 'skip_template_choice')
+      const hadWhiteLabelInRequest = whiteLabelKeys.some((k) => Object.prototype.hasOwnProperty.call(updateData, k))
+
       if (isColumnError) {
-        const AI_TIER_COLUMNS = ['skip_template_choice', 'white_label_enabled', 'custom_logo_url', 'custom_brand_name', 'custom_brand_color']
-        const coreData = { ...updateData }
-        for (const col of AI_TIER_COLUMNS) {
-          delete coreData[col]
+        const withoutWhiteLabel = { ...updateData }
+        for (const k of whiteLabelKeys) {
+          delete withoutWhiteLabel[k]
         }
-        if (Object.keys(coreData).length > 0) {
-          const { error: retryError } = await supabaseAdmin
+        if (Object.keys(withoutWhiteLabel).length > 0) {
+          const { error: retry1Error } = await supabaseAdmin
             .from('businesses')
-            .update(coreData)
+            .update(withoutWhiteLabel)
             .eq('id', businessId)
-          if (!retryError) {
+          if (!retry1Error) {
             return res.status(200).json({
               success: true,
-              message: 'Settings saved. Some AI-tier options require a database migration.',
+              message: hadWhiteLabelInRequest
+                ? 'Settings saved. White-label fields require the AI tier migration on your database.'
+                : undefined,
             })
+          }
+          const retry1Msg = (retry1Error as { message?: string }).message || String(retry1Error)
+          if (/does not exist|undefined column|column.*not found|schema cache/i.test(retry1Msg)) {
+            const withoutTemplate = { ...withoutWhiteLabel }
+            delete withoutTemplate.skip_template_choice
+            if (Object.keys(withoutTemplate).length > 0) {
+              const { error: retry2Error } = await supabaseAdmin
+                .from('businesses')
+                .update(withoutTemplate)
+                .eq('id', businessId)
+              if (!retry2Error) {
+                return res.status(200).json({
+                  success: true,
+                  templateSettingSkipped: hadSkipTemplateInRequest,
+                  message: hadSkipTemplateInRequest
+                    ? 'Settings saved, but the review template toggle could not be saved until skip_template_choice exists in your database. Run the latest migrations in Supabase.'
+                    : undefined,
+                })
+              }
+            }
           }
         }
       }

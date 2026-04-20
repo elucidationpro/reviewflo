@@ -90,15 +90,21 @@ export default function AccountPage() {
         })
       }
 
-      // Get business data
-      const { data: businessData, error: businessError } = await supabase
-        .from('businesses')
-        .select('id, business_name, tier')
-        .eq('user_id', user.id)
-        .single()
-
-      if (!businessError && businessData) {
-        setBusiness(businessData)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.access_token) {
+        const res = await fetch('/api/my-business', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        const payload = await res.json().catch(() => ({})) as {
+          business?: { id: string; business_name: string; tier: string } | null
+        }
+        if (res.ok && payload.business) {
+          setBusiness({
+            id: payload.business.id,
+            business_name: payload.business.business_name,
+            tier: (payload.business.tier as Business['tier']) || 'free',
+          })
+        }
       }
 
       setIsLoading(false)

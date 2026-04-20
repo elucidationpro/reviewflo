@@ -155,8 +155,8 @@ export default function OnboardingProgress({
       helpContent: (
         <div className="text-gray-600 space-y-2">
           <p>Review templates help customers write better reviews by providing suggestions they can use or customize.</p>
-          <p>Go to <strong>Settings → Review Flow</strong> to enable templates and customize the text.</p>
-          <p className="text-xs text-gray-500 mt-2">Tip: Templates are enabled by default and highly recommended.</p>
+          <p>Go to <strong>Settings → Review Flow</strong> to turn on review templates and customize the text.</p>
+          <p className="text-xs text-gray-500 mt-2">Templates are off by default; turn them on only if you want customers to see suggested wording.</p>
         </div>
       ),
     },

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ReviewFloFooter from './ReviewFloFooter'
 
 interface ReviewTemplate {
   id: string
@@ -18,6 +19,10 @@ interface ReviewPreviewProps {
   nextdoorReviewUrl: string | null
   skipTemplateChoice: boolean
   templates: ReviewTemplate[]
+  /** When true, footer shows “Powered by {brand}” instead of ReviewFlo (e.g. AI white-label). */
+  whiteLabelEnabled?: boolean
+  whiteLabelBrandName?: string | null
+  whiteLabelBrandColor?: string | null
 }
 
 type Screen = 'rating' | 'five_star' | 'feedback' | 'thanks'
@@ -43,6 +48,9 @@ export default function ReviewPreview({
   nextdoorReviewUrl,
   skipTemplateChoice,
   templates,
+  whiteLabelEnabled = false,
+  whiteLabelBrandName = null,
+  whiteLabelBrandColor = null,
 }: ReviewPreviewProps) {
   const [screen, setScreen] = useState<Screen>('rating')
   const [selectedRating, setSelectedRating] = useState<number | null>(null)
@@ -67,6 +75,18 @@ export default function ReviewPreview({
   const hasPlatformLinks = platforms.length > 0
   const displayRating = hoveredRating ?? selectedRating ?? 0
   const displayName = businessName || 'Your Business'
+  const accentColor =
+    whiteLabelEnabled && whiteLabelBrandColor?.trim()
+      ? whiteLabelBrandColor.trim()
+      : primaryColor
+  const previewWlName =
+    whiteLabelEnabled && (whiteLabelBrandName?.trim() || displayName.trim())
+      ? whiteLabelBrandName?.trim() || displayName.trim()
+      : null
+  const footerWhiteLabel = previewWlName
+    ? { brandName: previewWlName, brandColor: whiteLabelBrandColor }
+    : null
+  const showRfFooter = !footerWhiteLabel && showReviewfloBranding
 
   const handleStarClick = (star: number) => {
     setSelectedRating(star)
@@ -134,7 +154,7 @@ export default function ReviewPreview({
               </div>
             )}
             {showBusinessName && (
-              <h3 className="text-xl font-bold tracking-tight mb-1" style={{ color: primaryColor }}>
+              <h3 className="text-xl font-bold tracking-tight mb-1" style={{ color: accentColor }}>
                 {displayName}
               </h3>
             )}
@@ -152,8 +172,8 @@ export default function ReviewPreview({
                 >
                   <svg
                     className="w-10 h-10 min-w-0 transition-colors duration-150"
-                    fill={star <= displayRating ? primaryColor : 'none'}
-                    stroke={star <= displayRating ? primaryColor : '#CBD5E1'}
+                    fill={star <= displayRating ? accentColor : 'none'}
+                    stroke={star <= displayRating ? accentColor : '#CBD5E1'}
                     strokeWidth="1.5"
                     viewBox="0 0 24 24"
                   >
@@ -172,12 +192,8 @@ export default function ReviewPreview({
               <span>·</span>
               <span>Privacy</span>
             </div>
-            {showReviewfloBranding && (
-              <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400 mt-1">
-                <span>Powered by</span>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/reviewflo-logo.svg" alt="ReviewFlo" className="h-3.5 w-auto object-contain opacity-60" />
-              </div>
+            {(showRfFooter || footerWhiteLabel) && (
+              <ReviewFloFooter whiteLabel={footerWhiteLabel} showBranding={showRfFooter} compact />
             )}
           </div>
         )}
@@ -202,13 +218,13 @@ export default function ReviewPreview({
               </div>
             )}
             {showBusinessName && (
-              <h3 className="text-lg font-bold text-center tracking-tight mb-4" style={{ color: primaryColor }}>
+              <h3 className="text-lg font-bold text-center tracking-tight mb-4" style={{ color: accentColor }}>
                 {displayName}
               </h3>
             )}
             <div className="flex justify-center gap-2 mb-3">
               {[1, 2, 3, 4, 5].map(s => (
-                <svg key={s} className="w-7 h-7" fill={primaryColor} viewBox="0 0 24 24" aria-hidden>
+                <svg key={s} className="w-7 h-7" fill={accentColor} viewBox="0 0 24 24" aria-hidden>
                   <StarPath />
                 </svg>
               ))}
@@ -228,8 +244,8 @@ export default function ReviewPreview({
                   onClick={() => setReviewPath('write_own')}
                   className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-all cursor-pointer text-left"
                 >
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${primaryColor}18` }}>
-                    <svg className="w-5 h-5" style={{ color: primaryColor }} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${accentColor}18` }}>
+                    <svg className="w-5 h-5" style={{ color: accentColor }} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                   </div>
@@ -244,8 +260,8 @@ export default function ReviewPreview({
                     onClick={() => setReviewPath('use_template')}
                     className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-all cursor-pointer text-left"
                   >
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${primaryColor}18` }}>
-                      <svg className="w-5 h-5" style={{ color: primaryColor }} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${accentColor}18` }}>
+                      <svg className="w-5 h-5" style={{ color: accentColor }} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
                     </div>
@@ -315,7 +331,7 @@ export default function ReviewPreview({
                       className="w-full border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition-all cursor-pointer text-left"
                     >
                       <div className="flex items-start gap-3">
-                        <span className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5" style={{ backgroundColor: primaryColor }}>
+                        <span className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5" style={{ backgroundColor: accentColor }}>
                           {idx + 1}
                         </span>
                         <p className="text-sm text-gray-700 leading-relaxed flex-1">{template.template_text}</p>
@@ -366,12 +382,8 @@ export default function ReviewPreview({
             )}
           </div>
         )}
-        {screen === 'five_star' && showReviewfloBranding && (
-          <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400 mt-4">
-            <span>Powered by</span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/reviewflo-logo.svg" alt="ReviewFlo" className="h-3.5 w-auto object-contain opacity-60" />
-          </div>
+        {screen === 'five_star' && (showRfFooter || footerWhiteLabel) && (
+          <ReviewFloFooter whiteLabel={footerWhiteLabel} showBranding={showRfFooter} compact />
         )}
 
         {/* ── Feedback screen ── */}
@@ -394,7 +406,7 @@ export default function ReviewPreview({
               </div>
             )}
             {showBusinessName && (
-              <h3 className="text-lg font-bold text-center tracking-tight mb-1" style={{ color: primaryColor }}>
+              <h3 className="text-lg font-bold text-center tracking-tight mb-1" style={{ color: accentColor }}>
                 {displayName}
               </h3>
             )}
@@ -407,7 +419,7 @@ export default function ReviewPreview({
                   onChange={e => setWhatHappened(e.target.value)}
                   rows={3}
                   className="w-full px-3.5 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 resize-none"
-                  style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
+                  style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
                   placeholder="Please describe your experience…"
                 />
               </div>
@@ -418,7 +430,7 @@ export default function ReviewPreview({
                   onChange={e => setHowToMakeRight(e.target.value)}
                   rows={3}
                   className="w-full px-3.5 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-2 resize-none"
-                  style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
+                  style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
                   placeholder="What would make this better for you…"
                 />
               </div>
@@ -432,7 +444,7 @@ export default function ReviewPreview({
                       if (!e.target.checked) setContactError('')
                     }}
                     className="w-4 h-4 rounded cursor-pointer shrink-0"
-                    style={{ accentColor: primaryColor }}
+                    style={{ accentColor: accentColor }}
                   />
                   <span className="text-sm text-gray-700">I&apos;d like to be contacted about this</span>
                 </label>
@@ -455,7 +467,7 @@ export default function ReviewPreview({
                       placeholder="your@email.com"
                       autoComplete="email"
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 placeholder-gray-300 text-sm"
-                      style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
+                      style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
                     />
                   </div>
                   <div>
@@ -473,7 +485,7 @@ export default function ReviewPreview({
                       placeholder="(555) 123-4567"
                       autoComplete="tel"
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 placeholder-gray-300 text-sm"
-                      style={{ '--tw-ring-color': primaryColor } as React.CSSProperties}
+                      style={{ '--tw-ring-color': accentColor } as React.CSSProperties}
                     />
                   </div>
                   <p className="text-xs text-gray-400">Provide at least one contact method</p>
@@ -492,7 +504,7 @@ export default function ReviewPreview({
               <button
                 type="button"
                 onClick={submitFeedbackPreview}
-                style={{ backgroundColor: primaryColor }}
+                style={{ backgroundColor: accentColor }}
                 className="w-full text-white font-semibold py-3.5 px-4 text-sm rounded-xl transition-opacity active:opacity-80 cursor-pointer"
               >
                 Submit Feedback
@@ -500,12 +512,8 @@ export default function ReviewPreview({
             </div>
           </div>
         )}
-        {screen === 'feedback' && showReviewfloBranding && (
-          <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400 mt-4">
-            <span>Powered by</span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/reviewflo-logo.svg" alt="ReviewFlo" className="h-3.5 w-auto object-contain opacity-60" />
-          </div>
+        {screen === 'feedback' && (showRfFooter || footerWhiteLabel) && (
+          <ReviewFloFooter whiteLabel={footerWhiteLabel} showBranding={showRfFooter} compact />
         )}
 
         {/* ── Thanks screen ── */}
@@ -519,9 +527,9 @@ export default function ReviewPreview({
             )}
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
-              style={{ backgroundColor: `${primaryColor}18` }}
+              style={{ backgroundColor: `${accentColor}18` }}
             >
-              <svg className="w-8 h-8" style={{ color: primaryColor }} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg className="w-8 h-8" style={{ color: accentColor }} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -550,12 +558,8 @@ export default function ReviewPreview({
             )}
           </div>
         )}
-        {screen === 'thanks' && showReviewfloBranding && (
-          <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400 mt-4">
-            <span>Powered by</span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/reviewflo-logo.svg" alt="ReviewFlo" className="h-3.5 w-auto object-contain opacity-60" />
-          </div>
+        {screen === 'thanks' && (showRfFooter || footerWhiteLabel) && (
+          <ReviewFloFooter whiteLabel={footerWhiteLabel} showBranding={showRfFooter} compact />
         )}
         </div>
       </div>

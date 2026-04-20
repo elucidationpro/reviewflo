@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase'
 import ReviewFloFooter from '../../components/ReviewFloFooter'
 import { trackEvent } from '../../lib/posthog-provider'
 import { getTemplateSlots } from '../../lib/tier-permissions'
+import { getReviewAccentColor, resolvePublicReviewFooter } from '../../lib/review-page-branding'
 
 interface Business {
   id: string
@@ -23,6 +24,9 @@ interface Business {
   show_reviewflo_branding?: boolean
   show_business_name?: boolean
   logo_url?: string | null
+  white_label_enabled?: boolean
+  custom_brand_name?: string | null
+  custom_brand_color?: string | null
 }
 
 interface ReviewTemplate {
@@ -42,6 +46,8 @@ function getDisplayLogoUrl(b: Business): string | null {
 
 export default function TemplatesPage({ business, templates }: PageProps) {
   const router = useRouter()
+  const accentColor = getReviewAccentColor(business)
+  const footer = resolvePublicReviewFooter(business)
   const displayLogoUrl = getDisplayLogoUrl(business)
   const hasPlatformLinks = !!(business.google_review_url || business.facebook_review_url || business.yelp_review_url || business.nextdoor_review_url)
   const [reviewPath, setReviewPath] = useState<'write_own' | 'use_template' | null>(
@@ -179,7 +185,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
             {business.show_business_name !== false && (
               <h1
                 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-center tracking-tight mb-5"
-                style={{ color: business.primary_color }}
+                style={{ color: accentColor }}
               >
                 {business.business_name}
               </h1>
@@ -192,7 +198,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                   <svg
                     key={star}
                     className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12"
-                    fill={business.primary_color}
+                    fill={accentColor}
                     viewBox="0 0 24 24"
                     aria-hidden
                   >
@@ -227,9 +233,9 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                 >
                   <div
                     className="w-10 h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: `${business.primary_color}18` }}
+                    style={{ backgroundColor: `${accentColor}18` }}
                   >
-                    <PenLine className="w-5 h-5 lg:w-6 lg:h-6" style={{ color: business.primary_color }} />
+                    <PenLine className="w-5 h-5 lg:w-6 lg:h-6" style={{ color: accentColor }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 text-sm lg:text-base">Write your own</p>
@@ -254,9 +260,9 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                 >
                   <div
                     className="w-10 h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: `${business.primary_color}18` }}
+                    style={{ backgroundColor: `${accentColor}18` }}
                   >
-                    <ClipboardList className="w-5 h-5 lg:w-6 lg:h-6" style={{ color: business.primary_color }} />
+                    <ClipboardList className="w-5 h-5 lg:w-6 lg:h-6" style={{ color: accentColor }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 text-sm lg:text-base">Use a template</p>
@@ -342,7 +348,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                       <div className="flex items-start gap-3">
                         <span
                           className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5"
-                          style={{ backgroundColor: business.primary_color }}
+                          style={{ backgroundColor: accentColor }}
                         >
                           {index + 1}
                         </span>
@@ -423,7 +429,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
               <span>·</span>
               <Link href="/terms#privacy" className="hover:text-gray-500 transition-colors">Privacy</Link>
             </div>
-            <ReviewFloFooter showBranding={business.show_reviewflo_branding !== false || business.tier === 'free'} />
+            <ReviewFloFooter whiteLabel={footer.whiteLabel} showBranding={footer.showReviewFloBranding} />
           </div>
 
         </div>
@@ -447,7 +453,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const businessWithSettings = {
     ...business,
-    skip_template_choice: business.skip_template_choice ?? false,
+    skip_template_choice: business.skip_template_choice ?? true,
   }
 
   const { data: templatesData } = await supabase

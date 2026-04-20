@@ -49,6 +49,8 @@ export default function AdminLeadsPage() {
   const [earlyAccessSignups, setEarlyAccessSignups] = useState<EarlyAccessSignup[]>([])
   const [error, setError] = useState('')
   const [deletingEarlyAccessId, setDeletingEarlyAccessId] = useState<string | null>(null)
+  const [isClearing, setIsClearing] = useState(false)
+  const [success, setSuccess] = useState('')
 
   useEffect(() => {
     loadLeads()
@@ -99,6 +101,52 @@ export default function AdminLeadsPage() {
       console.error(err)
       setError('Failed to load leads')
       setIsLoading(false)
+    }
+  }
+
+  const handleClearAll = async () => {
+    if (isClearing) return
+    setSuccess('')
+    setError('')
+    if (!confirm('Clear ALL leads & signups data? This cannot be undone.')) return
+    if (!confirm('Last check: this will delete Early access, Beta signups, Waitlist, and Leads rows. Continue?')) return
+
+    setIsClearing(true)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setError('Session expired. Please refresh.')
+        return
+      }
+
+      const response = await fetch('/api/admin/clear-leads-and-signups', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ confirm: 'CLEAR_LEADS_AND_SIGNUPS' }),
+      })
+
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) {
+        setError(payload?.error || 'Failed to clear data')
+        return
+      }
+
+      setEarlyAccessSignups([])
+      setBetaSignups([])
+      setWaitlistSignups([])
+      const cleared = payload?.cleared
+      const summary = cleared
+        ? `Cleared — Early access: ${cleared.early_access_signups}, Beta: ${cleared.beta_signups}, Waitlist: ${cleared.waitlist}, Leads: ${cleared.leads}`
+        : 'Cleared leads & signups data.'
+      setSuccess(summary)
+    } catch (err) {
+      console.error(err)
+      setError('Failed to clear data')
+    } finally {
+      setIsClearing(false)
     }
   }
 
@@ -164,12 +212,27 @@ export default function AdminLeadsPage() {
       <AdminLayout onLogout={handleLogout}>
         <div className="px-4 py-8 max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Leads &amp; signups</h1>
-            <p className="text-gray-600 mt-1">Early access, beta, and waitlist entries</p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Leads &amp; signups</h1>
+                <p className="text-gray-600 mt-1">Early access, beta, and waitlist entries</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleClearAll}
+                disabled={isClearing}
+                className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-700 text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isClearing ? 'Clearing…' : 'Clear test data'}
+              </button>
+            </div>
           </div>
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">{error}</div>
+          )}
+          {success && (
+            <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-900">{success}</div>
           )}
 
           {/* Early Access */}

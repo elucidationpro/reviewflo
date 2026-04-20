@@ -62,7 +62,10 @@ export default function AuthMagicLandingPage() {
 
       const next: MagicLandingNext =
         parseMagicLandingNext(router.query.next) ?? 'dashboard';
-      const dest = next === 'google-confirm' ? '/join/google-confirm' : '/dashboard';
+      const dest =
+        next === 'google-confirm'
+          ? '/join/google-confirm?new_signup=1'
+          : '/dashboard';
       router.replace(dest);
     };
 
