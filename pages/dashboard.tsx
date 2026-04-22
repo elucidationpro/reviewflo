@@ -40,10 +40,11 @@ interface ReviewStats {
 }
 
 // ── Card wrapper ─────────────────────────────────────────────────────────────
-function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function Card({ children, className = '', accent = false }: { children: React.ReactNode; className?: string; accent?: boolean }) {
   return (
-    <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm p-6 ${className}`}>
-      {children}
+    <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden ${className}`}>
+      {accent && <div className="h-0.5 bg-gradient-to-r from-[#C9A961] via-[#e6c97a] to-[#C9A961]" />}
+      <div className="p-6">{children}</div>
     </div>
   )
 }
@@ -362,34 +363,37 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 gap-4">
           {/* Reviews this month */}
           <Card>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">This Month</p>
-            <div
-              className="text-4xl font-bold mb-1"
-              style={{ color: business.primary_color || '#4A3428' }}
-            >
-              {reviewStats.total}
+            <p className="text-xs font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-3">This Month</p>
+            <div className="flex items-baseline gap-2 mb-1">
+              <div
+                className="text-5xl font-bold leading-none"
+                style={{ color: business.primary_color || '#4A3428' }}
+              >
+                {reviewStats.total}
+              </div>
+              <span className="text-sm text-gray-400 font-medium">reviews</span>
             </div>
-            <p className="text-xs text-gray-500 mb-4">reviews</p>
 
-            <div className="space-y-1.5">
+            <div className="mt-4 space-y-2">
               {[5, 4, 3, 2, 1].map((rating) => (
                 <div key={rating} className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 w-3 text-right">{rating}</span>
-                  <svg className="w-3 h-3 shrink-0" fill={business.primary_color || '#4A3428'} viewBox="0 0 24 24">
+                  <span className="text-xs text-gray-400 w-3 text-right tabular-nums">{rating}</span>
+                  <svg className="w-3 h-3 shrink-0 opacity-70" fill={business.primary_color || '#4A3428'} viewBox="0 0 24 24">
                     <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
-                  <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                  <div className="flex-1 bg-[#F5F5DC]/80 rounded-full h-2 overflow-hidden">
                     <div
-                      className="h-full rounded-full transition-all duration-500"
+                      className="h-full rounded-full transition-all duration-700"
                       style={{
                         width: reviewStats.total > 0
                           ? `${(reviewStats.breakdown[rating as keyof typeof reviewStats.breakdown] / reviewStats.total) * 100}%`
                           : '0%',
                         backgroundColor: business.primary_color || '#4A3428',
+                        opacity: 0.85,
                       }}
                     />
                   </div>
-                  <span className="text-xs font-semibold text-gray-700 w-4 text-right">
+                  <span className="text-xs font-semibold text-gray-600 w-4 text-right tabular-nums">
                     {reviewStats.breakdown[rating as keyof typeof reviewStats.breakdown]}
                   </span>
                 </div>
@@ -399,14 +403,17 @@ export default function DashboardPage() {
 
           {/* Quick Stats */}
           <Card>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Quick Stats</p>
-            <div className="space-y-3">
-              <div className="p-3 bg-gray-50 rounded-xl">
-                <p className="text-xs text-gray-500 mb-0.5">Avg Rating</p>
-                <p className="text-2xl font-bold text-gray-900">{avgRating}</p>
+            <p className="text-xs font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-3">Quick Stats</p>
+            <div className="space-y-2.5">
+              <div className="p-3 bg-[#F5F5DC]/40 border border-[#C9A961]/20 rounded-xl">
+                <p className="text-xs text-gray-400 mb-0.5 flex items-center gap-1">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                  Avg Rating
+                </p>
+                <p className="text-2xl font-bold text-[#4A3428]">{avgRating}</p>
               </div>
               <div className="p-3 bg-gray-50 rounded-xl">
-                <p className="text-xs text-gray-500 mb-0.5">Pending Feedback</p>
+                <p className="text-xs text-gray-400 mb-0.5">Pending Feedback</p>
                 <div className="flex items-end justify-between">
                   <p className="text-2xl font-bold text-gray-900">{pendingFeedbackCount}</p>
                   {pendingFeedbackCount > 0 && (
@@ -415,7 +422,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="p-3 bg-gray-50 rounded-xl">
-                <p className="text-xs text-gray-500 mb-0.5">Conversion Rate</p>
+                <p className="text-xs text-gray-400 mb-0.5">Conversion Rate</p>
                 <p className="text-2xl font-bold text-gray-900">
                   {conversionRate !== null && funnelSent > 0 ? `${conversionRate}%` : '—'}
                 </p>
@@ -442,25 +449,25 @@ export default function DashboardPage() {
         )}
 
         {/* ── Your Review Link ── */}
-        <Card>
+        <Card accent>
           <h2 className="text-base font-bold text-gray-900 mb-1">Your Review Link</h2>
           <p className="text-xs text-gray-500 mb-4">
             Send this to customers after each job — they rate their experience, then get guided to Google.
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
-            <div className="flex-1 flex items-center bg-gray-50 rounded-lg px-3.5 py-2.5 border border-gray-200 min-w-0">
+            <div className="flex-1 flex items-center bg-[#F5F5DC]/40 rounded-xl px-3.5 py-2.5 border border-[#C9A961]/30 min-w-0">
               <a
                 href={fullUrlForCopy}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-mono text-gray-700 truncate hover:underline"
+                className="text-sm font-mono text-[#4A3428] truncate hover:underline"
               >
                 {displayLink}
               </a>
             </div>
             <button
               onClick={handleCopyReviewLink}
-              className="shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
+              className="shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.97] cursor-pointer"
               style={{ backgroundColor: business.primary_color || '#4A3428' }}
             >
               {linkCopied ? (
@@ -503,14 +510,14 @@ export default function DashboardPage() {
                   type="button"
                   onClick={() => { setComingSoonTier('pro'); setShowComingSoonModal(true) }}
                   disabled={updatingLaunchPref}
-                  className="px-3.5 py-2 rounded-lg text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer"
                 >
                   Get Notified
                 </button>
                 <button
                   type="button"
                   onClick={handlePricingClick}
-                  className="px-3.5 py-2 rounded-lg text-xs font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   See Pricing
                 </button>
@@ -521,46 +528,49 @@ export default function DashboardPage() {
 
         {/* ── Upgrade card (free, not yet on list) ── */}
         {business.tier === 'free' && !business.interested_in_tier && (
-          <Card>
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5">
-              <div className="flex-1">
-                <p className="text-xs font-semibold text-[#C9A961] uppercase tracking-wide mb-1">Coming May 2026</p>
-                <h2 className="text-base font-bold text-gray-900 mb-2">Pro &amp; AI Tiers</h2>
-                <div className="space-y-1.5 text-xs text-gray-600">
-                  <p><span className="font-semibold text-gray-800">Pro ($19/mo)</span> — dashboard sending, auto follow-ups, multi-platform</p>
-                  <p><span className="font-semibold text-gray-800">AI ($49/mo)</span> — SMS automation, AI features, CRM integration</p>
-                  <p className="text-emerald-700 font-medium">Early signup: 50% off first 3 months</p>
+          <div className="rounded-2xl border border-[#C9A961]/30 overflow-hidden shadow-sm">
+            <div className="h-0.5 bg-gradient-to-r from-[#C9A961] via-[#e6c97a] to-[#C9A961]" />
+            <div className="p-6 bg-gradient-to-br from-[#F5F5DC]/30 via-white to-white">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-[#C9A961] uppercase tracking-widest mb-1">Coming May 2026</p>
+                  <h2 className="text-base font-bold text-gray-900 mb-2">Pro &amp; AI Tiers</h2>
+                  <div className="space-y-1.5 text-xs text-gray-600">
+                    <p><span className="font-semibold text-gray-800">Pro ($19/mo)</span> — dashboard sending, auto follow-ups, multi-platform</p>
+                    <p><span className="font-semibold text-gray-800">AI ($49/mo)</span> — SMS automation, AI features, CRM integration</p>
+                    <p className="text-emerald-700 font-medium">Early signup: 50% off first 3 months</p>
+                  </div>
+                </div>
+                <div className="flex sm:flex-col gap-2 sm:w-40">
+                  <button
+                    type="button"
+                    onClick={() => { setComingSoonTier('pro'); setShowComingSoonModal(true) }}
+                    disabled={updatingLaunchPref}
+                    className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer"
+                  >
+                    Notify me — Pro
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setComingSoonTier('ai'); setShowComingSoonModal(true) }}
+                    disabled={updatingLaunchPref}
+                    className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl text-xs font-semibold border border-[#C9A961] text-[#4A3428] bg-[#F5F5DC]/60 hover:bg-[#F5F5DC] transition-colors disabled:opacity-60 cursor-pointer"
+                  >
+                    Notify me — AI
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePricingClick}
+                    className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
+                    See Pricing
+                  </button>
                 </div>
               </div>
-              <div className="flex sm:flex-col gap-2 sm:w-40">
-                <button
-                  type="button"
-                  onClick={() => { setComingSoonTier('pro'); setShowComingSoonModal(true) }}
-                  disabled={updatingLaunchPref}
-                  className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-lg text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer"
-                >
-                  Notify me — Pro
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setComingSoonTier('ai'); setShowComingSoonModal(true) }}
-                  disabled={updatingLaunchPref}
-                  className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-lg text-xs font-semibold border border-[#C9A961] text-[#4A3428] bg-[#F5F5DC]/60 hover:bg-[#F5F5DC] transition-colors disabled:opacity-60 cursor-pointer"
-                >
-                  Notify me — AI
-                </button>
-                <button
-                  type="button"
-                  onClick={handlePricingClick}
-                  className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-lg text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
-                >
-                  See Pricing
-                </button>
-              </div>
+              {launchMessage && <p className="mt-3 text-xs text-emerald-700 font-medium">{launchMessage}</p>}
+              {launchError && <p className="mt-3 text-xs text-red-600 font-medium">{launchError}</p>}
             </div>
-            {launchMessage && <p className="mt-3 text-xs text-emerald-700 font-medium">{launchMessage}</p>}
-            {launchError && <p className="mt-3 text-xs text-red-600 font-medium">{launchError}</p>}
-          </Card>
+          </div>
         )}
 
         {/* ── Already on launch list ── */}
@@ -569,14 +579,16 @@ export default function DashboardPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
+                  <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                    <svg className="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                   <p className="text-sm font-bold text-gray-900">
                     You&apos;re on the {business.interested_in_tier === 'pro' ? 'Pro' : 'AI'} launch list
                   </p>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 ml-7">
                   We&apos;ll email you in May 2026. Your discount: <span className="text-emerald-700 font-semibold">50% off first 3 months</span>.
                 </p>
               </div>
@@ -584,14 +596,14 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => router.push('/settings')}
-                  className="px-3 py-2 rounded-lg text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Change
                 </button>
                 <button
                   type="button"
                   onClick={handlePricingClick}
-                  className="px-3 py-2 rounded-lg text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer"
+                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer"
                 >
                   See Plans
                 </button>
