@@ -251,6 +251,21 @@ export default function AnalyticsDashboard() {
                   subtitle={`Last ${dateRange} days — tracks each stage from send to completion`}
                 />
 
+                {data.funnel.sent === 0 ? (
+                  <div className="bg-gray-50 rounded-2xl p-8 text-center">
+                    <p className="text-gray-500 text-sm mb-3">
+                      You haven&apos;t sent review requests through ReviewFlo yet.
+                    </p>
+                    <Link
+                      href="/dashboard"
+                      className="inline-block text-sm font-medium"
+                      style={{ color: primaryColor }}
+                    >
+                      Send your first request →
+                    </Link>
+                  </div>
+                ) : (
+                  <>
                 {/* KPI strip */}
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                   {[
@@ -361,6 +376,8 @@ export default function AnalyticsDashboard() {
                       ))}
                     </div>
                   </div>
+                )}
+                  </>
                 )}
               </div>
             )}
