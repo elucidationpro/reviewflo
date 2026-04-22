@@ -4,7 +4,7 @@
  * Body: { review_text: string, review_rating: number, reviewer_name: string }
  */
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getAuthContext, apiError, parseTier } from '../../../lib/api-utils'
+import { getAuthContext, apiError, parseTier, supabaseAdmin } from '../../../lib/api-utils'
 import { canUseAIFeatures } from '../../../lib/tier-permissions'
 import { generateReviewReplyDraft } from '../../../lib/claude'
 
@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     reviewerName: reviewer_name,
     quota: {
       businessId: business.id as string,
-      supabase: ctx.supabase,
+      supabase: supabaseAdmin,
       tier,
     },
   })

@@ -13,6 +13,7 @@ import GoogleStatsCard from '@/components/GoogleStatsCard'
 import AppLayout from '@/components/AppLayout'
 import { canSendFromDashboard, canAccessGoogleStats } from '../lib/tier-permissions'
 import { consumeGoogleAdsSignupConversionFromQuery } from '@/lib/google-ads'
+import type { GbpFullReview } from './api/google-reviews/list'
 
 interface Business {
   id: string
@@ -72,6 +73,7 @@ export default function DashboardPage() {
   const [refetchRequestsTrigger, setRefetchRequestsTrigger] = useState(0)
   const [conversionRate, setConversionRate] = useState<number | null>(null)
   const [funnelSent, setFunnelSent] = useState<number>(0)
+  const [reviewsData, setReviewsData] = useState<{ replyRate: number | null; unrepliedCount: number } | null>(null)
 
   useEffect(() => {
     checkAuthAndFetchData()
@@ -231,6 +233,27 @@ export default function DashboardPage() {
     })()
   }, [business])
 
+  useEffect(() => {
+    if (!business || !canAccessGoogleStats(business.tier)) return
+    ;(async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) return
+        const res = await fetch('/api/google-reviews/list', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        if (!res.ok) return
+        const json = await res.json()
+        const gbpReviews: GbpFullReview[] = json.reviews ?? []
+        const unrepliedCount = gbpReviews.filter((r) => !r.reviewReply).length
+        const replyRate = gbpReviews.length > 0 ? Math.round((1 - unrepliedCount / gbpReviews.length) * 100) : null
+        setReviewsData({ replyRate, unrepliedCount })
+      } catch {
+        // silent — reviewsData stays null
+      }
+    })()
+  }, [business])
+
   const handlePricingClick = () => {
     if (business) trackEvent('pricing_viewed_from_dashboard', { businessId: business.id, source: 'dashboard' })
     router.push('/#pricing')
@@ -362,6 +385,21 @@ export default function DashboardPage() {
 
       <div className="px-6 py-8 max-w-2xl mx-auto space-y-4">
 
+        {/* ── Awaiting Reply banner ── */}
+        {reviewsData && reviewsData.unrepliedCount > 0 && (
+          <div className="flex items-center justify-between gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
+            <p className="text-sm text-amber-800 font-medium">
+              {reviewsData.unrepliedCount} {reviewsData.unrepliedCount === 1 ? 'review' : 'reviews'} awaiting your reply
+            </p>
+            <Link
+              href="/dashboard/reviews?filter=unreplied"
+              className="text-xs font-semibold text-amber-900 hover:underline shrink-0"
+            >
+              Reply now →
+            </Link>
+          </div>
+        )}
+
         {/* ── Stats row ── */}
         <div className="grid grid-cols-2 gap-4">
           {/* Reviews this month */}
@@ -432,6 +470,14 @@ export default function DashboardPage() {
                 </p>
                 <p className="text-xs text-gray-400">clicked a review platform</p>
               </div>
+              {reviewsData !== null && (
+                <div className="p-3 bg-gray-50 rounded-xl" title="Percentage of your Google reviews you've replied to.">
+                  <p className="text-xs text-gray-400 mb-0.5">Reply Rate</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {reviewsData.replyRate !== null ? `${reviewsData.replyRate}%` : '—'}
+                  </p>
+                </div>
+              )}
             </div>
           </Card>
         </div>
