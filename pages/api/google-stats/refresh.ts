@@ -62,8 +62,16 @@ export default async function handler(
       try {
         const tokens = await refreshAccessToken(business.google_oauth_refresh_token)
         const gbpResult = await fetchAllReviewsFromBusinessProfile(tokens.accessToken)
-        if (gbpResult && gbpResult.reviews.length > 0) {
-          // Update tokens in DB
+        // GBP_DEBUG
+        console.log('[GBP_DEBUG] refresh: GBP OAuth result:', {
+          business_id: business.id,
+          result_returned: gbpResult !== null,
+          total_review_count: gbpResult?.totalReviewCount ?? null,
+          reviews_in_payload: gbpResult?.reviews.length ?? null,
+          average_rating: gbpResult?.averageRating ?? null,
+        })
+        if (gbpResult) {
+          // Use GBP data even when reviews array is empty — totalReviewCount is the source of truth
           await supabaseAdmin
             .from('businesses')
             .update({
@@ -100,6 +108,8 @@ export default async function handler(
       }
     }
 
+    // GBP_DEBUG
+    console.log('[GBP_DEBUG] refresh: falling through to Places API fallback', { business_id: business.id, had_oauth_token: !!business.google_oauth_refresh_token })
     // Fallback: Places API (max 5 reviews) when no OAuth or GBP failed
     let placeId = await getPlaceIdWithCache(
       business.id,

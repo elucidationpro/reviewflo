@@ -124,7 +124,8 @@ export default async function handler(
 
     // ── 2. Google Stats (snapshots + current) ────────────────────
     let googleStats = null
-    if (canAccessGoogleStats(business.tier as 'free' | 'pro' | 'ai')) {
+    const canSeeGoogleStats = canAccessGoogleStats(business.tier as 'free' | 'pro' | 'ai')
+    if (canSeeGoogleStats) {
       // Current stats
       const { data: currentStats } = await supabaseAdmin
         .from('google_business_stats')
@@ -149,6 +150,17 @@ export default async function handler(
         .limit(1)
         .single()
 
+      // GBP_DEBUG
+      console.log('[GBP_DEBUG] analytics/dashboard-data google stats lookup:', {
+        business_id: business.id,
+        tier: business.tier,
+        current_found: !!currentStats,
+        total_reviews: currentStats?.total_reviews ?? null,
+        average_rating: currentStats?.average_rating ?? null,
+        last_fetched: currentStats?.last_fetched ?? null,
+        snapshots_count: (snapshots || []).length,
+      })
+
       googleStats = {
         current: currentStats || null,
         snapshots: snapshots || [],
@@ -159,6 +171,9 @@ export default async function handler(
           rating_change_month: 0,
         },
       }
+    } else {
+      // GBP_DEBUG
+      console.log('[GBP_DEBUG] analytics/dashboard-data: google stats gated (tier:', business.tier, ')')
     }
 
     // ── 3. Revenue Attribution ───────────────────────────────────

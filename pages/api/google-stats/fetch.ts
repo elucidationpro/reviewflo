@@ -54,6 +54,15 @@ export default async function handler(
       .eq('business_id', business.id)
       .single()
 
+    // GBP_DEBUG
+    console.log('[GBP_DEBUG] google-stats/fetch cached row:', {
+      business_id: business.id,
+      found: !!stats,
+      total_reviews: stats?.total_reviews ?? null,
+      average_rating: stats?.average_rating ?? null,
+      last_fetched: stats?.last_fetched ?? null,
+    })
+
     return res.status(200).json({
       stats: stats || null,
       hasPlaceId: !!placeId,
