@@ -655,18 +655,17 @@ export default function DashboardPage() {
           </Card>
         )}
 
-        {/* ── Footer ── */}
-        <a
-          href="https://usereviewflo.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 py-6 text-gray-400 text-xs hover:text-gray-500 transition-colors"
+        {/* ── Footer (visual only in app; no external navigation) ── */}
+        <div
+          role="presentation"
+          className="flex items-center justify-center gap-2 py-6 text-gray-400 text-xs hover:text-gray-500 transition-colors cursor-pointer select-none"
+          aria-label="Powered by ReviewFlo (display only)"
         >
           <span>Powered by</span>
           <div className="relative w-20 h-5">
             <Image src="/images/reviewflo-logo.svg" alt="ReviewFlo" fill className="object-contain" />
           </div>
-        </a>
+        </div>
 
       </div>
 
