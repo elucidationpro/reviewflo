@@ -1,0 +1,315 @@
+================================================================================
+                    REVIEWFLO CODEBASE EXPLORATION SUMMARY
+================================================================================
+
+COMPLETED: Comprehensive analysis of ReviewFlo production codebase
+DATE: April 14, 2026
+SCOPE: Architecture, database, APIs, authentication, templates, AI readiness
+
+================================================================================
+                              KEY FINDINGS
+================================================================================
+
+1. PROJECT FRAMEWORK
+   - Next.js 16 with Pages Router (NOT App Router)
+   - React 19, TypeScript, Tailwind CSS v4
+   - Deployed on Vercel
+   - Production URL: https://www.usereviewflo.com
+
+2. DATABASE INFRASTRUCTURE
+   - Supabase PostgreSQL backend
+   - Row-Level Security (RLS) on all tables
+   - 15+ tables including AI-ready tables
+   - Service role for API backend operations
+   - Full migration history in /supabase/migrations/
+
+3. TIER-BASED FEATURE GATING
+   - Free Tier: Basic review collection (no backend sending)
+   - Pro Tier: Dashboard sending, multi-platform, 3 templates, no branding
+   - AI Tier: SMS, CRM integrations, AI features, white-label
+   - All tiers cleanly separated via lib/tier-permissions.ts
+
+4. BACKEND SERVICES
+   - Email: Resend (37KB comprehensive template library)
+   - SMS: Twilio (ready but disabled until May 2026)
+   - Auth: Supabase (Email/Password + Google OAuth + Magic Links)
+   - Google Integration: Business Profile API + Places API
+   - Analytics: PostHog (conversion tracking)
+   - Payments: Stripe (prepared, not yet implemented)
+
+5. AI/LLM INTEGRATION STATUS
+   ✓ Anthropic SDK installed (@anthropic-ai/sdk v0.79.0)
+   ✓ Database tables ready (ai_review_drafts, ai_review_responses)
+   ✓ Tier gating infrastructure ready (canUseAIFeatures())
+   ✓ UI placeholders in settings (AI Features section, lines 1284-1354)
+   ✗ API endpoints NOT YET implemented
+   ✗ Claude API integration NOT YET coded
+   ✗ Frontend AI components NOT YET built
+
+6. AUTHENTICATION SETUP
+   - Supabase Auth with 3 methods: Email/Password, Google OAuth, Magic Links
+   - Bearer token validation in API routes
+   - CSRF protection via state token
+   - Admin role support for /admin dashboard
+   - Session management: Supabase tokens + localStorage
+
+7. EMAIL/MESSAGING INFRASTRUCTURE
+   - Resend: Beta emails, review request emails, admin notifications
+   - All templates use inline CSS, fully styled HTML
+   - Tracking tokens for email attribution
+   - Reply-to addresses configured
+   - SMS: Twilio integration ready (AI tier, disabled until launch)
+
+8. REVIEW COLLECTION FLOW
+   - Public route: https://usereviewflo.com/{business-slug}
+   - 1-5 star rating → Feedback form (1-4) or Templates (5 stars)
+   - Supports white-label branding (AI tier)
+   - Configurable review platforms (Google, Facebook, Yelp, Nextdoor)
+   - 1-3 template slots (tier-limited)
+
+9. KEY COMPONENTS DEVELOPED
+   - ReviewPreview.tsx: Live preview during settings
+   - ReviewRequestsList.tsx: Pro/AI request management
+   - SendRequestModal.tsx: Send review requests from dashboard
+   - GoogleStatsCard.tsx: Pro/AI business stats
+   - Settings.tsx: 70KB comprehensive settings page (7 sections)
+   - Dashboard.tsx: 25KB main business dashboard
+
+10. SECURITY & BEST PRACTICES
+    - RLS prevents cross-business data access
+    - Service role restricted to backend only
+    - Input validation (email, phone, slug, length)
+    - No sensitive data exposed to client
+    - Bearer token auth on all protected endpoints
+
+================================================================================
+                            CRITICAL FILES
+================================================================================
+
+FOR UNDERSTANDING EXISTING PATTERNS:
+  lib/email-service.ts (37KB)          - Email template patterns
+  lib/sms-service.ts                   - SMS integration pattern
+  lib/tier-permissions.ts              - Feature gating
+  pages/api/send-review-request.ts     - API route pattern
+  pages/settings.tsx (lines 1284-1354) - AI Features UI section
+  supabase/migrations/20250316100000_ai_tier_schema.sql - AI tables
+
+FOR AI FEATURE IMPLEMENTATION:
+  lib/tier-permissions.ts              - Check canUseAIFeatures()
+  pages/api/send-review-request.ts     - Follow this pattern
+  lib/email-service.ts                 - Follow email pattern
+  pages/settings.tsx                   - Enable AI Features section
+  pages/dashboard.tsx                  - Add AI section
+
+DATABASE:
+  ai_review_drafts     - Ready for AI-generated review suggestions
+  ai_review_responses  - Ready for AI-generated responses
+
+================================================================================
+                        IMMEDIATE NEXT STEPS
+================================================================================
+
+PHASE 1: Setup (30 min)
+  [ ] Add ANTHROPIC_API_KEY to .env.local
+  [ ] Create /pages/api/ai/ directory
+  [ ] Verify Anthropic SDK is working
+
+PHASE 2: AI Review Drafts API (2-3 hours)
+  [ ] Create /pages/api/ai/generate-review-draft.ts
+  [ ] Implement: auth → tier check → Claude API → save to DB → return
+  [ ] Test with curl/Postman
+  [ ] Verify RLS works
+
+PHASE 3: AI Responses API (2-3 hours)
+  [ ] Create /pages/api/ai/generate-response.ts
+  [ ] Implement: fetch review text → generate response → save to DB
+  [ ] Test error handling
+  [ ] Add streaming for better UX
+
+PHASE 4: Frontend Components (3-4 hours)
+  [ ] Create keyword selector component
+  [ ] Add AI drafts display in templates page
+  [ ] Add response generator in dashboard
+  [ ] Enable AI Features toggle in settings
+
+PHASE 5: Integration & Testing (2-3 hours)
+  [ ] Wire up API calls to components
+  [ ] Add PostHog event tracking
+  [ ] Test with AI tier business
+  [ ] Verify tier gating works
+
+TOTAL ESTIMATED TIME: 10-14 hours for complete MVP
+
+================================================================================
+                        WHAT'S ALREADY BUILT
+================================================================================
+
+REVIEW COLLECTION:
+  ✓ Public 1-5 star rating page
+  ✓ Feedback capture for 1-4 stars
+  ✓ Template selection for 5 stars
+  ✓ Direct links to Google, Facebook, Yelp, Nextdoor
+  ✓ Tracking tokens for email attribution
+
+BUSINESS DASHBOARD:
+  ✓ Review stats this month
+  ✓ Average rating calculation
+  ✓ Pending feedback tracking
+  ✓ Google Business stats (Pro/AI)
+  ✓ Review requests list (Pro/AI)
+  ✓ Copy review link button
+
+SETTINGS:
+  ✓ Branding (logo, color, name)
+  ✓ Review platform links
+  ✓ Template text editing (1-3 slots)
+  ✓ SMS/CRM section placeholders (disabled)
+  ✓ AI Features section placeholder (disabled)
+
+EMAIL:
+  ✓ Welcome emails for signups
+  ✓ Review request emails
+  ✓ Review reminder emails
+  ✓ Admin notification emails
+  ✓ All with proper templates and styling
+
+AUTHENTICATION:
+  ✓ Email/password signup & login
+  ✓ Google OAuth (login & signup)
+  ✓ Magic link authentication
+  ✓ Password reset
+  ✓ Admin authentication
+
+DATABASE:
+  ✓ All tables with RLS
+  ✓ Migrations in place
+  ✓ AI tables ready (ai_review_drafts, ai_review_responses)
+
+================================================================================
+                        WHAT'S NOT YET BUILT
+================================================================================
+
+AI FEATURES (scheduled for May 2026):
+  ✗ Claude API integration
+  ✗ Review draft generation
+  ✗ Review response generation
+  ✗ Keywords selector UI
+  ✗ Response tone preference saving
+  ✗ Business type configuration
+  ✗ Rate limiting for AI API
+
+SMS AUTOMATION (scheduled for May 2026):
+  ✗ SMS sending from dashboard
+  ✗ Twilio integration activation
+  ✗ Phone number management
+
+CRM INTEGRATIONS (scheduled for May 2026):
+  ✗ Square integration
+  ✗ Jobber integration
+  ✗ Housecall Pro integration
+
+WHITE-LABEL (scheduled for May 2026):
+  ✗ Custom branding mode activation
+  ✗ Custom domain support
+
+BILLING:
+  ✗ Stripe payment processing
+  ✗ Subscription management
+  ✗ Invoice generation
+
+================================================================================
+                          DEPLOYMENT INFO
+================================================================================
+
+DEVELOPMENT:
+  npm run dev              # Starts dev server on localhost:3000
+  Environment: .env.local  # Not committed
+
+PRODUCTION:
+  Hosted: Vercel
+  Domain: https://www.usereviewflo.com
+  Database: Supabase (qawrdhxyadfmuxdzeslo.supabase.co)
+  Environment: Vercel dashboard variables
+
+BUILD:
+  npm run build            # Creates optimized build
+  npm start                # Runs production build locally
+  npm run lint             # ESLint checking
+
+================================================================================
+                      DOCUMENTATION CREATED
+================================================================================
+
+1. ARCHITECTURE.md (569 lines)
+   Comprehensive overview covering:
+   - Project structure & tech stack
+   - Database schema & migrations
+   - All API routes & endpoints
+   - Tier-based feature gating
+   - Email/SMS infrastructure
+   - Authentication setup
+   - AI/LLM integration status
+   - Key components
+   - Security & best practices
+
+2. QUICK_REFERENCE.md
+   Quick lookup guide with:
+   - Critical file locations
+   - API endpoint patterns
+   - Code examples
+   - Testing instructions
+   - Tier testing SQL
+   - Claude API usage
+   - Checklists
+   - Common gotchas
+
+3. QUICK_START.md (this file)
+   This summary document
+
+All files saved to ~/reviewflow/ for easy access.
+
+================================================================================
+                            KEY TAKEAWAYS
+================================================================================
+
+1. SOLID FOUNDATION
+   The codebase is well-architected with proper tier separation,
+   database design, and authentication. Ready for AI features.
+
+2. AI-READY INFRASTRUCTURE
+   Anthropic SDK installed, database tables created, UI placeholders
+   in place. Only the Claude API integration is missing.
+
+3. PATTERNS TO FOLLOW
+   Excellent examples exist: email-service.ts for template patterns,
+   send-review-request.ts for API route patterns, tier-permissions.ts
+   for feature gating.
+
+4. SECURITY FIRST
+   RLS on all tables, service role separation, input validation,
+   CSRF protection. Production-ready security practices.
+
+5. TIER GATING EXEMPLAR
+   Clear separation of Free/Pro/AI features. Use canUseAIFeatures()
+   before any AI operation.
+
+6. USER EXPERIENCE FOCUS
+   Responsive design, accessible components, email tracking,
+   PostHog analytics. Product-focused development.
+
+7. READY FOR EXPANSION
+   SMS, CRM, white-label, and billing are all scaffolded.
+   Infrastructure in place for future features.
+
+================================================================================
+                    CONFIDENCE LEVEL: VERY HIGH
+================================================================================
+
+The ReviewFlo codebase is production-ready and well-documented.
+Building AI features on this foundation will be straightforward
+with clear patterns to follow.
+
+Estimated time to full AI feature implementation: 10-14 hours
+Risk level: LOW (patterns exist, no novel architectures needed)
+
+================================================================================
