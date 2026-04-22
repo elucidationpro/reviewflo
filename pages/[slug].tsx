@@ -87,9 +87,9 @@ export default function ReviewPage({ business }: PageProps) {
 
       // FTC Consumer Review Rule compliance: the Google link is surfaced on BOTH
       // paths (templates + feedback), so rating-based routing is purely UX, not
-      // gating. 1-3 stars get a private feedback form with a secondary Google
-      // link; 4-5 stars go straight to the prominent Google CTA.
-      if (rating >= 1 && rating <= 3) {
+      // gating. 1-4 stars get a private feedback form with a secondary Google
+      // link; 5 stars only go straight to the prominent Google CTA.
+      if (rating >= 1 && rating <= 4) {
         router.push(`/${business.slug}/feedback?rating=${rating}${tokenParam}`)
       } else {
         router.push(`/${business.slug}/templates?${tokenParam ? `t=${trackingToken}` : ''}`)

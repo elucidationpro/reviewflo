@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, type ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -7,9 +7,7 @@ import { supabase } from '../lib/supabase'
 import { trackEvent, identifyUser } from '../lib/posthog-provider'
 import OnboardingProgress from '../components/OnboardingProgress'
 import ComingSoonTierModal, { type ComingSoonTier } from '@/components/ComingSoonTierModal'
-import SendRequestModal from '@/components/SendRequestModal'
-import ReviewRequestsList from '@/components/ReviewRequestsList'
-import GoogleStatsCard from '@/components/GoogleStatsCard'
+import RecentActivity from '@/components/RecentActivity'
 import AppLayout from '@/components/AppLayout'
 import { canSendFromDashboard, canAccessGoogleStats } from '../lib/tier-permissions'
 import { consumeGoogleAdsSignupConversionFromQuery } from '@/lib/google-ads'
@@ -27,28 +25,34 @@ interface Business {
   interested_in_tier?: 'pro' | 'ai' | null
   notify_on_launch?: boolean
   launch_discount_eligible?: boolean
+  google_connected?: boolean
 }
 
-interface ReviewStats {
-  total: number
-  breakdown: {
-    1: number
-    2: number
-    3: number
-    4: number
-    5: number
-  }
+interface CachedGbpStats {
+  total_reviews: number | null
+  average_rating: number | null
+  reviews_this_month: number | null
 }
 
 // ── Card wrapper ─────────────────────────────────────────────────────────────
-function Card({ children, className = '', accent = false }: { children: React.ReactNode; className?: string; accent?: boolean }) {
+function Card({
+  children,
+  className = '',
+  accent = false,
+  compact = false,
+}: {
+  children: React.ReactNode
+  className?: string
+  accent?: boolean
+  compact?: boolean
+}) {
   return (
     <div
       className={`bg-white rounded-2xl border border-[#4A3428]/6 overflow-hidden transition-shadow duration-200 hover:shadow-md ${className}`}
       style={{ boxShadow: '0 1px 4px rgba(74,52,40,0.07), 0 1px 2px rgba(74,52,40,0.04)' }}
     >
       {accent && <div className="h-0.5 bg-gradient-to-r from-[#C9A961] via-[#e6c97a] to-[#C9A961]" />}
-      <div className="p-6">{children}</div>
+      <div className={compact ? 'p-4' : 'p-6'}>{children}</div>
     </div>
   )
 }
@@ -57,10 +61,6 @@ export default function DashboardPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
-  const [reviewStats, setReviewStats] = useState<ReviewStats>({
-    total: 0,
-    breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-  })
   const [pendingFeedbackCount, setPendingFeedbackCount] = useState(0)
   const [linkCopied, setLinkCopied] = useState(false)
   const [showComingSoonModal, setShowComingSoonModal] = useState(false)
@@ -69,10 +69,10 @@ export default function DashboardPage() {
   const [launchError, setLaunchError] = useState<string | null>(null)
   const [updatingLaunchPref, setUpdatingLaunchPref] = useState(false)
   const [hasTrackedUpgradeCardView, setHasTrackedUpgradeCardView] = useState(false)
-  const [showSendModal, setShowSendModal] = useState(false)
-  const [refetchRequestsTrigger, setRefetchRequestsTrigger] = useState(0)
-  const [conversionRate, setConversionRate] = useState<number | null>(null)
-  const [funnelSent, setFunnelSent] = useState<number>(0)
+  const [cachedGbpStats, setCachedGbpStats] = useState<CachedGbpStats | null>(null)
+  const [requestsSentThisMonth, setRequestsSentThisMonth] = useState<number | null>(null)
+  const [gbpReviews, setGbpReviews] = useState<GbpFullReview[]>([])
+  const [gbpReviewsLoading, setGbpReviewsLoading] = useState(false)
   const [reviewsData, setReviewsData] = useState<{ replyRate: number | null; unrepliedCount: number } | null>(null)
 
   useEffect(() => {
@@ -139,31 +139,11 @@ export default function DashboardPage() {
         onboardingDate: new Date().toISOString(),
       })
 
-      const startOfMonth = new Date()
-      startOfMonth.setDate(1)
-      startOfMonth.setHours(0, 0, 0, 0)
-
-      const [reviewsResult, feedbackCountResult] = await Promise.all([
-        supabase
-          .from('reviews')
-          .select('star_rating')
-          .eq('business_id', businessData.id)
-          .gte('created_at', startOfMonth.toISOString()),
-        supabase
-          .from('feedback')
-          .select('*', { count: 'exact', head: true })
-          .eq('business_id', businessData.id)
-          .eq('is_resolved', false)
-      ])
-
-      if (!reviewsResult.error && reviewsResult.data) {
-        const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-        reviewsResult.data.forEach((review) => {
-          const rating = review.star_rating as 1 | 2 | 3 | 4 | 5
-          if (rating >= 1 && rating <= 5) breakdown[rating]++
-        })
-        setReviewStats({ total: reviewsResult.data.length, breakdown })
-      }
+      const feedbackCountResult = await supabase
+        .from('feedback')
+        .select('*', { count: 'exact', head: true })
+        .eq('business_id', businessData.id)
+        .eq('is_resolved', false)
 
       if (!feedbackCountResult.error) {
         setPendingFeedbackCount(feedbackCountResult.count ?? 0)
@@ -220,36 +200,65 @@ export default function DashboardPage() {
       try {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token) return
-        const res = await fetch('/api/analytics/dashboard-data?days=30', {
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        })
-        if (!res.ok) return
-        const json = await res.json()
-        setConversionRate(json.posthogConversions?.conversionRate ?? null)
-        setFunnelSent(json.funnel?.sent ?? 0)
-      } catch {
-        // silent — conversion rate stays null (shown as —)
-      }
-    })()
-  }, [business])
 
-  useEffect(() => {
-    if (!business || !canAccessGoogleStats(business.tier)) return
-    ;(async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session?.access_token) return
-        const res = await fetch('/api/google-reviews/list', {
+        const startOfMonth = new Date()
+        startOfMonth.setDate(1)
+        startOfMonth.setHours(0, 0, 0, 0)
+
+        const [statsRes, reqCountResult] = await Promise.all([
+          fetch('/api/google-stats/fetch', {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          }),
+          supabase
+            .from('review_requests')
+            .select('*', { count: 'exact', head: true })
+            .eq('business_id', business.id)
+            .gte('sent_at', startOfMonth.toISOString()),
+        ])
+
+        if (statsRes.ok) {
+          const j = await statsRes.json()
+          const s = j.stats
+          if (s) {
+            setCachedGbpStats({
+              total_reviews: s.total_reviews ?? null,
+              average_rating: s.average_rating ?? null,
+              reviews_this_month: s.reviews_this_month ?? null,
+            })
+          } else {
+            setCachedGbpStats(null)
+          }
+        }
+
+        if (!reqCountResult.error) {
+          setRequestsSentThisMonth(reqCountResult.count ?? 0)
+        }
+
+        if (!canAccessGoogleStats(business.tier) || !business.google_connected) {
+          setGbpReviews([])
+          setReviewsData(null)
+          return
+        }
+
+        setGbpReviewsLoading(true)
+        const listRes = await fetch('/api/google-reviews/list', {
           headers: { Authorization: `Bearer ${session.access_token}` },
         })
-        if (!res.ok) return
-        const json = await res.json()
-        const gbpReviews: GbpFullReview[] = json.reviews ?? []
-        const unrepliedCount = gbpReviews.filter((r) => !r.reviewReply).length
-        const replyRate = gbpReviews.length > 0 ? Math.round((1 - unrepliedCount / gbpReviews.length) * 100) : null
+        setGbpReviewsLoading(false)
+        if (!listRes.ok) {
+          setGbpReviews([])
+          setReviewsData(null)
+          return
+        }
+        const json = await listRes.json()
+        const reviews: GbpFullReview[] = json.reviews ?? []
+        setGbpReviews(reviews)
+        const unrepliedCount = reviews.filter((r) => !r.reviewReply).length
+        const replyRate =
+          reviews.length > 0 ? Math.round((1 - unrepliedCount / reviews.length) * 100) : null
         setReviewsData({ replyRate, unrepliedCount })
       } catch {
-        // silent — reviewsData stays null
+        setGbpReviewsLoading(false)
       }
     })()
   }, [business])
@@ -354,13 +363,69 @@ export default function DashboardPage() {
 
   const hasCustomColor = business.primary_color && business.primary_color !== '#3B82F6'
 
-  const avgRating = reviewStats.total > 0
-    ? (
-        (reviewStats.breakdown[5] * 5 + reviewStats.breakdown[4] * 4 +
-          reviewStats.breakdown[3] * 3 + reviewStats.breakdown[2] * 2 +
-          reviewStats.breakdown[1] * 1) / reviewStats.total
-      ).toFixed(1)
-    : '—'
+  const ratingKpi =
+    cachedGbpStats?.average_rating != null ? `${Number(cachedGbpStats.average_rating).toFixed(1)} ★` : '—'
+  const totalReviewsKpi =
+    cachedGbpStats?.total_reviews != null ? String(cachedGbpStats.total_reviews) : '—'
+  const newMonthKpi =
+    cachedGbpStats?.reviews_this_month != null
+      ? `+${cachedGbpStats.reviews_this_month}`
+      : '—'
+  const replyKpi =
+    reviewsData?.replyRate != null ? `${reviewsData.replyRate}% replied` : '—'
+  const requestsKpi = requestsSentThisMonth != null ? `${requestsSentThisMonth} sent` : '—'
+
+  const showGoogleReviewsColumn = canAccessGoogleStats(business.tier) && !!business.google_connected
+
+  const alertItems: { key: string; node: ReactNode }[] = []
+  if (reviewsData && reviewsData.unrepliedCount > 0) {
+    alertItems.push({
+      key: 'unreplied',
+      node: (
+        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
+          <p className="text-sm text-amber-800 font-medium">
+            {reviewsData.unrepliedCount}{' '}
+            {reviewsData.unrepliedCount === 1 ? 'review' : 'reviews'} awaiting your reply
+          </p>
+          <Link
+            href="/dashboard/reviews?filter=unreplied"
+            className="text-xs font-semibold text-amber-900 hover:underline shrink-0"
+          >
+            Reply now →
+          </Link>
+        </div>
+      ),
+    })
+  }
+  if (canAccessGoogleStats(business.tier) && !business.google_connected) {
+    alertItems.push({
+      key: 'gbp',
+      node: (
+        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-sky-50 border border-sky-200 rounded-xl">
+          <p className="text-sm text-sky-900 font-medium">Connect Google Business Profile to load reviews and reply from ReviewFlo.</p>
+          <Link href="/settings" className="text-xs font-semibold text-sky-900 hover:underline shrink-0">
+            Settings →
+          </Link>
+        </div>
+      ),
+    })
+  }
+  if (pendingFeedbackCount > 0) {
+    alertItems.push({
+      key: 'feedback',
+      node: (
+        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-violet-50 border border-violet-200 rounded-xl">
+          <p className="text-sm text-violet-900 font-medium">
+            {pendingFeedbackCount} private feedback{' '}
+            {pendingFeedbackCount === 1 ? 'item' : 'items'} to review
+          </p>
+          <Link href="/feedback" className="text-xs font-semibold text-violet-900 hover:underline shrink-0">
+            Open →
+          </Link>
+        </div>
+      ),
+    })
+  }
 
   return (
     <AppLayout
@@ -383,120 +448,48 @@ export default function DashboardPage() {
         hasEditedTemplates={!business.skip_template_choice}
       />
 
-      <div className="px-6 py-8 max-w-2xl mx-auto space-y-4">
+      <div className="px-6 py-8 max-w-6xl mx-auto space-y-5">
 
-        {/* ── Awaiting Reply banner ── */}
-        {reviewsData && reviewsData.unrepliedCount > 0 && (
-          <div className="flex items-center justify-between gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
-            <p className="text-sm text-amber-800 font-medium">
-              {reviewsData.unrepliedCount} {reviewsData.unrepliedCount === 1 ? 'review' : 'reviews'} awaiting your reply
-            </p>
-            <Link
-              href="/dashboard/reviews?filter=unreplied"
-              className="text-xs font-semibold text-amber-900 hover:underline shrink-0"
-            >
-              Reply now →
-            </Link>
-          </div>
-        )}
-
-        {/* ── Stats row ── */}
-        <div className="grid grid-cols-2 gap-4">
-          {/* Reviews this month */}
-          <Card>
-            <p className="text-xs font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-3">This Month</p>
-            <div className="flex items-baseline gap-2 mb-1 animate-fade-in-up">
-              <div
-                className="text-5xl font-bold leading-none"
-                style={{ color: business.primary_color || '#4A3428' }}
-              >
-                {reviewStats.total}
-              </div>
-              <span className="text-sm text-gray-400 font-medium">reviews</span>
-            </div>
-
-            <div className="mt-4 space-y-2">
-              {[5, 4, 3, 2, 1].map((rating, i) => (
-                <div key={rating} className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400 w-3 text-right tabular-nums">{rating}</span>
-                  <svg className="w-3 h-3 shrink-0 opacity-70" fill={business.primary_color || '#4A3428'} viewBox="0 0 24 24">
-                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                  </svg>
-                  <div className="flex-1 bg-[#F5F5DC]/80 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bar-animate h-full rounded-full"
-                      style={{
-                        width: reviewStats.total > 0
-                          ? `${(reviewStats.breakdown[rating as keyof typeof reviewStats.breakdown] / reviewStats.total) * 100}%`
-                          : '0%',
-                        backgroundColor: business.primary_color || '#4A3428',
-                        opacity: 0.85,
-                        animationDelay: `${i * 80}ms`,
-                      }}
-                    />
-                  </div>
-                  <span className="text-xs font-semibold text-gray-600 w-4 text-right tabular-nums">
-                    {reviewStats.breakdown[rating as keyof typeof reviewStats.breakdown]}
-                  </span>
-                </div>
-              ))}
-            </div>
+        {/* ── KPI row ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <Card compact>
+            <p className="text-[10px] font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-2">Google rating</p>
+            <p className="text-2xl font-bold text-gray-900 tabular-nums">{ratingKpi}</p>
           </Card>
-
-          {/* Quick Stats */}
-          <Card>
-            <p className="text-xs font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-3">Quick Stats</p>
-            <div className="space-y-2.5">
-              <div className="p-3 bg-[#F5F5DC]/40 border border-[#C9A961]/20 rounded-xl animate-fade-in-up" style={{ animationDelay: '60ms' }}>
-                <p className="text-xs text-gray-400 mb-0.5 flex items-center gap-1">
-                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
-                  Avg Rating
-                </p>
-                <p className="text-2xl font-bold text-[#4A3428]">{avgRating}</p>
-              </div>
-              <div className="p-3 bg-gray-50 rounded-xl">
-                <p className="text-xs text-gray-400 mb-0.5">Pending Feedback</p>
-                <div className="flex items-end justify-between">
-                  <p className="text-2xl font-bold text-gray-900">{pendingFeedbackCount}</p>
-                  {pendingFeedbackCount > 0 && (
-                    <Link href="/feedback" className="text-xs text-[#4A3428] font-semibold hover:underline">View →</Link>
-                  )}
-                </div>
-              </div>
-              <div className="p-3 bg-gray-50 rounded-xl">
-                <p className="text-xs text-gray-400 mb-0.5">Conversion Rate</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {conversionRate !== null && funnelSent > 0 ? `${conversionRate}%` : '—'}
-                </p>
-                <p className="text-xs text-gray-400">clicked a review platform</p>
-              </div>
-              {reviewsData !== null && (
-                <div className="p-3 bg-gray-50 rounded-xl" title="Percentage of your Google reviews you've replied to.">
-                  <p className="text-xs text-gray-400 mb-0.5">Reply Rate</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {reviewsData.replyRate !== null ? `${reviewsData.replyRate}%` : '—'}
-                  </p>
-                </div>
-              )}
-            </div>
+          <Card compact>
+            <p className="text-[10px] font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-2">Google reviews</p>
+            <p className="text-2xl font-bold text-gray-900 tabular-nums">{totalReviewsKpi}</p>
+          </Card>
+          <Card compact>
+            <p className="text-[10px] font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-2">New this month</p>
+            <p className="text-2xl font-bold text-gray-900 tabular-nums">{newMonthKpi}</p>
+            <p className="text-[11px] text-gray-400 mt-1">Google</p>
+          </Card>
+          <Card compact>
+            <p className="text-[10px] font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-2">Reply rate</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 tabular-nums leading-tight">{replyKpi}</p>
+          </Card>
+          <Card compact className="sm:col-span-2 lg:col-span-1">
+            <p className="text-[10px] font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-2">Requests (month)</p>
+            <p className="text-2xl font-bold text-gray-900 tabular-nums">{requestsKpi}</p>
+            <p className="text-[11px] text-gray-400 mt-1">Review requests sent</p>
           </Card>
         </div>
 
-        {/* ── Google Stats (Pro/AI) ── */}
-        {canAccessGoogleStats(business.tier) && (
-          <GoogleStatsCard primaryColor={business.primary_color || '#4A3428'} />
+        {/* ── Alert strip ── */}
+        {alertItems.length > 0 && (
+          <div className="space-y-2">
+            {alertItems.map((a) => (
+              <div key={a.key}>{a.node}</div>
+            ))}
+          </div>
         )}
 
-        {/* ── Review Requests (Pro/AI) ── */}
-        {canSendFromDashboard(business.tier) && (
-          <ReviewRequestsList
-            businessId={business.id}
-            businessSlug={business.slug}
-            tier={business.tier}
-            onSendRequest={() => setShowSendModal(true)}
-            refetchTrigger={refetchRequestsTrigger}
-          />
-        )}
+        <RecentActivity
+          reviews={gbpReviews}
+          reviewsLoading={gbpReviewsLoading}
+          showGoogleReviews={showGoogleReviewsColumn}
+        />
 
         {/* ── Your Review Link ── */}
         <Card accent>
@@ -538,7 +531,7 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {reviewStats.total === 0 && (
+          {(cachedGbpStats?.total_reviews == null || cachedGbpStats.total_reviews === 0) && (
             <p className="text-xs text-gray-400 mt-3">
               Tip: send the link to yourself first to see how the flow works.
             </p>
@@ -685,15 +678,6 @@ export default function DashboardPage() {
           onContinueWithFree={handleComingSoonContinue}
         />
       )}
-      <SendRequestModal
-        open={showSendModal}
-        businessName={business.business_name}
-        onClose={() => setShowSendModal(false)}
-        onSuccess={() => {
-          setShowSendModal(false)
-          setRefetchRequestsTrigger((t) => t + 1)
-        }}
-      />
     </AppLayout>
   )
 }

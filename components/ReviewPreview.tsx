@@ -90,9 +90,9 @@ export default function ReviewPreview({
 
   const handleStarClick = (star: number) => {
     setSelectedRating(star)
-    // Mirrors production /[slug].tsx: 1-3 -> private feedback (Google link
-    // still surfaced on that screen); 4-5 -> prominent Google CTA.
-    if (star <= 3) {
+    // Mirrors production /[slug].tsx: 1-4 -> private feedback (Google link
+    // still surfaced on that screen); 5 only -> prominent Google CTA.
+    if (star <= 4) {
       setScreen('feedback')
     } else {
       setReviewPath(skipTemplateChoice && hasPlatformLinks ? 'write_own' : null)

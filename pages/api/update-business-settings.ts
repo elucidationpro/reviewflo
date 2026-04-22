@@ -15,6 +15,9 @@ const supabaseAdmin = createClient(
 interface UpdateBusinessSettingsRequest {
   businessId: string
   businessName?: string
+  ownerName?: string | null
+  /** Clear Google OAuth tokens and disconnect Business Profile */
+  disconnectGoogle?: boolean
   primaryColor?: string
   logoUrl?: string | null
   skipTemplateChoice?: boolean
@@ -74,7 +77,14 @@ export default async function handler(
     }
 
     const updateData: Record<string, string | boolean | null> = {}
+    if (body.disconnectGoogle) {
+      updateData.google_oauth_refresh_token = null
+      updateData.google_oauth_access_token = null
+      updateData.google_oauth_expires_at = null
+      updateData.google_business_name = null
+    }
     if (body.businessName !== undefined) updateData.business_name = body.businessName
+    if (body.ownerName !== undefined) updateData.owner_name = body.ownerName?.trim() || null
     if (body.primaryColor !== undefined) updateData.primary_color = body.primaryColor
     if (body.logoUrl !== undefined) updateData.logo_url = body.logoUrl
     if (body.skipTemplateChoice !== undefined) updateData.skip_template_choice = body.skipTemplateChoice
