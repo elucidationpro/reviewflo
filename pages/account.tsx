@@ -18,9 +18,10 @@ interface Business {
 }
 
 interface GoogleAccount {
-  email: string
+  email?: string
   name?: string
   picture?: string
+  source: 'auth' | 'gbp'
 }
 
 // ── Card wrapper ─────────────────────────────────────────────────────────────
@@ -80,14 +81,16 @@ export default function AccountPage() {
       })
       setNameInput(userMetadata.full_name || userMetadata.name || '')
 
-      // Check for Google account connection
+      // Check for Google auth identity (user signed in with Google OAuth)
       const googleProvider = user.identities?.find(identity => identity.provider === 'google')
+      let resolvedGoogle: GoogleAccount | null = null
       if (googleProvider) {
-        setGoogleAccount({
+        resolvedGoogle = {
           email: googleProvider.identity_data?.email || user.email || '',
           name: googleProvider.identity_data?.full_name || googleProvider.identity_data?.name,
           picture: googleProvider.identity_data?.picture,
-        })
+          source: 'auth',
+        }
       }
 
       const { data: { session } } = await supabase.auth.getSession()
@@ -96,7 +99,13 @@ export default function AccountPage() {
           headers: { Authorization: `Bearer ${session.access_token}` },
         })
         const payload = await res.json().catch(() => ({})) as {
-          business?: { id: string; business_name: string; tier: string } | null
+          business?: {
+            id: string
+            business_name: string
+            tier: string
+            google_connected?: boolean
+            google_business_name?: string | null
+          } | null
         }
         if (res.ok && payload.business) {
           setBusiness({
@@ -104,7 +113,22 @@ export default function AccountPage() {
             business_name: payload.business.business_name,
             tier: (payload.business.tier as Business['tier']) || 'free',
           })
+
+          // GBP OAuth connection is separate from Supabase auth identity.
+          // Show it in Connected Accounts whenever a refresh token exists,
+          // even if the user signed up with email/password.
+          if (payload.business.google_connected && !resolvedGoogle) {
+            resolvedGoogle = {
+              email: user.email || undefined,
+              name: payload.business.google_business_name || undefined,
+              source: 'gbp',
+            }
+          }
         }
+      }
+
+      if (resolvedGoogle) {
+        setGoogleAccount(resolvedGoogle)
       }
 
       setIsLoading(false)
@@ -272,9 +296,13 @@ export default function AccountPage() {
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                   </svg>
-                  <p className="text-sm font-semibold text-gray-900">Google</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {googleAccount.source === 'gbp' ? 'Google Business Profile' : 'Google'}
+                  </p>
                 </div>
-                <p className="text-sm text-gray-600">{googleAccount.email}</p>
+                {googleAccount.email && (
+                  <p className="text-sm text-gray-600">{googleAccount.email}</p>
+                )}
                 {googleAccount.name && (
                   <p className="text-xs text-gray-500 mt-0.5">{googleAccount.name}</p>
                 )}

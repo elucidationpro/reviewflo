@@ -15,10 +15,10 @@ const supabaseAdmin = createClient(
 )
 
 const BUSINESS_SELECT =
-  'id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, business_type, parent_business_id, created_at'
+  'id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, business_type, parent_business_id, created_at, google_business_name, google_oauth_refresh_token'
 
 const BUSINESS_SELECT_LEGACY =
-  'id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, business_type, created_at'
+  'id, business_name, slug, primary_color, google_review_url, facebook_review_url, skip_template_choice, tier, interested_in_tier, notify_on_launch, launch_discount_eligible, business_type, created_at, google_business_name, google_oauth_refresh_token'
 
 type BusinessRow = import('../../lib/business-account').BusinessRowWithParent & {
   tier?: string | null
@@ -134,8 +134,13 @@ export default async function handler(
       ...sortLocationSummaries(summaries.filter((s) => !s.is_primary)),
     ]
 
+    // Derive GBP connection server-side so we never send the refresh token to the client
+    const googleConnected = !!primary.google_oauth_refresh_token
+    const googleBusinessName = (primary.google_business_name as string | null) ?? null
+    const { google_oauth_refresh_token: _omit, ...primarySafe } = primary as Record<string, unknown>
+
     return res.status(200).json({
-      business: primary,
+      business: { ...primarySafe, google_connected: googleConnected, google_business_name: googleBusinessName },
       locations: ordered,
       maxLocations,
     })
