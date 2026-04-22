@@ -307,7 +307,13 @@ export async function fetchAllReviewsFromBusinessProfile(
 } | null> {
   try {
     const profile = await getPlaceIdFromGoogleBusinessProfile(accessToken);
-    if (!profile?.locationName) return null;
+    if (!profile?.locationName) {
+      // GBP_DEBUG
+      console.error('[GBP_DEBUG] fetchAllReviews: no locationName from profile lookup, returning null early');
+      return null;
+    }
+    // GBP_DEBUG
+    console.log('[GBP_DEBUG] fetchAllReviews: resolved locationName:', profile.locationName);
 
     const allReviews: NormalizedReview[] = [];
     let pageToken: string | undefined;
@@ -329,7 +335,13 @@ export async function fetchAllReviewsFromBusinessProfile(
       const data: GbpListReviewsResponse = await res.json();
 
       if (data.error || !res.ok) {
-        console.warn('[Google Business Profile] Reviews list failed:', data.error || res.status);
+        // GBP_DEBUG
+        console.error('[GBP_DEBUG] fetchAllReviews non-200 response:', {
+          url: url.toString(),
+          status: res.status,
+          statusText: res.statusText,
+          errorBody: data.error ?? data,
+        });
         return null;
       }
 
@@ -357,7 +369,11 @@ export async function fetchAllReviewsFromBusinessProfile(
       totalReviewCount,
     };
   } catch (error) {
-    console.error('[Google Business Profile] Error fetching reviews:', error);
+    // GBP_DEBUG
+    console.error('[GBP_DEBUG] fetchAllReviews exception:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return null;
   }
 }

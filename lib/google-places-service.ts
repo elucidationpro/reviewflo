@@ -125,8 +125,15 @@ export async function fetchStatsWithOAuth(
         source: 'business_profile',
       }
     }
+
+    // GBP_DEBUG
+    console.error('[GBP_DEBUG] fetchStatsWithOAuth: GBP reviews call returned null (token refresh succeeded, reviews call failed or returned empty)');
   } catch (err) {
-    console.warn('[google-places-service] GBP OAuth fetch failed, trying Places fallback:', err)
+    // GBP_DEBUG
+    console.error('[GBP_DEBUG] fetchStatsWithOAuth exception:', {
+      message: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+    });
   }
 
   // Fallback to Places API

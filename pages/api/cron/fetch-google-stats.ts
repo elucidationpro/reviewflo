@@ -86,6 +86,15 @@ export default async function handler(
             business.google_oauth_refresh_token,
             business.google_place_id
           )
+          // GBP_DEBUG
+          console.log('[GBP_DEBUG] cron OAuth attempt result:', {
+            business_id: business.id,
+            business_name: business.business_name,
+            place_id_fallback: business.google_place_id,
+            stats_returned: stats !== null,
+            total_reviews: stats?.totalReviews ?? null,
+            source: stats?.source ?? null,
+          });
         } else if (business.google_place_id) {
           // Fallback to Places API
           const placeStats = await fetchPlaceStats(business.google_place_id)
@@ -95,6 +104,13 @@ export default async function handler(
         }
 
         if (!stats) {
+          // GBP_DEBUG
+          console.error('[GBP_DEBUG] cron: stats null after all fetch attempts:', {
+            business_id: business.id,
+            business_name: business.business_name,
+            had_oauth_token: !!business.google_oauth_refresh_token,
+            had_place_id: !!business.google_place_id,
+          });
           console.warn(`[fetch-google-stats] No stats for business ${business.id} (${business.business_name})`)
           results.skipped++
           await sleep(RATE_LIMIT_MS)
