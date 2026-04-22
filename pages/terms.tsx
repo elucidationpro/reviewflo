@@ -17,6 +17,7 @@ const TOC_TERMS = [
   { id: 'intro', label: 'Introduction & Beta Notice' },
   { id: 'acceptance', label: 'Acceptance of Terms' },
   { id: 'service', label: 'Service Description' },
+  { id: 'review-practices', label: 'Review Collection Practices' },
   { id: 'responsibilities', label: 'User Responsibilities' },
   { id: 'compliance', label: 'Review Platform Compliance' },
   { id: 'pricing', label: 'Pricing & Beta Terms' },
@@ -161,14 +162,25 @@ export default function TermsPage() {
                     intro: 'ReviewFlo provides a platform for service businesses to:',
                     items: [
                       'Collect customer feedback and ratings',
-                      'Direct satisfied customers to public review platforms (Google, Yelp, Facebook, Nextdoor)',
-                      'Capture private feedback from dissatisfied customers',
+                      'Direct customers to public review platforms (Google, Yelp, Facebook, Nextdoor)',
+                      'Offer customers a private feedback option alongside public review links',
                       'Manage and respond to customer feedback',
                     ],
                     note: 'ReviewFlo is a tool to facilitate review collection. We do not and cannot guarantee that customers will leave reviews, the content or rating of any reviews, that reviews will remain published, or compliance with all review platform policies.',
                   },
                   {
-                    id: 'responsibilities', n: '4', title: 'User Responsibilities',
+                    id: 'review-practices', n: '4', title: 'Review Collection Practices',
+                    intro: 'To comply with the FTC Consumer Review Rule and the policies of Google, Yelp, Facebook, and other review platforms, ReviewFlo follows these practices:',
+                    items: [
+                      'ReviewFlo sends review request messages to customers on behalf of Businesses.',
+                      'Every customer sees the public review link (e.g. Google) regardless of the rating they submit. ReviewFlo does not suppress, hide, or filter reviews based on sentiment.',
+                      'Businesses may not use ReviewFlo to gate, suppress, or incentivize reviews based on sentiment.',
+                      "ReviewFlo's private-feedback feature exists to help Businesses improve service. It does not prevent negative reviews from being posted: customers who submit a low rating still see the public review link and can post a public review at any time.",
+                      'Attempting to use ReviewFlo for review gating, review suppression, or sentiment-based filtering violates these Terms and may result in account termination.',
+                    ],
+                  },
+                  {
+                    id: 'responsibilities', n: '5', title: 'User Responsibilities',
                     intro: 'You agree to:',
                     items: [
                       'Provide accurate and complete information about your business',
@@ -199,7 +211,7 @@ export default function TermsPage() {
                 ))}
 
                 <div id="compliance" className="scroll-mt-24 flex gap-4">
-                  <SectionBadge n="5" />
+                  <SectionBadge n="6" />
                   <div className="flex-1">
                     <h2 className="text-lg font-bold text-gray-900 mb-3">Review Platform Compliance</h2>
                     <p className="text-sm font-semibold text-gray-800 mb-3">
@@ -221,7 +233,7 @@ export default function TermsPage() {
 
                 {[
                   {
-                    id: 'pricing', n: '6', title: 'Pricing & Beta Terms',
+                    id: 'pricing', n: '7', title: 'Pricing & Beta Terms',
                     intro: 'During the beta period:',
                     items: [
                       'Current pricing may be discounted or promotional',
@@ -232,7 +244,7 @@ export default function TermsPage() {
                     ],
                   },
                   {
-                    id: 'liability', n: '7', title: 'Limitation of Liability',
+                    id: 'liability', n: '8', title: 'Limitation of Liability',
                     intro: 'To the maximum extent permitted by law:',
                     items: [
                       'ReviewFlo is provided "AS IS" and "AS AVAILABLE" during beta',
@@ -245,7 +257,7 @@ export default function TermsPage() {
                     ],
                   },
                   {
-                    id: 'termination', n: '8', title: 'Service Termination',
+                    id: 'termination', n: '9', title: 'Service Termination',
                     intro: 'We reserve the right to:',
                     items: [
                       'Suspend or terminate your account at any time for any reason',
@@ -256,13 +268,13 @@ export default function TermsPage() {
                     note: 'You may terminate your account at any time by contacting support@usereviewflo.com',
                   },
                   {
-                    id: 'ip', n: '9', title: 'Intellectual Property',
+                    id: 'ip', n: '10', title: 'Intellectual Property',
                     intro: null,
                     items: [],
                     body: 'All intellectual property rights in ReviewFlo, including but not limited to software, design, content, and trademarks, are owned by us or our licensors. You may not copy, modify, distribute, or reverse engineer any part of the service.',
                   },
                   {
-                    id: 'data', n: '10', title: 'Data Ownership & Retention',
+                    id: 'data', n: '11', title: 'Data Ownership & Retention',
                     intro: 'You retain ownership of your business data and customer feedback. However:',
                     items: [
                       'You grant us a license to use your data to provide the service',
@@ -273,7 +285,7 @@ export default function TermsPage() {
                     ],
                   },
                   {
-                    id: 'indemnification', n: '11', title: 'Indemnification',
+                    id: 'indemnification', n: '12', title: 'Indemnification',
                     intro: 'You agree to indemnify and hold harmless ReviewFlo, its officers, directors, employees, and agents from any claims, damages, losses, liabilities, and expenses (including legal fees) arising from:',
                     items: [
                       'Your use of the service',
@@ -303,7 +315,7 @@ export default function TermsPage() {
                 ))}
 
                 <div id="changes" className="scroll-mt-24 flex gap-4">
-                  <SectionBadge n="12" />
+                  <SectionBadge n="13" />
                   <div className="flex-1">
                     <h2 className="text-lg font-bold text-gray-900 mb-3">Changes to Terms</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
@@ -313,7 +325,7 @@ export default function TermsPage() {
                 </div>
 
                 <div id="law" className="scroll-mt-24 flex gap-4">
-                  <SectionBadge n="13" />
+                  <SectionBadge n="14" />
                   <div className="flex-1">
                     <h2 className="text-lg font-bold text-gray-900 mb-3">Governing Law</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
@@ -323,7 +335,7 @@ export default function TermsPage() {
                 </div>
 
                 <div id="contact-terms" className="scroll-mt-24 flex gap-4">
-                  <SectionBadge n="14" />
+                  <SectionBadge n="15" />
                   <div className="flex-1">
                     <h2 className="text-lg font-bold text-gray-900 mb-3">Contact Information</h2>
                     <p className="text-gray-600 text-sm mb-2">For questions, concerns, or support regarding these Terms or the ReviewFlo service:</p>
