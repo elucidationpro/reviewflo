@@ -97,9 +97,11 @@ export default function GoogleStatsCard({ primaryColor }: GoogleStatsCardProps) 
     const copy = [...reviews]
     switch (option) {
       case 'lowest':
-        return copy.sort((a, b) => (a.rating ?? 5) - (b.rating ?? 5))
+        return copy.sort((a, b) =>
+          (a.rating ?? 5) - (b.rating ?? 5) || (b.time ?? 0) - (a.time ?? 0))
       case 'highest':
-        return copy.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+        return copy.sort((a, b) =>
+          (b.rating ?? 0) - (a.rating ?? 0) || (b.time ?? 0) - (a.time ?? 0))
       case 'recent':
       default:
         return copy.sort((a, b) => (b.time ?? 0) - (a.time ?? 0))
