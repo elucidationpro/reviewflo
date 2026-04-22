@@ -113,12 +113,6 @@ export default async function handler(
       .eq('month', monthStart.toISOString().split('T')[0])
       .single()
 
-    const monthlyCost = TIER_COST[business.tier] || 0
-    const googleRevenue = monthSummary?.google_review_revenue || 0
-    const roiPct = monthlyCost > 0
-      ? Math.round(((googleRevenue - monthlyCost) / monthlyCost) * 100)
-      : null
-
     // ── Generate HTML ───────────────────────────────────────────
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -252,12 +246,6 @@ export default async function handler(
         <div class="kpi-value">${monthSummary.attribution_percentage}%</div>
         <div class="kpi-label">From Reviews</div>
       </div>
-      ${roiPct !== null ? `
-      <div class="kpi" style="background:#f0fdf4;">
-        <div class="kpi-value green">${roiPct > 0 ? '+' : ''}${roiPct}%</div>
-        <div class="kpi-label">ROI This Month</div>
-      </div>
-      ` : ''}
     </div>
   </div>
   ` : ''}

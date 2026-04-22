@@ -1,7 +1,7 @@
 /**
  * GET /api/analytics/dashboard-data
  * Returns all analytics data needed for the analytics dashboard.
- * Aggregates: funnel metrics, Google snapshots, revenue attribution, ROI.
+ * Aggregates: funnel metrics, Google snapshots, revenue attribution.
  *
  * Query params:
  *   - days: 7 | 30 | 90 (default 30)
@@ -231,25 +231,7 @@ export default async function handler(
       history: monthlySummaries || [],
     }
 
-    // ── 4. ROI Calculation ───────────────────────────────────────
-    const monthlyCost = TIER_COST[business.tier] || 0
-    const googleRevenue = monthSummary?.google_review_revenue || 0
-    const roiPercent = monthlyCost > 0
-      ? Math.round(((googleRevenue - monthlyCost) / monthlyCost) * 100)
-      : null
-    const paybackDays = googleRevenue > 0 && monthlyCost > 0
-      ? Math.round((monthlyCost / (googleRevenue / 30)))
-      : null
-
-    const roi = {
-      monthlyCost,
-      googleRevenue: parseFloat(googleRevenue.toString()),
-      roiPercent,
-      paybackDays,
-      tier: business.tier,
-    }
-
-    // ── 5. Assemble response ─────────────────────────────────────
+    // ── 4. Assemble response ─────────────────────────────────────
     return res.status(200).json({
       businessId: business.id,
       businessName: business.business_name,
@@ -258,7 +240,6 @@ export default async function handler(
       funnel,
       googleStats,
       revenue: revenueData,
-      roi,
       posthogConversions,
       generatedAt: new Date().toISOString(),
     })

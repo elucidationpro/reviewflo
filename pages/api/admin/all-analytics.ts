@@ -223,9 +223,6 @@ export default async function handler(
 
       const monthlyCost = TIER_COST[biz.tier] || 0
       const googleRevenue = parseFloat(String(revSummary?.google_review_revenue || 0))
-      const roi = monthlyCost > 0
-        ? Math.round(((googleRevenue - monthlyCost) / monthlyCost) * 100)
-        : null
 
       const flowRow = posthogFlowRatings?.[biz.id]
       const customerFlowAvgRating =
@@ -267,8 +264,6 @@ export default async function handler(
         googleRevenue,
         totalRevenue: parseFloat(String(revSummary?.total_revenue || 0)),
         attributionPct: parseFloat(String(revSummary?.attribution_percentage || 0)),
-        // ROI
-        roi,
         monthlyCost,
       }
     })

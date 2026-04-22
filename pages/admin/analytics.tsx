@@ -51,7 +51,6 @@ interface BusinessAnalytics {
   googleRevenue: number
   totalRevenue: number
   attributionPct: number
-  roi: number | null
   monthlyCost: number
 }
 
@@ -219,7 +218,7 @@ export default function AdminAnalytics() {
       'Sent', 'Completed', 'Email conv%',
       'Flow \u2605 avg (PH)', 'Flow raters (PH)',
       'GBP list \u2605', 'Reviews', 'New/Mo', 'Rating \u0394',
-      'Google Rev', 'Total Rev', 'Attr%', 'ROI%',
+      'Google Rev', 'Total Rev', 'Attr%',
     ]
     const rows = sorted.map((b) => [
       b.businessName, b.tier,
@@ -230,7 +229,7 @@ export default function AdminAnalytics() {
       b.customerFlowAvgRating ?? '', b.customerFlowUniqueRaters ?? '',
       b.currentRating ?? '', b.totalReviews ?? '',
       b.reviewsThisMonth ?? '', b.ratingChangeMonth ?? '',
-      b.googleRevenue, b.totalRevenue, b.attributionPct, b.roi ?? '',
+      b.googleRevenue, b.totalRevenue, b.attributionPct,
     ])
     const csv = [headers, ...rows].map((r) => r.map((c) => `"${c}"`).join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
@@ -681,13 +680,12 @@ export default function AdminAnalytics() {
                       />
                       <Th col="reviewsThisMonth" label="+Rev/Mo" />
                       <Th col="googleRevenue" label="Google Rev" />
-                      <Th col="roi" label="ROI%" />
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-100">
                     {sorted.length === 0 ? (
                       <tr>
-                        <td colSpan={14} className="px-4 py-16 text-center">
+                        <td colSpan={13} className="px-4 py-16 text-center">
                           <div className="flex flex-col items-center gap-2">
                             <svg className="w-8 h-8 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5" />
@@ -769,13 +767,6 @@ export default function AdminAnalytics() {
                         <td className="px-3 py-3">
                           {biz.googleRevenue > 0 ? (
                             <span className="text-emerald-600 font-semibold">{fmt$(biz.googleRevenue)}</span>
-                          ) : <span className="text-stone-300">{'\u2014'}</span>}
-                        </td>
-                        <td className="px-3 py-3">
-                          {biz.roi !== null ? (
-                            <span className={`font-semibold ${biz.roi >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-                              {biz.roi >= 0 ? '+' : ''}{biz.roi}%
-                            </span>
                           ) : <span className="text-stone-300">{'\u2014'}</span>}
                         </td>
                       </tr>
