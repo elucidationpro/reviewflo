@@ -113,6 +113,7 @@ export default async function handler(
       .eq('month', monthStart.toISOString().split('T')[0])
       .single()
 
+    const monthlyCost = TIER_COST[business.tier] || 0
     const googleRevenue = monthSummary?.google_review_revenue || 0
 
     // ── Generate HTML ───────────────────────────────────────────
