@@ -56,6 +56,10 @@ export default function ReviewsPage() {
   const [replyText, setReplyText] = useState('')
   const [replyPosting, setReplyPosting] = useState(false)
   const [replyError, setReplyError] = useState<string | null>(null)
+  const [draftLoading, setDraftLoading] = useState(false)
+  const [hasDraft, setHasDraft] = useState(false)
+
+  const isAiTier = business?.tier === 'ai'
 
   // Read ?filter=unreplied from URL on mount
   useEffect(() => {
@@ -135,16 +139,50 @@ export default function ReviewsPage() {
     setRatingFilter((prev) => prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r])
   }
 
+  const fetchDraft = async (review: GbpFullReview) => {
+    setDraftLoading(true)
+    setHasDraft(false)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+      const res = await fetch('/api/google-reviews/draft-reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({
+          review_text: review.comment ?? '',
+          review_rating: STAR_RATING_TO_NUMBER[review.starRating] ?? 3,
+          reviewer_name: review.reviewer?.isAnonymous ? 'Anonymous' : (review.reviewer?.displayName || 'Anonymous'),
+        }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (res.ok && json.draft) {
+        setReplyText(json.draft)
+        setHasDraft(true)
+      }
+    } catch {
+      // Silent failure — user can type manually
+    } finally {
+      setDraftLoading(false)
+    }
+  }
+
   const openReplyModal = (review: GbpFullReview) => {
     setReplyTarget(review)
     setReplyText(review.reviewReply?.comment ?? '')
     setReplyError(null)
+    setHasDraft(false)
+    // Auto-draft only when opening a new reply (not editing an existing one) on AI tier
+    if (isAiTier && !review.reviewReply) {
+      fetchDraft(review)
+    }
   }
 
   const closeReplyModal = () => {
     setReplyTarget(null)
     setReplyText('')
     setReplyError(null)
+    setHasDraft(false)
+    setDraftLoading(false)
   }
 
   const handlePostReply = async () => {
@@ -425,15 +463,37 @@ export default function ReviewsPage() {
                 </p>
               </div>
 
+              {/* AI draft notice + Regenerate */}
+              {hasDraft && !draftLoading && (
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <p className="text-xs text-gray-400">✨ AI-drafted · review and edit before posting</p>
+                  <button
+                    type="button"
+                    onClick={() => replyTarget && fetchDraft(replyTarget)}
+                    className="text-xs font-semibold text-[#4A3428] hover:underline cursor-pointer shrink-0"
+                  >
+                    Regenerate
+                  </button>
+                </div>
+              )}
+
               {/* Reply textarea */}
-              <div className="mb-3">
-                <textarea
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  rows={5}
-                  placeholder="Write your reply..."
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961] outline-none transition-colors resize-none"
-                />
+              <div className="mb-3 relative">
+                {draftLoading ? (
+                  <div className="w-full h-[126px] px-4 py-3 border border-[#C9A961]/40 rounded-xl bg-[#F5F5DC]/30 animate-pulse flex flex-col gap-2 justify-center">
+                    <div className="h-3 bg-[#C9A961]/20 rounded-full w-3/4" />
+                    <div className="h-3 bg-[#C9A961]/20 rounded-full w-full" />
+                    <div className="h-3 bg-[#C9A961]/20 rounded-full w-5/6" />
+                  </div>
+                ) : (
+                  <textarea
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    rows={5}
+                    placeholder="Write your reply..."
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961] outline-none transition-colors resize-none"
+                  />
+                )}
                 <p className={`text-xs mt-1 text-right ${replyText.length > 4096 ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
                   {replyText.length} / 4096
                 </p>
@@ -459,7 +519,7 @@ export default function ReviewsPage() {
                 <button
                   type="button"
                   onClick={handlePostReply}
-                  disabled={replyPosting || !replyText.trim() || replyText.length > 4096}
+                  disabled={replyPosting || draftLoading || !replyText.trim() || replyText.length > 4096}
                   className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {replyPosting ? (

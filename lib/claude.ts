@@ -8,6 +8,7 @@ const anthropic = new Anthropic({
 })
 
 const MODEL = 'claude-haiku-4-5-20251001'
+const SONNET_MODEL = 'claude-sonnet-4-6'
 
 export interface GenerateReviewRequestTemplateParams {
   businessType: string
@@ -204,6 +205,66 @@ Write ONLY the review response. No explanations or meta-commentary.`
     }
   } catch (error) {
     console.error('[generateReviewResponse] Error:', error)
+    return { success: false, error }
+  }
+}
+
+export interface GenerateReviewReplyDraftParams {
+  businessName: string
+  reviewText: string
+  reviewRating: number
+  reviewerName: string
+  quota?: QuotaContext
+}
+
+/**
+ * Draft a reply to a Google review using Sonnet for higher quality customer-facing output.
+ * Tracks usage in ai_review_drafts for monthly quota enforcement.
+ */
+export async function generateReviewReplyDraft(
+  params: GenerateReviewReplyDraftParams
+): Promise<AIGenerationResult> {
+  const { businessName, reviewText, reviewRating, reviewerName, quota } = params
+
+  if (quota) {
+    const remaining = await getRemainingMonthlyTokens(quota.businessId, quota.supabase, quota.tier)
+    if (remaining <= 0) return { success: false, quotaExceeded: true }
+  }
+
+  try {
+    const systemPrompt = `You are drafting a reply on behalf of ${businessName} to a Google review they received. Keep it warm, brief (2-4 sentences), and professional. Acknowledge specifics from the review when possible (mention the customer's name if natural). For 5-star reviews, thank them sincerely without being effusive. For 4-star, thank them and gently invite them back. For 1-3 star, acknowledge their concern, do not be defensive, and offer to make it right offline (suggest they reach out directly). Never include hashtags, emojis, or marketing language. Write as if the business owner is replying personally.`
+
+    const userMessage = `Reviewer: ${reviewerName}
+Rating: ${reviewRating} out of 5 stars
+Review: ${reviewText || '(No written review — rating only)'}
+
+Please draft a reply.`
+
+    const message = await anthropic.messages.create({
+      model: SONNET_MODEL,
+      max_tokens: 500,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }],
+    })
+
+    const content = message.content[0]
+    if (content.type !== 'text') {
+      return { success: false, error: 'Unexpected response type' }
+    }
+
+    const tokensUsed = message.usage.input_tokens + message.usage.output_tokens
+
+    if (quota) {
+      await quota.supabase.from('ai_review_drafts').insert({
+        business_id: quota.businessId,
+        tokens_used: tokensUsed,
+        created_at: new Date().toISOString(),
+      })
+    }
+
+    return { success: true, content: content.text.trim(), tokensUsed }
+  } catch (error) {
+    console.error('[generateReviewReplyDraft] Error:', error)
     return { success: false, error }
   }
 }
