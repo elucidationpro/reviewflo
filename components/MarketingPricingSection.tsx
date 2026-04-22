@@ -34,7 +34,7 @@ export default function MarketingPricingSection({
               $0<span className="text-sm font-normal text-gray-500">/mo</span>
             </p>
             <p className="text-xs text-gray-500 mb-3">Forever</p>
-            <p className="text-xs text-gray-600">Stop bad reviews · Google reviews · Basic templates</p>
+            <p className="text-xs text-gray-600">Stop bad reviews · Google reviews</p>
           </div>
 
           {/* Pro */}

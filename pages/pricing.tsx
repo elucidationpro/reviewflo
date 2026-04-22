@@ -50,7 +50,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'How does Free tier compare to paid tiers?',
-    a: 'Free gives you core features: stop bad reviews, get Google reviews, basic templates. Pro adds dashboard sending and automation. AI adds SMS automation and AI-powered features.',
+    a: 'Free gives you core features: stop bad reviews, get Google reviews. Pro adds dashboard sending and automation. AI adds SMS automation and AI-powered features.',
   },
   {
     q: 'What payment methods do you accept?',
@@ -175,7 +175,7 @@ export default function PricingPage() {
                 <div className="mb-6 flex-1">
                   <p className="font-semibold text-gray-900 text-sm mb-3">What&apos;s included:</p>
                   <ul className="space-y-2 text-sm text-gray-600">
-                    {['Stop bad reviews', 'Google Reviews only', '1 review template', 'Email notifications', 'Basic stats', 'Manual sending'].map((f) => (
+                    {['Stop bad reviews', 'Google Reviews only', 'Email notifications', 'Basic stats', 'Manual sending'].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mt-0.5" />
                         {f}
@@ -209,7 +209,7 @@ export default function PricingPage() {
                 <div className="mb-6 flex-1">
                   <p className="font-semibold text-gray-900 text-sm mb-3">Everything in Basic, plus:</p>
                   <ul className="space-y-2 text-sm text-gray-600">
-                    {['Send from dashboard', 'Auto follow-up emails', 'Multi-platform support', 'Remove branding', '3 professional templates', 'Track your Google stats'].map((f) => (
+                    {['Send from dashboard', 'Auto follow-up emails', 'Multi-platform support', 'Remove branding', 'Customizable review request emails', 'Track your Google stats'].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mt-0.5" />
                         {f}
