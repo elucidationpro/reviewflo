@@ -20,8 +20,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'token is required' })
   }
 
-  if (!platform || !VALID_PLATFORMS.includes(platform.toLowerCase())) {
-    return res.status(400).json({ error: 'valid platform is required' })
+  // platform is optional — omit it for star-click completions, provide it for platform-click conversions
+  const normalizedPlatform = platform ? platform.toLowerCase() : null
+  if (normalizedPlatform && !VALID_PLATFORMS.includes(normalizedPlatform)) {
+    return res.status(400).json({ error: 'invalid platform' })
   }
 
   try {
@@ -36,15 +38,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ success: true })
     }
 
-    // Only mark complete if not already completed
+    const updates: Record<string, string> = {}
+
+    // Upgrade status to completed on any star click (or platform click without prior star)
     if (data.status !== 'completed') {
+      updates.status = 'completed'
+      updates.completed_at = new Date().toISOString()
+    }
+
+    // Always record the platform when provided — this is the conversion event.
+    // Must write even if status was already completed (star click already set it).
+    if (normalizedPlatform) {
+      updates.platform_selected = normalizedPlatform
+    }
+
+    if (Object.keys(updates).length > 0) {
       await supabaseAdmin
         .from('review_requests')
-        .update({
-          status: 'completed',
-          completed_at: new Date().toISOString(),
-          platform_selected: platform.toLowerCase(),
-        })
+        .update(updates)
         .eq('id', data.id)
     }
 

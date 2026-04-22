@@ -73,6 +73,15 @@ export default function ReviewPage({ business }: PageProps) {
         responseTime,
       })
 
+      // Mark completed on any star click — fire and forget, never block the customer
+      if (trackingToken) {
+        fetch('/api/track/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: trackingToken }),
+        }).catch(() => {})
+      }
+
       // Carry the tracking token forward so templates page can record completion
       const tokenParam = trackingToken ? `&t=${trackingToken}` : ''
 

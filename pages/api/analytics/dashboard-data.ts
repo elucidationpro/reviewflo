@@ -82,8 +82,8 @@ export default async function handler(
     const funnelCompleted = allRequests.filter((r) =>
       r.status === 'completed'
     ).length
-    // "Posted" = completed (we can't verify posting, so completed = sent to Google)
-    const funnelPosted = funnelCompleted
+    // "Posted" = completed AND platform clicked (the real conversion event)
+    const funnelPosted = allRequests.filter(r => r.status === 'completed' && !!r.platform_selected).length
 
     // Platform breakdown
     const platformCounts: Record<string, number> = {}
