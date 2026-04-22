@@ -425,7 +425,7 @@ export default function LandingPage() {
                 Smart Routing
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Happy customers are guided to leave a public review. Unhappy customers are routed to a private feedback form.
+                Customers rate their experience. 4–5 star ratings flow straight to your Google review page. 1–3 star ratings go to a short private feedback form — and you get an instant alert so you can reach out. The Google link is visible on every screen, to every customer.
               </p>
             </div>
 
@@ -528,13 +528,13 @@ export default function LandingPage() {
             </div>
             <div className="action-step-text w-full md:w-1/2">
               <span className="action-step-badge inline-block px-3 py-1 bg-[#FEE2E2] text-red-800 text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
-                If 1–4 stars → Private feedback
+                If 1–3 stars → Private feedback first
               </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Unhappy customers go to you, not Google
+                You hear from unhappy customers first
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                A 1–4 star rating quietly redirects to a private feedback form instead of a public review site. You get the full story by email and can fix it before it ever reaches Google.
+                A 1–3 star rating opens a quick private feedback form — with the Google review link still visible. You&apos;re alerted right away so you can resolve the issue before it escalates, without ever hiding the public review option.
               </p>
             </div>
           </div>
