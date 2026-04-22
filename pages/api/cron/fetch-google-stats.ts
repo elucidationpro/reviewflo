@@ -9,7 +9,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import {
   fetchStatsWithOAuth,
-  fetchPlaceStats,
+  fetchPlaceStatsWithRefresh,
   calculateDeltas,
   sleep,
 } from '../../../lib/google-places-service'
@@ -82,10 +82,21 @@ export default async function handler(
 
         if (business.google_oauth_refresh_token) {
           // Prefer OAuth (gets ALL reviews, not just 5)
-          stats = await fetchStatsWithOAuth(
+          const oauthResult = await fetchStatsWithOAuth(
             business.google_oauth_refresh_token,
-            business.google_place_id
+            business.google_place_id,
+            business.business_name
           )
+          if (oauthResult) {
+            const { refreshedPlaceId: oauthRefreshedId, ...oauthStats } = oauthResult
+            stats = oauthStats
+            if (oauthRefreshedId) {
+              // GBP_DEBUG
+              console.log('[GBP_DEBUG] cron persisting refreshed place_id from OAuth fallback:', `${business.google_place_id} -> ${oauthRefreshedId}`)
+              await supabaseAdmin.from('businesses').update({ google_place_id: oauthRefreshedId }).eq('id', business.id)
+              business.google_place_id = oauthRefreshedId
+            }
+          }
           // GBP_DEBUG
           console.log('[GBP_DEBUG] cron OAuth attempt result:', {
             business_id: business.id,
@@ -96,8 +107,17 @@ export default async function handler(
             source: stats?.source ?? null,
           });
         } else if (business.google_place_id) {
-          // Fallback to Places API
-          const placeStats = await fetchPlaceStats(business.google_place_id)
+          // Fallback to Places API with stale-ID refresh
+          const { stats: placeStats, refreshedPlaceId } = await fetchPlaceStatsWithRefresh(
+            business.google_place_id,
+            business.business_name
+          )
+          if (refreshedPlaceId) {
+            // GBP_DEBUG
+            console.log('[GBP_DEBUG] cron persisting refreshed place_id from Places fetch:', `${business.google_place_id} -> ${refreshedPlaceId}`)
+            await supabaseAdmin.from('businesses').update({ google_place_id: refreshedPlaceId }).eq('id', business.id)
+            business.google_place_id = refreshedPlaceId
+          }
           if (placeStats) {
             stats = { ...placeStats, source: 'places_api' as const }
           }

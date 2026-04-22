@@ -19,6 +19,7 @@ export interface PlaceReview {
 interface PlaceDetailsResponse {
   status: string
   result?: {
+    place_id?: string
     rating?: number
     user_ratings_total?: number
     reviews?: Array<{
@@ -100,6 +101,104 @@ export async function fetchPlaceReviews(placeId: string): Promise<PlaceReview[]>
 }
 
 /**
+ * Resolve a stale/deprecated Place ID to its current canonical ID.
+ * First tries Place Details with field=place_id (Google returns the new canonical
+ * ID even for deprecated IDs). Falls back to a text search on the business name.
+ */
+async function resolveCanonicalPlaceId(staleId: string, businessName: string): Promise<string | null> {
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY
+  if (!apiKey) return null
+
+  try {
+    const res = await fetch(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(staleId)}&fields=place_id&key=${apiKey}`
+    )
+    const data: { status: string; result?: { place_id?: string } } = await res.json()
+    if (data.status === 'OK' && data.result?.place_id) return data.result.place_id
+  } catch (err) {
+    console.warn('[google-places-service] resolveCanonicalPlaceId details lookup failed:', err)
+  }
+
+  try {
+    const res = await fetch(
+      `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(businessName)}&key=${apiKey}`
+    )
+    const data: { status: string; results?: Array<{ place_id?: string }> } = await res.json()
+    if (data.status === 'OK' && data.results?.[0]?.place_id) return data.results[0].place_id
+  } catch (err) {
+    console.warn('[google-places-service] resolveCanonicalPlaceId text search fallback failed:', err)
+  }
+
+  return null
+}
+
+export interface PlaceStatsWithRefresh {
+  stats: PlaceStats | null
+  refreshedPlaceId?: string
+}
+
+/**
+ * Like fetchPlaceStats but also handles stale Place IDs.
+ * On NOT_FOUND / INVALID_REQUEST, resolves a canonical ID and retries.
+ * Returns refreshedPlaceId when the stored ID changed — caller must persist it.
+ */
+export async function fetchPlaceStatsWithRefresh(
+  placeId: string,
+  businessName: string
+): Promise<PlaceStatsWithRefresh> {
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY
+  if (!apiKey) {
+    console.error('[google-places-service] GOOGLE_PLACES_API_KEY not configured')
+    return { stats: null }
+  }
+
+  try {
+    // Include place_id field so we can detect canonical ID swaps in the OK path
+    const res = await fetch(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=place_id,rating,user_ratings_total&key=${apiKey}`
+    )
+    const data: PlaceDetailsResponse = await res.json()
+
+    if (data.status === 'OK' && data.result) {
+      const stats: PlaceStats = {
+        totalReviews: data.result.user_ratings_total ?? 0,
+        averageRating: data.result.rating ?? 0,
+        source: 'places_api',
+      }
+      if (data.result.place_id && data.result.place_id !== placeId) {
+        // GBP_DEBUG
+        console.log('[GBP_DEBUG] place_id refreshed (canonical swap):', `${placeId} -> ${data.result.place_id}`)
+        return { stats, refreshedPlaceId: data.result.place_id }
+      }
+      return { stats }
+    }
+
+    if (data.status === 'NOT_FOUND' || data.status === 'INVALID_REQUEST') {
+      console.warn('[google-places-service] Stale place_id detected, attempting resolution:', placeId)
+      const newId = await resolveCanonicalPlaceId(placeId, businessName)
+      if (newId && newId !== placeId) {
+        // GBP_DEBUG
+        console.log('[GBP_DEBUG] place_id refreshed (via resolution):', `${placeId} -> ${newId}`)
+        const stats = await fetchPlaceStats(newId)
+        return { stats, refreshedPlaceId: newId }
+      }
+      console.warn('[google-places-service] Could not resolve stale place_id:', placeId)
+      return { stats: null }
+    }
+
+    console.warn('[google-places-service] fetchPlaceStatsWithRefresh unexpected status:', {
+      placeId,
+      status: data.status,
+      error: data.error_message,
+    })
+    return { stats: null }
+  } catch (err) {
+    console.error('[google-places-service] fetchPlaceStatsWithRefresh error:', err)
+    return { stats: null }
+  }
+}
+
+/**
  * Fetch stats via GBP OAuth (returns ALL reviews, not capped at 5).
  * Falls back to Places API if OAuth not available or fails.
  */
@@ -111,8 +210,9 @@ export interface GBPStats {
 
 export async function fetchStatsWithOAuth(
   refreshToken: string,
-  placeIdFallback: string | null
-): Promise<GBPStats | null> {
+  placeIdFallback: string | null,
+  businessName?: string
+): Promise<(GBPStats & { refreshedPlaceId?: string }) | null> {
   try {
     const { refreshAccessToken, fetchAllReviewsFromBusinessProfile } = await import('./google-business-profile')
     const tokens = await refreshAccessToken(refreshToken)
@@ -136,10 +236,15 @@ export async function fetchStatsWithOAuth(
     });
   }
 
-  // Fallback to Places API
+  // Fallback to Places API — use refresh-aware fetch when business name is available
   if (placeIdFallback) {
-    const stats = await fetchPlaceStats(placeIdFallback)
-    if (stats) return { ...stats, source: 'places_api' }
+    if (businessName) {
+      const { stats, refreshedPlaceId } = await fetchPlaceStatsWithRefresh(placeIdFallback, businessName)
+      if (stats) return { ...stats, refreshedPlaceId }
+    } else {
+      const stats = await fetchPlaceStats(placeIdFallback)
+      if (stats) return { ...stats, source: 'places_api' }
+    }
   }
 
   return null

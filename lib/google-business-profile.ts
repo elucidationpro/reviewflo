@@ -252,10 +252,16 @@ export async function getPlaceIdFromGoogleBusinessProfile(
 
     console.log('[Google Business Profile] Final Place ID:', placeId ?? '(none — SAB with no Places match)');
 
+    // v4 reviews API requires accounts/{accountId}/locations/{locationId}.
+    // Business Information API may return a relative name (locations/{id}) — prefix it when needed.
+    const locationName = firstLocation.name.startsWith('accounts/')
+      ? firstLocation.name
+      : `${firstAccount.name}/${firstLocation.name}`;
+
     return {
       placeId,
       businessName: firstLocation.title,
-      locationName: firstLocation.name,
+      locationName,
     };
   } catch (error) {
     console.error('[Google Business Profile] Error fetching Place ID:', error);
@@ -329,6 +335,8 @@ export async function fetchAllReviewsFromBusinessProfile(
         url.searchParams.set('pageToken', pageToken);
       }
 
+      // GBP_DEBUG
+      console.log('[GBP_DEBUG] fetchAllReviews requesting URL:', url.toString());
       const res = await fetch(url.toString(), {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
