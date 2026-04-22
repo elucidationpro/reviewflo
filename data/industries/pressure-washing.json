@@ -1,16 +1,16 @@
 {
   "slug": "pressure-washing",
   "industryName": "Pressure & Soft Washing",
-  "targetKeyword": "pressure washing review management",
+  "targetKeyword": "review request software for pressure washing",
   "seo": {
-    "title": "Pressure Washing Review Management | ReviewFlo",
-    "description": "Get more Google reviews for your pressure or soft washing business. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "title": "Pressure Washing Review Management Software | ReviewFlo",
+    "description": "Review request software for pressure washing: text after the job, hear problems privately, send 5-star jobs to Google. Free, no credit card.",
     "canonicalUrl": "https://reviewflo.com/for/pressure-washing"
   },
   "h1": "Review Management for Pressure & Soft Washing",
   "hero": {
     "heading": "Review Management Built for Pressure & Soft Washing",
-    "subheading": "The job looks great in person, but clients don’t always say it online. ReviewFlo helps you follow up after the wash.",
+    "subheading": "The concrete’s clean and you’re already en route to the next house—most homeowners won’t review unless you ask. ReviewFlo handles the ask.",
     "cta": {
       "label": "Start Free — No Credit Card",
       "href": "/join"
@@ -42,8 +42,8 @@
         "body": "They’re on to the next chore, not your listing."
       },
       {
-        "heading": "Streaks and overspray can go public fast",
-        "body": "When results miss expectations, people post before they call."
+        "heading": "Streaks and overspray stories can go public before you get a call",
+        "body": "When results miss expectations, people post before they reach out."
       },
       {
         "heading": "Crews don’t have time to ask at the truck",
@@ -104,8 +104,8 @@
         "a": "No. You can send requests manually by text or email."
       },
       {
-        "q": "How is this different from Podium?",
-        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small operators."
+        "q": "Does this replace asking in person?",
+        "a": "It’s the follow-up most crews skip—one tap from the truck beats hoping they remember."
       },
       {
         "q": "Does this work for soft washing and pressure washing?",
@@ -116,16 +116,16 @@
   "relatedIndustries": {
     "items": [
       {
+        "label": "Mobile Auto Detailing",
+        "href": "/for/mobile-auto-detailing"
+      },
+      {
         "label": "House Cleaning",
         "href": "/for/house-cleaning"
       },
       {
-        "label": "Pool Cleaning",
-        "href": "/for/pool-cleaning"
-      },
-      {
-        "label": "Mobile Auto Detailing",
-        "href": "/for/mobile-auto-detailing"
+        "label": "Window Cleaning",
+        "href": "/for/window-cleaning"
       }
     ]
   },

@@ -1,16 +1,16 @@
 {
   "slug": "nail-salons",
   "industryName": "Nail Salons",
-  "targetKeyword": "nail salon review management",
+  "targetKeyword": "get more reviews for nail salons",
   "seo": {
     "title": "Nail Salon Review Management Software | ReviewFlo",
-    "description": "Get more Google reviews for your nail salon. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "description": "Get more reviews for nail salons: quick follow-up after checkout, private feedback before Google, no extra desk work. Free, no credit card.",
     "canonicalUrl": "https://reviewflo.com/for/nail-salons"
   },
   "h1": "Review Management for Nail Salons",
   "hero": {
     "heading": "Review Management Built for Nail Salons",
-    "subheading": "Clients love the set, then leave without thinking about Google. ReviewFlo helps you follow up after the appointment.",
+    "subheading": "Every block has options—Google is how new clients pick you. ReviewFlo turns a great set into a review while it’s still fresh.",
     "cta": {
       "label": "Start Free — No Credit Card",
       "href": "/join"
@@ -38,16 +38,16 @@
     "sectionHeading": "The Review Problem Every Nail Salon Faces",
     "items": [
       {
+        "heading": "Local search is crowded—stars are the tiebreaker",
+        "body": "Clients compare salons on maps before they ever walk in."
+      },
+      {
         "heading": "A perfect mani doesn’t always become a review",
         "body": "They’re already planning their week, not your Google listing."
       },
       {
         "heading": "One bad experience can show up first",
         "body": "A single public complaint can shape how new clients choose a salon."
-      },
-      {
-        "heading": "Asking at the table feels awkward",
-        "body": "Techs are focused on service, not chasing stars."
       }
     ]
   },
@@ -104,8 +104,8 @@
         "a": "No. You can send requests manually by text or email."
       },
       {
-        "q": "How is this different from Podium?",
-        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small salons."
+        "q": "Does asking look pushy next to other salons?",
+        "a": "A short text after checkout reads normal—especially if it’s optional and quick."
       },
       {
         "q": "Can we use this across multiple locations?",
@@ -120,12 +120,12 @@
         "href": "/for/hair-salons"
       },
       {
-        "label": "Eyebrow and Lash Studios",
-        "href": "/for/eyebrow-lash-studios"
+        "label": "Barber Shops",
+        "href": "/for/barber-shops"
       },
       {
-        "label": "Massage Therapy",
-        "href": "/for/massage-therapy"
+        "label": "Eyebrow and Lash Studios",
+        "href": "/for/eyebrow-lash-studios"
       }
     ]
   },

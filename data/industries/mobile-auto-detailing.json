@@ -1,16 +1,16 @@
 {
   "slug": "mobile-auto-detailing",
   "industryName": "Mobile Auto Detailing",
-  "targetKeyword": "mobile auto detailing review management",
+  "targetKeyword": "review management for mobile detailing",
   "seo": {
-    "title": "Mobile Auto Detailing Review Management | ReviewFlo",
-    "description": "Get more Google reviews for your mobile detailing business. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "title": "Mobile Detailing Review Management Software | ReviewFlo",
+    "description": "Review management for mobile detailing: one link after the job, private feedback when something’s off, Google for happy clients. Free, no credit card.",
     "canonicalUrl": "https://reviewflo.com/for/mobile-auto-detailing"
   },
   "h1": "Review Management for Mobile Auto Detailing",
   "hero": {
     "heading": "Review Management Built for Mobile Auto Detailing",
-    "subheading": "Your work speaks for itself, but clients don’t always say it on Google. ReviewFlo helps you follow up right after the job.",
+    "subheading": "Your work speaks for itself in the driveway—Google only hears about it if you follow up. ReviewFlo sends the nudge right after the keys go back.",
     "cta": {
       "label": "Start Free — No Credit Card",
       "href": "/join"
@@ -38,16 +38,16 @@
     "sectionHeading": "The Review Problem Every Mobile Detailer Faces",
     "items": [
       {
-        "heading": "Clients drive off happy and forget to review",
-        "body": "They’re back to work, kids, and errands. Your detail isn’t on their mind anymore."
+        "heading": "Repeat customers don’t always translate to new Google proof",
+        "body": "They book again because they trust you—not because they remembered to review."
       },
       {
-        "heading": "One complaint can dominate your Google profile",
-        "body": "A single public 1-star can sit at the top and cost you new bookings."
+        "heading": "One complaint online can outshine dozens of quiet wins",
+        "body": "A single public 1-star can sit where every new lead checks first."
       },
       {
-        "heading": "You don’t have time to chase reviews",
-        "body": "You’re booking jobs, driving, and detailing. Follow-ups fall to the bottom."
+        "heading": "You’re already driving, detailing, and booking the next stop",
+        "body": "Follow-up slips when the day is packed end to end."
       }
     ]
   },
@@ -116,8 +116,8 @@
   "relatedIndustries": {
     "items": [
       {
-        "label": "Auto Repair Shops",
-        "href": "/for/auto-repair-shops"
+        "label": "Pressure Washing",
+        "href": "/for/pressure-washing"
       },
       {
         "label": "Barber Shops",

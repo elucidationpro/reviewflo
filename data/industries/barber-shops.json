@@ -1,16 +1,16 @@
 {
   "slug": "barber-shops",
   "industryName": "Barber Shops",
-  "targetKeyword": "barber shop review management",
+  "targetKeyword": "get more Google reviews for barbers",
   "seo": {
     "title": "Barber Shop Review Management Software | ReviewFlo",
-    "description": "Get more Google reviews for your barbershop. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "description": "Get more Google reviews for barbers: text a link after the cut, hear complaints privately first, send happy clients to Google. Free, no credit card.",
     "canonicalUrl": "https://reviewflo.com/for/barber-shops"
   },
   "h1": "Review Management for Barber Shops",
   "hero": {
     "heading": "Review Management Built for Barber Shops",
-    "subheading": "Most clients don’t think to leave a review after a great cut. ReviewFlo helps you ask at the right time, without feeling pushy.",
+    "subheading": "Your regulars walk out fresh and still don’t tap five stars. ReviewFlo follows up after they leave—no awkward ask in the chair.",
     "cta": {
       "label": "Start Free — No Credit Card",
       "href": "/join"
@@ -38,16 +38,16 @@
     "sectionHeading": "The Review Problem Every Barber Shop Faces",
     "items": [
       {
-        "heading": "Happy clients leave with a fade, not a review",
-        "body": "They’re already thinking about their next stop. Reviews aren’t top of mind."
+        "heading": "Chair time is loud and fast—reviews aren’t on their mind",
+        "body": "They’re out the door thinking about the rest of their day, not your Google listing."
       },
       {
-        "heading": "One bad review can scare off walk-ins",
-        "body": "A single 1-star can sit at the top and change how new clients choose."
+        "heading": "One bad review sits where new walk-ins look",
+        "body": "A single frustrated client can shape what strangers see before they ever sit down."
       },
       {
-        "heading": "Asking in the chair feels awkward",
-        "body": "Most barbers don’t want to interrupt the vibe to ask for a review."
+        "heading": "You don’t want to break the vibe to beg for stars",
+        "body": "The cut and conversation matter; stopping to pitch reviews can feel wrong."
       }
     ]
   },
@@ -92,24 +92,24 @@
   "faq": {
     "items": [
       {
-        "q": "Will clients actually leave reviews for a haircut?",
-        "a": "Yes, when you make it easy and ask right after the appointment."
+        "q": "Will asking for reviews make me look desperate?",
+        "a": "Not when it’s a short text after they leave and they can ignore it. You’re not cornering anyone in the chair."
+      },
+      {
+        "q": "What if a client leaves a bad review?",
+        "a": "ReviewFlo still sends everyone the same flow. If they’re upset, many will use private feedback first—but anyone can still post on Google if they choose to."
+      },
+      {
+        "q": "Does this work with my booking software?",
+        "a": "You can send requests manually after each cut, or use the API to hook into booking tools you already use."
       },
       {
         "q": "What happens if someone is unhappy?",
-        "a": "They rate 1–4 stars and send you a private message instead of going to Google."
-      },
-      {
-        "q": "Do I need special software or a POS integration?",
-        "a": "No. You can send requests manually by text or email, and start immediately."
+        "a": "They rate 1–4 stars and send you a private message instead of going straight to Google."
       },
       {
         "q": "How is this different from Podium?",
         "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small shops."
-      },
-      {
-        "q": "Can I use this for multiple barbers or chairs?",
-        "a": "Yes. You can use one shop link, and scale up as your team grows."
       }
     ]
   },
@@ -120,12 +120,12 @@
         "href": "/for/hair-salons"
       },
       {
-        "label": "Mobile Auto Detailing",
-        "href": "/for/mobile-auto-detailing"
+        "label": "Nail Salons",
+        "href": "/for/nail-salons"
       },
       {
-        "label": "Auto Repair Shops",
-        "href": "/for/auto-repair-shops"
+        "label": "Mobile Auto Detailing",
+        "href": "/for/mobile-auto-detailing"
       }
     ]
   },

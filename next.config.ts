@@ -39,6 +39,31 @@ const nextConfig: NextConfig = {
         destination: "/for/real-estate-agents",
         permanent: true,
       },
+      {
+        source: "/for-barbers",
+        destination: "/for/barber-shops",
+        permanent: true,
+      },
+      {
+        source: "/for-mobile-detailing",
+        destination: "/for/mobile-auto-detailing",
+        permanent: true,
+      },
+      {
+        source: "/for-nail-salons",
+        destination: "/for/nail-salons",
+        permanent: true,
+      },
+      {
+        source: "/for-pressure-washing",
+        destination: "/for/pressure-washing",
+        permanent: true,
+      },
+      {
+        source: "/for-hair-salons",
+        destination: "/for/hair-salons",
+        permanent: true,
+      },
     ];
   },
   // Do not redirect www ↔ apex here. Vercel’s “primary domain” already canonicalizes

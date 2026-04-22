@@ -1,16 +1,16 @@
 {
   "slug": "hair-salons",
   "industryName": "Hair Salons",
-  "targetKeyword": "hair salon review management",
+  "targetKeyword": "salon review automation software",
   "seo": {
     "title": "Hair Salon Review Management Software | ReviewFlo",
-    "description": "Get more Google reviews for your hair salon. Route unhappy clients to private feedback before it hits Google. Free forever, no credit card required.",
+    "description": "Salon review automation software for hair teams: follow up after checkout, private feedback first, Google for happy guests. Free, no credit card.",
     "canonicalUrl": "https://reviewflo.com/for/hair-salons"
   },
   "h1": "Review Management for Hair Salons",
   "hero": {
     "heading": "Review Management Built for Hair Salons",
-    "subheading": "A great appointment doesn’t always turn into a Google review. ReviewFlo helps you follow up after the visit, without awkward asks.",
+    "subheading": "A great blowout shouldn’t live only in the mirror. ReviewFlo sends one short follow-up after the visit—your front desk doesn’t have to wing it.",
     "cta": {
       "label": "Start Free — No Credit Card",
       "href": "/join"
@@ -100,12 +100,12 @@
         "a": "They rate 1–4 stars and send you a private message instead of going to Google."
       },
       {
-        "q": "Do we need a booking system integration?",
-        "a": "No. You can start by sending requests manually by text or email."
+        "q": "Is this real automation or just a template?",
+        "a": "You set the flow once—then each client gets the same link by text or email after checkout. Pro and AI add scheduling and follow-ups when those tiers launch."
       },
       {
-        "q": "How is this different from Podium?",
-        "a": "Same core flow for review requests and private feedback. ReviewFlo is priced for small salons."
+        "q": "Do we need a booking system integration?",
+        "a": "No. You can start by sending requests manually by text or email."
       },
       {
         "q": "Can I use this across multiple stylists?",
@@ -120,12 +120,12 @@
         "href": "/for/barber-shops"
       },
       {
-        "label": "Medical Spas",
-        "href": "/for/medical-spas"
+        "label": "Nail Salons",
+        "href": "/for/nail-salons"
       },
       {
-        "label": "Mobile Auto Detailing",
-        "href": "/for/mobile-auto-detailing"
+        "label": "Medical Spas",
+        "href": "/for/medical-spas"
       }
     ]
   },
