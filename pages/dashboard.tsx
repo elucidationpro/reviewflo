@@ -42,7 +42,10 @@ interface ReviewStats {
 // ── Card wrapper ─────────────────────────────────────────────────────────────
 function Card({ children, className = '', accent = false }: { children: React.ReactNode; className?: string; accent?: boolean }) {
   return (
-    <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden ${className}`}>
+    <div
+      className={`bg-white rounded-2xl border border-[#4A3428]/6 overflow-hidden transition-shadow duration-200 hover:shadow-md ${className}`}
+      style={{ boxShadow: '0 1px 4px rgba(74,52,40,0.07), 0 1px 2px rgba(74,52,40,0.04)' }}
+    >
       {accent && <div className="h-0.5 bg-gradient-to-r from-[#C9A961] via-[#e6c97a] to-[#C9A961]" />}
       <div className="p-6">{children}</div>
     </div>
@@ -364,7 +367,7 @@ export default function DashboardPage() {
           {/* Reviews this month */}
           <Card>
             <p className="text-xs font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-3">This Month</p>
-            <div className="flex items-baseline gap-2 mb-1">
+            <div className="flex items-baseline gap-2 mb-1 animate-fade-in-up">
               <div
                 className="text-5xl font-bold leading-none"
                 style={{ color: business.primary_color || '#4A3428' }}
@@ -375,7 +378,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="mt-4 space-y-2">
-              {[5, 4, 3, 2, 1].map((rating) => (
+              {[5, 4, 3, 2, 1].map((rating, i) => (
                 <div key={rating} className="flex items-center gap-2">
                   <span className="text-xs text-gray-400 w-3 text-right tabular-nums">{rating}</span>
                   <svg className="w-3 h-3 shrink-0 opacity-70" fill={business.primary_color || '#4A3428'} viewBox="0 0 24 24">
@@ -383,13 +386,14 @@ export default function DashboardPage() {
                   </svg>
                   <div className="flex-1 bg-[#F5F5DC]/80 rounded-full h-2 overflow-hidden">
                     <div
-                      className="h-full rounded-full transition-all duration-700"
+                      className="bar-animate h-full rounded-full"
                       style={{
                         width: reviewStats.total > 0
                           ? `${(reviewStats.breakdown[rating as keyof typeof reviewStats.breakdown] / reviewStats.total) * 100}%`
                           : '0%',
                         backgroundColor: business.primary_color || '#4A3428',
                         opacity: 0.85,
+                        animationDelay: `${i * 80}ms`,
                       }}
                     />
                   </div>
@@ -405,7 +409,7 @@ export default function DashboardPage() {
           <Card>
             <p className="text-xs font-semibold text-[#4A3428]/50 uppercase tracking-widest mb-3">Quick Stats</p>
             <div className="space-y-2.5">
-              <div className="p-3 bg-[#F5F5DC]/40 border border-[#C9A961]/20 rounded-xl">
+              <div className="p-3 bg-[#F5F5DC]/40 border border-[#C9A961]/20 rounded-xl animate-fade-in-up" style={{ animationDelay: '60ms' }}>
                 <p className="text-xs text-gray-400 mb-0.5 flex items-center gap-1">
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
                   Avg Rating
