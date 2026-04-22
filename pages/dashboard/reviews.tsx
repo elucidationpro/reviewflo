@@ -51,8 +51,11 @@ export default function ReviewsPage() {
   const [filter, setFilter] = useState<FilterOption>('all')
   const [ratingFilter, setRatingFilter] = useState<number[]>([])
 
-  // Reply modal (Commit 2 will fully wire this; scaffold state here)
+  // Reply modal
   const [replyTarget, setReplyTarget] = useState<GbpFullReview | null>(null)
+  const [replyText, setReplyText] = useState('')
+  const [replyPosting, setReplyPosting] = useState(false)
+  const [replyError, setReplyError] = useState<string | null>(null)
 
   // Read ?filter=unreplied from URL on mount
   useEffect(() => {
@@ -130,6 +133,59 @@ export default function ReviewsPage() {
 
   const toggleRatingFilter = (r: number) => {
     setRatingFilter((prev) => prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r])
+  }
+
+  const openReplyModal = (review: GbpFullReview) => {
+    setReplyTarget(review)
+    setReplyText(review.reviewReply?.comment ?? '')
+    setReplyError(null)
+  }
+
+  const closeReplyModal = () => {
+    setReplyTarget(null)
+    setReplyText('')
+    setReplyError(null)
+  }
+
+  const handlePostReply = async () => {
+    if (!replyTarget || !replyText.trim() || replyPosting) return
+    setReplyPosting(true)
+    setReplyError(null)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { closeReplyModal(); router.replace('/login'); return }
+
+      const res = await fetch('/api/google-reviews/reply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ review_name: replyTarget.name, comment: replyText.trim() }),
+      })
+      const json = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        const msg = json?.details?.error?.message ?? json?.error ?? 'Failed to post reply.'
+        setReplyError(`Reply failed: ${msg}`)
+        setReplyPosting(false)
+        return
+      }
+
+      // Optimistic update
+      setReviews((prev) =>
+        prev.map((r) =>
+          r.name === replyTarget.name
+            ? { ...r, reviewReply: { comment: replyText.trim(), updateTime: new Date().toISOString() } }
+            : r
+        )
+      )
+      closeReplyModal()
+    } catch {
+      setReplyError('Something went wrong. Please try again.')
+    } finally {
+      setReplyPosting(false)
+    }
   }
 
   // ── Loading ───────────────────────────────────────────────────────────────
@@ -318,7 +374,7 @@ export default function ReviewsPage() {
                     <div className="px-5 pb-4 flex items-center justify-between">
                       <button
                         type="button"
-                        onClick={() => setReplyTarget(review)}
+                        onClick={() => openReplyModal(review)}
                         className="px-3.5 py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
                       >
                         {hasReply ? 'Edit Reply' : 'Reply'}
@@ -345,18 +401,79 @@ export default function ReviewsPage() {
         </div>
       </div>
 
-      {/* Reply modal placeholder — wired in Commit 2 */}
+      {/* Reply modal */}
       {replyTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6">
-            <p className="text-sm text-gray-500 mb-4">Reply modal coming in next commit.</p>
-            <button
-              type="button"
-              onClick={() => setReplyTarget(null)}
-              className="px-4 py-2 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors cursor-pointer"
-            >
-              Close
-            </button>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+            {/* Gold accent top */}
+            <div className="h-0.5 bg-gradient-to-r from-[#C9A961] via-[#e6c97a] to-[#C9A961]" />
+            <div className="p-6">
+              <h2 className="text-base font-bold text-gray-900 mb-4">
+                {replyTarget.reviewReply ? 'Edit Reply' : 'Reply to Review'}
+              </h2>
+
+              {/* Original review (read-only) */}
+              <div className="mb-4 p-3.5 bg-[#F5F5DC]/40 border border-[#C9A961]/20 rounded-xl">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <StarRating rating={STAR_RATING_TO_NUMBER[replyTarget.starRating] ?? 0} />
+                  <span className="text-xs font-semibold text-gray-700">
+                    {replyTarget.reviewer?.isAnonymous ? 'Anonymous' : (replyTarget.reviewer?.displayName || 'Anonymous')}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {replyTarget.comment || <em className="text-gray-400">No written review.</em>}
+                </p>
+              </div>
+
+              {/* Reply textarea */}
+              <div className="mb-3">
+                <textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  rows={5}
+                  placeholder="Write your reply..."
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961] outline-none transition-colors resize-none"
+                />
+                <p className={`text-xs mt-1 text-right ${replyText.length > 4096 ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
+                  {replyText.length} / 4096
+                </p>
+              </div>
+
+              {/* Error */}
+              {replyError && (
+                <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-xl">
+                  <p className="text-xs text-red-600">{replyError}</p>
+                </div>
+              )}
+
+              {/* Buttons */}
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={closeReplyModal}
+                  disabled={replyPosting}
+                  className="px-4 py-2.5 rounded-xl text-sm font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePostReply}
+                  disabled={replyPosting || !replyText.trim() || replyText.length > 4096}
+                  className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {replyPosting ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                      </svg>
+                      Posting…
+                    </>
+                  ) : 'Post Reply'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
