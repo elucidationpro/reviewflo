@@ -4,7 +4,7 @@ interface SendRequestModalProps {
   open: boolean
   businessName: string
   onClose: () => void
-  onSuccess: () => void
+  onSuccess: (result: { queued: boolean; scheduledFor?: string; message?: string }) => void
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -20,10 +20,12 @@ export default function SendRequestModal({
   const [optionalNote, setOptionalNote] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState<string>('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
 
     if (!customerName.trim()) {
       setError('Customer name is required')
@@ -71,7 +73,17 @@ export default function SendRequestModal({
         return
       }
 
-      onSuccess()
+      if (data?.queued) {
+        setSuccess(data.message || 'Your request was scheduled to be sent later.')
+      } else {
+        setSuccess('Request sent!')
+      }
+
+      onSuccess({
+        queued: Boolean(data?.queued),
+        scheduledFor: typeof data?.scheduledFor === 'string' ? data.scheduledFor : undefined,
+        message: typeof data?.message === 'string' ? data.message : undefined,
+      })
       try {
         const { trackEvent } = await import('../lib/posthog-provider')
         trackEvent('review_request_sent', { requestMethod: 'email' })
@@ -79,7 +91,6 @@ export default function SendRequestModal({
       setCustomerName('')
       setCustomerEmail('')
       setOptionalNote('')
-      onClose()
     } catch (err) {
       console.error('Send request error:', err)
       setError('Something went wrong. Please try again.')
@@ -149,6 +160,12 @@ export default function SendRequestModal({
             </div>
           )}
 
+          {success && (
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-800">
+              {success}
+            </div>
+          )}
+
           <div className="flex gap-3 pt-2">
             <button
               type="button"
@@ -165,6 +182,10 @@ export default function SendRequestModal({
               {isSubmitting ? 'Sending...' : 'Send Request'}
             </button>
           </div>
+
+          <p className="text-xs text-slate-500 pt-1">
+            ReviewFlo spaces out your review requests to keep your Google profile safe. We send up to 10 per day.
+          </p>
         </form>
       </div>
     </div>

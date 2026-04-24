@@ -52,6 +52,9 @@ export default async function handler(
     let sent = 0
     for (const req of pending || []) {
       const businessName = bizMap.get(req.business_id) || 'Your business'
+      console.log(
+        `[SURVEY] Triggering send for business ${req.business_id}, contact ${req.customer_email}, reason: reminder_3_days`
+      )
       const result = await sendReviewReminderEmail({
         customerName: req.customer_name,
         customerEmail: req.customer_email,
@@ -68,6 +71,9 @@ export default async function handler(
           })
           .eq('id', req.id)
         sent++
+        console.log(`[SURVEY] Send succeeded: messageId ${result.id ?? 'unknown'}`)
+      } else {
+        console.log(`[SURVEY] Send failed: ${String(result.error)}`)
       }
     }
 

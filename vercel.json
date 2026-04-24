@@ -5,6 +5,10 @@
       "schedule": "0 9 * * *"
     },
     {
+      "path": "/api/review-requests/process-scheduled",
+      "schedule": "0 * * * *"
+    },
+    {
       "path": "/api/cron/fetch-google-stats",
       "schedule": "0 0 * * *"
     },

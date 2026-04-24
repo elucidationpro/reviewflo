@@ -701,6 +701,19 @@ export async function sendAdminNotification(type: 'beta' | 'waitlist' | 'qualify
 // --- REVIEW REQUEST EMAILS (Pro tier) ---
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com';
+const REVIEW_REQUEST_FROM =
+  process.env.REVIEW_REQUEST_FROM ||
+  'Jeremy at ReviewFlo <jeremy@usereviewflo.com>';
+
+function getListUnsubscribeHeaders() {
+  const oneClickUrl = `${BASE_URL}/api/unsubscribe`;
+  const mailto = 'mailto:jeremy@usereviewflo.com?subject=Unsubscribe';
+  return {
+    'List-Unsubscribe': `<${mailto}>, <${oneClickUrl}>`,
+    // Not every provider supports it, but harmless if ignored
+    'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+  } as const;
+}
 
 export interface ReviewRequestEmailData {
   customerName: string;
@@ -714,6 +727,10 @@ export interface ReviewRequestEmailData {
 
 export async function sendReviewRequestEmail(data: ReviewRequestEmailData) {
   try {
+    if (!process.env.RESEND_API_KEY) {
+      console.error('[sendReviewRequestEmail] RESEND_API_KEY is not set');
+      return { success: false, error: 'Email service not configured' };
+    }
     const noteHtml = data.optionalNote
       ? `<p style="margin: 20px 0; padding: 15px; background: #f8fafc; border-left: 4px solid #94a3b8; border-radius: 4px;">${escapeHtml(data.optionalNote)}</p>`
       : '';
@@ -752,10 +769,12 @@ export async function sendReviewRequestEmail(data: ReviewRequestEmailData) {
     `;
 
     const { data: result, error } = await resend.emails.send({
-      from: `${data.businessName} via ReviewFlo <reviews@usereviewflo.com>`,
+      // Use a verified sender by default (some providers reject arbitrary "from" names/addresses).
+      from: REVIEW_REQUEST_FROM,
       to: data.customerEmail,
       subject: `How was your experience with ${data.businessName}?`,
       html,
+      headers: getListUnsubscribeHeaders(),
     });
 
     if (error) {
@@ -779,6 +798,10 @@ export interface ReviewReminderEmailData {
 
 export async function sendReviewReminderEmail(data: ReviewReminderEmailData) {
   try {
+    if (!process.env.RESEND_API_KEY) {
+      console.error('[sendReviewReminderEmail] RESEND_API_KEY is not set');
+      return { success: false, error: 'Email service not configured' };
+    }
     const ctaHref = data.trackingToken
       ? `${BASE_URL}/api/track/click?t=${data.trackingToken}`
       : data.reviewLink;
@@ -810,10 +833,11 @@ export async function sendReviewReminderEmail(data: ReviewReminderEmailData) {
     `;
 
     const { data: result, error } = await resend.emails.send({
-      from: `${data.businessName} via ReviewFlo <reviews@usereviewflo.com>`,
+      from: REVIEW_REQUEST_FROM,
       to: data.customerEmail,
       subject: `Quick reminder: Feedback for ${data.businessName}`,
       html,
+      headers: getListUnsubscribeHeaders(),
     });
 
     if (error) {

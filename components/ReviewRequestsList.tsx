@@ -4,8 +4,10 @@ import { canSendFromDashboard } from '../lib/tier-permissions'
 interface ReviewRequest {
   id: string
   customer_name: string
-  customer_email: string
-  sent_at: string
+  customer_email: string | null
+  sent_at: string | null
+  scheduled_for?: string | null
+  send_status?: 'pending' | 'scheduled' | 'sent' | 'failed'
   status: 'pending' | 'opened' | 'clicked' | 'completed' | 'feedback'
   reminder_sent: boolean
 }
@@ -24,6 +26,23 @@ const STATUS_COLORS: Record<string, string> = {
   clicked: 'bg-orange-100 text-orange-800',
   completed: 'bg-green-100 text-green-800',
   feedback: 'bg-gray-100 text-gray-800',
+}
+
+const SEND_STATUS_COLORS: Record<string, string> = {
+  scheduled: 'bg-indigo-100 text-indigo-800',
+  sent: 'bg-emerald-100 text-emerald-800',
+  failed: 'bg-red-100 text-red-800',
+  pending: 'bg-slate-100 text-slate-800',
+}
+
+function formatWhen(r: ReviewRequest): string {
+  const iso = r.send_status === 'scheduled' ? (r.scheduled_for || null) : (r.sent_at || null)
+  if (!iso) return '—'
+  try {
+    return new Date(iso).toLocaleString()
+  } catch {
+    return iso
+  }
 }
 
 export default function ReviewRequestsList({
@@ -169,7 +188,7 @@ export default function ReviewRequestsList({
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase">Customer</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase">Sent</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase">Delivery</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase">Status</th>
                 </tr>
               </thead>
@@ -178,10 +197,21 @@ export default function ReviewRequestsList({
                   <tr key={r.id} className="hover:bg-slate-50/50">
                     <td className="px-4 py-3">
                       <p className="font-medium text-slate-800">{r.customer_name}</p>
-                      <p className="text-sm text-slate-500">{r.customer_email}</p>
+                      <p className="text-sm text-slate-500">{r.customer_email || '—'}</p>
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-600">
-                      {new Date(r.sent_at).toLocaleDateString()}
+                      <div className="flex flex-col gap-1">
+                        <span>{formatWhen(r)}</span>
+                        {r.send_status && (
+                          <span
+                            className={`inline-flex w-fit px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                              SEND_STATUS_COLORS[r.send_status] || 'bg-slate-100 text-slate-800'
+                            }`}
+                          >
+                            {r.send_status === 'scheduled' ? 'scheduled' : r.send_status}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <span

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "verify:phase2": "ts-node scripts/verify-phase2.ts",
+    "verify:phase2:full": "ts-node scripts/verify-phase2.ts --test-reply"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.79.0",
@@ -34,6 +36,7 @@
     "eslint-config-next": "15.5.5",
     "sharp": "^0.34.5",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

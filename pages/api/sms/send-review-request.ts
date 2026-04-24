@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { sendReviewRequestSMS } from '../../../lib/sms-service'
 import { canUseSMS } from '../../../lib/tier-permissions'
+import { getNextAvailableSendSlot } from '../../../lib/drip-limiter'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -12,6 +13,20 @@ const supabaseAdmin = createClient(
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'
 
 const PHONE_REGEX = /^\+?1?\d{10,15}$/
+
+function formatScheduledFor(d: Date): string {
+  try {
+    return d.toLocaleString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    })
+  } catch {
+    return d.toISOString()
+  }
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -71,6 +86,47 @@ export default async function handler(
 
     const reviewLink = `${BASE_URL}/${business.slug}`
 
+    const slot = await getNextAvailableSendSlot({
+      businessId: business.id,
+      tier: business.tier as 'free' | 'pro' | 'ai',
+      supabaseAdmin,
+    })
+    const withinFiveMinutes = Math.abs(slot.getTime() - Date.now()) <= 5 * 60_000
+
+    if (!withinFiveMinutes) {
+      const { data: request, error: insertError } = await supabaseAdmin
+        .from('review_requests')
+        .insert({
+          business_id: business.id,
+          customer_name: customer_name.trim(),
+          customer_phone: phone,
+          customer_email: null,
+          optional_note: optional_note?.trim() || null,
+          review_link: reviewLink,
+          sent_via: 'sms',
+          status: 'pending',
+          send_status: 'scheduled',
+          scheduled_for: slot.toISOString(),
+          queued_at: new Date().toISOString(),
+          sent_at: null,
+        })
+        .select()
+        .single()
+
+      if (insertError) {
+        console.error('[sms/send-review-request] Insert error:', insertError)
+        return res.status(500).json({ error: 'Failed to queue SMS review request' })
+      }
+
+      return res.status(200).json({
+        success: true,
+        queued: true,
+        scheduledFor: slot.toISOString(),
+        message: `Your request is scheduled for ${formatScheduledFor(slot)}.`,
+        request,
+      })
+    }
+
     const result = await sendReviewRequestSMS(
       phone,
       customer_name.trim(),
@@ -94,6 +150,7 @@ export default async function handler(
         review_link: reviewLink,
         sent_via: 'sms',
         status: 'pending',
+        send_status: 'sent',
       })
       .select()
       .single()
@@ -103,7 +160,7 @@ export default async function handler(
       return res.status(500).json({ error: 'SMS sent but failed to record request' })
     }
 
-    return res.status(200).json({ success: true, request })
+    return res.status(200).json({ success: true, queued: false, request })
   } catch (error) {
     console.error('[sms/send-review-request] Error:', error)
     return res.status(500).json({ error: 'Internal server error' })
