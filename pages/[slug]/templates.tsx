@@ -9,6 +9,7 @@ import ReviewFloFooter from '../../components/ReviewFloFooter'
 import { trackEvent } from '../../lib/posthog-provider'
 import { getTemplateSlots } from '../../lib/tier-permissions'
 import { getReviewAccentColor, resolvePublicReviewFooter } from '../../lib/review-page-branding'
+import { REVIEW_TEMPLATES_ENABLED } from '../../lib/feature-flags'
 
 interface Business {
   id: string
@@ -50,8 +51,9 @@ export default function TemplatesPage({ business, templates }: PageProps) {
   const footer = resolvePublicReviewFooter(business)
   const displayLogoUrl = getDisplayLogoUrl(business)
   const hasPlatformLinks = !!(business.google_review_url || business.facebook_review_url || business.yelp_review_url || business.nextdoor_review_url)
+  const templatesEnabled = REVIEW_TEMPLATES_ENABLED
   const [reviewPath, setReviewPath] = useState<'write_own' | 'use_template' | null>(
-    business.skip_template_choice && hasPlatformLinks ? 'write_own' : null
+    !templatesEnabled || (business.skip_template_choice && hasPlatformLinks) ? 'write_own' : null
   )
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [copiedTemplate, setCopiedTemplate] = useState(false)
@@ -210,14 +212,14 @@ export default function TemplatesPage({ business, templates }: PageProps) {
                 Thanks for the 5-star rating!
               </p>
               <p className="text-gray-500 text-sm md:text-base lg:text-lg xl:text-xl">
-                {business.skip_template_choice
+                {!templatesEnabled || business.skip_template_choice
                   ? 'Choose where to leave your review:'
                   : 'How would you like to leave your review?'}
               </p>
             </div>
 
-            {/* STEP 1: Path Choice */}
-            {!reviewPath && (
+            {/* STEP 1: Path Choice (hidden when templates are disabled) */}
+            {templatesEnabled && !reviewPath && (
               <div className="space-y-3">
                 <button
                   onClick={() => {
@@ -322,7 +324,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
             )}
 
             {/* STEP 2B: Template Selection */}
-            {reviewPath === 'use_template' && !selectedTemplate && templates.length > 0 && (
+            {templatesEnabled && reviewPath === 'use_template' && !selectedTemplate && templates.length > 0 && (
               <div>
                 <button
                   onClick={() => setReviewPath(null)}
@@ -366,7 +368,7 @@ export default function TemplatesPage({ business, templates }: PageProps) {
             )}
 
             {/* STEP 2B Continued: Platform after Template */}
-            {reviewPath === 'use_template' && selectedTemplate && platforms.length > 0 && (
+            {templatesEnabled && reviewPath === 'use_template' && selectedTemplate && platforms.length > 0 && (
               <div>
                 <button
                   onClick={() => setSelectedTemplate(null)}

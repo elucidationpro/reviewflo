@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { REVIEW_TEMPLATES_ENABLED } from '@/lib/feature-flags';
 
 interface OnboardingProgressProps {
   businessId: string;
@@ -263,6 +264,7 @@ export default function OnboardingProgress({
   // Filter steps based on tier and ignored status
   const visibleSteps = allSteps.filter(step => {
     if (ignoredSteps.has(step.key)) return false;
+    if (step.key === 'templates' && !REVIEW_TEMPLATES_ENABLED) return false;
     if (step.tier === 'all') return true;
     if (step.tier === 'pro') return tier === 'pro' || tier === 'ai';
     if (step.tier === 'ai') return tier === 'ai';

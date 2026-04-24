@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ReviewFloFooter from './ReviewFloFooter'
+import { REVIEW_TEMPLATES_ENABLED } from '@/lib/feature-flags'
 
 interface ReviewTemplate {
   id: string
@@ -71,8 +72,10 @@ export default function ReviewPreview({
     { name: 'Nextdoor', url: nextdoorReviewUrl },
   ].filter((p): p is { name: string; url: string } => !!p.url)
 
-  const nonEmptyTemplates = templates.filter(t => t.template_text.trim())
+  const templatesEnabled = REVIEW_TEMPLATES_ENABLED
+  const nonEmptyTemplates = templatesEnabled ? templates.filter(t => t.template_text.trim()) : []
   const hasPlatformLinks = platforms.length > 0
+  const effectiveSkipTemplateChoice = !templatesEnabled || skipTemplateChoice
   const displayRating = hoveredRating ?? selectedRating ?? 0
   const displayName = businessName || 'Your Business'
   const accentColor =
@@ -95,7 +98,7 @@ export default function ReviewPreview({
     if (star <= 4) {
       setScreen('feedback')
     } else {
-      setReviewPath(skipTemplateChoice && hasPlatformLinks ? 'write_own' : null)
+      setReviewPath(effectiveSkipTemplateChoice && hasPlatformLinks ? 'write_own' : null)
       setScreen('five_star')
     }
   }
@@ -233,13 +236,13 @@ export default function ReviewPreview({
             </div>
             <p className="text-center font-semibold text-gray-900 text-sm mb-1">Thanks for the 5-star rating!</p>
             <p className="text-center text-gray-500 text-sm mb-6 pb-6 border-b border-gray-100">
-              {skipTemplateChoice && hasPlatformLinks
+              {effectiveSkipTemplateChoice && hasPlatformLinks
                 ? 'Choose where to leave your review:'
                 : 'How would you like to leave your review?'}
             </p>
 
             {/* Path choice */}
-            {!reviewPath && !skipTemplateChoice && (
+            {!reviewPath && !effectiveSkipTemplateChoice && (
               <div className="space-y-3">
                 <button
                   type="button"
@@ -282,7 +285,7 @@ export default function ReviewPreview({
             {/* Write own — platform selection */}
             {reviewPath === 'write_own' && (
               <div>
-                {!skipTemplateChoice && (
+                {!effectiveSkipTemplateChoice && (
                   <button type="button" onClick={() => setReviewPath(null)} className="mb-4 flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 cursor-pointer">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -315,7 +318,7 @@ export default function ReviewPreview({
             )}
 
             {/* Template selection */}
-            {reviewPath === 'use_template' && !selectedTemplate && (
+            {templatesEnabled && reviewPath === 'use_template' && !selectedTemplate && (
               <div>
                 <button type="button" onClick={() => setReviewPath(null)} className="mb-4 flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 cursor-pointer">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -345,7 +348,7 @@ export default function ReviewPreview({
             )}
 
             {/* Template + platform */}
-            {reviewPath === 'use_template' && selectedTemplate && (
+            {templatesEnabled && reviewPath === 'use_template' && selectedTemplate && (
               <div>
                 <button type="button" onClick={() => setSelectedTemplate(null)} className="mb-4 flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 cursor-pointer">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">

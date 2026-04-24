@@ -6,6 +6,7 @@ import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav'
 import SiteFooter from '@/components/SiteFooter'
 import ReviewPreview from '@/components/ReviewPreview'
 import { getDefaultReviewTemplates } from '@/lib/default-review-templates'
+import { REVIEW_TEMPLATES_ENABLED } from '@/lib/feature-flags'
 
 const DEMO_PLACEHOLDER_URLS = {
   google: 'https://www.google.com/maps',
@@ -17,7 +18,7 @@ export default function DemoPage() {
   const [businessName, setBusinessName] = useState('Your Business')
   const [primaryColor, setPrimaryColor] = useState('#4A3428')
   const [showBusinessName, setShowBusinessName] = useState(true)
-  const [useDefaultTemplates, setUseDefaultTemplates] = useState(true)
+  const [useDefaultTemplates, setUseDefaultTemplates] = useState(REVIEW_TEMPLATES_ENABLED)
   const [whiteLabelDemo, setWhiteLabelDemo] = useState(false)
   const [whiteLabelBrandName, setWhiteLabelBrandName] = useState('')
   const [whiteLabelBrandColor, setWhiteLabelBrandColor] = useState('#C9A961')
@@ -90,7 +91,7 @@ export default function DemoPage() {
         <title>Try the review flow — ReviewFlo</title>
         <meta
           name="description"
-          content="See how your customers experience ReviewFlo: stars, optional templates, and review links."
+          content="See how your customers experience ReviewFlo: stars and review links."
         />
         <meta name="robots" content="index, follow" />
       </Head>
@@ -104,8 +105,8 @@ export default function DemoPage() {
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Interactive demo</h1>
             <p className="text-gray-600 text-sm sm:text-base">
-              Add your business name and logo, then try the same flow your customers see after a job — stars,
-              optional review templates, and Google, Facebook, and Yelp. Nothing is saved.
+              Add your business name and logo, then try the same flow your customers see after a job — stars
+              and links to Google, Facebook, and Yelp. Nothing is saved.
             </p>
           </div>
 
@@ -190,27 +191,29 @@ export default function DemoPage() {
                     </button>
                   </label>
 
-                  <label className="flex items-center justify-between gap-4 cursor-pointer">
-                    <div>
-                      <span className="text-sm font-medium text-gray-800 block">Default review templates</span>
-                      <span className="text-xs text-gray-500">Pre-written copy with your business name filled in</span>
-                    </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={useDefaultTemplates}
-                      onClick={() => setUseDefaultTemplates((v) => !v)}
-                      className={`relative inline-flex h-7 w-12 shrink-0 rounded-full transition-colors ${
-                        useDefaultTemplates ? 'bg-[#4A3428]' : 'bg-gray-200'
-                      }`}
-                    >
-                      <span
-                        className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform mt-1 ${
-                          useDefaultTemplates ? 'translate-x-6' : 'translate-x-1'
+                  {REVIEW_TEMPLATES_ENABLED && (
+                    <label className="flex items-center justify-between gap-4 cursor-pointer">
+                      <div>
+                        <span className="text-sm font-medium text-gray-800 block">Default review templates</span>
+                        <span className="text-xs text-gray-500">Pre-written copy with your business name filled in</span>
+                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={useDefaultTemplates}
+                        onClick={() => setUseDefaultTemplates((v) => !v)}
+                        className={`relative inline-flex h-7 w-12 shrink-0 rounded-full transition-colors ${
+                          useDefaultTemplates ? 'bg-[#4A3428]' : 'bg-gray-200'
                         }`}
-                      />
-                    </button>
-                  </label>
+                      >
+                        <span
+                          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform mt-1 ${
+                            useDefaultTemplates ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </label>
+                  )}
 
                   <div className="border-t border-gray-100 pt-5 space-y-3">
                     <label className="flex items-center justify-between gap-4 cursor-pointer">
