@@ -4,7 +4,7 @@ import { getPublishedSlugs } from '@/lib/blog-schedule'
 import { getIndustrySlugs } from '@/lib/industries'
 
 // IMPORTANT: this should match the primary canonical domain.
-const SITE = 'https://reviewflo.com'
+const SITE = 'https://usereviewflo.com'
 
 /**
  * Public, fixed routes (Pages Router) — excludes dynamic [slug], admin, dashboard, and API routes.
