@@ -45,17 +45,55 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.redirect(`/settings?error=${encodeURIComponent('Missing authorization code')}`);
     }
 
-    // State contains the user's session token
+    // State contains the user's session token, optionally followed by
+    // `|<businessId>` to target a specific location (multi-location flow).
     if (!state || typeof state !== 'string') {
       return res.redirect(`/settings?error=${encodeURIComponent('Invalid session')}`);
     }
 
+    const pipeIdx = state.indexOf('|');
+    const sessionToken = pipeIdx === -1 ? state : state.slice(0, pipeIdx);
+    const targetBusinessId = pipeIdx === -1 ? null : state.slice(pipeIdx + 1) || null;
+
     // Verify the session token and get the user
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(state);
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(sessionToken);
 
     if (authError || !user) {
       console.error('[Google OAuth] Invalid session:', authError);
       return res.redirect(`/settings?error=${encodeURIComponent('Invalid session')}`);
+    }
+
+    // Resolve the target business row. If a businessId is supplied, validate
+    // ownership; otherwise fall back to the primary (parent_business_id IS NULL).
+    let targetBusiness: { id: string; google_place_id: string | null; google_review_url: string | null; google_business_name: string | null } | null = null;
+    if (targetBusinessId) {
+      const { data, error: lookupErr } = await supabaseAdmin
+        .from('businesses')
+        .select('id, user_id, google_place_id, google_review_url, google_business_name')
+        .eq('id', targetBusinessId)
+        .single();
+      if (lookupErr || !data || data.user_id !== user.id) {
+        console.error('[Google OAuth] Invalid businessId in state:', targetBusinessId);
+        return res.redirect(`/settings?error=${encodeURIComponent('Invalid location')}`);
+      }
+      targetBusiness = {
+        id: data.id,
+        google_place_id: data.google_place_id,
+        google_review_url: data.google_review_url,
+        google_business_name: data.google_business_name,
+      };
+    } else {
+      const { data } = await supabaseAdmin
+        .from('businesses')
+        .select('id, google_place_id, google_review_url, google_business_name')
+        .eq('user_id', user.id)
+        .is('parent_business_id', null)
+        .single();
+      if (data) targetBusiness = data;
+    }
+
+    if (!targetBusiness) {
+      return res.redirect(`/settings?error=${encodeURIComponent('No business found for this account')}`);
     }
 
     // Exchange authorization code for tokens
@@ -69,21 +107,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Calculate token expiration time
     const expiresAt = new Date(Date.now() + tokens.expiresIn * 1000);
 
-    const { data: existingBusiness } = await supabaseAdmin
-      .from('businesses')
-      .select('google_place_id, google_review_url, google_business_name')
-      .eq('user_id', user.id)
-      .single();
-
     const newPlaceId = businessData?.placeId ?? null;
-    const mergedPlaceId = newPlaceId ?? existingBusiness?.google_place_id ?? null;
+    const mergedPlaceId = newPlaceId ?? targetBusiness.google_place_id ?? null;
     const googleReviewUrl = newPlaceId
       ? `https://search.google.com/local/writereview?placeid=${newPlaceId}`
-      : existingBusiness?.google_review_url ?? null;
+      : targetBusiness.google_review_url ?? null;
     const mergedBusinessName =
-      businessData?.businessName ?? existingBusiness?.google_business_name ?? null;
+      businessData?.businessName ?? targetBusiness.google_business_name ?? null;
 
-    // Store tokens, Place ID, and review URL in database
+    // Store tokens, Place ID, and review URL on the specific location row only.
     const { error: updateError } = await supabaseAdmin
       .from('businesses')
       .update({
@@ -94,7 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         google_oauth_expires_at: expiresAt.toISOString(),
         google_business_name: mergedBusinessName,
       })
-      .eq('user_id', user.id);
+      .eq('id', targetBusiness.id);
 
     if (updateError) {
       console.error('[Google OAuth] Failed to update business:', updateError);

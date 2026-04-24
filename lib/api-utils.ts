@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import type { User } from '@supabase/supabase-js'
 import type { Tier } from './tier-permissions'
+import { getBusinessForRequest } from './business-account'
 
 export const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -50,16 +51,23 @@ export async function getAuthContext(
     return null
   }
 
-  const { data: business, error: bizError } = await supabaseAdmin
-    .from('businesses')
-    .select(select)
-    .eq('user_id', user.id)
-    .single()
+  // Accept optional businessId from query or body for multi-location flows;
+  // falls back to the user's primary business row.
+  const reqBody = (req.body as Record<string, unknown> | null | undefined) ?? null
+  const bodyBusinessId = reqBody && typeof reqBody.businessId === 'string' ? reqBody.businessId : null
+  const queryBusinessId = typeof req.query.businessId === 'string' ? req.query.businessId : null
+  const businessId = bodyBusinessId || queryBusinessId
 
-  if (bizError || !business) {
-    apiError(res, 404, 'Business not found')
+  const { row: business, error: lookupErr } = await getBusinessForRequest(
+    supabaseAdmin,
+    user.id,
+    businessId,
+    select
+  )
+  if (!business) {
+    apiError(res, lookupErr === 'not found' ? 403 : 404, 'Business not found')
     return null
   }
 
-  return { user, business: business as unknown as Record<string, unknown> }
+  return { user, business }
 }
