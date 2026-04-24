@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import LocationSwitcher from './LocationSwitcher'
 
 interface AppLayoutProps {
   businessName?: string
@@ -46,6 +47,9 @@ function SidebarInner({ businessName, tier, pendingFeedbackCount, onLogout, path
           >
             {tierLabel}
           </span>
+          <div className="mt-3">
+            <LocationSwitcher />
+          </div>
         </div>
       )}
 

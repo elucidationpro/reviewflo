@@ -56,3 +56,41 @@ export function isValidSlug(slug: string): boolean {
 export function normalizeSlugForValidation(slug: string): string {
   return slug.toLowerCase().trim().replace(/-+/g, '-');
 }
+
+/**
+ * Generic industry/filler words dropped when generating a multi-location slug.
+ * Goal: keep the distinctive brand word + append the city, e.g.
+ *   "Serenity Medical Spa" + "Lake Ozark" → "serenity-lake-ozark"
+ */
+const LOCATION_FILLER_WORDS = new Set([
+  'the', 'a', 'an', 'of', 'and',
+  'medical', 'spa', 'salon', 'clinic', 'dental', 'dentist', 'dentistry',
+  'health', 'wellness', 'care', 'therapy', 'studio', 'shop', 'store',
+  'services', 'service', 'solutions', 'company', 'co', 'group', 'firm',
+  'center', 'centre', 'office', 'llc', 'inc', 'corp', 'ltd',
+  'pharmacy', 'market', 'bar', 'grill', 'cafe', 'restaurant',
+]);
+
+/**
+ * Smart slug for a new location. Keeps the distinctive brand word(s) from the
+ * business name and appends the city, capped at 30 chars.
+ */
+export function generateLocationSlug(businessName: string, city?: string): string {
+  const baseSlug = generateSlugFromBusinessName(businessName || '');
+  const baseWords = baseSlug.split('-').filter(Boolean);
+  const distinctive = baseWords.filter((w) => !LOCATION_FILLER_WORDS.has(w));
+  const brandWords = (distinctive.length > 0 ? distinctive : baseWords).slice(0, 2);
+
+  const citySlug = city ? generateSlugFromBusinessName(city) : '';
+  const cityWords = citySlug.split('-').filter(Boolean);
+
+  let combined = [...brandWords, ...cityWords].join('-');
+  if (combined.length > 30) {
+    // Keep the city intact; trim the brand side.
+    const cityPart = cityWords.join('-');
+    const budget = Math.max(3, 30 - (cityPart ? cityPart.length + 1 : 0));
+    const brandPart = brandWords.join('-').substring(0, budget).replace(/-+$/g, '');
+    combined = cityPart ? `${brandPart}-${cityPart}` : brandPart;
+  }
+  return combined.replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 30);
+}
