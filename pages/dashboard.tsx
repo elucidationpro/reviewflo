@@ -11,6 +11,7 @@ import RecentActivity from '@/components/RecentActivity'
 import AppLayout from '@/components/AppLayout'
 import { canSendFromDashboard, canAccessGoogleStats } from '../lib/tier-permissions'
 import { consumeGoogleAdsSignupConversionFromQuery } from '@/lib/google-ads'
+import { useBusiness } from '@/contexts/BusinessContext'
 import type { GbpFullReview } from './api/google-reviews/list'
 
 interface Business {
@@ -59,6 +60,7 @@ function Card({
 
 export default function DashboardPage() {
   const router = useRouter()
+  const { selectedBusinessId } = useBusiness()
   const [isLoading, setIsLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
   const [pendingFeedbackCount, setPendingFeedbackCount] = useState(0)
@@ -77,8 +79,9 @@ export default function DashboardPage() {
 
   useEffect(() => {
     checkAuthAndFetchData()
+    // Re-fetch when the selected location changes so KPIs/feedback counts scope correctly.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [selectedBusinessId])
 
   useEffect(() => {
     if (!router.isReady) return
@@ -99,7 +102,10 @@ export default function DashboardPage() {
       const user = session.user
 
       console.time('[Dashboard] Business Fetch')
-      const res = await fetch('/api/my-business', {
+      const url = selectedBusinessId
+        ? `/api/my-business?businessId=${encodeURIComponent(selectedBusinessId)}`
+        : '/api/my-business'
+      const res = await fetch(url, {
         headers: { 'Authorization': `Bearer ${session.access_token}` },
       })
       console.timeEnd('[Dashboard] Business Fetch')
@@ -205,8 +211,9 @@ export default function DashboardPage() {
         startOfMonth.setDate(1)
         startOfMonth.setHours(0, 0, 0, 0)
 
+        const statsUrl = `/api/google-stats/fetch?businessId=${encodeURIComponent(business.id)}`
         const [statsRes, reqCountResult] = await Promise.all([
-          fetch('/api/google-stats/fetch', {
+          fetch(statsUrl, {
             headers: { Authorization: `Bearer ${session.access_token}` },
           }),
           supabase
@@ -241,7 +248,7 @@ export default function DashboardPage() {
         }
 
         setGbpReviewsLoading(true)
-        const listRes = await fetch('/api/google-reviews/list', {
+        const listRes = await fetch(`/api/google-reviews/list?businessId=${encodeURIComponent(business.id)}`, {
           headers: { Authorization: `Bearer ${session.access_token}` },
         })
         setGbpReviewsLoading(false)

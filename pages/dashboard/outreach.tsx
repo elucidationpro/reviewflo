@@ -13,6 +13,7 @@ import AppLayout from '../../components/AppLayout'
 import ReviewRequestsList from '../../components/ReviewRequestsList'
 import SendRequestModal from '../../components/SendRequestModal'
 import { canSendFromDashboard } from '../../lib/tier-permissions'
+import { useBusiness } from '@/contexts/BusinessContext'
 
 interface Business {
   id: string
@@ -56,6 +57,7 @@ function InfoDot({ text }: { text: string }) {
 
 export default function OutreachPage() {
   const router = useRouter()
+  const { selectedBusinessId } = useBusiness()
   const [loading, setLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
   const [pendingFeedbackCount, setPendingFeedbackCount] = useState(0)
@@ -72,7 +74,7 @@ export default function OutreachPage() {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) return
     try {
-      const res = await fetch(`/api/analytics/dashboard-data?days=${days}`, {
+      const res = await fetch(`/api/analytics/dashboard-data?days=${days}&businessId=${encodeURIComponent(biz.id)}`, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       })
       if (!res.ok) return
@@ -89,21 +91,27 @@ export default function OutreachPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { router.replace('/login'); return }
 
-      const [bizRes, feedbackRes] = await Promise.all([
-        fetch('/api/my-business', { headers: { Authorization: `Bearer ${session.access_token}` } }),
-        supabase.from('feedback').select('*', { count: 'exact', head: true }).eq('is_resolved', false),
-      ])
+      const bizUrl = selectedBusinessId
+        ? `/api/my-business?businessId=${encodeURIComponent(selectedBusinessId)}`
+        : '/api/my-business'
+      const bizRes = await fetch(bizUrl, { headers: { Authorization: `Bearer ${session.access_token}` } })
       if (!bizRes.ok) { router.replace('/login'); return }
       const bizJson = await bizRes.json()
       const biz = bizJson.business as Business
       setBusiness(biz)
+
+      const feedbackRes = await supabase
+        .from('feedback')
+        .select('*', { count: 'exact', head: true })
+        .eq('business_id', biz.id)
+        .eq('is_resolved', false)
       setPendingFeedbackCount(feedbackRes.count ?? 0)
 
       await fetchData(biz, dateRange)
       setLoading(false)
     })()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [selectedBusinessId])
 
   useEffect(() => {
     if (!business) return
@@ -298,7 +306,6 @@ export default function OutreachPage() {
         businessName={business.business_name}
         onClose={() => setShowSendModal(false)}
         onSuccess={() => {
-          setShowSendModal(false)
           setRefetchTrigger((t) => t + 1)
           if (business) fetchData(business, dateRange)
         }}

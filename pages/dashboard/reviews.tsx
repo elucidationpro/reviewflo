@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import AppLayout from '../../components/AppLayout'
 import { canAccessGoogleStats } from '../../lib/tier-permissions'
+import { useBusiness } from '@/contexts/BusinessContext'
 import type { GbpFullReview } from '../api/google-reviews/list'
 
 const STAR_RATING_TO_NUMBER: Record<string, number> = {
@@ -39,6 +40,7 @@ function formatDate(iso: string): string {
 
 export default function ReviewsPage() {
   const router = useRouter()
+  const { selectedBusinessId } = useBusiness()
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -69,19 +71,29 @@ export default function ReviewsPage() {
 
   useEffect(() => {
     async function load() {
+      setLoading(true)
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { router.replace('/login'); return }
 
-      const [bizRes, feedbackRes] = await Promise.all([
-        fetch('/api/my-business', { headers: { Authorization: `Bearer ${session.access_token}` } }),
-        supabase.from('feedback').select('*', { count: 'exact', head: true }).eq('is_resolved', false),
-      ])
+      const bizUrl = selectedBusinessId
+        ? `/api/my-business?businessId=${encodeURIComponent(selectedBusinessId)}`
+        : '/api/my-business'
+      const bizRes = await fetch(bizUrl, { headers: { Authorization: `Bearer ${session.access_token}` } })
 
       if (!bizRes.ok) { router.replace('/login'); return }
       const bizJson = await bizRes.json()
       const biz = bizJson.business
       setBusiness(biz)
-      setPendingFeedbackCount(feedbackRes.count ?? 0)
+
+      // Scope pending feedback count to the selected location (prior query was unscoped).
+      if (biz?.id) {
+        const feedbackRes = await supabase
+          .from('feedback')
+          .select('*', { count: 'exact', head: true })
+          .eq('business_id', biz.id)
+          .eq('is_resolved', false)
+        setPendingFeedbackCount(feedbackRes.count ?? 0)
+      }
 
       if (!canAccessGoogleStats(biz?.tier)) {
         setError('Reviews are available on Pro and AI tiers.')
@@ -89,7 +101,10 @@ export default function ReviewsPage() {
         return
       }
 
-      const reviewsRes = await fetch('/api/google-reviews/list', {
+      const reviewsUrl = biz?.id
+        ? `/api/google-reviews/list?businessId=${encodeURIComponent(biz.id)}`
+        : '/api/google-reviews/list'
+      const reviewsRes = await fetch(reviewsUrl, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       })
       const reviewsJson = await reviewsRes.json()
@@ -105,7 +120,7 @@ export default function ReviewsPage() {
     }
     load()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [selectedBusinessId])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()

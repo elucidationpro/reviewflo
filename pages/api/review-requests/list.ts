@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
+import { getBusinessForRequest } from '../../../lib/business-account'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -29,15 +30,17 @@ export default async function handler(
       return res.status(401).json({ error: 'Unauthorized' })
     }
 
-    const { data: business } = await supabaseAdmin
-      .from('businesses')
-      .select('id')
-      .eq('user_id', user.id)
-      .single()
-
-    if (!business) {
-      return res.status(404).json({ error: 'Business not found' })
+    const businessId = typeof req.query.businessId === 'string' ? req.query.businessId : null
+    const { row: businessRow, error: lookupErr } = await getBusinessForRequest(
+      supabaseAdmin,
+      user.id,
+      businessId,
+      'id'
+    )
+    if (!businessRow) {
+      return res.status(lookupErr === 'not found' ? 403 : 404).json({ error: 'Business not found' })
     }
+    const business = businessRow as { id: string }
 
     const page = Math.max(1, parseInt(String(req.query.page || '1'), 10))
     const status = req.query.status as string | undefined
@@ -48,7 +51,7 @@ export default async function handler(
       .from('review_requests')
       .select('*', { count: 'exact' })
       .eq('business_id', business.id)
-      .order('sent_at', { ascending: false })
+      .order('created_at', { ascending: false })
       .range(offset, offset + PAGE_SIZE - 1)
 
     if (status && ['pending', 'opened', 'clicked', 'completed', 'feedback'].includes(status)) {

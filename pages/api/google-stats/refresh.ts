@@ -7,6 +7,7 @@ import {
   getPlaceIdFromGoogleBusinessProfile,
   fetchAllReviewsFromBusinessProfile,
 } from '../../../lib/google-business-profile'
+import { getBusinessForRequest } from '../../../lib/business-account'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -47,13 +48,31 @@ export default async function handler(
       return res.status(401).json({ error: 'Unauthorized' })
     }
 
-    const { data: business } = await supabaseAdmin
-      .from('businesses')
-      .select('id, google_place_id, google_review_url, tier, google_oauth_refresh_token, google_oauth_access_token, google_oauth_expires_at')
-      .eq('user_id', user.id)
-      .single()
-
-    if (!business || !canAccessGoogleStats(business.tier as 'free' | 'pro' | 'ai')) {
+    const businessId =
+      typeof req.body?.businessId === 'string'
+        ? req.body.businessId
+        : typeof req.query.businessId === 'string'
+        ? req.query.businessId
+        : null
+    const { row: businessRow, error: lookupErr } = await getBusinessForRequest(
+      supabaseAdmin,
+      user.id,
+      businessId,
+      'id, google_place_id, google_review_url, tier, google_oauth_refresh_token, google_oauth_access_token, google_oauth_expires_at'
+    )
+    if (!businessRow) {
+      return res.status(lookupErr === 'not found' ? 403 : 404).json({ error: 'Business not found' })
+    }
+    const business = businessRow as {
+      id: string
+      google_place_id: string | null
+      google_review_url: string | null
+      tier: string | null
+      google_oauth_refresh_token: string | null
+      google_oauth_access_token: string | null
+      google_oauth_expires_at: string | null
+    }
+    if (!canAccessGoogleStats(business.tier as 'free' | 'pro' | 'ai')) {
       return res.status(403).json({ error: 'Pro or AI tier required' })
     }
 

@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { supabase } from '../lib/supabase'
 import { trackEvent } from '../lib/posthog-provider'
 import AppLayout from '@/components/AppLayout'
+import { useBusiness } from '@/contexts/BusinessContext'
 
 interface Business {
   id: string
@@ -26,6 +27,7 @@ interface Feedback {
 
 export default function FeedbackPage() {
   const router = useRouter()
+  const { selectedBusinessId } = useBusiness()
   const [isLoading, setIsLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
   const [feedbackList, setFeedbackList] = useState<Feedback[]>([])
@@ -34,7 +36,7 @@ export default function FeedbackPage() {
   useEffect(() => {
     checkAuthAndFetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [selectedBusinessId])
 
   const checkAuthAndFetchData = async () => {
     try {
@@ -44,7 +46,10 @@ export default function FeedbackPage() {
         return
       }
 
-      const res = await fetch('/api/my-business', {
+      const bizUrl = selectedBusinessId
+        ? `/api/my-business?businessId=${encodeURIComponent(selectedBusinessId)}`
+        : '/api/my-business'
+      const res = await fetch(bizUrl, {
         headers: { 'Authorization': `Bearer ${session.access_token}` },
       })
 

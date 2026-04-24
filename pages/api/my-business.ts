@@ -119,14 +119,24 @@ export default async function handler(
       return res.status(200).json({ business: null, locations: [], maxLocations: 1 })
     }
 
+    // Tier is always read from the primary row — child locations inherit the account tier.
     const tier = (primary.tier as 'free' | 'pro' | 'ai' | undefined) || 'free'
     const maxLocations = getMaxBusinessLocations(tier)
+
+    // Optional businessId lets callers request a specific location's full row
+    // instead of the primary. Falls back to primary when absent or unowned.
+    const requestedBusinessId =
+      typeof req.query.businessId === 'string' ? req.query.businessId : null
+    const target =
+      (requestedBusinessId && rows.find((r) => r.id === requestedBusinessId)) || primary
 
     const summaries = rows.map((r) => ({
       id: String(r.id),
       business_name: String(r.business_name ?? ''),
       slug: String(r.slug ?? ''),
       is_primary: r.id === primary.id,
+      google_connected: !!r.google_oauth_refresh_token,
+      google_business_name: (r.google_business_name as string | null) ?? null,
     }))
 
     const ordered = [
@@ -135,12 +145,18 @@ export default async function handler(
     ]
 
     // Derive GBP connection server-side so we never send the refresh token to the client
-    const googleConnected = !!primary.google_oauth_refresh_token
-    const googleBusinessName = (primary.google_business_name as string | null) ?? null
-    const { google_oauth_refresh_token: _omit, ...primarySafe } = primary as Record<string, unknown>
+    const googleConnected = !!target.google_oauth_refresh_token
+    const googleBusinessName = (target.google_business_name as string | null) ?? null
+    const { google_oauth_refresh_token: _omit, ...targetSafe } = target as Record<string, unknown>
 
     return res.status(200).json({
-      business: { ...primarySafe, google_connected: googleConnected, google_business_name: googleBusinessName },
+      business: {
+        ...targetSafe,
+        // Tier flows from the primary/root so child-location views still see the account tier.
+        tier,
+        google_connected: googleConnected,
+        google_business_name: googleBusinessName,
+      },
       locations: ordered,
       maxLocations,
     })

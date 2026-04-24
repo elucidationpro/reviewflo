@@ -9,6 +9,9 @@ import AppLayout from '@/components/AppLayout'
 import ReviewPreview from '@/components/ReviewPreview'
 import AITemplateGenerator from '../components/AITemplateGenerator'
 import AIReviewResponseGenerator from '../components/AIReviewResponseGenerator'
+import LocationsSection from '../components/LocationsSection'
+import { useBusiness } from '@/contexts/BusinessContext'
+import { REVIEW_TEMPLATES_ENABLED } from '@/lib/feature-flags'
 
 interface Business {
   id: string
@@ -304,6 +307,7 @@ const inputCls =
 
 export default function SettingsPage() {
   const router = useRouter()
+  const { selectedBusinessId, locations, maxLocations, refresh: refreshBusiness } = useBusiness()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -314,7 +318,7 @@ export default function SettingsPage() {
   const [planError, setPlanError] = useState('')
   const [showManualGoogle, setShowManualGoogle] = useState(false)
   const [activeSection, setActiveSection] = useState<
-    'profile' | 'branding' | 'links' | 'flow' | 'plan' | 'sms' | 'crm' | 'ai-features'
+    'profile' | 'branding' | 'links' | 'flow' | 'plan' | 'sms' | 'crm' | 'ai-features' | 'locations'
   >('branding')
   const [ownerName, setOwnerName] = useState('')
   const [accountEmail, setAccountEmail] = useState('')
@@ -387,7 +391,10 @@ export default function SettingsPage() {
           return
         }
 
-        const myBusinessRes = await fetch('/api/my-business', {
+        const myBusinessUrl = selectedBusinessId
+          ? `/api/my-business?businessId=${encodeURIComponent(selectedBusinessId)}`
+          : '/api/my-business'
+        const myBusinessRes = await fetch(myBusinessUrl, {
           headers: { Authorization: `Bearer ${session.access_token}` },
         })
         const myBusinessPayload = await myBusinessRes.json().catch(() => ({})) as {
@@ -472,7 +479,7 @@ export default function SettingsPage() {
     }
 
     fetchData()
-  }, [router])
+  }, [router, selectedBusinessId])
 
   const handlePlanPreferenceClick = async (tier: 'pro' | 'ai' | null) => {
     setPlanError('')
@@ -754,6 +761,16 @@ export default function SettingsPage() {
       icon: (
         <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        </svg>
+      ),
+    },
+    {
+      id: 'locations' as const,
+      label: 'Locations',
+      icon: (
+        <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       ),
     },
@@ -1078,7 +1095,10 @@ export default function SettingsPage() {
                             const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID || 'YOUR_CLIENT_ID'
                             const redirectUri = `${window.location.origin}/api/auth/google/callback`
                             const scope = 'https://www.googleapis.com/auth/business.manage'
-                            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(session.access_token)}&access_type=offline&prompt=consent`
+                            // Encode businessId into state so the callback writes tokens only to the
+                            // currently-selected location, not every row for the user.
+                            const stateValue = `${session.access_token}|${businessData.id}`
+                            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(stateValue)}&access_type=offline&prompt=consent`
                             window.location.href = authUrl
                           }}
                           className="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-800 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm cursor-pointer"
@@ -1227,44 +1247,56 @@ export default function SettingsPage() {
               {/* ══ REVIEW FLOW ══ */}
               {activeSection === 'flow' && (
                 <>
-                  <Card title="Flow Settings">
-                    <Toggle
-                      id="includeTemplateChoice"
-                      checked={!businessData.skip_template_choice}
-                      onChange={() => setBusinessData({ ...businessData, skip_template_choice: !businessData.skip_template_choice })}
-                      label="Show review templates"
-                      description="When on, customers can pick a pre-written template or write their own before opening your review link. When off, they go straight to your review platforms after 5 stars."
-                    />
-                  </Card>
+                  {REVIEW_TEMPLATES_ENABLED && (
+                    <Card title="Flow Settings">
+                      <Toggle
+                        id="includeTemplateChoice"
+                        checked={!businessData.skip_template_choice}
+                        onChange={() => setBusinessData({ ...businessData, skip_template_choice: !businessData.skip_template_choice })}
+                        label="Show review templates"
+                        description="When on, customers can pick a pre-written template or write their own before opening your review link. When off, they go straight to your review platforms after 5 stars."
+                      />
+                    </Card>
+                  )}
 
-                  <Card title={`Review Templates${getTemplateSlots(businessData.tier) === 1 ? ' (Free: 1 template)' : ''}`}>
-                    <div className="space-y-4">
-                      {templates.slice(0, getTemplateSlots(businessData.tier)).map((template, index) => (
-                        <Field key={template.platform} label={`Template ${index + 1}`} htmlFor={`template-${template.platform}`}>
-                          <textarea
-                            id={`template-${template.platform}`}
-                            value={template.template_text}
-                            onChange={(e) => {
-                              const newTemplates = [...templates]
-                              newTemplates[index] = { ...newTemplates[index], template_text: e.target.value }
-                              setTemplates(newTemplates)
-                            }}
-                            rows={3}
-                            className={inputCls}
-                            placeholder={`Template ${index + 1} — customers can copy and paste this when leaving a review`}
-                          />
-                        </Field>
-                      ))}
-                    </div>
-                    {getTemplateSlots(businessData.tier) === 1 && (
-                      <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p className="text-xs text-amber-800">
-                          Want 3 templates?{' '}
-                          <Link href="/#pricing" className="font-semibold hover:underline">Upgrade to Pro →</Link>
-                        </p>
+                  {REVIEW_TEMPLATES_ENABLED && (
+                    <Card title={`Review Templates${getTemplateSlots(businessData.tier) === 1 ? ' (Free: 1 template)' : ''}`}>
+                      <div className="space-y-4">
+                        {templates.slice(0, getTemplateSlots(businessData.tier)).map((template, index) => (
+                          <Field key={template.platform} label={`Template ${index + 1}`} htmlFor={`template-${template.platform}`}>
+                            <textarea
+                              id={`template-${template.platform}`}
+                              value={template.template_text}
+                              onChange={(e) => {
+                                const newTemplates = [...templates]
+                                newTemplates[index] = { ...newTemplates[index], template_text: e.target.value }
+                                setTemplates(newTemplates)
+                              }}
+                              rows={3}
+                              className={inputCls}
+                              placeholder={`Template ${index + 1} — customers can copy and paste this when leaving a review`}
+                            />
+                          </Field>
+                        ))}
                       </div>
-                    )}
-                  </Card>
+                      {getTemplateSlots(businessData.tier) === 1 && (
+                        <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                          <p className="text-xs text-amber-800">
+                            Want 3 templates?{' '}
+                            <Link href="/#pricing" className="font-semibold hover:underline">Upgrade to Pro →</Link>
+                          </p>
+                        </div>
+                      )}
+                    </Card>
+                  )}
+
+                  {!REVIEW_TEMPLATES_ENABLED && (
+                    <Card title="Review Flow">
+                      <p className="text-sm text-gray-600">
+                        After a 5-star rating, customers go straight to your review platforms (Google, Facebook, Yelp).
+                      </p>
+                    </Card>
+                  )}
                 </>
               )}
 
@@ -1491,23 +1523,25 @@ export default function SettingsPage() {
 
               {activeSection === 'ai-features' && businessData.tier === 'ai' && (
                 <>
-                  <Card title="AI Template Generator">
-                    <div className="space-y-4">
-                      <p className="text-sm text-gray-600">
-                        Generate personalized review request templates using AI. Create custom messages for email or SMS based on your business type and preferred tone.
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setShowAITemplateGenerator(true)}
-                        className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                        </svg>
-                        Generate AI Template
-                      </button>
-                    </div>
-                  </Card>
+                  {REVIEW_TEMPLATES_ENABLED && (
+                    <Card title="AI Template Generator">
+                      <div className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                          Generate personalized review request templates using AI. Create custom messages for email or SMS based on your business type and preferred tone.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setShowAITemplateGenerator(true)}
+                          className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                          </svg>
+                          Generate AI Template
+                        </button>
+                      </div>
+                    </Card>
+                  )}
 
                   <Card title="AI Review Response Generator">
                     <div className="space-y-4">
@@ -1644,6 +1678,15 @@ export default function SettingsPage() {
                 </div>
               )}
               {activeSection === 'plan' && <div className="pb-8" />}
+
+              {activeSection === 'locations' && (
+                <LocationsSection
+                  tier={businessData.tier}
+                  locations={locations}
+                  maxLocations={maxLocations}
+                  onChange={refreshBusiness}
+                />
+              )}
 
             </form>
           </div>{/* end section content */}
