@@ -439,7 +439,7 @@ export default function LandingPage() {
                 Smart Routing
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Customers rate their experience. 5-star ratings go straight to your Google review page. 1–4 star ratings go to a short private feedback form — and you get an instant alert so you can reach out. The Google link is always visible on every screen, so every customer can leave a public review if they choose.
+                Customers rate their experience. 5-star ratings go straight to Google. 1–4 star ratings go to a short private feedback form, and you get an instant alert to reach out.
               </p>
             </div>
 
@@ -603,6 +603,7 @@ export default function LandingPage() {
               {
                 icon: RefreshCcw,
                 title: 'Automated Follow-Ups',
+                comingSoon: true,
                 description:
                   "ReviewFlo sends a reminder a few days later if they haven't responded yet. Set it and forget it.",
               },
@@ -615,45 +616,49 @@ export default function LandingPage() {
               {
                 icon: Users,
                 title: 'Past Customer Campaigns',
+                comingSoon: true,
                 description:
                   "Upload your customer list and let ReviewFlo reach out to everyone who's worked with you. Build years of social proof in weeks.",
               },
               {
                 icon: BarChart3,
                 title: 'Google Business Profile Integration',
+                comingSoon: true,
                 description:
                   'Connect your Google Business Profile and see your rating, review count, and reply rate directly in your dashboard.',
               },
               {
                 icon: Globe,
                 title: 'Reply to Reviews',
+                comingSoon: true,
                 description:
-                  'Read and respond to every Google review without leaving ReviewFlo. AI tier gets pre-drafted replies.',
+                  'Read and respond to every Google review without leaving ReviewFlo.',
               },
               {
                 icon: MapPin,
                 title: 'Multi-Location Support',
+                comingSoon: true,
                 description:
                   'Manage multiple business locations from one account. Each location gets its own review link, stats, and outreach queue.',
               },
               {
                 icon: MessageCircle,
                 title: 'SMS Outreach',
-                badge: 'AI tier',
+                comingSoon: true,
                 description:
                   "Send review requests via text message for dramatically higher open rates. Automatically paced to stay within Google's guidelines.",
               },
               {
                 icon: Sparkles,
                 title: 'AI Review Responses',
-                badge: 'AI tier',
+                comingSoon: true,
                 description:
                   'AI drafts a reply to each review in your voice. One click to post.',
               },
               {
                 icon: Sparkles,
                 title: 'Sentiment & Theme Analysis',
-                badge: 'AI tier — coming soon',
+                comingSoon: true,
                 description:
                   'Understand what customers love and what needs work. Themes extracted from every review automatically.',
               },
@@ -668,9 +673,9 @@ export default function LandingPage() {
                     <div className="w-10 h-10 rounded-lg bg-[#E8DCC8]/35 flex items-center justify-center border border-[#C9A961]/25">
                       <Icon className="w-5 h-5 text-[#4A3428]" />
                     </div>
-                    {f.badge && (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#4A3428] text-white">
-                        {f.badge}
+                    {f.comingSoon && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#E8DCC8] text-[#4A3428] border border-[#C9A961]/40">
+                        Coming soon
                       </span>
                     )}
                   </div>

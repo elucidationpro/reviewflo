@@ -162,13 +162,13 @@ export default function PricingPage() {
                   <p className="font-semibold text-gray-900 text-sm mb-3">What&apos;s included:</p>
                   <ul className="space-y-2 text-sm text-gray-600">
                     {[
-                      'Private feedback intercept (all customers)',
+                      'ReviewFlo review link (share via text, email, or anywhere)',
+                      'Smart routing — happy customers go to Google, others come to you privately',
+                      'Private feedback intercept with instant owner alert',
                       'Google Reviews link',
-                      'Email notifications when feedback comes in',
+                      'Email notifications when feedback arrives',
                       'Basic dashboard stats',
-                      'Manual review request sending',
                       '1 business location',
-                      'Up to 5 review requests/day',
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mt-0.5" />
@@ -203,14 +203,12 @@ export default function PricingPage() {
                     {[
                       'Send review requests from dashboard',
                       'Automated follow-up email sequences',
-                      'Past customer campaigns (up to 500 contacts)',
-                      'Multi-location support (up to 3 locations)',
                       'Google Business Profile stats & tracking',
                       'Reply to Google reviews from dashboard',
                       'Multi-platform support (Google, Facebook, and more)',
                       'Remove ReviewFlo branding',
                       'Customizable email templates',
-                      'Up to 10 review requests/day',
+                      'Multi-location support (up to 3 locations)',
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mt-0.5" />
@@ -246,14 +244,12 @@ export default function PricingPage() {
                   <p className="font-semibold text-gray-900 text-sm mb-3">Everything in Pro, plus:</p>
                   <ul className="space-y-2 text-sm text-gray-600">
                     {[
+                      'Past Customer Campaigns — upload your list once, ReviewFlo reaches out automatically over weeks, Google-compliant pacing',
                       'SMS review request automation',
-                      'Unlimited past customer campaigns',
-                      'Multi-location support (up to 15 locations)',
                       'AI-drafted review replies',
-                      'AI review response generator',
-                      'Sentiment & theme analysis (coming soon)',
+                      'Multi-location support (up to 15 locations)',
                       'Priority support',
-                      'Up to 10 review requests/day',
+                      'Sentiment & theme analysis (coming soon)',
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mt-0.5" />
@@ -326,7 +322,7 @@ export default function PricingPage() {
                       ['Starting Paid Price', '$19/mo', 'N/A', 'N/A', 'N/A'],
                       ['Contract Required', 'No', '12 mo', '12 mo', 'No'],
                       ['Private Feedback Intercept', CHECK, CROSS, CROSS, CROSS],
-                      ['Past Customer Campaigns', CHECK, CROSS, CROSS, CROSS],
+                      ['Past Customer Campaigns (AI tier)', CHECK, CROSS, CROSS, CROSS],
                       ['Multi-Location Support', CHECK, CHECK, CHECK, CROSS],
                       ['Multi-Platform Reviews', CHECK, CHECK, CHECK, CHECK],
                       ['SMS Automation', CHECK, CHECK, CHECK, CHECK],
