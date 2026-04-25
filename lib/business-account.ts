@@ -3,6 +3,47 @@
  * Before migration, parent_business_id is undefined for all rows — treat every row as a root candidate.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SbLike = { from: (t: string) => any }
+
+function isLegacySchemaColumnError(err: unknown): boolean {
+  return /parent_business_id|column|does not exist/i.test(
+    String((err as { message?: string })?.message || '')
+  )
+}
+
+function normId(v: unknown): string | null {
+  if (v == null || v === '') return null
+  return String(v).toLowerCase()
+}
+
+/** True if this business row belongs to the signed-in user (direct owner or child of their root). */
+async function rowOwnedByUser(
+  client: SbLike,
+  match: Record<string, unknown>,
+  userId: string
+): Promise<boolean> {
+  const uid = normId(userId)
+  if (!uid) return false
+
+  const rowUid = normId(match.user_id)
+  if (rowUid === uid) return true
+
+  const parentId = match.parent_business_id
+  if (typeof parentId !== 'string' || !parentId) return false
+
+  const { data: root, error } = await client
+    .from('businesses')
+    .select('user_id')
+    .eq('id', parentId)
+    .maybeSingle()
+  if (error || !root) return false
+  const rootUid = normId((root as { user_id?: unknown }).user_id)
+  if (rootUid !== uid) return false
+  // Legacy child rows may have user_id null until backfilled
+  return rowUid == null || rowUid === uid
+}
+
 export type BusinessRowWithParent = {
   id: string
   parent_business_id?: string | null
@@ -35,10 +76,9 @@ export function sortLocationSummaries<T extends { business_name: string }>(rows:
  *
  * Callers pass the supabase admin client; the select string determines which columns are returned.
  * `user_id`, `parent_business_id`, and `created_at` are always appended to the select.
+ * If `parent_business_id` is not in the database yet, the same legacy fallback as
+ * `/api/my-business` is used (select without that column).
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type SbLike = { from: (t: string) => any }
-
 export async function getBusinessForRequest(
   client: SbLike,
   userId: string,
@@ -46,23 +86,42 @@ export async function getBusinessForRequest(
   select: string = '*'
 ): Promise<{ row: Record<string, unknown> | null; error: string | null }> {
   const augmented = `${select}, user_id, parent_business_id, created_at`
+  const augmentedLegacy = `${select}, user_id, created_at`
 
   if (businessId) {
-    const { data, error } = await client
+    let { data, error } = await client
       .from('businesses')
       .select(augmented)
       .eq('id', businessId)
       .maybeSingle()
+
+    if (error && isLegacySchemaColumnError(error)) {
+      const second = await client
+        .from('businesses')
+        .select(augmentedLegacy)
+        .eq('id', businessId)
+        .maybeSingle()
+      data = second.data
+      error = second.error
+    }
+
     if (error) return { row: null, error: error.message || 'lookup failed' }
     const match = data as Record<string, unknown> | null
-    if (!match || match.user_id !== userId) return { row: null, error: 'not found' }
+    if (!match) return { row: null, error: 'not found' }
+
+    const owns = await rowOwnedByUser(client, match, userId)
+    if (!owns) return { row: null, error: 'not found' }
     return { row: match, error: null }
   }
 
-  const { data, error } = await client
-    .from('businesses')
-    .select(augmented)
-    .eq('user_id', userId)
+  let { data, error } = await client.from('businesses').select(augmented).eq('user_id', userId)
+
+  if (error && isLegacySchemaColumnError(error)) {
+    const second = await client.from('businesses').select(augmentedLegacy).eq('user_id', userId)
+    data = second.data
+    error = second.error
+  }
+
   if (error) return { row: null, error: error.message || 'lookup failed' }
   const rows = (data as (Record<string, unknown> & BusinessRowWithParent)[] | null) || []
   const primary = pickPrimaryBusinessRow(rows)
