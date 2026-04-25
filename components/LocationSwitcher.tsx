@@ -19,7 +19,9 @@ export default function LocationSwitcher() {
   const { locations, selectedBusinessId, setSelectedBusinessId, viewMode, setViewMode } = ctx
   if (!locations || locations.length < 2) return null
 
-  const current = locations.find((l) => l.id === selectedBusinessId) ?? locations[0]
+  const current = viewMode === 'single'
+    ? (locations.find((l) => l.id === selectedBusinessId) ?? locations[0])
+    : null
 
   return (
     <div ref={ref} className="relative">
@@ -29,6 +31,7 @@ export default function LocationSwitcher() {
         className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors cursor-pointer"
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-controls="location-switcher-listbox"
       >
         <span className="truncate">
           {viewMode === 'all' ? 'All Locations' : (current?.business_name || 'Location')}
@@ -39,6 +42,7 @@ export default function LocationSwitcher() {
       </button>
       {open && (
         <div
+          id="location-switcher-listbox"
           className="absolute z-40 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 max-h-60 overflow-auto"
           role="listbox"
         >
