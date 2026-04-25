@@ -19,19 +19,18 @@ export interface GbpStatsSlice {
  * - average_rating: weighted average (weighted by total_reviews), null if no location has data
  */
 export function aggregateGbpStats(slices: GbpStatsSlice[]): GbpStatsSlice {
-  const valid = slices.filter((s) => s.total_reviews != null)
-  if (valid.length === 0) return { total_reviews: null, average_rating: null, reviews_this_month: null }
-
-  const totalReviews = valid.reduce((sum, s) => sum + (s.total_reviews ?? 0), 0)
   const reviewsThisMonth = slices.reduce((sum, s) => sum + (s.reviews_this_month ?? 0), 0)
+  const valid = slices.filter((s) => s.total_reviews != null)
+  if (valid.length === 0) return { total_reviews: null, average_rating: null, reviews_this_month: reviewsThisMonth }
 
-  // Weighted average rating
+  const totalReviews = valid.reduce((sum, s) => sum + (s.total_reviews as number), 0)
+
   let weightedSum = 0
   let weightTotal = 0
   for (const s of valid) {
-    if (s.average_rating != null && s.total_reviews != null && s.total_reviews > 0) {
-      weightedSum += s.average_rating * s.total_reviews
-      weightTotal += s.total_reviews
+    if (s.average_rating != null && (s.total_reviews as number) > 0) {
+      weightedSum += s.average_rating * (s.total_reviews as number)
+      weightTotal += s.total_reviews as number
     }
   }
   const average_rating = weightTotal > 0 ? weightedSum / weightTotal : null
@@ -54,11 +53,12 @@ export function mergeReviews(
       merged.push({ ...r, _businessId: businessId, _locationName: locationName })
     }
   }
-  // Sort by createTime descending (most recent first)
+  // Sort newest-first; missing createTime maps to epoch (sinks to bottom intentionally).
+  // Tiebreak on review resource name for stable ordering across equal timestamps.
   merged.sort((a, b) => {
     const ta = a.createTime ? new Date(a.createTime).getTime() : 0
     const tb = b.createTime ? new Date(b.createTime).getTime() : 0
-    return tb - ta
+    return tb - ta || a.name.localeCompare(b.name)
   })
   return merged
 }
