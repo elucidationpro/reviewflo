@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/review-requests/process-scheduled",
-      "schedule": "0 * * * *"
+      "schedule": "30 9 * * *"
     },
     {
       "path": "/api/cron/fetch-google-stats",
