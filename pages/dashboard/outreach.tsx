@@ -148,25 +148,27 @@ export default function OutreachPage() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="px-6 py-8 max-w-3xl mx-auto">
+      <div className="px-4 sm:px-6 py-8 max-w-4xl mx-auto">
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        {/* Header — single primary action for sending (list no longer duplicates this) */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-xl font-bold text-gray-900">Outreach</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Send review requests to customers and track their progress.</p>
+            <p className="text-sm text-gray-500 mt-1 max-w-lg">
+              Email review requests from your dashboard, then watch opens and completions. Campaigns for past customers live at the bottom.
+            </p>
           </div>
           {canSend && (
             <button
               type="button"
               onClick={() => setShowSendModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors cursor-pointer"
-              style={{ backgroundColor: primaryColor }}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer sm:shrink-0"
+              style={{ backgroundColor: primaryColor, boxShadow: '0 1px 3px rgba(74,52,40,0.12)' }}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.25} viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.25} viewBox="0 0 24 24" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
               </svg>
-              Send Request
+              New review request
             </button>
           )}
         </div>
@@ -201,10 +203,13 @@ export default function OutreachPage() {
 
         {/* Funnel (Pro/AI) */}
         {canSend && (
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-gray-700">Funnel</h2>
-              <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden text-xs">
+          <div className="mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+              <div>
+                <h2 className="text-sm font-semibold text-gray-800">Request funnel</h2>
+                <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">How far customers get after you send a request.</p>
+              </div>
+              <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden text-xs self-start">
                 {([7, 30, 90] as DateRange[]).map((d) => (
                   <button
                     key={d}
@@ -277,26 +282,25 @@ export default function OutreachPage() {
               <div className="bg-white rounded-2xl border border-[#4A3428]/6 p-8 text-center"
                 style={{ boxShadow: '0 1px 4px rgba(74,52,40,0.07), 0 1px 2px rgba(74,52,40,0.04)' }}
               >
-                <p className="text-sm text-gray-500">No review requests sent in the last {dateRange} days.</p>
-                <button
-                  type="button"
-                  onClick={() => setShowSendModal(true)}
-                  className="mt-3 inline-block text-sm font-semibold text-[#4A3428] hover:underline cursor-pointer"
-                >
-                  Send your first request →
-                </button>
+                <p className="text-sm text-gray-600">
+                  No review requests sent in the last {dateRange} days.
+                </p>
+                <p className="text-xs text-gray-500 mt-2 max-w-sm mx-auto">
+                  Send one with <strong className="text-gray-700">New review request</strong> above to start filling this funnel.
+                </p>
               </div>
             )}
           </div>
         )}
 
-        {/* Request history list */}
+        {/* Request history — primary send action is only in the page header */}
         {canSend && (
           <ReviewRequestsList
             businessId={business.id}
             businessSlug={business.slug}
             tier={business.tier}
             onSendRequest={() => setShowSendModal(true)}
+            showSendButton={false}
             refetchTrigger={refetchTrigger}
           />
         )}

@@ -17,6 +17,8 @@ interface ReviewRequestsListProps {
   businessSlug: string
   tier: 'free' | 'pro' | 'ai'
   onSendRequest: () => void
+  /** When false, hide the header Send button (parent page owns the primary CTA). */
+  showSendButton?: boolean
   refetchTrigger?: number
 }
 
@@ -50,6 +52,7 @@ export default function ReviewRequestsList({
   businessSlug,
   tier,
   onSendRequest,
+  showSendButton = true,
   refetchTrigger = 0,
 }: ReviewRequestsListProps) {
   const [requests, setRequests] = useState<ReviewRequest[]>([])
@@ -114,35 +117,46 @@ export default function ReviewRequestsList({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h2 className="text-xl font-semibold text-slate-800 tracking-tight">
-          Review Requests
-        </h2>
-        <button
-          onClick={onSendRequest}
-          className="shrink-0 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
-        >
-          Send Request
-        </button>
+    <div
+      className="bg-white rounded-2xl border border-[#4A3428]/6 p-6 md:p-8 mb-8"
+      style={{ boxShadow: '0 1px 4px rgba(74,52,40,0.07), 0 1px 2px rgba(74,52,40,0.04)' }}
+    >
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+        <div>
+          <h2 className="text-base font-bold text-gray-900 tracking-tight">
+            Review requests
+          </h2>
+          <p className="text-xs text-gray-500 mt-1 max-w-md">
+            Everyone you&apos;ve emailed from the dashboard. Search, filter, and track status.
+          </p>
+        </div>
+        {showSendButton && (
+          <button
+            type="button"
+            onClick={onSendRequest}
+            className="shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer"
+          >
+            Send request
+          </button>
+        )}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="p-3 bg-slate-50 rounded-lg">
-          <p className="text-xs text-slate-600 uppercase tracking-wide">Sent (month)</p>
-          <p className="text-2xl font-bold text-slate-800">{stats.sent}</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="p-3 bg-[#F5F5DC]/40 rounded-xl border border-[#C9A961]/15">
+          <p className="text-[11px] text-gray-600 uppercase tracking-wide font-medium">Sent (month)</p>
+          <p className="text-xl font-bold text-gray-900 mt-0.5">{stats.sent}</p>
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg">
-          <p className="text-xs text-slate-600 uppercase tracking-wide">Opened</p>
-          <p className="text-2xl font-bold text-slate-800">{stats.opened}</p>
+        <div className="p-3 bg-[#F5F5DC]/40 rounded-xl border border-[#C9A961]/15">
+          <p className="text-[11px] text-gray-600 uppercase tracking-wide font-medium">Opened</p>
+          <p className="text-xl font-bold text-gray-900 mt-0.5">{stats.opened}</p>
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg">
-          <p className="text-xs text-slate-600 uppercase tracking-wide">Completed</p>
-          <p className="text-2xl font-bold text-slate-800">{stats.completed}</p>
+        <div className="p-3 bg-[#F5F5DC]/40 rounded-xl border border-[#C9A961]/15">
+          <p className="text-[11px] text-gray-600 uppercase tracking-wide font-medium">Completed</p>
+          <p className="text-xl font-bold text-gray-900 mt-0.5">{stats.completed}</p>
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg">
-          <p className="text-xs text-slate-600 uppercase tracking-wide">Completion Rate</p>
-          <p className="text-2xl font-bold text-slate-800">{stats.completionRate}%</p>
+        <div className="p-3 bg-[#F5F5DC]/40 rounded-xl border border-[#C9A961]/15">
+          <p className="text-[11px] text-gray-600 uppercase tracking-wide font-medium">Completion rate</p>
+          <p className="text-xl font-bold text-gray-900 mt-0.5">{stats.completionRate}%</p>
         </div>
       </div>
 
@@ -153,12 +167,12 @@ export default function ReviewRequestsList({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-800"
+          className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-[#C9A961]/40 focus:border-[#C9A961] outline-none"
         />
         <select
           value={statusFilter}
           onChange={(e) => handleFilterChange(e.target.value)}
-          className="px-4 py-2 border border-slate-300 rounded-lg text-slate-800"
+          className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 bg-white"
         >
           <option value="all">All</option>
           <option value="pending">Pending</option>
@@ -168,38 +182,43 @@ export default function ReviewRequestsList({
           <option value="feedback">Feedback</option>
         </select>
         <button
+          type="button"
           onClick={handleSearch}
-          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-medium"
+          className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
         >
           Search
         </button>
       </div>
 
       {loading ? (
-        <div className="py-8 text-center text-slate-500">Loading...</div>
+        <div className="py-8 text-center text-gray-500 text-sm">Loading…</div>
       ) : requests.length === 0 ? (
-        <div className="py-8 text-center text-slate-500">
-          No review requests yet. Click &quot;Send Request&quot; to send your first one.
+        <div className="py-10 text-center text-gray-500 text-sm px-4">
+          {showSendButton ? (
+            <>No review requests yet. Use <strong className="text-gray-700">Send request</strong> above to send your first one.</>
+          ) : (
+            <>No review requests match your filters, or you haven&apos;t sent any yet. Use <strong className="text-gray-700">New review request</strong> at the top of this page.</>
+          )}
         </div>
       ) : (
         <>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-gray-50/80 border-b border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase">Customer</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase">Delivery</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">Customer</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">Delivery</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-gray-100">
                 {requests.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/50">
+                  <tr key={r.id} className="hover:bg-[#F5F5DC]/25">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-slate-800">{r.customer_name}</p>
-                      <p className="text-sm text-slate-500">{r.customer_email || '—'}</p>
+                      <p className="font-medium text-gray-900">{r.customer_name}</p>
+                      <p className="text-sm text-gray-500">{r.customer_email || '—'}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">
+                    <td className="px-4 py-3 text-sm text-gray-600">
                       <div className="flex flex-col gap-1">
                         <span>{formatWhen(r)}</span>
                         {r.send_status && (
@@ -230,10 +249,11 @@ export default function ReviewRequestsList({
           {total > 20 && (
             <div className="mt-4 flex justify-center">
               <button
+                type="button"
                 onClick={() => fetchRequests(page + 1)}
-                className="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700"
+                className="px-4 py-2 text-sm font-semibold text-[#4A3428] hover:underline cursor-pointer"
               >
-                Load More
+                Load more
               </button>
             </div>
           )}
