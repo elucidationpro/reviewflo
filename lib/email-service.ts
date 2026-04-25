@@ -859,3 +859,104 @@ function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+
+// --- PAST CUSTOMER CAMPAIGN EMAILS ---
+
+export interface CampaignEmailData {
+  to: string;
+  firstName: string | null;
+  businessName: string;
+  template: string;          // owner-editable plain-text template
+  reviewLink: string;        // CTA destination after click tracker
+  trackingToken: string;     // for click tracking
+  unsubscribeUrl: string;    // signed URL
+}
+
+function renderCampaignTemplate(
+  template: string,
+  vars: { firstName: string | null; businessName: string; reviewLink: string; unsubscribeUrl: string }
+): string {
+  const firstName = vars.firstName?.trim() || 'there';
+  return template
+    .replace(/\{first_name\}/g, firstName)
+    .replace(/\{business_name\}/g, vars.businessName)
+    .replace(/\{google_review_link\}/g, vars.reviewLink)
+    .replace(/\{review_link\}/g, vars.reviewLink)
+    .replace(/\{unsubscribe_link\}/g, vars.unsubscribeUrl);
+}
+
+export async function sendCampaignEmail(data: CampaignEmailData) {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      console.error('[sendCampaignEmail] RESEND_API_KEY is not set');
+      return { success: false, error: 'Email service not configured' };
+    }
+
+    const ctaHref = `${BASE_URL}/api/campaigns/track-click?t=${data.trackingToken}`;
+
+    const renderedText = renderCampaignTemplate(data.template, {
+      firstName: data.firstName,
+      businessName: data.businessName,
+      reviewLink: ctaHref,
+      unsubscribeUrl: data.unsubscribeUrl,
+    });
+
+    // Convert plain-text body to HTML: escape, replace explicit URLs with anchor
+    // tags, then convert newlines to <br>.
+    const escaped = escapeHtml(renderedText);
+    const linked = escaped
+      // Style the CTA URL as a button when it appears in the template body.
+      .replace(
+        new RegExp(escapeHtml(ctaHref).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+        `<a href="${ctaHref}" class="cta">Leave a Google review →</a>`
+      )
+      // Linkify the unsubscribe URL.
+      .replace(
+        new RegExp(escapeHtml(data.unsubscribeUrl).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+        `<a href="${data.unsubscribeUrl}">Unsubscribe</a>`
+      );
+    const bodyHtml = linked.replace(/\n/g, '<br>');
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .cta { display: inline-block; background: #4A3428; color: white !important; padding: 14px 28px; text-decoration: none; border-radius: 8px; margin: 16px 0; font-weight: 600; }
+          .footer { text-align: center; color: #6b7280; margin-top: 30px; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <p>${bodyHtml}</p>
+          <div class="footer">
+            <p>Powered by ReviewFlo</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const { data: result, error } = await resend.emails.send({
+      from: REVIEW_REQUEST_FROM,
+      to: data.to,
+      subject: `A quick favor from ${data.businessName}`,
+      html,
+      headers: {
+        'List-Unsubscribe': `<${data.unsubscribeUrl}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
+    });
+
+    if (error) {
+      console.error('[sendCampaignEmail] Resend error:', error);
+      return { success: false, error };
+    }
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error('[sendCampaignEmail] Error:', error);
+    return { success: false, error };
+  }
+}

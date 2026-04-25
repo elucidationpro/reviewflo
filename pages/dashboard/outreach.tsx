@@ -12,6 +12,7 @@ import { supabase } from '../../lib/supabase'
 import AppLayout from '../../components/AppLayout'
 import ReviewRequestsList from '../../components/ReviewRequestsList'
 import SendRequestModal from '../../components/SendRequestModal'
+import PastCustomerCampaigns from '../../components/PastCustomerCampaigns'
 import { canSendFromDashboard } from '../../lib/tier-permissions'
 import { useBusiness } from '@/contexts/BusinessContext'
 
@@ -299,6 +300,9 @@ export default function OutreachPage() {
             refetchTrigger={refetchTrigger}
           />
         )}
+
+        {/* Past Customer Campaigns */}
+        <PastCustomerCampaigns business={business} />
       </div>
 
       <SendRequestModal

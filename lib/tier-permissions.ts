@@ -74,3 +74,15 @@ export function canUseMultipleLocations(tier: Tier | undefined): boolean {
 export function getMonthlyTokenLimit(tier: Tier | undefined): number {
   return tier === 'ai' ? 50_000 : 0
 }
+
+/** Can use past-customer CSV outreach campaigns (Pro/AI only) */
+export function canUseCampaigns(tier: Tier | undefined): boolean {
+  return tier === 'pro' || tier === 'ai'
+}
+
+/** Max contacts per campaign: Free=0, Pro=500, AI=Infinity */
+export function getMaxCampaignContacts(tier: Tier | undefined): number {
+  if (tier === 'ai') return Infinity
+  if (tier === 'pro') return 500
+  return 0
+}
