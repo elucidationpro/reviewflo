@@ -186,10 +186,6 @@ export default function ReviewsPage() {
     setReplyText(review.reviewReply?.comment ?? '')
     setReplyError(null)
     setHasDraft(false)
-    // Auto-draft only when opening a new reply (not editing an existing one) on AI tier
-    if (isAiTier && !review.reviewReply) {
-      fetchDraft(review)
-    }
   }
 
   const closeReplyModal = () => {
@@ -477,6 +473,23 @@ export default function ReviewsPage() {
                   {replyTarget.comment || <em className="text-gray-400">No written review.</em>}
                 </p>
               </div>
+
+              {/* AI draft controls (AI tier, new reply only) */}
+              {isAiTier && !replyTarget.reviewReply && !hasDraft && !draftLoading && (
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <p className="text-xs text-gray-500">
+                    Want a starting point? ReviewFlo can draft a reply for you to edit.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => replyTarget && fetchDraft(replyTarget)}
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#4A3428] bg-[#E8DCC8] border border-[#C9A961]/40 hover:bg-[#C9A961]/30 transition-colors cursor-pointer"
+                  >
+                    <span aria-hidden="true">✨</span>
+                    Generate AI reply
+                  </button>
+                </div>
+              )}
 
               {/* AI draft notice + Regenerate */}
               {hasDraft && !draftLoading && (
