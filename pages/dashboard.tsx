@@ -13,6 +13,7 @@ import { canSendFromDashboard, canAccessGoogleStats } from '../lib/tier-permissi
 import { consumeGoogleAdsSignupConversionFromQuery } from '@/lib/google-ads'
 import { useBusiness } from '@/contexts/BusinessContext'
 import type { GbpFullReview } from './api/google-reviews/list'
+import { aggregateGbpStats, mergeReviews } from '@/lib/all-locations-aggregation'
 
 interface Business {
   id: string
@@ -60,7 +61,7 @@ function Card({
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { selectedBusinessId } = useBusiness()
+  const { selectedBusinessId, viewMode, locations } = useBusiness()
   const [isLoading, setIsLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
   const [pendingFeedbackCount, setPendingFeedbackCount] = useState(0)
@@ -211,64 +212,118 @@ export default function DashboardPage() {
         startOfMonth.setDate(1)
         startOfMonth.setHours(0, 0, 0, 0)
 
-        const statsUrl = `/api/google-stats/fetch?businessId=${encodeURIComponent(business.id)}`
-        const [statsRes, reqCountResult] = await Promise.all([
-          fetch(statsUrl, {
-            headers: { Authorization: `Bearer ${session.access_token}` },
-          }),
-          supabase
-            .from('review_requests')
-            .select('*', { count: 'exact', head: true })
-            .eq('business_id', business.id)
-            .gte('sent_at', startOfMonth.toISOString()),
-        ])
+        if (viewMode === 'all' && locations.length > 1) {
+          // ── All-locations: fan out, aggregate ──────────────────────────────
+          const token = session.access_token
 
-        if (statsRes.ok) {
-          const j = await statsRes.json()
-          const s = j.stats
-          if (s) {
-            setCachedGbpStats({
-              total_reviews: s.total_reviews ?? null,
-              average_rating: s.average_rating ?? null,
-              reviews_this_month: s.reviews_this_month ?? null,
+          const locationResults = await Promise.all(
+            locations.map(async (loc) => {
+              const [statsRes, reqCount] = await Promise.all([
+                fetch(`/api/google-stats/fetch?businessId=${encodeURIComponent(loc.id)}`, {
+                  headers: { Authorization: `Bearer ${token}` },
+                }),
+                supabase
+                  .from('review_requests')
+                  .select('*', { count: 'exact', head: true })
+                  .eq('business_id', loc.id)
+                  .gte('sent_at', startOfMonth.toISOString()),
+              ])
+              const statsJson = statsRes.ok ? await statsRes.json() : null
+              const s = statsJson?.stats ?? null
+              return {
+                loc,
+                stats: s
+                  ? { total_reviews: s.total_reviews ?? null, average_rating: s.average_rating ?? null, reviews_this_month: s.reviews_this_month ?? null }
+                  : { total_reviews: null, average_rating: null, reviews_this_month: null },
+                requestCount: reqCount.error ? 0 : (reqCount.count ?? 0),
+              }
             })
+          )
+
+          setCachedGbpStats(aggregateGbpStats(locationResults.map((r) => r.stats)))
+          setRequestsSentThisMonth(locationResults.reduce((sum, r) => sum + r.requestCount, 0))
+
+          if (canAccessGoogleStats(business.tier)) {
+            setGbpReviewsLoading(true)
+            const reviewResults = await Promise.all(
+              locations
+                .filter((loc) => loc.google_connected)
+                .map(async (loc) => {
+                  const res = await fetch(`/api/google-reviews/list?businessId=${encodeURIComponent(loc.id)}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                  })
+                  const json = res.ok ? await res.json() : { reviews: [] }
+                  return { businessId: loc.id, locationName: loc.business_name, reviews: json.reviews ?? [] }
+                })
+            )
+            setGbpReviewsLoading(false)
+            const merged = mergeReviews(reviewResults)
+            setGbpReviews(merged)
+            const unrepliedCount = merged.filter((r) => !r.reviewReply).length
+            const replyRate = merged.length > 0 ? Math.round((1 - unrepliedCount / merged.length) * 100) : null
+            setReviewsData({ replyRate, unrepliedCount })
           } else {
-            setCachedGbpStats(null)
+            setGbpReviews([])
+            setReviewsData(null)
           }
-        }
+        } else {
+          // ── Single-location: existing logic ───────────────────────────────
+          const statsUrl = `/api/google-stats/fetch?businessId=${encodeURIComponent(business.id)}`
+          const [statsRes, reqCountResult] = await Promise.all([
+            fetch(statsUrl, { headers: { Authorization: `Bearer ${session.access_token}` } }),
+            supabase
+              .from('review_requests')
+              .select('*', { count: 'exact', head: true })
+              .eq('business_id', business.id)
+              .gte('sent_at', startOfMonth.toISOString()),
+          ])
 
-        if (!reqCountResult.error) {
-          setRequestsSentThisMonth(reqCountResult.count ?? 0)
-        }
+          if (statsRes.ok) {
+            const j = await statsRes.json()
+            const s = j.stats
+            if (s) {
+              setCachedGbpStats({
+                total_reviews: s.total_reviews ?? null,
+                average_rating: s.average_rating ?? null,
+                reviews_this_month: s.reviews_this_month ?? null,
+              })
+            } else {
+              setCachedGbpStats(null)
+            }
+          }
 
-        if (!canAccessGoogleStats(business.tier) || !business.google_connected) {
-          setGbpReviews([])
-          setReviewsData(null)
-          return
-        }
+          if (!reqCountResult.error) {
+            setRequestsSentThisMonth(reqCountResult.count ?? 0)
+          }
 
-        setGbpReviewsLoading(true)
-        const listRes = await fetch(`/api/google-reviews/list?businessId=${encodeURIComponent(business.id)}`, {
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        })
-        setGbpReviewsLoading(false)
-        if (!listRes.ok) {
-          setGbpReviews([])
-          setReviewsData(null)
-          return
+          if (!canAccessGoogleStats(business.tier) || !business.google_connected) {
+            setGbpReviews([])
+            setReviewsData(null)
+            return
+          }
+
+          setGbpReviewsLoading(true)
+          const listRes = await fetch(`/api/google-reviews/list?businessId=${encodeURIComponent(business.id)}`, {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          })
+          setGbpReviewsLoading(false)
+          if (!listRes.ok) {
+            setGbpReviews([])
+            setReviewsData(null)
+            return
+          }
+          const json = await listRes.json()
+          const reviews: GbpFullReview[] = json.reviews ?? []
+          setGbpReviews(reviews)
+          const unrepliedCount = reviews.filter((r) => !r.reviewReply).length
+          const replyRate = reviews.length > 0 ? Math.round((1 - unrepliedCount / reviews.length) * 100) : null
+          setReviewsData({ replyRate, unrepliedCount })
         }
-        const json = await listRes.json()
-        const reviews: GbpFullReview[] = json.reviews ?? []
-        setGbpReviews(reviews)
-        const unrepliedCount = reviews.filter((r) => !r.reviewReply).length
-        const replyRate =
-          reviews.length > 0 ? Math.round((1 - unrepliedCount / reviews.length) * 100) : null
-        setReviewsData({ replyRate, unrepliedCount })
       } catch {
         setGbpReviewsLoading(false)
       }
     })()
-  }, [business])
+  }, [business, viewMode, locations])
 
   const handlePricingClick = () => {
     if (business) trackEvent('pricing_viewed_from_dashboard', { businessId: business.id, source: 'dashboard' })

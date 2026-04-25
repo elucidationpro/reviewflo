@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 import type { GbpFullReview } from '../pages/api/google-reviews/list'
+import LocationBadge from './LocationBadge'
 
 interface RecentActivityProps {
   /** Pre-fetched GBP reviews from the parent. Pass [] if Google not available. */
@@ -186,6 +187,9 @@ export default function RecentActivity({
                               <p className="text-xs font-semibold text-gray-900 truncate">{name}</p>
                               <StarRow rating={rating} />
                             </div>
+                            {'_locationName' in r && (
+                              <LocationBadge name={(r as { _locationName: string })._locationName} className="mb-0.5" />
+                            )}
                             {snippet ? (
                               <p className="text-xs text-gray-600 line-clamp-2">{snippet}</p>
                             ) : (
