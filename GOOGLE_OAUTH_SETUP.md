@@ -121,9 +121,15 @@ npm run dev
 ### "API not enabled"
 - Make sure you enabled "Google Business Profile API" in Google Cloud Console
 
-### "Redirect URI mismatch"
-- Make sure you added all redirect URIs to your OAuth client
-- Check that `NEXT_PUBLIC_APP_URL` matches your domain
+### "Redirect URI mismatch" / token exchange fails after you approve Google
+
+- The **authorize** step uses `window.location.origin` (the hostname you are actually on). The **token** step must send Google the **same** `redirect_uri`. The app now derives that from the incoming request host on the server, so www vs apex matches what you used in the browser.
+- You must still register **every** hostname you use in Google Cloud → Credentials → OAuth client → **Authorized redirect URIs**, for all three paths (`/callback`, `/login-callback`, `/signup-callback`). If both `https://usereviewflo.com` and `https://www.usereviewflo.com` are live, add both sets (six URIs total for those paths).
+- `NEXT_PUBLIC_APP_URL` is only a fallback when host headers are missing; it does not replace registering both hostnames in Google Cloud if users can hit either.
+
+### "Failed to connect" / server OAuth not configured
+
+- Token exchange needs **`GOOGLE_OAUTH_CLIENT_SECRET`** in the environment (e.g. Vercel). The client ID can be **`GOOGLE_OAUTH_CLIENT_ID`** or, if you only set **`NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID`**, the server will use that as a fallback for the same value.
 
 ### Google Cloud “OAuth Overview” warnings (dashboard)
 

@@ -33,13 +33,21 @@ interface GoogleLocationsListResponse {
 /**
  * Exchange authorization code for access and refresh tokens
  */
+function getGoogleOAuthClientId(): string | undefined {
+  return (
+    process.env.GOOGLE_OAUTH_CLIENT_ID ||
+    process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID ||
+    undefined
+  );
+}
+
 export async function exchangeCodeForTokens(
   code: string,
   mode: 'settings' | 'signup' | 'login' = 'settings',
   /** Must match the host used in /api/auth/google/start (dev: request host). */
   appBaseUrl?: string
 ) {
-  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+  const clientId = getGoogleOAuthClientId();
   const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
   const callbackPath = mode === 'signup'
     ? '/api/auth/google/signup-callback'
@@ -48,6 +56,13 @@ export async function exchangeCodeForTokens(
       : '/api/auth/google/callback';
   const base = (appBaseUrl || process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
   const redirectUri = `${base}${callbackPath}`;
+
+  if (!clientId || !clientSecret) {
+    console.error('[Google OAuth] Missing GOOGLE_OAUTH_CLIENT_SECRET or client id (set GOOGLE_OAUTH_CLIENT_ID or NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID)');
+    throw new Error(
+      'Google OAuth is not configured on the server. Set GOOGLE_OAUTH_CLIENT_SECRET and GOOGLE_OAUTH_CLIENT_ID (or NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID).'
+    );
+  }
 
   const response = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
@@ -82,8 +97,14 @@ export async function exchangeCodeForTokens(
  * Refresh an expired access token
  */
 export async function refreshAccessToken(refreshToken: string) {
-  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+  const clientId = getGoogleOAuthClientId();
   const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    throw new Error(
+      'Google OAuth is not configured on the server. Set GOOGLE_OAUTH_CLIENT_SECRET and GOOGLE_OAUTH_CLIENT_ID (or NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID).'
+    );
+  }
 
   const response = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',

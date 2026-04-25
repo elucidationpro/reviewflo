@@ -1092,7 +1092,11 @@ export default function SettingsPage() {
                           onClick={async () => {
                             const { data: { session } } = await supabase.auth.getSession()
                             if (!session) return
-                            const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID || 'YOUR_CLIENT_ID'
+                            const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID
+                            if (!clientId) {
+                              alert('Google sign-in is not configured (missing NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID).')
+                              return
+                            }
                             const redirectUri = `${window.location.origin}/api/auth/google/callback`
                             const scope = 'https://www.googleapis.com/auth/business.manage'
                             // Encode businessId into state so the callback writes tokens only to the
