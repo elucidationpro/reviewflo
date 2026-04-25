@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { CheckCircle, ChevronDown, ChevronRight, X } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
-import ComingSoonTierModal from '@/components/ComingSoonTierModal';
 import { trackEvent } from '@/lib/posthog-provider';
 import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
@@ -34,7 +33,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'When do Pro and AI tiers launch?',
-    a: "May 2026. We're building these features based on user feedback from our Free tier users.",
+    a: "They're available now. Start free and upgrade anytime — no contracts.",
   },
   {
     q: "What's included in the 50% launch discount?",
@@ -67,8 +66,6 @@ export default function PricingPage() {
   const comparisonSection = useFadeInOnScroll();
   const faqSection = useFadeInOnScroll();
   const ctaSection = useFadeInOnScroll();
-  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
-  const [comingSoonTier, setComingSoonTier] = useState<'pro' | 'ai' | null>(null);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const hasTrackedPageView = useRef(false);
   const hasTrackedComparison = useRef(false);
@@ -110,22 +107,11 @@ export default function PricingPage() {
     trackEvent('pricing_cta_clicked', { tier });
   }, []);
 
-  const handleComingSoonContinue = useCallback((notifyOnLaunch: boolean) => {
-    setShowComingSoonModal(false);
-    const tier = comingSoonTier;
-    setComingSoonTier(null);
-    if (typeof window !== 'undefined' && tier) {
-      // /qualify has the full form with tier selection; preserve intent via URL
-      const params = new URLSearchParams({ tier, notify: notifyOnLaunch ? '1' : '0' });
-      window.location.href = `/qualify?${params.toString()}`;
-    }
-  }, [comingSoonTier]);
-
   return (
     <>
       <Head>
         <title>ReviewFlo Pricing - Simple, Transparent Pricing for Review Management</title>
-        <meta name="description" content="ReviewFlo pricing: Free forever for Basic. Pro $19/mo, AI $49/mo launching May 2026. No contracts. 50% off for early signups. Compare to Podium, BirdEye, NiceJob." />
+        <meta name="description" content="ReviewFlo pricing: Start free. Pro $19/mo, AI $49/mo. No contracts. 50% off for early signups for the first 3 months. Compare to Podium, BirdEye, NiceJob." />
         <meta name="robots" content="index, follow" />
       </Head>
 
@@ -143,7 +129,7 @@ export default function PricingPage() {
               Simple, transparent pricing. No contracts. No surprises.
             </p>
             <p className="text-base text-gray-500">
-              Start free forever. Upgrade when Pro & AI launch in May 2026.
+              Start free. Upgrade anytime — no contracts.
             </p>
           </div>
         </section>
@@ -175,7 +161,15 @@ export default function PricingPage() {
                 <div className="mb-6 flex-1">
                   <p className="font-semibold text-gray-900 text-sm mb-3">What&apos;s included:</p>
                   <ul className="space-y-2 text-sm text-gray-600">
-                    {['Stop bad reviews', 'Google Reviews only', 'Email notifications', 'Basic stats', 'Manual sending'].map((f) => (
+                    {[
+                      'Private feedback intercept (all customers)',
+                      'Google Reviews link',
+                      'Email notifications when feedback comes in',
+                      'Basic dashboard stats',
+                      'Manual review request sending',
+                      '1 business location',
+                      'Up to 5 review requests/day',
+                    ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mt-0.5" />
                         {f}
@@ -196,9 +190,6 @@ export default function PricingPage() {
               <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 sm:p-8 flex flex-col relative">
                 <div className="mb-4">
                   <h3 className="text-lg font-bold text-gray-900">PRO</h3>
-                  <span className="inline-block mt-1 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-medium rounded">
-                    Coming May 2026
-                  </span>
                 </div>
                 <div className="mb-4">
                   <span className="text-3xl font-bold text-gray-900">$19</span>
@@ -209,7 +200,18 @@ export default function PricingPage() {
                 <div className="mb-6 flex-1">
                   <p className="font-semibold text-gray-900 text-sm mb-3">Everything in Basic, plus:</p>
                   <ul className="space-y-2 text-sm text-gray-600">
-                    {['Send from dashboard', 'Auto follow-up emails', 'Multi-platform support', 'Remove branding', 'Customizable review request emails', 'Track your Google stats'].map((f) => (
+                    {[
+                      'Send review requests from dashboard',
+                      'Automated follow-up email sequences',
+                      'Past customer campaigns (up to 500 contacts)',
+                      'Multi-location support (up to 3 locations)',
+                      'Google Business Profile stats & tracking',
+                      'Reply to Google reviews from dashboard',
+                      'Multi-platform support (Google, Facebook, and more)',
+                      'Remove ReviewFlo branding',
+                      'Customizable email templates',
+                      'Up to 10 review requests/day',
+                    ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mt-0.5" />
                         {f}
@@ -217,13 +219,13 @@ export default function PricingPage() {
                     ))}
                   </ul>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => { setComingSoonTier('pro'); setShowComingSoonModal(true); handleCtaClick('pro'); }}
+                <Link
+                  href="/join?plan=pro"
+                  onClick={() => handleCtaClick('pro')}
                   className="block w-full text-center px-6 py-3 bg-white text-[#4A3428] border-2 border-[#4A3428] rounded-lg font-semibold hover:bg-[#E8DCC8]/20 transition-all"
                 >
-                  Get Notified at Launch
-                </button>
+                  Start with Pro — $19/mo
+                </Link>
               </div>
 
               {/* AI */}
@@ -233,9 +235,6 @@ export default function PricingPage() {
                 </span>
                 <div className="mb-4 mt-2">
                   <h3 className="text-lg font-bold text-gray-900">AI</h3>
-                  <span className="inline-block mt-1 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-medium rounded">
-                    Coming May 2026
-                  </span>
                 </div>
                 <div className="mb-4">
                   <span className="text-3xl font-bold text-gray-900">$49</span>
@@ -246,7 +245,16 @@ export default function PricingPage() {
                 <div className="mb-6 flex-1">
                   <p className="font-semibold text-gray-900 text-sm mb-3">Everything in Pro, plus:</p>
                   <ul className="space-y-2 text-sm text-gray-600">
-                    {['SMS automation', 'CRM integration', 'AI review drafts', 'AI review responses', 'White-label option', 'Priority support'].map((f) => (
+                    {[
+                      'SMS review request automation',
+                      'Unlimited past customer campaigns',
+                      'Multi-location support (up to 15 locations)',
+                      'AI-drafted review replies',
+                      'AI review response generator',
+                      'Sentiment & theme analysis (coming soon)',
+                      'Priority support',
+                      'Up to 10 review requests/day',
+                    ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mt-0.5" />
                         {f}
@@ -254,13 +262,13 @@ export default function PricingPage() {
                     ))}
                   </ul>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => { setComingSoonTier('ai'); setShowComingSoonModal(true); handleCtaClick('ai'); }}
+                <Link
+                  href="/join?plan=ai"
+                  onClick={() => handleCtaClick('ai')}
                   className="block w-full text-center px-6 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 transition-all"
                 >
-                  Get Notified at Launch
-                </button>
+                  Start with AI — $49/mo
+                </Link>
               </div>
             </div>
 
@@ -274,7 +282,7 @@ export default function PricingPage() {
             <div className="bg-gradient-to-br from-[#E8DCC8]/50 to-[#C9A961]/20 rounded-xl border-2 border-[#C9A961]/40 p-6 sm:p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-2">Early Signup Bonus</h3>
               <p className="text-gray-700 mb-4">
-                Sign up now (free) and lock in 50% off Pro or AI tier when they launch in May.
+                Sign up now (free) and lock in 50% off Pro or AI tier for the first 3 months.
               </p>
               <p className="text-gray-700 mb-2">
                 Free users who upgrade: <strong>$9.50</strong> or <strong>$24.50/mo</strong> for first 3 months (vs $19/$49 regular).
@@ -315,12 +323,14 @@ export default function PricingPage() {
                     const CROSS = '__CROSS__';
                     const rows: [string, string, string, string, string][] = [
                       ['Starting Price', 'FREE', '$289/mo', '$299/mo', '$75/mo'],
-                      ['Pro Tier (May 2026)', '$19/mo', 'N/A', 'N/A', 'N/A'],
+                      ['Starting Paid Price', '$19/mo', 'N/A', 'N/A', 'N/A'],
                       ['Contract Required', 'No', '12 mo', '12 mo', 'No'],
-                      ['Negative Review Intercept', CHECK, CROSS, CROSS, CROSS],
+                      ['Private Feedback Intercept', CHECK, CROSS, CROSS, CROSS],
+                      ['Past Customer Campaigns', CHECK, CROSS, CROSS, CROSS],
+                      ['Multi-Location Support', CHECK, CHECK, CHECK, CROSS],
                       ['Multi-Platform Reviews', CHECK, CHECK, CHECK, CHECK],
-                      ['SMS Automation (May 2026)', CHECK, CHECK, CHECK, CHECK],
-                      ['AI Features (May 2026)', CHECK, CROSS, CROSS, CROSS],
+                      ['SMS Automation', CHECK, CHECK, CHECK, CHECK],
+                      ['AI Features', CHECK, CROSS, CROSS, CROSS],
                       ['Email Support', CHECK, CHECK, CHECK, CHECK],
                       ['Free Tier', CHECK, CROSS, CROSS, CROSS],
                     ];
@@ -342,6 +352,10 @@ export default function PricingPage() {
                 </tbody>
               </table>
             </div>
+
+            <p className="text-center text-gray-500 text-sm mt-4">
+              Note: ReviewFlo starts at $0. Other platforms with multi-location support typically start at $299+/mo.
+            </p>
 
             <p className="text-center text-[#4A3428] font-semibold mt-6">
               Save $3,468/year compared to Podium
@@ -417,15 +431,6 @@ export default function PricingPage() {
 
         <SiteFooter />
       </div>
-
-      {showComingSoonModal && comingSoonTier && (
-        <ComingSoonTierModal
-          open={showComingSoonModal}
-          tier={comingSoonTier}
-          onClose={() => { setShowComingSoonModal(false); setComingSoonTier(null); }}
-          onContinueWithFree={handleComingSoonContinue}
-        />
-      )}
     </>
   );
 }

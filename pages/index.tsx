@@ -1,7 +1,21 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { CheckCircle, Clock, Shield, Star, ArrowRight } from 'lucide-react';
+import {
+  ArrowRight,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Globe,
+  Mail,
+  MapPin,
+  MessageCircle,
+  RefreshCcw,
+  Shield,
+  Sparkles,
+  Star,
+  Users,
+} from 'lucide-react';
 import Image from 'next/image';
 import Head from 'next/head';
 import Script from 'next/script';
@@ -142,8 +156,8 @@ export default function LandingPage() {
     <>
       <Head>
         {/* Basic SEO */}
-        <title>ReviewFlo - Get More 5-Star Google Reviews Automatically</title>
-        <meta name="description" content="Get more 5-star Google reviews automatically. Catch unhappy customers privately before they post. Simple review management for small service businesses." />
+        <title>ReviewFlo — Review Management for Local Service Businesses</title>
+        <meta name="description" content="ReviewFlo helps local service businesses get more Google reviews automatically — and handle unhappy customers before they post publicly. Free to start. No contracts." />
         <meta name="keywords" content="review management, customer feedback, small business, negative reviews, review software, reputation management, service business, 5-star reviews, online reviews, Google reviews, Facebook reviews, Yelp reviews, barber reviews, mechanic reviews, auto detailing reviews" />
         <meta name="author" content="ReviewFlo" />
 
@@ -153,8 +167,8 @@ export default function LandingPage() {
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://usereviewflo.com" />
-        <meta property="og:title" content="ReviewFlo - Get More 5-Star Google Reviews Automatically" />
-        <meta property="og:description" content="Get more 5-star Google reviews automatically. Catch unhappy customers privately before they post. Simple review management for small service businesses." />
+        <meta property="og:title" content="ReviewFlo — Review Management for Local Service Businesses" />
+        <meta property="og:description" content="ReviewFlo helps local service businesses get more Google reviews automatically — and handle unhappy customers before they post publicly. Free to start. No contracts." />
         <meta property="og:image" content="https://usereviewflo.com/api/og-homepage" />
         <meta property="og:image:secure_url" content="https://usereviewflo.com/api/og-homepage" />
         <meta property="og:image:type" content="image/png" />
@@ -166,8 +180,8 @@ export default function LandingPage() {
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://usereviewflo.com" />
-        <meta name="twitter:title" content="ReviewFlo - Get More 5-Star Google Reviews Automatically" />
-        <meta name="twitter:description" content="Get more 5-star Google reviews automatically. Catch unhappy customers privately before they post. Simple review management for small service businesses." />
+        <meta name="twitter:title" content="ReviewFlo — Review Management for Local Service Businesses" />
+        <meta name="twitter:description" content="ReviewFlo helps local service businesses get more Google reviews automatically — and handle unhappy customers before they post publicly. Free to start. No contracts." />
         <meta name="twitter:image" content="https://usereviewflo.com/api/og-homepage" />
         <meta name="twitter:image:alt" content="ReviewFlo - Get more 5-star Google reviews automatically" />
 
@@ -317,22 +331,22 @@ export default function LandingPage() {
           <div className="text-center animate-slideUp">
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-              Stop Bad Reviews Before They Go Public
+              Get More Google Reviews. Handle Bad Ones Privately.
             </h1>
 
             {/* Subheadline */}
             <p className="text-base sm:text-xl text-gray-600 mb-3 sm:mb-4 max-w-2xl mx-auto leading-relaxed">
-              Get 10x More 5-Star Google Reviews — Automatically
+              The simple review management tool for owner-operated service businesses. Free to start. No contracts.
             </p>
 
             {/* Tagline */}
             <p className="text-sm sm:text-lg text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
-              The simple review management software for{' '}
+              Built for{' '}
               <span className="text-[#4A3428] font-semibold whitespace-nowrap">
                 {typedWord}
                 <span className="cursor-blink inline-block w-[2px] h-[1em] bg-[#C9A961] ml-[2px] align-middle" />
               </span>
-              . Free forever.
+              .
             </p>
 
             {/* CTA Buttons */}
@@ -425,7 +439,7 @@ export default function LandingPage() {
                 Smart Routing
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Customers rate their experience. 4–5 star ratings flow straight to your Google review page. 1–3 star ratings go to a short private feedback form — and you get an instant alert so you can reach out. The Google link is visible on every screen, to every customer.
+                Customers rate their experience. 5-star ratings go straight to your Google review page. 1–4 star ratings go to a short private feedback form — and you get an instant alert so you can reach out. The Google link is always visible on every screen, so every customer can leave a public review if they choose.
               </p>
             </div>
 
@@ -504,13 +518,13 @@ export default function LandingPage() {
             </div>
             <div className="action-step-text w-full md:w-1/2">
               <span className="action-step-badge inline-block px-3 py-1 bg-[#DCFCE7] text-green-800 text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
-                If 5 stars → Review platform
+                If 5 stars → Google review
               </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Happy customers pick a platform
+                Happy customers go straight to Google
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                A 5-star tap sends them to choose Google, Facebook, or any link you&rsquo;ve set up—then straight into that site&rsquo;s review flow. No extra steps.
+                A 5-star tap sends them straight to your Google review page in one step. No extra choices, no extra friction.
               </p>
             </div>
           </div>
@@ -528,13 +542,13 @@ export default function LandingPage() {
             </div>
             <div className="action-step-text w-full md:w-1/2">
               <span className="action-step-badge inline-block px-3 py-1 bg-[#FEE2E2] text-red-800 text-xs font-bold rounded-full mb-3 tracking-wide uppercase">
-                If 1–3 stars → Private feedback first
+                If 1–4 stars → Private feedback first
               </span>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 You hear from unhappy customers first
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                A 1–3 star rating opens a quick private feedback form — with the Google review link still visible. You&apos;re alerted right away so you can resolve the issue before it escalates, without ever hiding the public review option.
+                A 1–4 star rating opens a quick private feedback form — with the Google review link still visible. You&apos;re alerted right away so you can reach out and resolve the issue, without ever hiding the public review option.
               </p>
             </div>
           </div>
@@ -566,6 +580,113 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Features Grid */}
+      <section className="py-12 sm:py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">
+              Everything you need to manage your reputation
+            </h2>
+            <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto">
+              From automated follow-ups to multi-location management — ReviewFlo is built for local service businesses that want more reviews with less effort.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {[
+              {
+                icon: Mail,
+                title: 'Review Requests',
+                description:
+                  'Send review request links by email after every job. Customers tap once — no app, no login required.',
+              },
+              {
+                icon: RefreshCcw,
+                title: 'Automated Follow-Ups',
+                description:
+                  "ReviewFlo sends a reminder a few days later if they haven't responded yet. Set it and forget it.",
+              },
+              {
+                icon: Star,
+                title: 'Smart Routing',
+                description:
+                  '5-star customers go straight to Google. 1–4 star customers go to you first, privately — with the Google link still available.',
+              },
+              {
+                icon: Users,
+                title: 'Past Customer Campaigns',
+                description:
+                  "Upload your customer list and let ReviewFlo reach out to everyone who's worked with you. Build years of social proof in weeks.",
+              },
+              {
+                icon: BarChart3,
+                title: 'Google Business Profile Integration',
+                description:
+                  'Connect your Google Business Profile and see your rating, review count, and reply rate directly in your dashboard.',
+              },
+              {
+                icon: Globe,
+                title: 'Reply to Reviews',
+                description:
+                  'Read and respond to every Google review without leaving ReviewFlo. AI tier gets pre-drafted replies.',
+              },
+              {
+                icon: MapPin,
+                title: 'Multi-Location Support',
+                description:
+                  'Manage multiple business locations from one account. Each location gets its own review link, stats, and outreach queue.',
+              },
+              {
+                icon: MessageCircle,
+                title: 'SMS Outreach',
+                badge: 'AI tier',
+                description:
+                  "Send review requests via text message for dramatically higher open rates. Automatically paced to stay within Google's guidelines.",
+              },
+              {
+                icon: Sparkles,
+                title: 'AI Review Responses',
+                badge: 'AI tier',
+                description:
+                  'AI drafts a reply to each review in your voice. One click to post.',
+              },
+              {
+                icon: Sparkles,
+                title: 'Sentiment & Theme Analysis',
+                badge: 'AI tier — coming soon',
+                description:
+                  'Understand what customers love and what needs work. Themes extracted from every review automatically.',
+              },
+            ].map((f) => {
+              const Icon = f.icon;
+              return (
+                <div
+                  key={f.title}
+                  className="bg-white rounded-xl shadow-sm border border-[#C9A961]/20 p-6 sm:p-7 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-[#E8DCC8]/35 flex items-center justify-center border border-[#C9A961]/25">
+                      <Icon className="w-5 h-5 text-[#4A3428]" />
+                    </div>
+                    {f.badge && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#4A3428] text-white">
+                        {f.badge}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5">
+                    {f.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {f.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Teaser Section */}
       <section
         id="pricing"
@@ -592,14 +713,33 @@ export default function LandingPage() {
             Helping local pros get more 5-star reviews every week.
           </p>
           <div className="flex flex-wrap justify-center gap-2">
-            {['Barbers', 'Auto Detailers', 'Plumbers', 'Electricians', 'Cleaners', 'HVAC Pros', 'Mechanics', 'Landscapers'].map((biz) => (
-              <span
-                key={biz}
-                className="px-3 py-1.5 bg-white border border-[#C9A961]/30 rounded-full text-sm text-gray-700 font-medium shadow-sm"
-              >
-                {biz}
-              </span>
-            ))}
+            {[
+              { label: 'Barbers', href: '/for/barber-shops' },
+              { label: 'Auto Detailers', href: '/for/mobile-auto-detailing' },
+              { label: 'Plumbers' }, // No exact /for/plumbers page (we have plumbing-services)
+              { label: 'Electricians', href: '/for/electricians' },
+              { label: 'Cleaners', href: '/for/house-cleaning' },
+              { label: 'HVAC Pros' }, // No exact /for/hvac page (we have hvac-repair)
+              { label: 'Mechanics' }, // No exact /for/auto-repair page (we have auto-repair-shops)
+              { label: 'Landscapers' }, // No exact /for/landscaping page (we have lawn-care)
+            ].map((biz) =>
+              biz.href ? (
+                <Link
+                  key={biz.label}
+                  href={biz.href}
+                  className="px-3 py-1.5 bg-white border border-[#C9A961]/30 rounded-full text-sm text-gray-700 font-medium shadow-sm hover:border-[#4A3428]/40 hover:bg-[#E8DCC8]/20 transition-colors"
+                >
+                  {biz.label}
+                </Link>
+              ) : (
+                <span
+                  key={biz.label}
+                  className="px-3 py-1.5 bg-white border border-[#C9A961]/30 rounded-full text-sm text-gray-700 font-medium shadow-sm"
+                >
+                  {biz.label}
+                </span>
+              )
+            )}
           </div>
         </div>
       </section>
