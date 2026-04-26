@@ -62,8 +62,10 @@ function Card({
 export default function DashboardPage() {
   const router = useRouter()
   const { selectedBusinessId, viewMode, locations } = useBusiness()
+  const locationIds = locations.map((l) => l.id).join(',')
   const [isLoading, setIsLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
+  const [hasAttemptedRecovery, setHasAttemptedRecovery] = useState(false)
   const [pendingFeedbackCount, setPendingFeedbackCount] = useState(0)
   const [linkCopied, setLinkCopied] = useState(false)
   const [showComingSoonModal, setShowComingSoonModal] = useState(false)
@@ -106,9 +108,12 @@ export default function DashboardPage() {
       const url = selectedBusinessId
         ? `/api/my-business?businessId=${encodeURIComponent(selectedBusinessId)}`
         : '/api/my-business'
-      const res = await fetch(url, {
+
+      const fetchBusiness = async () => fetch(url, {
         headers: { 'Authorization': `Bearer ${session.access_token}` },
       })
+
+      const res = await fetchBusiness()
       console.timeEnd('[Dashboard] Business Fetch')
 
       if (res.status === 401) {
@@ -119,6 +124,57 @@ export default function DashboardPage() {
       const data = await res.json().catch(() => ({} as Record<string, unknown>))
 
       if (!res.ok || !data.business) {
+        // If the user is authenticated but their businesses row was never created,
+        // silently attempt recovery once before showing "No Business Found".
+        if (!hasAttemptedRecovery && session.access_token) {
+          setHasAttemptedRecovery(true)
+          try {
+            await fetch('/api/auth/recover-business', {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${session.access_token}` },
+            })
+
+            const retryRes = await fetchBusiness()
+            if (retryRes.status === 401) {
+              router.push('/login')
+              return
+            }
+            const retryData = await retryRes.json().catch(() => ({} as Record<string, unknown>))
+            const retryBusiness = (retryData as Record<string, unknown>)?.business
+            if (retryRes.ok && retryBusiness && typeof retryBusiness === 'object') {
+              const businessData = retryBusiness as Business
+              setBusiness(businessData)
+
+              identifyUser(user.id, {
+                businessId: businessData.id,
+                businessName: businessData.business_name,
+                businessSlug: businessData.slug,
+              })
+
+              trackEvent('business_onboarded', {
+                businessId: businessData.id,
+                businessName: businessData.business_name,
+                onboardingDate: new Date().toISOString(),
+              })
+
+              const feedbackCountResult = await supabase
+                .from('feedback')
+                .select('*', { count: 'exact', head: true })
+                .eq('business_id', businessData.id)
+                .eq('is_resolved', false)
+
+              if (!feedbackCountResult.error) {
+                setPendingFeedbackCount(feedbackCountResult.count ?? 0)
+              }
+
+              setIsLoading(false)
+              return
+            }
+          } catch {
+            // Intentionally silent: user will fall through to "No Business Found"
+          }
+        }
+
         console.log('[Dashboard] No business found:', {
           status: res.status,
           ok: res.ok,
@@ -203,6 +259,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!business) return
+    let ignore = false
     ;(async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
@@ -215,6 +272,10 @@ export default function DashboardPage() {
         if (viewMode === 'all' && locations.length > 1) {
           // ── All-locations: fan out, aggregate ──────────────────────────────
           const token = session.access_token
+
+          if (canAccessGoogleStats(business.tier)) {
+            if (!ignore) setGbpReviewsLoading(true)
+          }
 
           const locationResults = await Promise.all(
             locations.map(async (loc) => {
@@ -240,11 +301,10 @@ export default function DashboardPage() {
             })
           )
 
-          setCachedGbpStats(aggregateGbpStats(locationResults.map((r) => r.stats)))
-          setRequestsSentThisMonth(locationResults.reduce((sum, r) => sum + r.requestCount, 0))
+          if (!ignore) setCachedGbpStats(aggregateGbpStats(locationResults.map((r) => r.stats)))
+          if (!ignore) setRequestsSentThisMonth(locationResults.reduce((sum, r) => sum + r.requestCount, 0))
 
           if (canAccessGoogleStats(business.tier)) {
-            setGbpReviewsLoading(true)
             const reviewResults = await Promise.all(
               locations
                 .filter((loc) => loc.google_connected)
@@ -256,15 +316,15 @@ export default function DashboardPage() {
                   return { businessId: loc.id, locationName: loc.business_name, reviews: json.reviews ?? [] }
                 })
             )
-            setGbpReviewsLoading(false)
+            if (!ignore) setGbpReviewsLoading(false)
             const merged = mergeReviews(reviewResults)
-            setGbpReviews(merged)
+            if (!ignore) setGbpReviews(merged)
             const unrepliedCount = merged.filter((r) => !r.reviewReply).length
             const replyRate = merged.length > 0 ? Math.round((1 - unrepliedCount / merged.length) * 100) : null
-            setReviewsData({ replyRate, unrepliedCount })
+            if (!ignore) setReviewsData({ replyRate, unrepliedCount })
           } else {
-            setGbpReviews([])
-            setReviewsData(null)
+            if (!ignore) setGbpReviews([])
+            if (!ignore) setReviewsData(null)
           }
         } else {
           // ── Single-location: existing logic ───────────────────────────────
@@ -282,48 +342,49 @@ export default function DashboardPage() {
             const j = await statsRes.json()
             const s = j.stats
             if (s) {
-              setCachedGbpStats({
+              if (!ignore) setCachedGbpStats({
                 total_reviews: s.total_reviews ?? null,
                 average_rating: s.average_rating ?? null,
                 reviews_this_month: s.reviews_this_month ?? null,
               })
             } else {
-              setCachedGbpStats(null)
+              if (!ignore) setCachedGbpStats(null)
             }
           }
 
           if (!reqCountResult.error) {
-            setRequestsSentThisMonth(reqCountResult.count ?? 0)
+            if (!ignore) setRequestsSentThisMonth(reqCountResult.count ?? 0)
           }
 
           if (!canAccessGoogleStats(business.tier) || !business.google_connected) {
-            setGbpReviews([])
-            setReviewsData(null)
+            if (!ignore) setGbpReviews([])
+            if (!ignore) setReviewsData(null)
             return
           }
 
-          setGbpReviewsLoading(true)
+          if (!ignore) setGbpReviewsLoading(true)
           const listRes = await fetch(`/api/google-reviews/list?businessId=${encodeURIComponent(business.id)}`, {
             headers: { Authorization: `Bearer ${session.access_token}` },
           })
-          setGbpReviewsLoading(false)
+          if (!ignore) setGbpReviewsLoading(false)
           if (!listRes.ok) {
-            setGbpReviews([])
-            setReviewsData(null)
+            if (!ignore) setGbpReviews([])
+            if (!ignore) setReviewsData(null)
             return
           }
           const json = await listRes.json()
           const reviews: GbpFullReview[] = json.reviews ?? []
-          setGbpReviews(reviews)
+          if (!ignore) setGbpReviews(reviews)
           const unrepliedCount = reviews.filter((r) => !r.reviewReply).length
           const replyRate = reviews.length > 0 ? Math.round((1 - unrepliedCount / reviews.length) * 100) : null
-          setReviewsData({ replyRate, unrepliedCount })
+          if (!ignore) setReviewsData({ replyRate, unrepliedCount })
         }
       } catch {
-        setGbpReviewsLoading(false)
+        if (!ignore) setGbpReviewsLoading(false)
       }
     })()
-  }, [business, viewMode, locations])
+    return () => { ignore = true }
+  }, [business, viewMode, locationIds])
 
   const handlePricingClick = () => {
     if (business) trackEvent('pricing_viewed_from_dashboard', { businessId: business.id, source: 'dashboard' })

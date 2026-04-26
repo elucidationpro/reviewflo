@@ -22,6 +22,20 @@ interface MagicLinkRequest {
   businessName: string;
 }
 
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  'teleworm.us',
+  'dayrep.com',
+  'armyspy.com',
+  'jourrapide.com',
+  'mailinator.com',
+  'guerrillamail.com',
+  'tempmail.com',
+  'throwam.com',
+  'sharklasers.com',
+  'trashmail.com',
+  'yopmail.com',
+])
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -43,6 +57,11 @@ export default async function handler(
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrim)) {
       return res.status(400).json({ error: 'Please enter a valid email address' });
+    }
+
+    const domain = emailTrim.split('@')[1]?.toLowerCase() || ''
+    if (domain && DISPOSABLE_EMAIL_DOMAINS.has(domain)) {
+      return res.status(400).json({ error: 'Please use a valid business email address.' })
     }
 
     // Check if user already exists

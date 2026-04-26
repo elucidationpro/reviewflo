@@ -18,6 +18,20 @@ const supabaseAdmin = createClient(
   }
 );
 
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  'teleworm.us',
+  'dayrep.com',
+  'armyspy.com',
+  'jourrapide.com',
+  'mailinator.com',
+  'guerrillamail.com',
+  'tempmail.com',
+  'throwam.com',
+  'sharklasers.com',
+  'trashmail.com',
+  'yopmail.com',
+])
+
 interface JoinRequest {
   name: string;
   businessName: string;
@@ -73,6 +87,12 @@ export default async function handler(
     if (!nameTrim || !businessNameTrim || !emailTrim || !password || !requestedSlug) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
+
+    const domain = emailTrim.split('@')[1]?.toLowerCase() || ''
+    if (domain && DISPOSABLE_EMAIL_DOMAINS.has(domain)) {
+      return res.status(400).json({ error: 'Please use a valid business email address.' })
+    }
+
     if (!businessType || !customersPerMonth || !reviewAskingFrequency) {
       return res.status(400).json({ error: 'Please answer all questions' });
     }
