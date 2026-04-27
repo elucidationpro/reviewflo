@@ -11,6 +11,7 @@ const supabaseAdmin = createClient(
 
 const CRON_SECRET = process.env.CRON_SECRET
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'
+const CAMPAIGNS_ENABLED = process.env.CAMPAIGNS_ENABLED === 'true'
 
 const BATCH_LIMIT = 50
 
@@ -41,6 +42,19 @@ interface BusinessRow {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET' && req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  if (!CAMPAIGNS_ENABLED) {
+    return res.status(200).json({
+      success: true,
+      processed: 0,
+      sent: 0,
+      failed: 0,
+      skipped_unsubscribed: 0,
+      skipped_paused: 0,
+      skipped_no_email: 0,
+      disabled: true,
+    })
   }
 
   const authHeader = req.headers.authorization

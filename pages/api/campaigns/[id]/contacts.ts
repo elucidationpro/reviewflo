@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const business = ctx.business as { id: string; tier: string | null }
   const tier = parseTier(business.tier)
   if (!canUseCampaigns(tier)) {
-    return apiError(res, 403, 'Pro or AI tier required for campaigns')
+    return apiError(res, 403, 'Campaigns are coming soon', { code: 'campaigns_disabled' })
   }
 
   // Confirm campaign belongs to business (RLS would also enforce it via service role bypass; we use service role).

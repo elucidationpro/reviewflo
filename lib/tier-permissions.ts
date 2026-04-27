@@ -10,6 +10,11 @@ export function canSendFromDashboard(tier: Tier | undefined): boolean {
   return tier === 'pro' || tier === 'ai'
 }
 
+/** Should the UI show campaigns entry points? (Pro/AI only) */
+export function canSeeCampaigns(tier: Tier | undefined): boolean {
+  return tier === 'pro' || tier === 'ai'
+}
+
 /** Can access multi-platform (Facebook, Yelp) settings (Pro/AI only) */
 export function canAccessMultiPlatform(tier: Tier | undefined): boolean {
   return tier === 'pro' || tier === 'ai'
@@ -77,7 +82,8 @@ export function getMonthlyTokenLimit(tier: Tier | undefined): number {
 
 /** Can use past-customer CSV outreach campaigns (Pro/AI only) */
 export function canUseCampaigns(tier: Tier | undefined): boolean {
-  return tier === 'pro' || tier === 'ai'
+  // Temporarily disabled for all tiers until campaigns are re-verified end-to-end.
+  return false
 }
 
 /** Max contacts per campaign: Free=0, Pro=500, AI=Infinity */

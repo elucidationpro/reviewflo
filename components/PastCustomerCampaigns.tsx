@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
-import { canUseCampaigns, getMaxCampaignContacts } from '../lib/tier-permissions'
+import { canSeeCampaigns, canUseCampaigns, getMaxCampaignContacts } from '../lib/tier-permissions'
 
 type Tier = 'free' | 'pro' | 'ai'
 
@@ -150,7 +150,8 @@ async function authedFetch(url: string, init: RequestInit = {}): Promise<Respons
 }
 
 export default function PastCustomerCampaigns({ business }: PastCustomerCampaignsProps) {
-  const allowed = canUseCampaigns(business.tier)
+  const canSee = canSeeCampaigns(business.tier)
+  const enabled = canUseCampaigns(business.tier)
   const contactLimit = getMaxCampaignContacts(business.tier)
 
   const [view, setView] = useState<'list' | 'wizard' | 'detail'>('list')
@@ -159,7 +160,7 @@ export default function PastCustomerCampaigns({ business }: PastCustomerCampaign
   const [activeCampaignId, setActiveCampaignId] = useState<string | null>(null)
 
   const loadCampaigns = useCallback(async () => {
-    if (!allowed) {
+    if (!enabled) {
       setCampaigns([])
       return
     }
@@ -178,7 +179,7 @@ export default function PastCustomerCampaigns({ business }: PastCustomerCampaign
       setCampaigns([])
       setCampaignsError(err instanceof Error ? err.message : 'Network error')
     }
-  }, [allowed])
+  }, [enabled])
 
   useEffect(() => {
     loadCampaigns()
@@ -190,12 +191,19 @@ export default function PastCustomerCampaigns({ business }: PastCustomerCampaign
     <div className="mt-10">
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h2 className="text-sm font-semibold text-gray-700">Past Customer Campaigns</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-gray-700">Past Customer Campaigns</h2>
+            {canSee && !enabled && (
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-[#F5F5DC] text-[#6B4F3E] border-[#C9A961]/40">
+                Coming soon
+              </span>
+            )}
+          </div>
           <p className="text-xs text-gray-500 mt-0.5">
             Upload a CSV of past customers and drip-send review requests over time.
           </p>
         </div>
-        {view === 'list' && allowed && (
+        {view === 'list' && enabled && (
           <button
             type="button"
             onClick={() => setView('wizard')}
@@ -210,8 +218,10 @@ export default function PastCustomerCampaigns({ business }: PastCustomerCampaign
         )}
       </div>
 
-      {!allowed ? (
+      {!canSee ? (
         <UpgradeCard />
+      ) : !enabled ? (
+        <ComingSoonCard />
       ) : view === 'list' ? (
         <CampaignList
           campaigns={campaigns}
@@ -263,6 +273,25 @@ function UpgradeCard() {
         >
           See Pricing
         </Link>
+      </div>
+    </div>
+  )
+}
+
+function ComingSoonCard() {
+  return (
+    <div className="rounded-2xl border border-[#C9A961]/30 overflow-hidden shadow-sm">
+      <div className="h-0.5 bg-gradient-to-r from-[#C9A961] via-[#e6c97a] to-[#C9A961]" />
+      <div className="p-6 bg-gradient-to-br from-[#F5F5DC]/30 via-white to-white">
+        <p className="text-xs font-semibold text-[#6B4F3E] uppercase tracking-widest mb-1">Coming soon</p>
+        <h3 className="text-base font-bold text-gray-900 mb-2">Past customer campaigns</h3>
+        <p className="text-sm text-gray-600 mb-4 max-w-lg">
+          Campaigns will let you upload a CSV of past customers and have ReviewFlo drip-send review requests automatically.
+          We’re finishing verification and polishing the flow before turning it on.
+        </p>
+        <p className="text-xs text-gray-500">
+          Tip: You can still send one-off review requests from the top of this page.
+        </p>
       </div>
     </div>
   )

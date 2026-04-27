@@ -96,7 +96,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const business = ctx.business as { id: string; business_name: string; tier: string | null }
   const tier = parseTier(business.tier)
   if (!canUseCampaigns(tier)) {
-    return apiError(res, 403, 'Pro or AI tier required for campaigns')
+    return apiError(res, 403, 'Campaigns are coming soon', { code: 'campaigns_disabled' })
   }
 
   const body = (req.body as CreateBody) || {}
