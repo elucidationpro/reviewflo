@@ -64,6 +64,12 @@ const nextConfig: NextConfig = {
         destination: "/for/hair-salons",
         permanent: true,
       },
+      // Kova Wash slug redirect: old slug had no dash, new one does
+      {
+        source: "/obsidianauto",
+        destination: "/obsidian-auto",
+        permanent: true,
+      },
     ];
   },
   // Do not redirect www ↔ apex here. Vercel’s “primary domain” already canonicalizes
