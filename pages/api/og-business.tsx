@@ -109,19 +109,6 @@ export default async function handler(req: NextRequest) {
             )}
           </div>
 
-          <p
-            style={{
-              fontSize: 22,
-              fontWeight: 500,
-              color: '#5a5a5a',
-              margin: '0 0 12px',
-              textAlign: 'center',
-              lineHeight: 1.25,
-            }}
-          >
-            More Good Reviews. Less Bad Ones.
-          </p>
-
           <div
             style={{
               fontSize: nameFontSize,
@@ -145,19 +132,6 @@ export default async function handler(req: NextRequest) {
               </svg>
             ))}
           </div>
-
-          <p
-            style={{
-              fontSize: 22,
-              fontWeight: 500,
-              color: '#666666',
-              margin: 0,
-              textAlign: 'center',
-              lineHeight: 1.3,
-            }}
-          >
-            Tap a star to rate
-          </p>
         </div>
 
         <p style={{ fontSize: 16, color: '#999999', margin: 0 }}>Powered by ReviewFlo</p>
