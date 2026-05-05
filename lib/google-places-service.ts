@@ -276,17 +276,19 @@ export function calculateDeltas(
   const now = new Date()
   const sevenDaysAgo = new Date(now)
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-  const thirtyDaysAgo = new Date(now)
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+  // "This month" = since the 1st of the current calendar month
+  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
   // Find the snapshot closest to 7 days ago
   const weekSnap = snapshots.find(
     (s) => new Date(s.snapshot_date) <= sevenDaysAgo
   )
-  // Find the snapshot closest to 30 days ago
-  const monthSnap = snapshots.find(
-    (s) => new Date(s.snapshot_date) <= thirtyDaysAgo
-  )
+  // Find the last snapshot before the 1st of this month.
+  // Fall back to the oldest available snapshot so new accounts still show a delta.
+  const monthSnap =
+    snapshots.find((s) => new Date(s.snapshot_date) < firstOfMonth) ??
+    (snapshots.length > 1 ? snapshots[snapshots.length - 1] : undefined)
 
   return {
     reviewsThisWeek: weekSnap ? currentReviews - weekSnap.total_reviews : 0,
