@@ -3,27 +3,23 @@ import { getBlogPost } from '@/lib/blog-posts'
 import { getPublishedSlugs } from '@/lib/blog-schedule'
 import { getIndustrySlugs } from '@/lib/industries'
 
-// IMPORTANT: this should match the primary canonical domain.
-const SITE = 'https://usereviewflo.com'
+// IMPORTANT: this must match the Vercel primary domain (www is primary; non-www redirects to www).
+const SITE = 'https://www.usereviewflo.com'
 
 /**
  * Public, fixed routes (Pages Router) — excludes dynamic [slug], admin, dashboard, and API routes.
+ * Do NOT include pages that have noindex meta tags — they contradict being in a sitemap.
+ * Excluded: /qualify, /survey, /feedback, /join, /early-access, /early-access/join (all noindex).
+ * Excluded: /privacy (re-export of /privacy-policy; 301 redirect handles old links).
  */
 const STATIC_PATHS: string[] = [
   '/',
   '/about',
   '/pricing',
   '/terms',
-  '/privacy',
   '/privacy-policy',
   '/demo',
-  '/qualify',
-  '/survey',
-  '/feedback',
-  '/join',
   '/blog',
-  '/early-access',
-  '/early-access/join',
 ]
 
 function escapeXml(unsafe: string): string {

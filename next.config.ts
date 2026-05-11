@@ -70,6 +70,13 @@ const nextConfig: NextConfig = {
         destination: "/obsidian-auto",
         permanent: true,
       },
+      // /privacy is a re-export of /privacy-policy; consolidate to one canonical URL.
+      // Old links still work; /privacy is removed from the sitemap.
+      {
+        source: "/privacy",
+        destination: "/privacy-policy",
+        permanent: true,
+      },
     ];
   },
   // Do not redirect www ↔ apex here. Vercel’s “primary domain” already canonicalizes

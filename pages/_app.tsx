@@ -10,9 +10,12 @@ import Script from "next/script";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://usereviewflo.com").replace(/\/$/, "");
+  // Canonical always uses the Vercel primary domain (www). Do NOT pull from NEXT_PUBLIC_APP_URL
+  // here — if that env var is set to the non-www domain it creates a canonical/redirect loop
+  // because Vercel redirects usereviewflo.com → www.usereviewflo.com.
+  const CANONICAL_ORIGIN = "https://www.usereviewflo.com";
   const canonicalPath = (router.asPath || "/").split("?")[0] || "/";
-  const canonicalUrl = `${baseUrl}${canonicalPath === "/" ? "" : canonicalPath}`;
+  const canonicalUrl = `${CANONICAL_ORIGIN}${canonicalPath === "/" ? "" : canonicalPath}`;
   const googleAdsConversionId = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID?.trim();
 
   useEffect(() => {
