@@ -129,7 +129,7 @@ export default function PricingPage() {
               Simple, transparent pricing. No contracts. No surprises.
             </p>
             <p className="text-base text-gray-500">
-              Start free. Upgrade anytime — no contracts.
+              Start free. Upgrade anytime.
             </p>
           </div>
         </section>
@@ -163,7 +163,7 @@ export default function PricingPage() {
                   <ul className="space-y-2 text-sm text-gray-600">
                     {[
                       'ReviewFlo review link (share via text, email, or anywhere)',
-                      'Smart routing — happy customers go to Google, others come to you privately',
+                      'Smart routing',
                       'Private feedback intercept with instant owner alert',
                       'Google Reviews link',
                       'Email notifications when feedback arrives',
@@ -208,6 +208,7 @@ export default function PricingPage() {
                       'Multi-platform support (Google, Facebook, and more)',
                       'Remove ReviewFlo branding',
                       'Customizable email templates',
+                      'Past customer campaigns (up to 500 contacts per campaign)',
                       'Multi-location support (up to 3 locations)',
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
@@ -244,7 +245,7 @@ export default function PricingPage() {
                   <p className="font-semibold text-gray-900 text-sm mb-3">Everything in Pro, plus:</p>
                   <ul className="space-y-2 text-sm text-gray-600">
                     {[
-                      'Past Customer Campaigns — upload your list once, ReviewFlo reaches out automatically over weeks, Google-compliant pacing',
+                      'Unlimited contacts per past-customer campaign (fair use)',
                       'SMS review request automation',
                       'AI-drafted review replies',
                       'Multi-location support (up to 15 locations)',
@@ -322,7 +323,7 @@ export default function PricingPage() {
                       ['Starting Paid Price', '$19/mo', 'N/A', 'N/A', 'N/A'],
                       ['Contract Required', 'No', '12 mo', '12 mo', 'No'],
                       ['Private Feedback Intercept', CHECK, CROSS, CROSS, CROSS],
-                      ['Past Customer Campaigns (AI tier)', CHECK, CROSS, CROSS, CROSS],
+                      ['Past customer campaigns (Pro & AI)', CHECK, CROSS, CROSS, CROSS],
                       ['Multi-Location Support', CHECK, CHECK, CHECK, CROSS],
                       ['Multi-Platform Reviews', CHECK, CHECK, CHECK, CHECK],
                       ['SMS Automation', CHECK, CHECK, CHECK, CHECK],

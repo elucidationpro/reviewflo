@@ -114,6 +114,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const rootName = String(root.business_name || '')
     const now = new Date().toISOString()
 
+    // Minimal insert — match [pages/api/auth/complete-magic-link.ts] plus `parent_business_id`.
+    // Do NOT set tier, launch discount, white-label, SMS, or CRM fields here: some production DBs are missing
+    // columns that only exist in ad-hoc SQL (e.g. `launch_discount_claimed` from migration-businesses-tier-fields.sql).
+    // We sync `tier` immediately after insert so the child row is not left at the table default.
     const insertPayload: Record<string, unknown> = {
       user_id: user.id,
       parent_business_id: primary.id,
@@ -127,26 +131,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       facebook_review_url: null,
       yelp_review_url: null,
       nextdoor_review_url: null,
-      tier: root.tier ?? 'free',
-      interested_in_tier: root.interested_in_tier ?? null,
-      notify_on_launch: root.notify_on_launch ?? false,
-      launch_discount_eligible: root.launch_discount_eligible ?? true,
-      launch_discount_claimed: root.launch_discount_claimed ?? false,
       terms_accepted_at: root.terms_accepted_at ?? now,
-      show_reviewflo_branding: root.show_reviewflo_branding ?? true,
-      show_business_name: root.show_business_name ?? true,
-      google_place_id: null,
-      sms_enabled: false,
-      twilio_phone_number: null,
-      white_label_enabled: root.white_label_enabled ?? false,
-      custom_logo_url: null,
-      custom_brand_name: null,
-      custom_brand_color: null,
-      square_access_token: null,
-      square_refresh_token: null,
-      square_merchant_id: null,
-      jobber_api_key: null,
-      housecall_pro_api_key: null,
     }
 
     const { data: created, error: insertErr } = await supabaseAdmin
@@ -164,6 +149,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return apiError(res, 400, 'That link is already taken. Please choose another.')
       }
       return apiError(res, 500, 'Failed to create location')
+    }
+
+    const tierToSync = String(root.tier ?? 'free')
+    const { error: tierErr } = await supabaseAdmin
+      .from('businesses')
+      .update({ tier: tierToSync })
+      .eq('id', created.id)
+
+    if (tierErr) {
+      console.error('[add-location] tier sync:', tierErr.message, tierErr)
+      await supabaseAdmin.from('businesses').delete().eq('id', created.id)
+      if (/column|does not exist/i.test(String(tierErr.message || ''))) {
+        return apiError(res, 503, 'Multi-location requires a database update. Please try again later or contact support.')
+      }
+      return apiError(res, 500, 'Failed to set plan tier on the new location')
     }
 
     const { data: rootTemplates } = await supabaseAdmin

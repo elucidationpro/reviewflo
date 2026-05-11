@@ -188,6 +188,7 @@ export default async function handler(
       .select('id, business_name, tier, user_id')
       .in('tier', ['pro', 'ai'])
       .eq('weekly_report_emails', true)
+      .is('parent_business_id', null)
 
     if (bizError) {
       console.error('[send-weekly-reports] Failed to fetch businesses:', bizError)

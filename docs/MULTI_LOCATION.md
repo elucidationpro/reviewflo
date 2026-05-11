@@ -17,6 +17,10 @@ Each location is a full `businesses` row: its own **slug**, **review link**, tem
 - **API:** `POST /api/businesses/add-location` creates a child row + default templates (Pro/AI only, under cap).
 - **UI:** Dashboard lists locations and adds new ones (basics). Settings continue to edit the **primary** business until we add per-location settings switching.
 
+## Troubleshooting
+
+- **`add-location` insert fails with PGRST / “column not found in schema cache”** — `POST /api/businesses/add-location` uses the same **minimal** column set as [pages/api/auth/complete-magic-link.ts](../pages/api/auth/complete-magic-link.ts) (plus `parent_business_id`), then runs a single `UPDATE` to copy **`tier`** from the primary location so the child is not left at the table default. It does not write launch-discount, white-label, SMS, or CRM fields (some of those only exist if you ran ad-hoc SQL or every migration). To add missing launch columns in Supabase, see [supabase/migrations/20260425140000_businesses_launch_discount_claimed.sql](../supabase/migrations/20260425140000_businesses_launch_discount_claimed.sql) and [supabase/migrations/20250316100000_ai_tier_schema.sql](../supabase/migrations/20250316100000_ai_tier_schema.sql) for optional fields.
+
 ## Future
 
 - Per-location Settings / Google connect, delete/archive location, org dashboard rollups.

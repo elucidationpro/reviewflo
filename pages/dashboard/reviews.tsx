@@ -167,6 +167,7 @@ export default function ReviewsPage() {
           review_text: review.comment ?? '',
           review_rating: STAR_RATING_TO_NUMBER[review.starRating] ?? 3,
           reviewer_name: review.reviewer?.isAnonymous ? 'Anonymous' : (review.reviewer?.displayName || 'Anonymous'),
+          businessId: business?.id,
         }),
       })
       const json = await res.json().catch(() => ({}))
@@ -210,7 +211,7 @@ export default function ReviewsPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ review_name: replyTarget.name, comment: replyText.trim() }),
+        body: JSON.stringify({ review_name: replyTarget.name, comment: replyText.trim(), businessId: business?.id }),
       })
       const json = await res.json().catch(() => ({}))
 
