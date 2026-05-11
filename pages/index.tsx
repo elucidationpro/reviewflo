@@ -603,7 +603,6 @@ export default function LandingPage() {
               {
                 icon: RefreshCcw,
                 title: 'Automated Follow-Ups',
-                comingSoon: true,
                 description:
                   "ReviewFlo sends a reminder a few days later if they haven't responded yet. Set it and forget it.",
               },
@@ -623,21 +622,18 @@ export default function LandingPage() {
               {
                 icon: BarChart3,
                 title: 'Google Business Profile Integration',
-                comingSoon: true,
                 description:
                   'Connect your Google Business Profile and see your rating, review count, and reply rate directly in your dashboard.',
               },
               {
                 icon: Globe,
                 title: 'Reply to Reviews',
-                comingSoon: true,
                 description:
                   'Read and respond to every Google review without leaving ReviewFlo.',
               },
               {
                 icon: MapPin,
                 title: 'Multi-Location Support',
-                comingSoon: true,
                 description:
                   'Manage multiple business locations from one account. Each location gets its own review link, stats, and outreach queue.',
               },
