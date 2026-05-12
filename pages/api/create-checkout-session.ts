@@ -16,6 +16,15 @@ function resolveAccountRootId(row: Record<string, unknown>): string {
   return String(row.id)
 }
 
+/** Fetch / undici reject header values outside ISO-8859-1; Stripe keys must be ASCII-only. */
+function firstNonLatin1Index(s: string): { index: number; code: number } | null {
+  for (let i = 0; i < s.length; i++) {
+    const code = s.charCodeAt(i)
+    if (code > 255) return { index: i, code }
+  }
+  return null
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -48,24 +57,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   }
 
-  // Diagnostic: raw fetch to Stripe — return full error so it's visible in the browser
-  try {
-    const testResp = await fetch('https://api.stripe.com/v1/charges?limit=1', {
-      headers: { 'Authorization': `Bearer ${secretKey.trim()}` }
-    })
-    console.log('[STRIPE_CONNECT_TEST]', JSON.stringify({ status: testResp.status, ok: testResp.ok }))
-    if (!testResp.ok) {
-      return res.status(500).json({
-        error: `[STRIPE_CONNECT_HTTP] status=${testResp.status}`,
-        _debug: 'raw fetch succeeded but returned non-2xx',
-      })
-    }
-  } catch (connectErr) {
-    const e = connectErr as Error & { code?: string; cause?: unknown }
-    console.error('[STRIPE_CONNECT_FAIL]', e.message, e.code, String(e.cause))
+  const trimmedSecret = secretKey.trim()
+  const trimmedPrice = priceId.trim()
+  const badKey = firstNonLatin1Index(trimmedSecret)
+  if (badKey) {
+    console.error('[create-checkout-session] STRIPE_SECRET_KEY has non-ASCII at index', badKey.index)
     return res.status(500).json({
-      error: `[STRIPE_CONNECT_FAIL] ${e.message}`,
-      _debug: { code: e.code, cause: String(e.cause) },
+      error:
+        'Stripe secret key in the server environment contains a non-ASCII character (often a mis-copied key or invisible Unicode). Open Vercel → Environment Variables, delete STRIPE_SECRET_KEY, and paste the key again from Stripe Dashboard (Developers → API keys) so it is only letters, numbers, and underscores after sk_live_ / sk_test_.',
+      _debug: { env: 'STRIPE_SECRET_KEY', index: badKey.index, charCode: badKey.code },
+    })
+  }
+  const badPrice = firstNonLatin1Index(trimmedPrice)
+  if (badPrice) {
+    console.error('[create-checkout-session] STRIPE_PRO_PRICE_ID has non-ASCII at index', badPrice.index)
+    return res.status(500).json({
+      error:
+        'Stripe price ID in the server environment contains invalid characters. Re-copy STRIPE_PRO_PRICE_ID from Stripe (plain ASCII only).',
+      _debug: { env: 'STRIPE_PRO_PRICE_ID', index: badPrice.index, charCode: badPrice.code },
     })
   }
 
@@ -120,7 +129,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     'https://usereviewflo.com'
 
   try {
-    const stripe = new Stripe(secretKey, {
+    const stripe = new Stripe(trimmedSecret, {
       apiVersion: '2026-01-28.clover',
       httpClient: Stripe.createFetchHttpClient(),
       maxNetworkRetries: 0,
@@ -129,7 +138,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [{ price: trimmedPrice, quantity: 1 }],
       success_url: `${origin}/dashboard?checkout=success`,
       cancel_url: `${origin}/settings?section=plan`,
       client_reference_id: user.id,
@@ -160,15 +169,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ url: session.url })
   } catch (error: unknown) {
-    const stripeErr = error as Record<string, unknown>
-    console.error('[CHECKOUT_FAIL]', JSON.stringify({
-      type: stripeErr?.type,
-      code: stripeErr?.code,
-      message: stripeErr?.message,
-      param: stripeErr?.param,
-      statusCode: stripeErr?.statusCode,
-      raw: stripeErr?.raw,
-    }))
     if (
       error instanceof Stripe.errors.StripeInvalidRequestError &&
       error.code === 'resource_missing' &&
