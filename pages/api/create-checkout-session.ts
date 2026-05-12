@@ -48,6 +48,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   }
 
+  // Diagnostic: log key shape without exposing value
+  console.log('[STRIPE_DIAG]', JSON.stringify({
+    keyPrefix: secretKey.slice(0, 8),
+    keyLength: secretKey.length,
+    keyHasWhitespace: /\s/.test(secretKey),
+    priceIdPrefix: priceId.slice(0, 12),
+    priceIdLength: priceId.length,
+    priceIdHasWhitespace: /\s/.test(priceId),
+  }))
+
   const businessIdParam =
     typeof req.body?.businessId === 'string' && req.body.businessId.trim()
       ? req.body.businessId.trim()
