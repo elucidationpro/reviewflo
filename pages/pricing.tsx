@@ -264,7 +264,7 @@ export default function PricingPage() {
                   onClick={() => handleCtaClick('ai')}
                   className="block w-full text-center px-6 py-3 bg-[#4A3428] text-white rounded-lg font-semibold hover:bg-[#4A3428]/90 transition-all"
                 >
-                  Start with AI — $49/mo
+                  Coming soon
                 </Link>
               </div>
             </div>

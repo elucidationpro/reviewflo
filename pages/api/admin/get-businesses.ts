@@ -2,6 +2,16 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { isAdminUser } from '../../../lib/adminAuth'
 
+/** Columns from `businesses` used by this route; `select('*')` returns the full row including these */
+export interface Business {
+  id: string
+  created_at: string
+  tier: 'free' | 'pro' | 'ai'
+  interested_in_tier?: string | null
+  notify_on_launch?: boolean | null
+  stripe_subscription_id?: string | null
+}
+
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || '',

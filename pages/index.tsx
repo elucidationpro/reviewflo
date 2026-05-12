@@ -324,6 +324,15 @@ export default function LandingPage() {
       <div className="min-h-screen bg-white">
         <SiteNav variant="marketing" />
         <div className={SITE_NAV_SPACER_CLASS}></div>
+        <div className="w-full bg-[#4A3428] text-white text-xs sm:text-sm text-center py-2 px-4">
+          ✨ Pro is now live — launch pricing from $9.50/mo{' '}
+          <Link
+            href="/pricing"
+            className="text-[#C9A961] font-semibold hover:underline"
+          >
+            → See plans
+          </Link>
+        </div>
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#E8DCC8]/30 via-white to-[#E8DCC8]/30 animate-fadeIn">
@@ -597,45 +606,52 @@ export default function LandingPage() {
               {
                 icon: Mail,
                 title: 'Review Requests',
+                tier: 'free' as const,
                 description:
                   'Send review request links by email after every job. Customers tap once — no app, no login required.',
               },
               {
-                icon: RefreshCcw,
-                title: 'Automated Follow-Ups',
-                description:
-                  "ReviewFlo sends a reminder a few days later if they haven't responded yet. Set it and forget it.",
-              },
-              {
                 icon: Star,
                 title: 'Smart Routing',
+                tier: 'free' as const,
                 description:
                   '5-star customers go straight to Google. 1–4 star customers go to you first, privately — with the Google link still available.',
               },
               {
-                icon: Users,
-                title: 'Past Customer Campaigns',
-                comingSoon: true,
+                icon: RefreshCcw,
+                title: 'Automated Follow-Ups',
+                tier: 'pro' as const,
                 description:
-                  "Upload your customer list and let ReviewFlo reach out to everyone who's worked with you. Build years of social proof in weeks.",
+                  "ReviewFlo sends a reminder a few days later if they haven't responded yet. Set it and forget it.",
               },
               {
                 icon: BarChart3,
                 title: 'Google Business Profile Integration',
+                tier: 'pro' as const,
                 description:
                   'Connect your Google Business Profile and see your rating, review count, and reply rate directly in your dashboard.',
               },
               {
                 icon: Globe,
                 title: 'Reply to Reviews',
+                tier: 'pro' as const,
                 description:
                   'Read and respond to every Google review without leaving ReviewFlo.',
               },
               {
                 icon: MapPin,
                 title: 'Multi-Location Support',
+                tier: 'pro' as const,
                 description:
                   'Manage multiple business locations from one account. Each location gets its own review link, stats, and outreach queue.',
+              },
+              {
+                icon: Users,
+                title: 'Past Customer Campaigns',
+                tier: 'pro' as const,
+                comingSoon: true,
+                description:
+                  "Upload your customer list and let ReviewFlo reach out to everyone who's worked with you. Build years of social proof in weeks.",
               },
               {
                 icon: MessageCircle,
@@ -669,10 +685,19 @@ export default function LandingPage() {
                     <div className="w-10 h-10 rounded-lg bg-[#E8DCC8]/35 flex items-center justify-center border border-[#C9A961]/25">
                       <Icon className="w-5 h-5 text-[#4A3428]" />
                     </div>
-                    {f.comingSoon && (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#E8DCC8] text-[#4A3428] border border-[#C9A961]/40">
-                        Coming soon
-                      </span>
+                    {(f.tier === 'pro' || f.comingSoon) && (
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        {f.tier === 'pro' && (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#4A3428] text-white">
+                            Pro
+                          </span>
+                        )}
+                        {f.comingSoon && (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#E8DCC8] text-[#4A3428] border border-[#C9A961]/40">
+                            Coming soon
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5">

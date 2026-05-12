@@ -87,6 +87,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ? rootRow.stripe_customer_id.trim()
       : undefined
 
+  if (!stripeCustomerId && !user.email) {
+    return res.status(400).json({
+      error:
+        'Add an email address to your account before subscribing (Settings → profile), or contact support.',
+    })
+  }
   const origin =
     (typeof req.headers.origin === 'string' && req.headers.origin) ||
     process.env.NEXT_PUBLIC_APP_URL ||
@@ -104,8 +110,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ...(stripeCustomerId
         ? { customer: stripeCustomerId }
         : {
-            customer_email: user.email ?? undefined,
-            customer_creation: 'always' as const,
+            // Subscription mode: Stripe creates the Customer at checkout completion when email is set.
+            // Do not set `customer_creation` here — Stripe only allows it for `mode: 'payment'`.
+            ...(user.email ? { customer_email: user.email } : {}),
           }),
       subscription_data: {
         metadata: {

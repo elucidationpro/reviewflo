@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { trackEvent } from '@/lib/posthog-provider';
 
 type WrapperTag = 'section' | 'div';
 
@@ -57,7 +58,16 @@ export default function MarketingPricingSection({
               $49<span className="text-sm font-normal text-gray-500">/mo</span>
             </p>
             <p className="text-xs text-[#4A3428] font-medium mb-3">Launch: $24.50/mo*</p>
-            <p className="text-xs text-gray-600">SMS automation · AI drafts · CRM integration</p>
+            <p className="text-xs text-gray-600 mb-4">SMS automation · AI drafts · CRM integration</p>
+            <Link
+              href="/join?plan=ai"
+              onClick={() =>
+                trackEvent('pricing_cta_clicked', { tier: 'ai', source: 'homepage_pricing_section' })
+              }
+              className="inline-flex w-full items-center justify-center rounded-lg border-2 border-[#4A3428] bg-white px-4 py-2.5 text-sm font-semibold text-[#4A3428] transition-colors hover:bg-[#E8DCC8]/30"
+            >
+              Coming soon
+            </Link>
           </div>
         </div>
 

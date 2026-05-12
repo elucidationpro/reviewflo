@@ -19,6 +19,7 @@ interface Business {
   user_id: string
   tier: 'free' | 'pro' | 'ai'
   admin_override?: boolean
+  stripe_subscription_id?: string | null
 }
 
 export default function AdminBusinessesPage() {
@@ -282,6 +283,17 @@ export default function AdminBusinessesPage() {
                           <option value="pro">Pro (testing)</option>
                           <option value="ai">AI (testing)</option>
                         </select>
+                        {business.tier !== 'free' &&
+                          (typeof business.stripe_subscription_id === 'string' &&
+                          business.stripe_subscription_id.length > 0 ? (
+                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-700 mt-1 inline-block">
+                              ● Live (Stripe)
+                            </span>
+                          ) : (
+                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 mt-1 inline-block">
+                              ● Test
+                            </span>
+                          ))}
                       </td>
                       <td className="px-6 py-4 text-gray-600">{new Date(business.created_at).toLocaleDateString()}</td>
                       <td className="px-6 py-4 text-center">
