@@ -49,6 +49,7 @@ export default function ComingSoonTierModal({
   const label = TIER_LABELS[tier];
   const discountPrice = DISCOUNT_PRICE[tier];
   const regularPrice = REGULAR_PRICE[tier];
+  const isPro = tier === 'pro';
 
   return (
     <div
@@ -78,21 +79,33 @@ export default function ComingSoonTierModal({
           </div>
 
           <h2 id="coming-soon-modal-title" className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-            {label} Tier Coming May 2026
+            {isPro ? `${label} is live` : `${label} tier — coming next`}
           </h2>
           <p className="text-gray-600 text-sm sm:text-base mb-6">
-            The {label} tier isn&apos;t available yet, but you can start with our Free tier today.
+            {isPro ? (
+              <>
+                You can subscribe to {label} from <strong>Settings → Plan &amp; Billing</strong> anytime after you finish signup.
+              </>
+            ) : (
+              <>
+                The {label} tier isn&apos;t available yet, but you can start with our Free tier today.
+              </>
+            )}
           </p>
 
           <p className="font-semibold text-gray-900 text-sm mb-2">What happens next:</p>
           <ol className="list-decimal list-inside text-gray-600 text-sm space-y-2 mb-6">
             <li>We&apos;ll create your free account now</li>
             <li>You start using ReviewFlo immediately</li>
-            <li>We&apos;ll email you when {label} launches</li>
-            <li>You get 50% off for the first 3 months</li>
+            {isPro ? (
+              <li>Open <strong>Settings → Plan</strong> to start your {label} subscription when you&apos;re ready</li>
+            ) : (
+              <li>We&apos;ll email you when {label} launches</li>
+            )}
+            <li>Eligible signups: 50% off for the first 3 months at checkout</li>
           </ol>
 
-          <p className="font-semibold text-gray-900 text-sm mb-2">Lock in your launch discount:</p>
+          <p className="font-semibold text-gray-900 text-sm mb-2">Launch pricing (when you subscribe):</p>
           <p className="text-gray-600 text-sm mb-1">
             {label}: {discountPrice} for first 3 months
           </p>
@@ -106,7 +119,9 @@ export default function ComingSoonTierModal({
               className="mt-1 w-4 h-4 rounded border-gray-300 text-[#4A3428] focus:ring-[#C9A961]"
             />
             <span className="text-sm text-gray-700">
-              Yes, notify me when {label} launches
+              {isPro
+                ? `Email me tips and reminders about starting on ${label}`
+                : `Yes, notify me when ${label} launches`}
             </span>
           </label>
 

@@ -15,6 +15,88 @@ const supabase = createClient(
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
+/** Pro stays on while Stripe is still retrying a failed renewal (`past_due`). */
+function subscriptionGrantsPro(status: Stripe.Subscription.Status): boolean {
+  return status === 'active' || status === 'trialing' || status === 'past_due';
+}
+
+function subscriptionCustomerId(subscription: Stripe.Subscription): string | undefined {
+  const c = subscription.customer;
+  if (typeof c === 'string') return c;
+  if (c && typeof c === 'object' && 'id' in c && typeof (c as { id: string }).id === 'string') {
+    return (c as { id: string }).id;
+  }
+  return undefined;
+}
+
+/**
+ * Keeps `businesses.tier` in sync with the Stripe subscription used for Pro checkout.
+ * Matches on `stripe_subscription_id`, then `metadata.business_id` from Checkout.
+ */
+async function syncProSubscriptionFromStripe(subscription: Stripe.Subscription): Promise<void> {
+  const subId = subscription.id;
+  const customerId = subscriptionCustomerId(subscription);
+  const businessIdMeta =
+    typeof subscription.metadata?.business_id === 'string' &&
+    subscription.metadata.business_id.trim()
+      ? subscription.metadata.business_id.trim()
+      : null;
+
+  const grantsPro = subscriptionGrantsPro(subscription.status);
+  const now = new Date().toISOString();
+
+  if (grantsPro) {
+    const payload = {
+      tier: 'pro' as const,
+      ...(customerId ? { stripe_customer_id: customerId } : {}),
+      stripe_subscription_id: subId,
+      updated_at: now,
+    };
+
+    const { data: bySub, error: errBySub } = await supabase
+      .from('businesses')
+      .update(payload)
+      .eq('stripe_subscription_id', subId)
+      .select('id');
+
+    if (errBySub) {
+      console.error('[Stripe webhook] sync subscription (by sub id):', errBySub);
+      return;
+    }
+    if (bySub && bySub.length > 0) return;
+
+    if (businessIdMeta) {
+      const { error: errByBiz } = await supabase
+        .from('businesses')
+        .update(payload)
+        .eq('id', businessIdMeta);
+      if (errByBiz) {
+        console.error('[Stripe webhook] sync subscription (by metadata business_id):', errByBiz);
+      }
+    }
+    return;
+  }
+
+  const { error: downgradeError } = await supabase
+    .from('businesses')
+    .update({
+      tier: 'free',
+      stripe_subscription_id: null,
+      updated_at: now,
+    })
+    .eq('stripe_subscription_id', subId);
+
+  if (downgradeError) {
+    console.error('[Stripe webhook] Error downgrading business (subscription inactive):', downgradeError);
+  } else {
+    console.log(
+      '[Stripe webhook] Business set to free (subscription not paying):',
+      subId,
+      subscription.status
+    );
+  }
+}
+
 // Disable body parsing, need raw body for webhook signature verification
 export const config = {
   api: {
@@ -228,7 +310,67 @@ export default async function handler(
         }
 
         console.log('Early access payment processed successfully:', customerEmail);
+      } else if (
+        session.metadata?.source === 'pro_subscription' &&
+        session.metadata?.supabase_user_id &&
+        session.metadata?.business_id
+      ) {
+        const supabaseUserId = session.metadata.supabase_user_id;
+        const businessId = session.metadata.business_id;
+        const stripeCustomerId = session.customer as string;
+        const stripeSubscriptionId = session.subscription as string;
+
+        if (session.payment_status !== 'paid') {
+          console.warn(
+            '[Stripe webhook] checkout.session.completed (pro): skipping upgrade; payment_status is not paid',
+            session.id,
+            session.payment_status
+          );
+        } else {
+          const { error: proCheckoutError } = await supabase
+            .from('businesses')
+            .update({
+              tier: 'pro',
+              stripe_customer_id: stripeCustomerId,
+              stripe_subscription_id: stripeSubscriptionId,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', businessId);
+
+          if (proCheckoutError) {
+            console.error(
+              '[Stripe webhook] Error updating business to pro after checkout:',
+              proCheckoutError
+            );
+          } else {
+            console.log(
+              '[Stripe webhook] Business upgraded to pro after checkout:',
+              { businessId, supabaseUserId, sessionId: session.id }
+            );
+          }
+        }
       }
+    }
+
+    if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
+      const subscription = event.data.object as Stripe.Subscription;
+      await syncProSubscriptionFromStripe(subscription);
+    }
+
+    if (event.type === 'invoice.payment_failed') {
+      const inv = event.data.object as unknown as Record<string, unknown>;
+      const subRaw = inv.subscription;
+      const subId =
+        typeof subRaw === 'string'
+          ? subRaw
+          : subRaw && typeof subRaw === 'object' && 'id' in subRaw
+            ? String((subRaw as { id: string }).id)
+            : undefined;
+      console.warn('[Stripe webhook] invoice.payment_failed', {
+        invoiceId: inv.id,
+        subscriptionId: subId,
+        attemptCount: inv.attempt_count,
+      });
     }
 
     return res.status(200).json({ received: true });

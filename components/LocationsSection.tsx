@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { getMaxBusinessLocations } from '@/lib/tier-permissions'
 import { generateLocationSlug } from '@/lib/slug-utils'
@@ -199,11 +200,17 @@ export default function LocationsSection({ tier, locations, maxLocations, onChan
       )}
 
       {!isPaid && (
-        <div className="rounded-xl border border-[#C9A961]/30 bg-gradient-to-br from-[#F5F5DC]/30 via-white to-white p-4">
-          <p className="text-xs font-semibold text-[#C9A961] uppercase tracking-widest mb-1">Upgrade</p>
+        <div className="rounded-xl border border-[#C9A961]/30 bg-gradient-to-br from-[#F5F5DC]/30 via-white to-white p-4 space-y-2">
+          <p className="text-xs font-semibold text-[#C9A961] uppercase tracking-widest">Upgrade</p>
           <p className="text-sm text-gray-700">
             Add up to {getMaxBusinessLocations('pro')} locations on Pro or {getMaxBusinessLocations('ai')} on AI.
           </p>
+          <Link
+            href="/settings?section=plan"
+            className="inline-flex text-xs font-semibold text-[#4A3428] hover:underline"
+          >
+            Manage plan →
+          </Link>
         </div>
       )}
 

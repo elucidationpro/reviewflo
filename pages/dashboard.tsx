@@ -386,10 +386,10 @@ export default function DashboardPage() {
     return () => { ignore = true }
   }, [business, viewMode, locationIds])
 
-  const handlePricingClick = () => {
-    if (business) trackEvent('pricing_viewed_from_dashboard', { businessId: business.id, source: 'dashboard' })
-    router.push('/#pricing')
-  }
+  const goToPlanSettings = useCallback(() => {
+    if (business) trackEvent('upgrade_cta_to_plan_settings', { businessId: business.id, source: 'dashboard' })
+    void router.push('/settings?section=plan')
+  }, [business, router])
 
   const updateLaunchPreference = useCallback(
     async (tier: ComingSoonTier | null, notifyOnLaunch: boolean) => {
@@ -427,7 +427,9 @@ export default function DashboardPage() {
         const tierLabel = updatedTier === 'pro' ? 'Pro' : 'AI'
         setLaunchMessage(
           updatedNotify
-            ? `We'll email you when ${tierLabel} launches in May 2026.`
+            ? (updatedTier === 'ai'
+                ? "We'll email you when the AI tier launches."
+                : "Thanks — we'll keep you posted about Pro.")
             : `Your preference for the ${tierLabel} tier has been updated.`
         )
 
@@ -671,22 +673,21 @@ export default function DashboardPage() {
                   Pro unlocks dashboard sending — no copy-paste required.
                 </p>
               </div>
-              <div className="flex gap-2 shrink-0">
+              <div className="flex flex-wrap gap-2 shrink-0">
                 <button
                   type="button"
-                  onClick={() => { setComingSoonTier('pro'); setShowComingSoonModal(true) }}
+                  onClick={goToPlanSettings}
                   disabled={updatingLaunchPref}
                   className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer"
                 >
-                  Get Notified
+                  Upgrade to Pro
                 </button>
-                <button
-                  type="button"
-                  onClick={handlePricingClick}
-                  className="px-3.5 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                <Link
+                  href="/pricing"
+                  className="px-3.5 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors inline-flex items-center"
                 >
-                  See Pricing
-                </button>
+                  See pricing
+                </Link>
               </div>
             </div>
           </Card>
@@ -699,22 +700,22 @@ export default function DashboardPage() {
             <div className="p-6 bg-gradient-to-br from-[#F5F5DC]/30 via-white to-white">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5">
                 <div className="flex-1">
-                  <p className="text-xs font-semibold text-[#C9A961] uppercase tracking-widest mb-1">Coming May 2026</p>
-                  <h2 className="text-base font-bold text-gray-900 mb-2">Pro &amp; AI Tiers</h2>
+                  <p className="text-xs font-semibold text-[#C9A961] uppercase tracking-widest mb-1">Plans</p>
+                  <h2 className="text-base font-bold text-gray-900 mb-2">Pro &amp; AI</h2>
                   <div className="space-y-1.5 text-xs text-gray-600">
-                    <p><span className="font-semibold text-gray-800">Pro ($19/mo)</span> — dashboard sending, auto follow-ups, multi-platform</p>
-                    <p><span className="font-semibold text-gray-800">AI ($49/mo)</span> — SMS automation, AI features, CRM integration</p>
-                    <p className="text-emerald-700 font-medium">Early signup: 50% off first 3 months</p>
+                    <p><span className="font-semibold text-gray-800">Pro</span> — dashboard sending, follow-ups, multi-platform links, Google stats, and more.</p>
+                    <p><span className="font-semibold text-gray-800">AI</span> — higher limits, SMS automation, and AI-powered tools (rolling out after Pro).</p>
+                    <p className="text-emerald-700 font-medium">Eligible accounts: 50% off the first 3 months at checkout.</p>
                   </div>
                 </div>
                 <div className="flex sm:flex-col gap-2 sm:w-40">
                   <button
                     type="button"
-                    onClick={() => { setComingSoonTier('pro'); setShowComingSoonModal(true) }}
+                    onClick={goToPlanSettings}
                     disabled={updatingLaunchPref}
                     className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer"
                   >
-                    Notify me — Pro
+                    Upgrade to Pro
                   </button>
                   <button
                     type="button"
@@ -724,13 +725,12 @@ export default function DashboardPage() {
                   >
                     Notify me — AI
                   </button>
-                  <button
-                    type="button"
-                    onClick={handlePricingClick}
-                    className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                  <Link
+                    href="/pricing"
+                    className="flex-1 sm:flex-none text-center px-3.5 py-2.5 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
                   >
-                    See Pricing
-                  </button>
+                    Compare plans
+                  </Link>
                 </div>
               </div>
               {launchMessage && <p className="mt-3 text-xs text-emerald-700 font-medium">{launchMessage}</p>}
@@ -751,28 +751,50 @@ export default function DashboardPage() {
                     </svg>
                   </div>
                   <p className="text-sm font-bold text-gray-900">
-                    You&apos;re on the {business.interested_in_tier === 'pro' ? 'Pro' : 'AI'} launch list
+                    {business.interested_in_tier === 'pro'
+                      ? 'Pro is live — subscribe when you’re ready'
+                      : 'You’re on the AI interest list'}
                   </p>
                 </div>
                 <p className="text-xs text-gray-500 ml-7">
-                  We&apos;ll email you in May 2026. Your discount: <span className="text-emerald-700 font-semibold">50% off first 3 months</span>.
+                  {business.interested_in_tier === 'pro' ? (
+                    <>
+                      Manage billing and checkout in{' '}
+                      <span className="font-medium text-gray-700">Settings → Plan</span>.
+                      Eligible accounts still get{' '}
+                      <span className="text-emerald-700 font-semibold">50% off the first 3 months</span> at checkout.
+                    </>
+                  ) : (
+                    <>
+                      We&apos;ll email you when the AI tier opens up. Eligible accounts:{' '}
+                      <span className="text-emerald-700 font-semibold">50% off the first 3 months</span>.
+                    </>
+                  )}
                 </p>
               </div>
-              <div className="flex gap-2 shrink-0">
+              <div className="flex flex-wrap gap-2 shrink-0">
+                {business.interested_in_tier === 'pro' && (
+                  <button
+                    type="button"
+                    onClick={goToPlanSettings}
+                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer"
+                  >
+                    Manage plan
+                  </button>
+                )}
                 <button
                   type="button"
-                  onClick={() => router.push('/settings')}
+                  onClick={() => router.push('/settings?section=plan')}
                   className="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Change
                 </button>
-                <button
-                  type="button"
-                  onClick={handlePricingClick}
-                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer"
+                <Link
+                  href="/pricing"
+                  className="px-3 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors inline-flex items-center"
                 >
-                  See Plans
-                </button>
+                  Compare plans
+                </Link>
               </div>
             </div>
           </Card>

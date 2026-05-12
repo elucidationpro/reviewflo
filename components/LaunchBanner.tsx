@@ -51,6 +51,10 @@ export default function LaunchBanner() {
       is_logged_in: isLoggedIn,
       timestamp: new Date().toISOString(),
     });
+    if (isLoggedIn) {
+      void router.push('/settings?section=plan');
+      return;
+    }
     if (router.pathname === '/') {
       const el = document.getElementById('pricing');
       if (el) {
@@ -82,14 +86,13 @@ export default function LaunchBanner() {
         <p className="hidden text-sm font-medium sm:block">
           {isDashboard ? (
             <>
-              Interested in Pro or AI? Get 50% off first 3 months when they
-              launch in May 2026 →{' '}
+              Pro is live — manage your plan or join the AI waitlist in{' '}
               <button
                 type="button"
                 onClick={handleCtaClick}
                 className="underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-[#4A3428]/50 rounded"
               >
-                See Pricing
+                Settings → Plan
               </button>
             </>
           ) : (
@@ -110,13 +113,13 @@ export default function LaunchBanner() {
         <p className="text-sm font-medium sm:hidden">
           {isDashboard ? (
             <>
-              50% off Pro & AI at launch (May 2026){' '}
+              Pro is live —{' '}
               <button
                 type="button"
                 onClick={handleCtaClick}
                 className="underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-[#4A3428]/50 rounded"
               >
-                See Pricing
+                Plan &amp; Billing
               </button>
             </>
           ) : (

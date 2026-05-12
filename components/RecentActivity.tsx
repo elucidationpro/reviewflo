@@ -153,7 +153,10 @@ export default function RecentActivity({
 
               {!showGoogleReviews ? (
                 <p className="text-xs text-gray-500 py-2">
-                  Upgrade to Pro and connect Google to see reviews here.
+                  Connect Google on Pro to see reviews here.{' '}
+                  <Link href="/settings?section=plan" className="font-semibold text-[#4A3428] hover:underline">
+                    Manage plan
+                  </Link>
                 </p>
               ) : reviewsLoading ? (
                 <div className="space-y-2">

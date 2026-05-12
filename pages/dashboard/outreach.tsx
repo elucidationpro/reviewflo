@@ -185,10 +185,10 @@ export default function OutreachPage() {
               </p>
               <div className="flex flex-wrap gap-2">
                 <Link
-                  href="/#pricing"
+                  href="/settings?section=plan"
                   className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer"
                 >
-                  See Pricing
+                  Upgrade to Pro
                 </Link>
                 <Link
                   href="/dashboard"

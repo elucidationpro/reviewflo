@@ -268,10 +268,10 @@ function UpgradeCard() {
           Upload a CSV of past customers and drip-send review requests over weeks — perfect for tapping into the backlog of happy customers who never left a review.
         </p>
         <Link
-          href="/#pricing"
-          className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer inline-block"
+          href="/settings?section=plan"
+          className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer inline-block text-center"
         >
-          See Pricing
+          Manage plan
         </Link>
       </div>
     </div>

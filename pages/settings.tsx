@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
@@ -268,8 +268,8 @@ function Toggle({
   checked: boolean
   onChange: () => void
   label: string
-  description?: string
-  badge?: React.ReactNode
+  description?: ReactNode
+  badge?: ReactNode
 }) {
   return (
     <div className="flex items-start justify-between gap-4">
@@ -278,7 +278,9 @@ function Toggle({
           <span className="text-sm font-semibold text-gray-900">{label}</span>
           {badge}
         </div>
-        {description && <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{description}</p>}
+        {description != null && description !== '' && (
+          <div className="text-xs text-gray-500 mt-0.5 leading-relaxed">{description}</div>
+        )}
       </div>
       <button
         type="button"
@@ -316,6 +318,8 @@ export default function SettingsPage() {
   const [planSaving, setPlanSaving] = useState(false)
   const [planMessage, setPlanMessage] = useState('')
   const [planError, setPlanError] = useState('')
+  const [proCheckoutLoading, setProCheckoutLoading] = useState(false)
+  const [proCheckoutError, setProCheckoutError] = useState('')
   const [showManualGoogle, setShowManualGoogle] = useState(false)
   const [activeSection, setActiveSection] = useState<
     'profile' | 'branding' | 'links' | 'flow' | 'plan' | 'sms' | 'crm' | 'ai-features' | 'locations'
@@ -361,9 +365,9 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!router.isReady) return
-    if (router.query.section === 'profile') {
-      setActiveSection('profile')
-    }
+    const s = router.query.section
+    if (s === 'profile') setActiveSection('profile')
+    if (s === 'plan') setActiveSection('plan')
   }, [router.isReady, router.query.section])
 
   useEffect(() => {
@@ -514,17 +518,58 @@ export default function SettingsPage() {
         notify_on_launch: data?.notify_on_launch ?? (tier !== null),
       }))
 
-      if (tier) {
-        setPlanMessage(`We'll email you when ${tier === 'pro' ? 'Pro' : 'AI'} launches in May 2026.`)
-        trackEvent('upgrade_notification_requested', { tier, source: 'settings' })
-      } else {
+      if (tier === null) {
         setPlanMessage("Got it — we'll keep you on Free.")
+      } else if (tier === 'ai') {
+        setPlanMessage("We'll email you when the AI tier launches.")
+        trackEvent('upgrade_notification_requested', { tier: 'ai', source: 'settings' })
+      } else {
+        setPlanMessage('Preference saved.')
       }
     } catch (err) {
       console.error('Error updating launch preference:', err)
       setPlanError('An unexpected error occurred. Please try again.')
     } finally {
       setPlanSaving(false)
+    }
+  }
+
+  const handleProCheckout = async () => {
+    if (businessData.tier !== 'free' || !businessData.id) return
+    setProCheckoutError('')
+    setPlanMessage('')
+    setPlanError('')
+    setProCheckoutLoading(true)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        setProCheckoutError('Session expired. Please log in again.')
+        return
+      }
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ businessId: businessData.id }),
+      })
+      const data = (await res.json().catch(() => ({}))) as { error?: string; url?: string }
+      if (!res.ok) {
+        setProCheckoutError(data.error || 'Could not start checkout. Please try again.')
+        return
+      }
+      if (!data.url) {
+        setProCheckoutError('Invalid response from server.')
+        return
+      }
+      trackEvent('upgrade_to_pro_checkout_started', { businessId: businessData.id, source: 'settings' })
+      window.location.assign(data.url)
+    } catch (err) {
+      console.error('[Settings] Pro checkout error:', err)
+      setProCheckoutError('Something went wrong. Please try again.')
+    } finally {
+      setProCheckoutLoading(false)
     }
   }
 
@@ -1017,7 +1062,14 @@ export default function SettingsPage() {
                         description={
                           canRemoveBranding(businessData.tier)
                             ? "When off, your review pages won't show ReviewFlo branding."
-                            : "Upgrade to Pro to remove ReviewFlo branding from your review pages."
+                            : (
+                              <>
+                                Upgrade to Pro to remove ReviewFlo branding from your review pages.{' '}
+                                <Link href="/settings?section=plan" className="font-semibold text-[#4A3428] hover:underline">
+                                  Open Plan &amp; Billing →
+                                </Link>
+                              </>
+                            )
                         }
                         badge={
                           !canRemoveBranding(businessData.tier)
@@ -1238,8 +1290,8 @@ export default function SettingsPage() {
                         <div>
                           <p className="text-sm font-semibold text-gray-900 mb-0.5">Facebook, Yelp &amp; Nextdoor</p>
                           <p className="text-xs text-gray-500 leading-relaxed">Add more review platforms with the Pro plan. Direct customers to the platform that matters most to your business.</p>
-                          <Link href="/#pricing" className="inline-block mt-2.5 text-xs font-semibold text-[#4A3428] hover:underline">
-                            Upgrade to Pro →
+                          <Link href="/settings?section=plan" className="inline-block mt-2.5 text-xs font-semibold text-[#4A3428] hover:underline">
+                            Manage plan →
                           </Link>
                         </div>
                       </div>
@@ -1287,7 +1339,7 @@ export default function SettingsPage() {
                         <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                           <p className="text-xs text-amber-800">
                             Want 3 templates?{' '}
-                            <Link href="/#pricing" className="font-semibold hover:underline">Upgrade to Pro →</Link>
+                            <Link href="/settings?section=plan" className="font-semibold hover:underline">Manage plan →</Link>
                           </p>
                         </div>
                       )}
@@ -1605,40 +1657,93 @@ export default function SettingsPage() {
                     </div>
                     {businessData.launch_discount_eligible && (
                       <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
-                        You qualify for <span className="font-semibold">50% off</span> the first 3 months when Pro or AI launch in May 2026.
+                        You qualify for <span className="font-semibold">50% off</span> the first 3 months when you subscribe to Pro or AI (eligibility is applied at checkout).
                       </p>
                     )}
-                    <div>
-                      <p className="text-xs text-gray-500 mb-3">Get notified when paid plans launch:</p>
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handlePlanPreferenceClick('pro')}
-                          disabled={planSaving}
-                          className="px-3.5 py-2 bg-[#4A3428] text-white rounded-lg text-xs font-semibold hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer"
-                        >
-                          Notify me — Pro
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handlePlanPreferenceClick('ai')}
-                          disabled={planSaving}
-                          className="px-3.5 py-2 border border-[#C9A961] bg-[#F5F5DC]/70 text-[#4A3428] rounded-lg text-xs font-semibold hover:bg-[#F5F5DC] transition-colors disabled:opacity-60 cursor-pointer"
-                        >
-                          Notify me — AI
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handlePlanPreferenceClick(null)}
-                          disabled={planSaving}
-                          className="px-3.5 py-2 border border-gray-200 bg-white text-gray-600 rounded-lg text-xs font-semibold hover:bg-gray-50 transition-colors disabled:opacity-60 cursor-pointer"
-                        >
-                          Stay on Free
-                        </button>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-xl border border-[#4A3428]/15 bg-white p-4 space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-bold text-gray-900">Pro</p>
+                            <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                              Dashboard sending, follow-ups, multi-platform links, Google stats, and more.
+                            </p>
+                          </div>
+                          {businessData.tier === 'pro' && (
+                            <span
+                              className="shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full border"
+                              style={{ backgroundColor: '#F5F5DC', borderColor: '#C9A961', color: '#4A3428' }}
+                            >
+                              Current plan
+                            </span>
+                          )}
+                        </div>
+                        {businessData.tier === 'free' && (
+                          <button
+                            type="button"
+                            onClick={() => { void handleProCheckout() }}
+                            disabled={proCheckoutLoading || planSaving}
+                            className="w-full px-3.5 py-2.5 bg-[#4A3428] text-white rounded-lg text-xs font-semibold hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer inline-flex items-center justify-center gap-2"
+                          >
+                            {proCheckoutLoading ? (
+                              <>
+                                <svg className="animate-spin h-4 w-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" aria-hidden>
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                Starting checkout…
+                              </>
+                            ) : (
+                              'Upgrade to Pro'
+                            )}
+                          </button>
+                        )}
+                        {businessData.tier === 'ai' && (
+                          <p className="text-xs text-gray-500">Everything in Pro is included on the AI tier.</p>
+                        )}
                       </div>
-                      {planMessage && <p className="mt-2.5 text-xs text-emerald-700 font-medium">{planMessage}</p>}
-                      {planError && <p className="mt-2.5 text-xs text-red-600 font-medium">{planError}</p>}
+                      <div className="rounded-xl border border-[#C9A961]/40 bg-[#F5F5DC]/20 p-4 space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-bold text-gray-900">AI</p>
+                            <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                              SMS automation, AI drafting, CRM hooks, and higher limits — launching after Pro.
+                            </p>
+                          </div>
+                          {businessData.tier === 'ai' && (
+                            <span
+                              className="shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full border"
+                              style={{ backgroundColor: '#F5F5DC', borderColor: '#C9A961', color: '#4A3428' }}
+                            >
+                              Current plan
+                            </span>
+                          )}
+                        </div>
+                        {businessData.tier !== 'ai' && (
+                          <button
+                            type="button"
+                            onClick={() => handlePlanPreferenceClick('ai')}
+                            disabled={planSaving || proCheckoutLoading}
+                            className="w-full px-3.5 py-2.5 border border-[#C9A961] bg-[#F5F5DC]/70 text-[#4A3428] rounded-lg text-xs font-semibold hover:bg-[#F5F5DC] transition-colors disabled:opacity-60 cursor-pointer"
+                          >
+                            Notify me — AI
+                          </button>
+                        )}
+                      </div>
                     </div>
+                    <div className="pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handlePlanPreferenceClick(null)}
+                        disabled={planSaving || proCheckoutLoading}
+                        className="px-3.5 py-2 border border-gray-200 bg-white text-gray-600 rounded-lg text-xs font-semibold hover:bg-gray-50 transition-colors disabled:opacity-60 cursor-pointer"
+                      >
+                        Stay on Free
+                      </button>
+                    </div>
+                    {planMessage && <p className="text-xs text-emerald-700 font-medium">{planMessage}</p>}
+                    {planError && <p className="text-xs text-red-600 font-medium">{planError}</p>}
+                    {proCheckoutError && <p className="text-xs text-red-600 font-medium" role="alert">{proCheckoutError}</p>}
                   </div>
                 </Card>
               )}
