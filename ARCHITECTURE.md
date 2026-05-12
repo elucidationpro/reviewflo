@@ -16,7 +16,7 @@ ReviewFlo is a Next.js application (Pages Router) built to help small business o
 - **SMS**: Twilio
 - **Auth**: Supabase Auth (Email/Password + Google OAuth)
 - **Analytics**: PostHog
-- **Payments**: Stripe (ready for implementation)
+- **Payments**: Stripe (Pro subscriptions — Checkout Session + webhooks)
 - **Image Processing**: Sharp, Canvas, Vercel OG
 
 ### Directory Structure
@@ -51,6 +51,12 @@ ReviewFlo is a Next.js application (Pages Router) built to help small business o
 ├── public/                         # Static assets
 └── styles/                         # Global styles
 ```
+
+### Stripe (Pro)
+
+- **Checkout**: `pages/api/create-checkout-session.ts` — uses `Stripe.createFetchHttpClient()`, `maxNetworkRetries: 0`, `timeout: 8000`
+- **Webhooks**: `pages/api/webhooks/stripe.ts` — tier + `stripe_customer_id` / `stripe_subscription_id` on `checkout.session.completed` (metadata `source=pro_subscription`)
+- **Environment**: `STRIPE_SECRET_KEY`, `STRIPE_PRO_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` on Vercel (and `.env.local`). Keys must be **ASCII, single line**, pasted from Stripe; `lib/stripe-env-ascii.ts` validates before the SDK runs
 
 ---
 

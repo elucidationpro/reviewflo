@@ -1,0 +1,90 @@
+---
+description: ReviewFlo project context — what it is, tech stack, file structure, DB schema, and conventions
+alwaysApply: true
+---
+
+# ReviewFlo — Project Context
+
+ReviewFlo helps small business owners request, collect, and manage customer reviews. The platform has three tiers: Free, Pro, and AI. Read this before starting any task.
+
+## Tech Stack
+
+- **Framework**: Next.js (Pages Router — not App Router)
+- **Frontend**: React 19, TypeScript, Tailwind CSS
+- **Backend**: Serverless API routes in `/pages/api/`
+- **Database**: Supabase (PostgreSQL with RLS)
+- **Auth**: Supabase Auth (Email/Password + Google OAuth)
+- **Email**: Resend (`lib/email-service.ts`)
+- **SMS**: Twilio (`lib/sms-service.ts`)
+- **Payments**: Stripe (Pro checkout + webhooks; see **Stripe** below)
+- **Analytics**: PostHog
+- **AI**: Anthropic SDK
+- **Image**: Sharp, Canvas, Vercel OG
+- **Validation**: Zod
+
+## Stripe (Pro checkout)
+
+- **Routes**: `pages/api/create-checkout-session.ts` (authenticated checkout URL), `pages/api/webhooks/stripe.ts` (`checkout.session.completed` → `businesses.tier`, Stripe IDs)
+- **Env (Vercel + `.env.local`)**: `STRIPE_SECRET_KEY`, `STRIPE_PRO_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` — live vs test keys must match the Stripe mode you use
+- **Resolved incident (2026-05):** Production “Stripe connection” errors were **`STRIPE_SECRET_KEY` polluted with non-ASCII** (e.g. Cyrillic lookalikes from a bad paste into Vercel). Node `fetch` rejects those header values. **Fix:** delete the env var in Vercel, paste again **only** from Stripe Dashboard (one line, no rich text), redeploy; **rotate** the key if it was exposed anywhere outside Vercel
+- **Code guard**: `lib/stripe-env-ascii.ts` (`firstNonLatin1Index`) — fails fast with a clear message instead of an opaque ByteString error
+
+## Directory Structure
+
+```
+pages/             # Next.js pages + API routes
+  api/             # All serverless API endpoints
+  admin/           # Admin dashboard
+  [slug].tsx       # Public review collection page
+  dashboard.tsx    # Business owner dashboard
+  settings.tsx     # Settings/configuration
+components/        # React components
+lib/               # Utilities & services
+  tier-permissions.ts    # Feature gating — always check this
+  email-service.ts       # Resend email templates
+  sms-service.ts         # Twilio SMS
+  supabase.ts            # Supabase client
+  google-business-profile.ts
+  posthog-provider.tsx
+supabase/migrations/     # DB migrations — always add one for schema changes
+scripts/           # Utility scripts
+public/            # Static assets
+```
+
+## Database — Key Tables
+
+| Table | Purpose |
+|-------|---------|
+| `businesses` | Core account — business name, slug, tier, branding, API keys |
+| `review_requests` | Pro/AI: tracks outbound review request emails/SMS |
+| `reviews` | Star ratings submitted on public review page |
+| `feedback` | Private feedback from 1-4 star submissions |
+| `ai_review_drafts` | AI-generated review draft suggestions |
+| `ai_review_responses` | AI-generated responses to reviews |
+
+Key `businesses` fields: `tier` ('free' | 'pro' | 'ai'), `slug` (unique public URL), `google_place_id`, `sms_enabled`, `twilio_phone_number`, `stripe_*`, CRM keys.
+
+## Tier Gating
+
+Always check `lib/tier-permissions.ts` before adding any feature. Every API route that touches a tier-gated feature must verify tier server-side — do not rely on frontend gating alone.
+
+```typescript
+import { canUseAIFeatures, canUsePro } from '@/lib/tier-permissions'
+if (!canUsePro(business.tier)) return res.status(403).json({ error: 'Pro tier required' })
+```
+
+## API Route Pattern
+
+All API routes follow the same shape — see `pages/api/send-review-request.ts` as the canonical example:
+1. Auth check (Bearer token → `supabaseAdmin.auth.getUser()`)
+2. Input validation (trim, return 400 if missing)
+3. Business lookup + tier check
+4. Do the work
+5. Return clean JSON
+
+## Conventions
+
+- **Migrations**: every DB schema change needs a migration file in `supabase/migrations/`. Never alter tables directly.
+- **Canonical docs**: `ARCHITECTURE.md` and `QUICK_REFERENCE.md` in the repo root. If these conflict with this rule, those files win — they're more up to date.
+- **Public URL**: `usereviewflo.com`
+- **Dev server**: `npm run dev` (runs on localhost:3000)

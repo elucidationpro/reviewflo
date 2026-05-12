@@ -79,6 +79,16 @@ return res.status(200).json({ success: true, data: record })
 ANTHROPIC_API_KEY=sk-ant-...  # Your Claude API key
 ```
 
+### Stripe (Pro checkout + webhooks)
+
+Paste **only** from Stripe Dashboard (Developers → API keys / Products). **One line, ASCII** — rich-text or “lookalike” Unicode in `STRIPE_SECRET_KEY` breaks Node `fetch` headers on Vercel. If checkout fails with a non-ASCII warning, delete the var and re-paste; rotate the key if it leaked outside Vercel.
+
+```bash
+STRIPE_SECRET_KEY=sk_live_...      # or sk_test_... ; must match STRIPE_PRO_PRICE_ID mode
+STRIPE_PRO_PRICE_ID=price_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
 ## Component Update Locations
 
 ### Settings Page AI Section
