@@ -37,7 +37,10 @@ export default async function handler(
   }
 
   try {
-    const stripe = new Stripe(secretKey, { apiVersion: '2026-01-28.clover' });
+    const stripe = new Stripe(secretKey, {
+      apiVersion: '2026-01-28.clover',
+      httpClient: Stripe.createFetchHttpClient(),
+    });
 
     // Use your Stripe product's Price ID if set; otherwise fall back to inline price
     const priceId = process.env.STRIPE_EARLY_ACCESS_PRICE_ID;

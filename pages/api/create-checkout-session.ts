@@ -99,7 +99,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     'https://usereviewflo.com'
 
   try {
-    const stripe = new Stripe(secretKey, { apiVersion: '2026-01-28.clover' })
+    const stripe = new Stripe(secretKey, {
+      apiVersion: '2026-01-28.clover',
+      // Avoid intermittent "connection to Stripe ... retried" failures on some serverless hosts (fetch is more reliable than Node's default client there).
+      httpClient: Stripe.createFetchHttpClient(),
+    })
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
