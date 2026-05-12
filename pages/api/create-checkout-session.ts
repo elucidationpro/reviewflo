@@ -48,15 +48,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   }
 
-  // Diagnostic: raw fetch to Stripe to isolate SDK vs network issue
+  // Diagnostic: raw fetch to Stripe — return full error so it's visible in the browser
   try {
     const testResp = await fetch('https://api.stripe.com/v1/charges?limit=1', {
       headers: { 'Authorization': `Bearer ${secretKey.trim()}` }
     })
     console.log('[STRIPE_CONNECT_TEST]', JSON.stringify({ status: testResp.status, ok: testResp.ok }))
+    if (!testResp.ok) {
+      return res.status(500).json({
+        error: `[STRIPE_CONNECT_HTTP] status=${testResp.status}`,
+        _debug: 'raw fetch succeeded but returned non-2xx',
+      })
+    }
   } catch (connectErr) {
-    const e = connectErr as Error
-    console.error('[STRIPE_CONNECT_FAIL]', e.message)
+    const e = connectErr as Error & { code?: string; cause?: unknown }
+    console.error('[STRIPE_CONNECT_FAIL]', e.message, e.code, String(e.cause))
+    return res.status(500).json({
+      error: `[STRIPE_CONNECT_FAIL] ${e.message}`,
+      _debug: { code: e.code, cause: String(e.cause) },
+    })
   }
 
   const businessIdParam =
