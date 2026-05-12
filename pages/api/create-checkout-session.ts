@@ -138,7 +138,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ url: session.url })
   } catch (error: unknown) {
-    console.error('Error creating Pro checkout session:', error)
+    const stripeErr = error as Record<string, unknown>
+    console.error('[CHECKOUT_FAIL]', JSON.stringify({
+      type: stripeErr?.type,
+      code: stripeErr?.code,
+      message: stripeErr?.message,
+      param: stripeErr?.param,
+      statusCode: stripeErr?.statusCode,
+      raw: stripeErr?.raw,
+    }))
     if (
       error instanceof Stripe.errors.StripeInvalidRequestError &&
       error.code === 'resource_missing' &&
