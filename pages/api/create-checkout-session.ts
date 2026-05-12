@@ -48,15 +48,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   }
 
-  // Diagnostic: log key shape without exposing value
-  console.log('[STRIPE_DIAG]', JSON.stringify({
-    keyPrefix: secretKey.slice(0, 8),
-    keyLength: secretKey.length,
-    keyHasWhitespace: /\s/.test(secretKey),
-    priceIdPrefix: priceId.slice(0, 12),
-    priceIdLength: priceId.length,
-    priceIdHasWhitespace: /\s/.test(priceId),
-  }))
+  // Diagnostic: raw fetch to Stripe to isolate SDK vs network issue
+  try {
+    const testResp = await fetch('https://api.stripe.com/v1/charges?limit=1', {
+      headers: { 'Authorization': `Bearer ${secretKey.trim()}` }
+    })
+    console.log('[STRIPE_CONNECT_TEST]', JSON.stringify({ status: testResp.status, ok: testResp.ok }))
+  } catch (connectErr) {
+    const e = connectErr as Error
+    console.error('[STRIPE_CONNECT_FAIL]', e.message)
+  }
 
   const businessIdParam =
     typeof req.body?.businessId === 'string' && req.body.businessId.trim()
