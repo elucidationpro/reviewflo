@@ -28,7 +28,26 @@ function resolveAccountRootId(row: Record<string, unknown>): string {
 async function buildLaunchDiscounts(stripe: Stripe): Promise<Stripe.Checkout.SessionCreateParams.Discount[]> {
   const couponEnv = process.env.STRIPE_LAUNCH_COUPON_ID?.trim()
   if (couponEnv) {
-    return [{ coupon: couponEnv }]
+    try {
+      // Validate early so we can return a clear, actionable error.
+      const c = await stripe.coupons.retrieve(couponEnv)
+      return [{ coupon: c.id }]
+    } catch (err: unknown) {
+      // Common operator issue: mixed-case custom coupon IDs copied with wrong case.
+      const stripeErr = err as Stripe.errors.StripeError & { code?: string }
+      if (stripeErr?.code === 'resource_missing') {
+        try {
+          const page = await stripe.coupons.list({ limit: 100 })
+          const caseInsensitiveMatch = page.data.find((c) => c.id.toLowerCase() === couponEnv.toLowerCase())
+          if (caseInsensitiveMatch) {
+            return [{ coupon: caseInsensitiveMatch.id }]
+          }
+        } catch {
+          // If listing fails, preserve original error path below.
+        }
+      }
+      throw err
+    }
   }
 
   const promoOrCoupon = process.env.STRIPE_LAUNCH_PROMO_ID?.trim()
@@ -238,6 +257,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ url: session.url })
   } catch (error: unknown) {
+    if (
+      error instanceof Stripe.errors.StripeInvalidRequestError &&
+      error.code === 'resource_missing' &&
+      error.param === 'discounts[0][coupon]'
+    ) {
+      return res.status(500).json({
+        error:
+          'Launch discount coupon was not found in the Stripe account used by STRIPE_SECRET_KEY. Re-copy STRIPE_LAUNCH_COUPON_ID from this same Stripe account/mode (Live), or use a generated coupon_... id.',
+      })
+    }
     if (
       error instanceof Stripe.errors.StripeInvalidRequestError &&
       error.code === 'resource_missing' &&
