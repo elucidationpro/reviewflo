@@ -221,6 +221,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       timeout: 8000,
     })
 
+    // Stripe receipts/invoices rely on Customer.email for subscriptions.
+    // Ensure existing customers have the current signed-in email when available.
+    if (stripeCustomerId && user.email) {
+      try {
+        const existing = await stripe.customers.retrieve(stripeCustomerId)
+        if (!existing.deleted) {
+          const existingEmail =
+            typeof existing.email === 'string' ? existing.email.trim().toLowerCase() : ''
+          const desiredEmail = user.email.trim().toLowerCase()
+          if (!existingEmail && desiredEmail) {
+            await stripe.customers.update(stripeCustomerId, { email: user.email })
+          }
+        }
+      } catch (customerSyncErr) {
+        console.warn(
+          '[create-checkout-session] Unable to verify/set Stripe customer email before checkout:',
+          customerSyncErr
+        )
+      }
+    }
+
     const discounts = await buildLaunchDiscounts(stripe)
 
     const session = await stripe.checkout.sessions.create({

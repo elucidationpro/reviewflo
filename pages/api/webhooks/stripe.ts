@@ -5,7 +5,7 @@ import { Resend } from 'resend';
 import { sendAdminNotification } from '@/lib/email-service';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-01-28.clover',
+  apiVersion: '2026-02-25.clover',
 });
 
 const supabase = createClient(
@@ -43,14 +43,11 @@ async function syncProSubscriptionFromStripe(subscription: Stripe.Subscription):
       : null;
 
   const grantsPro = subscriptionGrantsPro(subscription.status);
-  const now = new Date().toISOString();
-
   if (grantsPro) {
     const payload = {
       tier: 'pro' as const,
       ...(customerId ? { stripe_customer_id: customerId } : {}),
       stripe_subscription_id: subId,
-      updated_at: now,
     };
 
     const { data: bySub, error: errBySub } = await supabase
@@ -82,7 +79,6 @@ async function syncProSubscriptionFromStripe(subscription: Stripe.Subscription):
     .update({
       tier: 'free',
       stripe_subscription_id: null,
-      updated_at: now,
     })
     .eq('stripe_subscription_id', subId);
 
@@ -327,26 +323,49 @@ export default async function handler(
             session.payment_status
           );
         } else {
-          const { error: proCheckoutError } = await supabase
+          const { data: bizRow, error: bizLookupErr } = await supabase
             .from('businesses')
-            .update({
-              tier: 'pro',
-              stripe_customer_id: stripeCustomerId,
-              stripe_subscription_id: stripeSubscriptionId,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', businessId);
+            .select('id, user_id')
+            .eq('id', businessId)
+            .maybeSingle();
 
-          if (proCheckoutError) {
-            console.error(
-              '[Stripe webhook] Error updating business to pro after checkout:',
-              proCheckoutError
-            );
+          if (bizLookupErr || !bizRow) {
+            console.error('[Stripe webhook] checkout.session.completed (pro): business not found', {
+              businessId,
+              sessionId: session.id,
+              err: bizLookupErr,
+            });
           } else {
-            console.log(
-              '[Stripe webhook] Business upgraded to pro after checkout:',
-              { businessId, supabaseUserId, sessionId: session.id }
-            );
+            const rowUid =
+              typeof bizRow.user_id === 'string' ? bizRow.user_id.trim().toLowerCase() : '';
+            const metaUid = supabaseUserId.trim().toLowerCase();
+            if (!rowUid || rowUid !== metaUid) {
+              console.error(
+                '[Stripe webhook] checkout.session.completed (pro): refused — business.user_id does not match session metadata',
+                { businessId, sessionId: session.id }
+              );
+            } else {
+              const { error: proCheckoutError } = await supabase
+                .from('businesses')
+                .update({
+                  tier: 'pro',
+                  stripe_customer_id: stripeCustomerId,
+                  stripe_subscription_id: stripeSubscriptionId,
+                })
+                .eq('id', businessId);
+
+              if (proCheckoutError) {
+                console.error(
+                  '[Stripe webhook] Error updating business to pro after checkout:',
+                  proCheckoutError
+                );
+              } else {
+                console.log(
+                  '[Stripe webhook] Business upgraded to pro after checkout:',
+                  { businessId, supabaseUserId, sessionId: session.id }
+                );
+              }
+            }
           }
         }
       }
