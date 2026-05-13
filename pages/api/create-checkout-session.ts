@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
 import { getBusinessForRequest } from '../../lib/business-account'
+import { firstNonLatin1Index } from '../../lib/stripe-env-ascii'
 import { isPaidTier } from '../../lib/tier-permissions'
 
 const supabaseAdmin = createClient(
@@ -16,13 +17,51 @@ function resolveAccountRootId(row: Record<string, unknown>): string {
   return String(row.id)
 }
 
-/** Fetch / undici reject header values outside ISO-8859-1; Stripe keys must be ASCII-only. */
-function firstNonLatin1Index(s: string): { index: number; code: number } | null {
-  for (let i = 0; i < s.length; i++) {
-    const code = s.charCodeAt(i)
-    if (code > 255) return { index: i, code }
+/**
+ * Stripe Checkout reliably applies server-side discounts via `discounts: [{ coupon }]`
+ * (see https://docs.stripe.com/payments/checkout/discounts ). Promotion code objects
+ * (`promo_…`) sometimes do not change the subscription line item until restrictions
+ * match; we resolve unrestricted promos to their underlying coupon for Checkout.
+ *
+ * Use `STRIPE_LAUNCH_COUPON_ID` with the Dashboard **ID** (e.g. `cRmgHIfI` or `coupon_…`) to skip lookup.
+ */
+async function buildLaunchDiscounts(stripe: Stripe): Promise<Stripe.Checkout.SessionCreateParams.Discount[]> {
+  const couponEnv = process.env.STRIPE_LAUNCH_COUPON_ID?.trim()
+  if (couponEnv) {
+    return [{ coupon: couponEnv }]
   }
-  return null
+
+  const promoOrCoupon = process.env.STRIPE_LAUNCH_PROMO_ID?.trim()
+  if (!promoOrCoupon) {
+    throw new Error('Set STRIPE_LAUNCH_COUPON_ID or STRIPE_LAUNCH_PROMO_ID for the launch discount.')
+  }
+
+  if (promoOrCoupon.startsWith('coupon_')) {
+    return [{ coupon: promoOrCoupon }]
+  }
+
+  if (!promoOrCoupon.startsWith('promo_')) {
+    throw new Error('STRIPE_LAUNCH_PROMO_ID must be a promotion code id (promo_…) or coupon id (coupon_).')
+  }
+
+  const pc = await stripe.promotionCodes.retrieve(promoOrCoupon)
+
+  if (!pc.active) {
+    throw new Error(`Promotion code ${promoOrCoupon} is not active in Stripe (expired, max redemptions, or disabled).`)
+  }
+
+  const restrictedToCustomer = pc.customer != null
+  const firstTimeOnly = pc.restrictions?.first_time_transaction === true
+  if (restrictedToCustomer || firstTimeOnly) {
+    return [{ promotion_code: promoOrCoupon }]
+  }
+
+  const c = pc.promotion?.coupon
+  if (pc.promotion?.type !== 'coupon' || !c) {
+    throw new Error('Promotion code is not linked to a coupon (unexpected promotion type).')
+  }
+  const couponId = typeof c === 'string' ? c : (c as Stripe.Coupon).id
+  return [{ coupon: couponId }]
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -57,6 +96,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   }
 
+  const launchCouponId = process.env.STRIPE_LAUNCH_COUPON_ID?.trim()
+  const launchPromoId = process.env.STRIPE_LAUNCH_PROMO_ID?.trim()
+  if (!launchCouponId && !launchPromoId) {
+    console.error('Neither STRIPE_LAUNCH_COUPON_ID nor STRIPE_LAUNCH_PROMO_ID is set')
+    return res.status(500).json({
+      error:
+        'Pro launch discount is not configured. Set STRIPE_LAUNCH_COUPON_ID (coupon ID from Stripe → Coupon details, e.g. cRmgHIfI or coupon_…) or STRIPE_LAUNCH_PROMO_ID (promo_…). Prefer the coupon ID for reliable Checkout auto-apply.',
+    })
+  }
+
   const trimmedSecret = secretKey.trim()
   const trimmedPrice = priceId.trim()
   const badKey = firstNonLatin1Index(trimmedSecret)
@@ -75,6 +124,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       error:
         'Stripe price ID in the server environment contains invalid characters. Re-copy STRIPE_PRO_PRICE_ID from Stripe (plain ASCII only).',
       _debug: { env: 'STRIPE_PRO_PRICE_ID', index: badPrice.index, charCode: badPrice.code },
+    })
+  }
+
+  const badCoupon = launchCouponId ? firstNonLatin1Index(launchCouponId) : null
+  if (badCoupon) {
+    console.error('[create-checkout-session] STRIPE_LAUNCH_COUPON_ID has non-ASCII at index', badCoupon.index)
+    return res.status(500).json({
+      error: 'STRIPE_LAUNCH_COUPON_ID contains invalid characters. Re-copy from Stripe (ASCII only).',
+      _debug: { env: 'STRIPE_LAUNCH_COUPON_ID', index: badCoupon.index, charCode: badCoupon.code },
+    })
+  }
+  const badPromo = launchPromoId ? firstNonLatin1Index(launchPromoId) : null
+  if (badPromo) {
+    console.error('[create-checkout-session] STRIPE_LAUNCH_PROMO_ID has non-ASCII at index', badPromo.index)
+    return res.status(500).json({
+      error: 'STRIPE_LAUNCH_PROMO_ID contains invalid characters. Re-copy from Stripe (ASCII only).',
+      _debug: { env: 'STRIPE_LAUNCH_PROMO_ID', index: badPromo.index, charCode: badPromo.code },
     })
   }
 
@@ -130,15 +196,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const stripe = new Stripe(trimmedSecret, {
-      apiVersion: '2026-01-28.clover',
+      apiVersion: '2026-02-25.clover',
       httpClient: Stripe.createFetchHttpClient(),
       maxNetworkRetries: 0,
       timeout: 8000,
     })
 
+    const discounts = await buildLaunchDiscounts(stripe)
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       line_items: [{ price: trimmedPrice, quantity: 1 }],
+      discounts,
       success_url: `${origin}/dashboard?checkout=success`,
       cancel_url: `${origin}/settings?section=plan`,
       client_reference_id: user.id,
