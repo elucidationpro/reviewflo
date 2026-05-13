@@ -230,7 +230,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const existingEmail =
             typeof existing.email === 'string' ? existing.email.trim().toLowerCase() : ''
           const desiredEmail = user.email.trim().toLowerCase()
-          if (!existingEmail && desiredEmail) {
+          if (desiredEmail && existingEmail !== desiredEmail) {
             await stripe.customers.update(stripeCustomerId, { email: user.email })
           }
         }

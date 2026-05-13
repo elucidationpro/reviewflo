@@ -371,7 +371,11 @@ export default async function handler(
       }
     }
 
-    if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
+    if (
+      event.type === 'customer.subscription.created' ||
+      event.type === 'customer.subscription.updated' ||
+      event.type === 'customer.subscription.deleted'
+    ) {
       const subscription = event.data.object as Stripe.Subscription;
       await syncProSubscriptionFromStripe(subscription);
     }
