@@ -17,6 +17,10 @@ function resolveAccountRootId(row: Record<string, unknown>): string {
   return String(row.id)
 }
 
+function subscriptionGrantsPaid(status: Stripe.Subscription.Status): boolean {
+  return status === 'active' || status === 'trialing' || status === 'past_due'
+}
+
 /**
  * Stripe Checkout reliably applies server-side discounts via `discounts: [{ coupon }]`
  * (see https://docs.stripe.com/payments/checkout/discounts ). Promotion code objects
@@ -185,7 +189,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     supabaseAdmin,
     user.id,
     rootId,
-    'id, tier, stripe_customer_id'
+    'id, tier, stripe_customer_id, stripe_subscription_id'
   )
 
   if (!rootRow) {
@@ -220,6 +224,52 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       maxNetworkRetries: 0,
       timeout: 8000,
     })
+
+    // Safety net: if DB tier is stale but Stripe already has an active/trialing/past_due
+    // subscription for this customer, heal DB and block creating a duplicate checkout.
+    if (stripeCustomerId) {
+      const existingSubs = await stripe.subscriptions.list({
+        customer: stripeCustomerId,
+        status: 'all',
+        limit: 20,
+      })
+      const paidSub = existingSubs.data.find((sub) => subscriptionGrantsPaid(sub.status))
+      if (paidSub) {
+        await supabaseAdmin
+          .from('businesses')
+          .update({
+            tier: 'pro',
+            stripe_customer_id: stripeCustomerId,
+            stripe_subscription_id: paidSub.id,
+          })
+          .eq('id', String(rootRow.id))
+
+        return res.status(403).json({
+          error: 'Your account already has an active Pro subscription.',
+        })
+      }
+    }
+
+    const knownSubId =
+      typeof rootRow.stripe_subscription_id === 'string' && rootRow.stripe_subscription_id.trim()
+        ? rootRow.stripe_subscription_id.trim()
+        : null
+    if (knownSubId) {
+      const sub = await stripe.subscriptions.retrieve(knownSubId)
+      if (subscriptionGrantsPaid(sub.status)) {
+        await supabaseAdmin
+          .from('businesses')
+          .update({
+            tier: 'pro',
+            ...(stripeCustomerId ? { stripe_customer_id: stripeCustomerId } : {}),
+            stripe_subscription_id: sub.id,
+          })
+          .eq('id', String(rootRow.id))
+        return res.status(403).json({
+          error: 'Your account already has an active Pro subscription.',
+        })
+      }
+    }
 
     // Stripe receipts/invoices rely on Customer.email for subscriptions.
     // Ensure existing customers have the current signed-in email when available.
