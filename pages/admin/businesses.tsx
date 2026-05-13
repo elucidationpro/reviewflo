@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { supabase } from '../../lib/supabase'
 import { checkIsAdmin } from '../../lib/adminAuth'
 import AdminLayout from '@/components/AdminLayout'
+import { rowToAdminTierChoice, type AdminTierChoice } from '@/lib/admin-tier-override'
 
 interface Business {
   id: string
@@ -95,7 +96,7 @@ export default function AdminBusinessesPage() {
     router.push('/login')
   }
 
-  const handleOverrideTier = async (businessId: string, newTier: 'free' | 'pro' | 'ai') => {
+  const handleOverrideTier = async (businessId: string, newTier: AdminTierChoice) => {
     setUpdatingTierId(businessId)
     setError('')
     try {
@@ -118,9 +119,21 @@ export default function AdminBusinessesPage() {
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.error || 'Failed to update tier')
 
-      setBusinesses((prev) => prev.map((b) => (b.id === businessId ? { ...b, tier: newTier, admin_override: true } : b)))
-      setFilteredBusinesses((prev) => prev.map((b) => (b.id === businessId ? { ...b, tier: newTier, admin_override: true } : b)))
-      setSuccessMessage(`Tier set to ${newTier.toUpperCase()} for testing`)
+      const tier = data.tier as 'free' | 'pro' | 'ai'
+      const admin_override = Boolean(data.admin_override)
+      setBusinesses((prev) =>
+        prev.map((b) => (b.id === businessId ? { ...b, tier, admin_override } : b))
+      )
+      setFilteredBusinesses((prev) =>
+        prev.map((b) => (b.id === businessId ? { ...b, tier, admin_override } : b))
+      )
+      const labels: Record<AdminTierChoice, string> = {
+        free: 'Free',
+        pro_live: 'Pro',
+        pro_test: 'Pro (testing)',
+        ai_test: 'AI (testing)',
+      }
+      setSuccessMessage(`Tier set to ${labels[newTier]}`)
       setTimeout(() => setSuccessMessage(''), 3000)
     } catch (err) {
       console.error('Error overriding tier:', err)
@@ -274,14 +287,17 @@ export default function AdminBusinessesPage() {
                       </td>
                       <td className="px-6 py-4">
                         <select
-                          value={business.tier || 'free'}
-                          onChange={(e) => handleOverrideTier(business.id, e.target.value as 'free' | 'pro' | 'ai')}
+                          value={rowToAdminTierChoice(business.tier, business.admin_override)}
+                          onChange={(e) =>
+                            handleOverrideTier(business.id, e.target.value as AdminTierChoice)
+                          }
                           disabled={updatingTierId === business.id}
                           className="text-sm font-medium px-2 py-1.5 rounded border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-[#C9A961] disabled:opacity-50"
                         >
                           <option value="free">Free</option>
-                          <option value="pro">Pro (testing)</option>
-                          <option value="ai">AI (testing)</option>
+                          <option value="pro_live">Pro</option>
+                          <option value="pro_test">Pro (testing)</option>
+                          <option value="ai_test">AI (testing)</option>
                         </select>
                         {business.tier !== 'free' &&
                           (typeof business.stripe_subscription_id === 'string' &&

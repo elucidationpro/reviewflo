@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { firstNonLatin1Index } from '../../lib/stripe-env-ascii';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -28,6 +29,11 @@ export default async function handler(
     return res.status(401).json({ error: 'Invalid or expired session. Please sign in again.' });
   }
 
+  const origin =
+    (typeof req.headers.origin === 'string' && req.headers.origin) ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    'https://usereviewflo.com';
+
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey) {
     console.error('STRIPE_SECRET_KEY is not set');
@@ -36,14 +42,39 @@ export default async function handler(
     });
   }
 
+  const trimmedSecret = secretKey.trim();
+  const badKey = firstNonLatin1Index(trimmedSecret);
+  if (badKey) {
+    console.error('[create-early-access-checkout] STRIPE_SECRET_KEY has non-ASCII at index', badKey.index);
+    return res.status(500).json({
+      error:
+        'Stripe secret key in the server environment contains a non-ASCII character (often a mis-copied key). Re-paste STRIPE_SECRET_KEY from Stripe Dashboard (ASCII only).',
+      _debug: { env: 'STRIPE_SECRET_KEY', index: badKey.index, charCode: badKey.code },
+    });
+  }
+
+  const priceId = process.env.STRIPE_EARLY_ACCESS_PRICE_ID?.trim();
+  if (priceId) {
+    const badPrice = firstNonLatin1Index(priceId);
+    if (badPrice) {
+      console.error(
+        '[create-early-access-checkout] STRIPE_EARLY_ACCESS_PRICE_ID has non-ASCII at index',
+        badPrice.index
+      );
+      return res.status(500).json({
+        error: 'Stripe price ID in the environment contains invalid characters. Re-copy STRIPE_EARLY_ACCESS_PRICE_ID.',
+        _debug: { env: 'STRIPE_EARLY_ACCESS_PRICE_ID', index: badPrice.index, charCode: badPrice.code },
+      });
+    }
+  }
+
   try {
-    const stripe = new Stripe(secretKey, {
-      apiVersion: '2026-01-28.clover',
+    const stripe = new Stripe(trimmedSecret, {
+      apiVersion: '2026-02-25.clover',
       httpClient: Stripe.createFetchHttpClient(),
     });
 
     // Use your Stripe product's Price ID if set; otherwise fall back to inline price
-    const priceId = process.env.STRIPE_EARLY_ACCESS_PRICE_ID;
     const lineItems = priceId
       ? [{ price: priceId, quantity: 1 }]
       : [
@@ -63,8 +94,8 @@ export default async function handler(
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: lineItems,
-      success_url: `${req.headers.origin}/onboarding?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin}/early-access`,
+      success_url: `${origin}/onboarding?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/early-access`,
       client_reference_id: user.id,
       customer_email: user.email ?? undefined,
       metadata: {

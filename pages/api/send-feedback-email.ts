@@ -27,6 +27,15 @@ interface FeedbackEmailRequest {
   phone?: string
 }
 
+function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -99,6 +108,11 @@ export default async function handler(
     }
 
     const ownerEmail = userData.user.email
+    const safeBusinessName = escapeHtml(business.business_name)
+    const safeWhatHappened = escapeHtml(whatHappened || '')
+    const safeHowToMakeRight = escapeHtml(howToMakeRight || '')
+    const safeEmail = email ? escapeHtml(email) : ''
+    const safePhone = phone ? escapeHtml(phone) : ''
 
     // Create email HTML content
     const emailHtml = `
@@ -109,10 +123,10 @@ export default async function handler(
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>New Feedback</title>
         </head>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(to right, #f3f4f6, #e5e7eb); padding: 30px; border-radius: 10px; margin-bottom: 20px;">
-            <h1 style="color: #1f2937; margin: 0 0 10px 0;">New Feedback Received</h1>
-            <p style="color: #6b7280; margin: 0;">From ${business.business_name}</p>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937; max-width: 600px; margin: 0 auto; padding: 20px; background: #f9fafb;">
+          <div style="background: #4A3428; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+            <h1 style="color: #ffffff; margin: 0 0 10px 0;">New feedback received</h1>
+            <p style="color: rgba(255,255,255,0.85); margin: 0;">From ${safeBusinessName}</p>
           </div>
 
           <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
@@ -127,22 +141,22 @@ export default async function handler(
             <div style="margin-bottom: 20px;">
               <h3 style="color: #374151; font-size: 16px; margin: 0 0 10px 0;">What happened?</h3>
               <p style="background: #f9fafb; padding: 15px; border-radius: 5px; margin: 0; white-space: pre-line;">
-                ${whatHappened}
+                ${safeWhatHappened}
               </p>
             </div>
 
             <div style="margin-bottom: 20px;">
               <h3 style="color: #374151; font-size: 16px; margin: 0 0 10px 0;">How can we make it right?</h3>
               <p style="background: #f9fafb; padding: 15px; border-radius: 5px; margin: 0; white-space: pre-line;">
-                ${howToMakeRight}
+                ${safeHowToMakeRight}
               </p>
             </div>
 
             ${wantsContact ? `
               <div style="background: #dbeafe; padding: 15px; border-radius: 5px; border-left: 4px solid #3b82f6;">
                 <h3 style="color: #1e40af; font-size: 16px; margin: 0 0 10px 0;">Customer wants to be contacted</h3>
-                ${email ? `<p style="margin: 5px 0;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #2563eb;">${email}</a></p>` : ''}
-                ${phone ? `<p style="margin: 5px 0;"><strong>Phone:</strong> <a href="tel:${phone}" style="color: #2563eb;">${phone}</a></p>` : ''}
+                ${email ? `<p style="margin: 5px 0;"><strong>Email:</strong> <a href="mailto:${safeEmail}" style="color: #4A3428;">${safeEmail}</a></p>` : ''}
+                ${phone ? `<p style="margin: 5px 0;"><strong>Phone:</strong> <a href="tel:${safePhone}" style="color: #4A3428;">${safePhone}</a></p>` : ''}
               </div>
             ` : `
               <div style="background: #fef3c7; padding: 15px; border-radius: 5px; border-left: 4px solid #f59e0b;">
@@ -153,7 +167,7 @@ export default async function handler(
 
           <div style="text-align: center; color: #9ca3af; font-size: 14px; padding: 20px;">
             <p style="margin: 0;">This email was sent from ReviewFlo</p>
-            <p style="margin: 5px 0 0 0;">Log in to your <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/dashboard" style="color: #3b82f6;">dashboard</a> to manage feedback</p>
+            <p style="margin: 5px 0 0 0;">Log in to your <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://usereviewflo.com'}/dashboard" style="color: #4A3428;">dashboard</a> to manage feedback</p>
           </div>
         </body>
       </html>
@@ -163,7 +177,7 @@ export default async function handler(
     const { data, error } = await resend.emails.send({
       from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: ownerEmail,
-      subject: `New Feedback from ${business.business_name}`,
+      subject: `New feedback from ${business.business_name}`,
       html: emailHtml,
     })
 

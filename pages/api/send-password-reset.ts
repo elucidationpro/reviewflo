@@ -70,28 +70,37 @@ export default async function handler(
     }
 
     const { error: emailError } = await resend.emails.send({
-      from: 'ReviewFlo Support <support@usereviewflo.com>',
+      from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: emailTrim,
-      subject: 'Reset Your Password',
+      subject: 'Reset your ReviewFlo password',
       text: `Hi there,
 
-You requested to reset your password for your ReviewFlo account.
+You requested to reset your password for ReviewFlo.
 
-Reset your password: ${resetLink}
+Reset password: ${resetLink}
 
 If you didn't request this, you can safely ignore this email. The link expires in 1 hour.
 
-- Jeremy
+Jeremy
 ReviewFlo`,
       html: `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px;">
-<p>Hi there,</p>
-<p>You requested to reset your password for your ReviewFlo account.</p>
-<p><a href="${resetLink}" style="color: #2563eb;">Click here to reset your password</a></p>
-<p style="color: #6b7280; font-size: 14px;">If you didn't request this, you can safely ignore this email. The link expires in 1 hour.</p>
-<p>- Jeremy<br>ReviewFlo</p>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 24px; background: #f9fafb;">
+<div style="max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+  <div style="background: #4A3428; color: #ffffff; padding: 24px;">
+    <h1 style="margin: 0; font-size: 22px;">Reset your password</h1>
+  </div>
+  <div style="padding: 24px;">
+    <p>Hi there,</p>
+    <p>We received a request to reset your ReviewFlo password.</p>
+    <p style="margin: 24px 0;">
+      <a href="${resetLink}" style="display: inline-block; background: #4A3428; color: #ffffff; text-decoration: none; padding: 12px 22px; border-radius: 8px; font-weight: 600;">Reset password</a>
+    </p>
+    <p style="color: #6b7280; font-size: 14px;">This link expires in 1 hour. If you didn't request this, you can safely ignore this email.</p>
+    <p style="margin-top: 24px;">Jeremy<br>ReviewFlo</p>
+  </div>
+</div>
 </body>
 </html>`,
     })

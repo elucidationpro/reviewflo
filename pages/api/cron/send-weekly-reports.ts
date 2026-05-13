@@ -89,7 +89,7 @@ function buildWeeklyEmail(params: {
   .stat { background: #f9fafb; border-radius: 10px; padding: 14px 16px; }
   .stat-value { font-size: 26px; font-weight: 800; color: #111; }
   .stat-label { font-size: 12px; color: #6b7280; margin-top: 2px; }
-  .encouragement { background: #fef3c7; border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #92400e; }
+  .encouragement { background: #f8f4ee; border-left: 4px solid #C9A961; border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #4A3428; }
   .cta { display: inline-block; background: #4A3428; color: white !important; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 14px; margin-top: 8px; }
   .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 20px; }
 </style>
@@ -98,7 +98,7 @@ function buildWeeklyEmail(params: {
 <div class="wrapper">
   <div class="card">
     <div class="header">
-      <h1>📊 Your Weekly Report</h1>
+      <h1>Your Weekly Report</h1>
       <p>${escHtml(businessName)} • ReviewFlo</p>
     </div>
     <div class="body">
@@ -158,7 +158,8 @@ function buildWeeklyEmail(params: {
     </div>
   </div>
   <div class="footer">
-    <p>ReviewFlo • <a href="${APP_URL}/settings" style="color:#9ca3af;">Manage email preferences</a></p>
+    <p>ReviewFlo • Stop bad reviews before they go public</p>
+    <p><a href="${APP_URL}/settings" style="color:#9ca3af;">Manage email preferences</a></p>
   </div>
 </div>
 </body>

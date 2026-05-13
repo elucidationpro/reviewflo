@@ -5,7 +5,7 @@ import { Resend } from 'resend';
 import { sendAdminNotification } from '@/lib/email-service';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-01-28.clover',
+  apiVersion: '2026-02-25.clover',
 });
 
 const supabase = createClient(
@@ -46,6 +46,7 @@ async function syncProSubscriptionFromStripe(subscription: Stripe.Subscription):
   if (grantsPro) {
     const payload = {
       tier: 'pro' as const,
+      admin_override: false,
       ...(customerId ? { stripe_customer_id: customerId } : {}),
       stripe_subscription_id: subId,
     };
@@ -79,6 +80,7 @@ async function syncProSubscriptionFromStripe(subscription: Stripe.Subscription):
     .update({
       tier: 'free',
       stripe_subscription_id: null,
+      admin_override: false,
     })
     .eq('stripe_subscription_id', subId);
 
@@ -207,17 +209,17 @@ export default async function handler(
           const { error: emailError } = await resend.emails.send({
             from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
             to: customerEmail,
-            subject: 'Welcome to ReviewFlo Early Access',
+            subject: 'Your ReviewFlo early access is active',
             html: `
               <!DOCTYPE html>
               <html>
                 <head>
                   <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937; background: #f9fafb; }
                     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
                     .header { background: #4A3428; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-                    .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
-                    .button { display: inline-block; background: #C9A961; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
+                    .content { background: #ffffff; padding: 30px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none; }
+                    .button { display: inline-block; background: #4A3428; color: white !important; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }
                     .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
                     ul { padding-left: 20px; }
                     li { margin-bottom: 10px; }
@@ -226,16 +228,16 @@ export default async function handler(
                 <body>
                   <div class="container">
                     <div class="header">
-                      <h1>🎉 Welcome to ReviewFlo Early Access!</h1>
+                      <h1>Your early access is active</h1>
                     </div>
                     <div class="content">
                       <p>Hi there!</p>
 
-                      <p>Thanks for being one of the first 50 businesses to try ReviewFlo!</p>
+                      <p>Thanks for becoming an early ReviewFlo customer.</p>
 
                       <p>Your early access includes <strong>2 full months</strong> starting today (ending ${accessEndDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}).</p>
 
-                      <h2>📋 IMPORTANT – Complete This Quick Survey (3 min):</h2>
+                      <h2>Next step: complete this short survey</h2>
                       <p><a href="https://usereviewflo.com/survey" class="button">Complete Survey →</a></p>
                       <p>This helps us understand what features you need and how to price ReviewFlo fairly.</p>
 
@@ -246,7 +248,7 @@ export default async function handler(
                         <li>✅ 2 months of full access</li>
                         <li>✅ Stop bad reviews before they go public</li>
                         <li>✅ Get more 5-star Google reviews automatically</li>
-                        <li>✅ Priority support from founder (me!)</li>
+                        <li>✅ Priority support from the founder</li>
                         <li>✅ Help shape new features</li>
                       </ul>
 
@@ -349,6 +351,7 @@ export default async function handler(
                 .from('businesses')
                 .update({
                   tier: 'pro',
+                  admin_override: false,
                   stripe_customer_id: stripeCustomerId,
                   stripe_subscription_id: stripeSubscriptionId,
                 })

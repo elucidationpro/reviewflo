@@ -219,7 +219,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const stripe = new Stripe(trimmedSecret, {
-      apiVersion: '2026-01-28.clover',
+      apiVersion: '2026-02-25.clover',
       httpClient: Stripe.createFetchHttpClient(),
       maxNetworkRetries: 0,
       timeout: 8000,

@@ -173,7 +173,7 @@ export default async function handler(
               .container { max-width: 600px; margin: 0 auto; padding: 20px; }
               .header { background: #4A3428; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
               .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none; }
-              .button { display: inline-block; background: #C9A961; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 10px 0; }
+              .button { display: inline-block; background: #4A3428; color: white !important; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px 0; }
               .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
               .box { background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e5e7eb; }
               ol { padding-left: 20px; }
@@ -183,7 +183,7 @@ export default async function handler(
           <body>
             <div class="container">
               <div class="header">
-                <h1 style="margin: 0; font-size: 28px;">Welcome to ReviewFlo Beta! 🚀 Your Account is Ready</h1>
+                <h1 style="margin: 0; font-size: 28px;">Welcome to ReviewFlo Beta</h1>
               </div>
               <div class="content">
                 <p>Hi ${ownerName}!</p>
@@ -203,7 +203,7 @@ export default async function handler(
                   <p style="margin: 12px 0 0 0;">Copy this link and send it to customers after you finish each job.</p>
                 </div>
 
-                <h2 style="color: #4A3428; font-size: 18px; margin: 20px 0 10px 0;">WHAT HAPPENS NEXT</h2>
+                <h2 style="color: #4A3428; font-size: 18px; margin: 20px 0 10px 0;">HOW IT WORKS</h2>
                 <ol>
                   <li>Your customer opens the link</li>
                   <li>They rate their experience (1-5 stars)</li>
@@ -221,7 +221,7 @@ export default async function handler(
 
                 <p>Questions? Just reply to this email.</p>
 
-                <p>Thanks for being beta tester #${betaTesterNumber}!</p>
+                <p>Thanks for being beta tester #${betaTesterNumber}.</p>
 
                 <p><strong>- Jeremy</strong><br>
                 ReviewFlo<br>
@@ -230,7 +230,7 @@ export default async function handler(
                 <p style="margin-top: 20px;"><em>P.S. This is beta, so if anything breaks or is confusing, please let me know. Your feedback helps us build exactly what you need.</em></p>
 
                 <div style="text-align: center; margin-top: 28px;">
-                  <a href="${loginUrl}" class="button">Log In to Your Dashboard</a>
+                  <a href="${loginUrl}" class="button">Start Free in ReviewFlo</a>
                 </div>
               </div>
               <div class="footer">
@@ -245,7 +245,7 @@ export default async function handler(
       await resend.emails.send({
         from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
         to: email,
-        subject: `Your ReviewFlo Account is Ready - ${businessName}`,
+        subject: `Your ReviewFlo beta account is ready - ${businessName}`,
         html: emailHtml,
       })
     } catch (emailError) {

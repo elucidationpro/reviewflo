@@ -127,17 +127,26 @@ export default async function handler(
     const { error: emailError } = await resend.emails.send({
       from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
       to: emailTrim,
-      subject: `Your ReviewFlo login link - ${businessNameTrim}`,
+      subject: `Your ReviewFlo sign-in link for ${businessNameTrim}`,
       html: `
         <!DOCTYPE html>
         <html>
         <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px;">
-          <p>Hi there,</p>
-          <p>You requested a login link to create your ReviewFlo account for <strong>${businessNameTrim}</strong>.</p>
-          <p><a href="${magicLink}" style="color: #2563eb; font-weight: 600;">Click here to complete your signup</a></p>
-          <p style="color: #6b7280; font-size: 14px;">This link expires in 1 hour. If you didn't request this, you can safely ignore this email.</p>
-          <p>- Jeremy<br>ReviewFlo</p>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 24px; background: #f9fafb;">
+          <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+            <div style="background: #4A3428; color: #ffffff; padding: 24px;">
+              <h1 style="margin: 0; font-size: 22px;">Your secure sign-in link</h1>
+            </div>
+            <div style="padding: 24px;">
+              <p>Hi there,</p>
+              <p>You requested a sign-in link for <strong>${businessNameTrim}</strong>.</p>
+              <p style="margin: 24px 0;">
+                <a href="${magicLink}" style="display: inline-block; background: #4A3428; color: #ffffff; text-decoration: none; padding: 12px 22px; border-radius: 8px; font-weight: 600;">Sign in to ReviewFlo</a>
+              </p>
+              <p style="color: #6b7280; font-size: 14px;">This link expires in 1 hour. If you didn't request this, you can ignore this email.</p>
+              <p style="margin-top: 24px;">Jeremy<br>ReviewFlo</p>
+            </div>
+          </div>
         </body>
         </html>
       `,

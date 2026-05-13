@@ -10,6 +10,7 @@ export interface Business {
   interested_in_tier?: string | null
   notify_on_launch?: boolean | null
   stripe_subscription_id?: string | null
+  admin_override?: boolean | null
 }
 
 const supabaseAdmin = createClient(

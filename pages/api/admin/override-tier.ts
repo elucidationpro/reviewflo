@@ -1,6 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { isAdminUser } from '../../../lib/adminAuth'
+import {
+  adminTierChoiceToRow,
+  type AdminTierChoice,
+} from '../../../lib/admin-tier-override'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -8,7 +12,7 @@ const supabaseAdmin = createClient(
   { auth: { autoRefreshToken: false, persistSession: false } }
 )
 
-type Tier = 'free' | 'pro' | 'ai'
+const ADMIN_TIER_CHOICES: AdminTierChoice[] = ['free', 'pro_live', 'pro_test', 'ai_test']
 
 export default async function handler(
   req: NextApiRequest,
@@ -31,19 +35,26 @@ export default async function handler(
       return res.status(403).json({ error: 'Forbidden - Admin access required' })
     }
 
-    const { business_id, new_tier } = req.body as { business_id: string; new_tier: Tier }
+    const { business_id, new_tier } = req.body as {
+      business_id: string
+      new_tier: AdminTierChoice
+    }
     if (!business_id || !new_tier) {
       return res.status(400).json({ error: 'business_id and new_tier are required' })
     }
-    if (!['free', 'pro', 'ai'].includes(new_tier)) {
-      return res.status(400).json({ error: 'new_tier must be free, pro, or ai' })
+    if (!ADMIN_TIER_CHOICES.includes(new_tier)) {
+      return res.status(400).json({
+        error: 'new_tier must be free, pro_live, pro_test, or ai_test',
+      })
     }
+
+    const { tier, admin_override } = adminTierChoiceToRow(new_tier)
 
     const { error: updateError } = await supabaseAdmin
       .from('businesses')
       .update({
-        tier: new_tier,
-        admin_override: true,
+        tier,
+        admin_override,
       })
       .eq('id', business_id)
 
@@ -52,7 +63,7 @@ export default async function handler(
       return res.status(500).json({ error: 'Failed to update tier' })
     }
 
-    return res.status(200).json({ success: true, tier: new_tier })
+    return res.status(200).json({ success: true, tier, admin_override })
   } catch (error) {
     console.error('[override-tier] Unexpected error:', error)
     return res.status(500).json({ error: 'Internal server error' })

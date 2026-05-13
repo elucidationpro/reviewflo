@@ -6,7 +6,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase'
 import AppLayout from '../../components/AppLayout'
-import { canAccessGoogleStats } from '../../lib/tier-permissions'
+import { canAccessGoogleStats, type Tier } from '../../lib/tier-permissions'
 import { useBusiness } from '@/contexts/BusinessContext'
 import type { GbpFullReview } from '../api/google-reviews/list'
 
@@ -36,6 +36,146 @@ function formatDate(iso: string): string {
   } catch {
     return iso
   }
+}
+
+/** Static examples for Free tier — shows Pro layout without calling Google APIs. */
+const FREE_TIER_PREVIEW_SAMPLES: {
+  name: string
+  initial: string
+  rating: number
+  dateLabel: string
+  comment: string | null
+  hasReply: boolean
+  replyText?: string
+  replyDateLabel?: string
+}[] = [
+  {
+    name: 'Sarah M.',
+    initial: 'S',
+    rating: 5,
+    dateLabel: 'Jan 28, 2026',
+    comment: 'Outstanding work — friendly team and on time. Highly recommend!',
+    hasReply: true,
+    replyText: 'Thank you so much, Sarah! We loved working with you.',
+    replyDateLabel: 'Jan 29, 2026',
+  },
+  {
+    name: 'James K.',
+    initial: 'J',
+    rating: 4,
+    dateLabel: 'Jan 15, 2026',
+    comment: 'Great experience overall. Will use again next season.',
+    hasReply: false,
+  },
+  {
+    name: 'Alex R.',
+    initial: 'A',
+    rating: 5,
+    dateLabel: 'Jan 8, 2026',
+    comment: null,
+    hasReply: false,
+  },
+]
+
+function FreeTierReviewsPreview() {
+  return (
+    <div className="mt-8">
+      <div className="mb-3">
+        <h2 className="text-base font-bold text-gray-900">Your Google reviews</h2>
+        <p className="text-sm text-gray-500 mt-1 max-w-lg">
+          The same tools you&apos;ll use on Pro — sort, filter by stars, and reply from one place. This workspace is not active on Free; the cards below are examples only.
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-[#C9A961]/30 overflow-hidden shadow-sm">
+        <div className="h-0.5 bg-gradient-to-r from-[#C9A961] via-[#e6c97a] to-[#C9A961]" />
+        <div className="p-5 sm:p-6 bg-gradient-to-br from-[#F5F5DC]/15 via-white to-white">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <p className="text-xs font-semibold text-[#8a7349]">
+              Example layout — your real reviews appear here after you upgrade and connect Google.
+            </p>
+            <span className="inline-flex shrink-0 items-center rounded-full border border-[#C9A961]/50 bg-[#F5F5DC]/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#6b5a38]">
+              Preview · unavailable on Free
+            </span>
+          </div>
+
+          {/* Non-interactive copy of the Pro filter bar */}
+          <div
+            className="flex flex-wrap items-center gap-2 mb-5 opacity-[0.72] select-none"
+            aria-hidden
+          >
+            <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl p-1">
+              <span className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#4A3428] text-white">Recent</span>
+              <span className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500">Oldest</span>
+              <span className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500">Highest ★</span>
+              <span className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500">Lowest ★</span>
+            </div>
+            <span className="px-3 py-2 rounded-xl text-xs font-semibold border bg-white border-gray-200 text-gray-600">
+              Unreplied
+            </span>
+            {[5, 4, 3, 2, 1].map((r) => (
+              <span
+                key={r}
+                className="px-2.5 py-2 rounded-xl text-xs font-semibold border bg-white border-gray-200 text-gray-600 flex items-center gap-1"
+              >
+                {r}
+                <svg className="w-3 h-3 text-[#C9A961]" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+              </span>
+            ))}
+          </div>
+
+          <div className="space-y-4 pointer-events-none select-none">
+            {FREE_TIER_PREVIEW_SAMPLES.map((row) => (
+              <div
+                key={row.name}
+                className="bg-white rounded-2xl border border-[#4A3428]/6 shadow-sm overflow-hidden"
+                style={{ boxShadow: '0 1px 4px rgba(74,52,40,0.07), 0 1px 2px rgba(74,52,40,0.04)' }}
+              >
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-[#F5F5DC] border border-[#C9A961]/30 flex items-center justify-center shrink-0">
+                        <span className="text-sm font-bold text-[#4A3428]">{row.initial}</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-gray-900 truncate">{row.name}</p>
+                        <p className="text-xs text-gray-400">{row.dateLabel}</p>
+                      </div>
+                    </div>
+                    <StarRating rating={row.rating} />
+                  </div>
+                  {row.comment ? (
+                    <p className="text-sm text-gray-700 leading-relaxed">{row.comment}</p>
+                  ) : (
+                    <p className="text-sm text-gray-400 italic">No written review.</p>
+                  )}
+                </div>
+
+                {row.hasReply && row.replyText && (
+                  <div className="mx-5 mb-4 p-3.5 bg-[#F5F5DC]/40 border border-[#C9A961]/20 rounded-xl">
+                    <p className="text-xs font-semibold text-[#4A3428] mb-1">Your reply</p>
+                    <p className="text-sm text-gray-700 leading-relaxed">{row.replyText}</p>
+                    <p className="text-xs text-gray-400 mt-1.5">{row.replyDateLabel}</p>
+                  </div>
+                )}
+
+                <div className="px-5 pb-4 flex items-center justify-between">
+                  <span className="px-3.5 py-2 rounded-xl text-xs font-semibold border bg-white border-gray-200 text-gray-500">
+                    {row.hasReply ? 'Edit Reply' : 'Reply'}
+                  </span>
+                  {!row.hasReply && (
+                    <span className="text-xs text-amber-600/80 font-medium">Awaiting reply</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function ReviewsPage() {
@@ -96,7 +236,7 @@ export default function ReviewsPage() {
       }
 
       if (!canAccessGoogleStats(biz?.tier)) {
-        setError('Reviews are available on Pro and AI tiers.')
+        setError(null)
         setLoading(false)
         return
       }
@@ -247,6 +387,8 @@ export default function ReviewsPage() {
     )
   }
 
+  const tierBlocked = Boolean(business && !canAccessGoogleStats(business.tier as Tier))
+
   return (
     <AppLayout
       businessName={business?.business_name}
@@ -259,26 +401,60 @@ export default function ReviewsPage() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="px-6 py-8 max-w-3xl mx-auto">
+      <div className="px-4 sm:px-6 py-8 max-w-4xl mx-auto">
 
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-8">
           <h1 className="text-xl font-bold text-gray-900">Google Reviews</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            {reviews.length > 0
-              ? `${reviews.length} review${reviews.length !== 1 ? 's' : ''} · ${reviews.filter((r) => !r.reviewReply).length} unreplied`
-              : 'All your Google reviews in one place'}
+          <p className="text-sm text-gray-500 mt-1 max-w-lg">
+            {tierBlocked
+              ? 'Load reviews from Google Business Profile, filter and sort them, and post replies — all from ReviewFlo on Pro or AI.'
+              : reviews.length > 0
+                ? `${reviews.length} review${reviews.length !== 1 ? 's' : ''} · ${reviews.filter((r) => !r.reviewReply).length} unreplied`
+                : 'All your Google reviews in one place'}
           </p>
         </div>
 
-        {/* Error state */}
-        {error && (
+        {/* Free tier: Outreach-style upgrade + inactive preview */}
+        {tierBlocked && (
+          <>
+            <div className="rounded-2xl border border-[#C9A961]/30 overflow-hidden shadow-sm mb-6">
+              <div className="h-0.5 bg-gradient-to-r from-[#C9A961] via-[#e6c97a] to-[#C9A961]" />
+              <div className="p-6 bg-gradient-to-br from-[#F5F5DC]/30 via-white to-white">
+                <p className="text-xs font-semibold text-[#C9A961] uppercase tracking-widest mb-1">Pro feature</p>
+                <h2 className="text-base font-bold text-gray-900 mb-2">Google reviews inbox</h2>
+                <p className="text-sm text-gray-600 mb-4 max-w-lg">
+                  This feature is not active on Free. On Pro or AI, ReviewFlo syncs your Google reviews so you can triage unreplied feedback, filter by star rating, and reply without leaving the dashboard (after you connect Google Business Profile in Settings).
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href="/settings?section=plan"
+                    className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#4A3428] text-white hover:bg-[#4A3428]/90 transition-colors cursor-pointer"
+                  >
+                    Upgrade to Pro
+                  </Link>
+                  <Link
+                    href="/dashboard"
+                    className="px-3.5 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
+                    ← Back to Overview
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <FreeTierReviewsPreview />
+          </>
+        )}
+
+        {/* Error state (Pro/AI only — failed API) */}
+        {!tierBlocked && error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
             {error}
           </div>
         )}
 
-        {!error && (
+        {!tierBlocked && !error && (
           <>
             {/* Sort + Filter bar */}
             <div className="flex flex-wrap items-center gap-2 mb-5">
@@ -444,7 +620,9 @@ export default function ReviewsPage() {
         <div className="pt-8 pb-4 text-center">
           <Link
             href="/dashboard"
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            className={`text-xs transition-colors ${
+              tierBlocked ? 'text-gray-500 hover:text-gray-700 font-medium' : 'text-gray-400 hover:text-gray-600'
+            }`}
           >
             ← Back to Overview
           </Link>

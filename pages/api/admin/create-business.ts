@@ -265,23 +265,30 @@ ReviewFlo`
           const emailHtml = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px;">
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 24px; background: #f9fafb;">
+<div style="max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+<div style="background: #4A3428; color: #ffffff; padding: 24px;">
+<h1 style="margin: 0; font-size: 22px;">Your ReviewFlo account is ready</h1>
+</div>
+<div style="padding: 24px;">
 <p>Hi ${ownerName},</p>
 <p>Your ReviewFlo account has been created.</p>
-<p><strong>Set your password:</strong> <a href="${inviteLink}" style="color: #2563eb;">Click here to set password and activate</a></p>
-<p><strong>Login:</strong> <a href="${baseUrl}/login" style="color: #2563eb;">${loginDisplay}</a><br>
+<p><a href="${inviteLink}" style="display: inline-block; background: #4A3428; color: #ffffff; text-decoration: none; padding: 12px 22px; border-radius: 8px; font-weight: 600;">Set password and activate</a></p>
+<p><strong>Login:</strong> <a href="${baseUrl}/login" style="color: #4A3428;">${loginDisplay}</a><br>
 <strong>Email:</strong> ${ownerEmail}<br>
-<strong>Your review link:</strong> <a href="${reviewPageUrl}" style="color: #2563eb;">${reviewPageUrl}</a></p>
+<strong>Your review link:</strong> <a href="${reviewPageUrl}" style="color: #4A3428;">${reviewPageUrl}</a></p>
 <p>Send the review link to customers after each job.</p>
 <p>Questions? Reply to this email.</p>
-<p>- Jeremy<br>ReviewFlo</p>
+<p style="margin-top: 24px;">Jeremy<br>ReviewFlo</p>
+</div>
+</div>
 </body>
 </html>`
 
           await resend.emails.send({
             from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
             to: ownerEmail,
-            subject: 'Your ReviewFlo Account - Set Your Password',
+            subject: 'Set your ReviewFlo password',
             text: emailText,
             html: emailHtml,
           })

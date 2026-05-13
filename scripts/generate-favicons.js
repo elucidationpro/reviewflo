@@ -1,72 +1,103 @@
-const sharp = require('sharp');
-const fs = require('fs');
-const path = require('path');
+/**
+ * Generates favicon + apple-touch PNGs from the canonical star source in public/.
+ *
+ * Source: public/images/reviewflo-star-icon-source.png (rounded outline star from logo).
+ * Black/near-black matte is keyed to transparent so the icon works on any tab background.
+ *
+ * Run: node scripts/generate-favicons.js
+ */
+const sharp = require('sharp')
+const fs = require('fs')
+const path = require('path')
 
-// Star icon extracted from the ReviewFlo logo
-const starSvg = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <path d="M43.53,30.53l8.75,17.73c.44.89,1.28,1.5,2.26,1.64l19.57,2.84c2.46.36,3.44,3.38,1.66,5.12l-14.16,13.8c-.71.69-1.03,1.68-.86,2.66l3.34,19.49c.42,2.45-2.15,4.32-4.35,3.16l-17.5-9.2c-.87-.46-1.92-.46-2.79,0l-17.5,9.2c-2.2,1.16-4.77-.71-4.35-3.16l3.34-19.49c.17-.97-.16-1.97-.86-2.66l-14.16-13.8c-1.78-1.74-.8-4.76,1.66-5.12l19.57-2.84c.98-.14,1.82-.76,2.26-1.64l8.75-17.73c1.1-2.23,4.28-2.23,5.38,0Z"
-        fill="none"
-        stroke="#4a3428"
-        stroke-miterlimit="10"
-        stroke-width="10"
-        transform="translate(5, 0)"/>
-</svg>
-`;
+const SOURCE = path.join(__dirname, '..', 'public', 'images', 'reviewflo-star-icon-source.png')
+
+/** Pixels at or below this RGB level (all channels) become fully transparent. */
+const BLACK_KEY_THRESHOLD = 22
+
+async function loadStarWithTransparentMatte() {
+  if (!fs.existsSync(SOURCE)) {
+    throw new Error(`Missing source image: ${SOURCE}\nPlace reviewflo-star-icon-source.png there first.`)
+  }
+
+  const { data, info } = await sharp(SOURCE)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+
+  const channels = info.channels
+  if (channels !== 4) {
+    throw new Error(`Expected RGBA source, got ${channels} channels`)
+  }
+
+  const out = Buffer.from(data)
+  for (let i = 0; i < out.length; i += 4) {
+    const r = out[i]
+    const g = out[i + 1]
+    const b = out[i + 2]
+    if (r <= BLACK_KEY_THRESHOLD && g <= BLACK_KEY_THRESHOLD && b <= BLACK_KEY_THRESHOLD) {
+      out[i + 3] = 0
+    }
+  }
+
+  return sharp(out, {
+    raw: { width: info.width, height: info.height, channels: 4 },
+  })
+}
 
 async function generateFavicons() {
-  const publicDir = path.join(__dirname, '..', 'public');
+  const publicDir = path.join(__dirname, '..', 'public')
 
   try {
-    console.log('Generating favicons from star icon...\n');
+    console.log('Generating favicons from public/images/reviewflo-star-icon-source.png...\n')
 
-    // Generate 16x16 PNG
-    await sharp(Buffer.from(starSvg))
-      .resize(16, 16)
+    const base = await loadStarWithTransparentMatte()
+
+    const transparent = { r: 0, g: 0, b: 0, alpha: 0 }
+    /** Light backing so iOS home-screen shortcut is not a muddy black square */
+    const appleBg = { r: 248, g: 250, b: 249, alpha: 1 }
+
+    await base
+      .clone()
+      .resize(16, 16, { fit: 'contain', background: transparent })
       .png()
-      .toFile(path.join(publicDir, 'favicon-16x16.png'));
-    console.log('✓ Generated favicon-16x16.png');
+      .toFile(path.join(publicDir, 'favicon-16x16.png'))
+    console.log('✓ Generated favicon-16x16.png')
 
-    // Generate 32x32 PNG
-    await sharp(Buffer.from(starSvg))
-      .resize(32, 32)
+    await base
+      .clone()
+      .resize(32, 32, { fit: 'contain', background: transparent })
       .png()
-      .toFile(path.join(publicDir, 'favicon-32x32.png'));
-    console.log('✓ Generated favicon-32x32.png');
+      .toFile(path.join(publicDir, 'favicon-32x32.png'))
+    console.log('✓ Generated favicon-32x32.png')
 
-    // Generate 180x180 Apple Touch Icon
-    await sharp(Buffer.from(starSvg))
-      .resize(180, 180)
+    await base
+      .clone()
+      .resize(180, 180, { fit: 'contain', background: appleBg })
       .png()
-      .toFile(path.join(publicDir, 'apple-touch-icon.png'));
-    console.log('✓ Generated apple-touch-icon.png (180x180)');
+      .toFile(path.join(publicDir, 'apple-touch-icon.png'))
+    console.log('✓ Generated apple-touch-icon.png (180x180)')
 
-    // Generate ICO file (using sharp to create 32x32, then we'll use it as .ico)
-    // Note: Sharp doesn't directly support .ico format, so we'll create a 32x32 PNG
-    // and rename it. For true multi-size .ico, you'd need a separate library.
-    await sharp(Buffer.from(starSvg))
-      .resize(32, 32)
+    const icoPathPng = path.join(publicDir, 'favicon.ico.png')
+    await base
+      .clone()
+      .resize(32, 32, { fit: 'contain', background: transparent })
       .png()
-      .toFile(path.join(publicDir, 'favicon.ico.png'));
+      .toFile(icoPathPng)
 
-    // Rename to .ico (basic approach)
-    fs.renameSync(
-      path.join(publicDir, 'favicon.ico.png'),
-      path.join(publicDir, 'favicon.ico')
-    );
-    console.log('✓ Generated favicon.ico (32x32)');
+    fs.renameSync(icoPathPng, path.join(publicDir, 'favicon.ico'))
+    console.log('✓ Generated favicon.ico (32x32 PNG payload)')
 
-    console.log('\n✓ All favicon files generated successfully!');
-    console.log('\nGenerated files:');
-    console.log('  - favicon.ico (32x32)');
-    console.log('  - favicon-16x16.png');
-    console.log('  - favicon-32x32.png');
-    console.log('  - apple-touch-icon.png (180x180)');
-
+    console.log('\n✓ All favicon files generated successfully!')
+    console.log('\nGenerated files:')
+    console.log('  - favicon.ico')
+    console.log('  - favicon-16x16.png')
+    console.log('  - favicon-32x32.png')
+    console.log('  - apple-touch-icon.png')
   } catch (error) {
-    console.error('Error generating favicons:', error);
-    process.exit(1);
+    console.error('Error generating favicons:', error)
+    process.exit(1)
   }
 }
 
-generateFavicons();
+generateFavicons()

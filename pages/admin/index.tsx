@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase'
 import { checkIsAdmin } from '../../lib/adminAuth'
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import AdminLayout from '@/components/AdminLayout'
+import type { AdminTierChoice } from '@/lib/admin-tier-override'
 
 interface Business {
   id: string
@@ -144,7 +145,7 @@ export default function AdminDashboard() {
     router.push('/login')
   }
 
-  const handleOverrideTier = async (businessId: string, newTier: 'free' | 'pro' | 'ai') => {
+  const handleOverrideTier = async (businessId: string, newTier: AdminTierChoice) => {
     setUpdatingTierId(businessId)
     setError('')
     try {
@@ -164,13 +165,21 @@ export default function AdminDashboard() {
       })
       const data = await response.json()
       if (response.ok) {
+        const tier = data.tier as 'free' | 'pro' | 'ai'
+        const admin_override = Boolean(data.admin_override)
         setBusinesses(prev =>
-          prev.map(b => (b.id === businessId ? { ...b, tier: newTier, admin_override: true } : b))
+          prev.map(b => (b.id === businessId ? { ...b, tier, admin_override } : b))
         )
         setFilteredBusinesses(prev =>
-          prev.map(b => (b.id === businessId ? { ...b, tier: newTier, admin_override: true } : b))
+          prev.map(b => (b.id === businessId ? { ...b, tier, admin_override } : b))
         )
-        setSuccessMessage(`Tier set to ${newTier.toUpperCase()} for testing`)
+        const labels: Record<AdminTierChoice, string> = {
+          free: 'Free',
+          pro_live: 'Pro',
+          pro_test: 'Pro (testing)',
+          ai_test: 'AI (testing)',
+        }
+        setSuccessMessage(`Tier set to ${labels[newTier]}`)
         setTimeout(() => setSuccessMessage(''), 3000)
       } else {
         setError(data.error || 'Failed to update tier')

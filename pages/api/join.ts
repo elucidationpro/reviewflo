@@ -285,7 +285,7 @@ export default async function handler(
       const launchTierLabel = interestedInTier === 'pro' ? 'Pro' : interestedInTier === 'ai' ? 'AI' : null;
       const launchNotificationLine =
         notifyOnLaunch && launchTierLabel
-          ? `\nWe've added you to the ${launchTierLabel} launch notification list. You'll get 50% off for the first 3 months when it launches in May 2026.\n\n`
+          ? `\nWe've added you to the ${launchTierLabel} launch notification list. We'll email you when it is available and include your launch discount details.\n\n`
           : '';
 
       const emailText = `Hi ${businessNameTrim},
@@ -307,24 +307,31 @@ ReviewFlo`;
       const emailHtml = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px;">
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 24px; background: #f9fafb;">
+<div style="max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+<div style="background: #4A3428; color: #ffffff; padding: 24px;">
+<h1 style="margin: 0; font-size: 22px;">Your ReviewFlo account is ready</h1>
+</div>
+<div style="padding: 24px;">
 <p>Hi ${businessNameTrim},</p>
-<p>Your ReviewFlo account is ready.</p>
-${notifyOnLaunch && launchTierLabel ? `<p>We've added you to the <strong>${launchTierLabel}</strong> launch notification list. You'll get 50% off for the first 3 months when it launches in May 2026.</p>` : ''}
-<p><strong>Login:</strong> <a href="${loginUrl}" style="color: #2563eb;">${loginDisplay}</a><br>
+<p>Your account is live and you can start sending review requests now.</p>
+${notifyOnLaunch && launchTierLabel ? `<p>You're on the <strong>${launchTierLabel}</strong> launch notification list. We'll email you when it is available with your launch discount details.</p>` : ''}
+<p><strong>Login:</strong> <a href="${loginUrl}" style="color: #4A3428;">${loginDisplay}</a><br>
 <strong>Email:</strong> ${emailTrim}<br>
 <strong>Password:</strong> (the one you created)</p>
-<p><strong>Your review link:</strong> <a href="${reviewPageUrl}" style="color: #2563eb;">${reviewPageUrl}</a></p>
-<p>Send this link to customers after each job.</p>
+<p><strong>Your review link:</strong> <a href="${reviewPageUrl}" style="color: #4A3428;">${reviewPageUrl}</a></p>
+<p>Send this link to customers after each job to start collecting feedback.</p>
 <p>Questions? Reply to this email.</p>
-<p>- Jeremy<br>ReviewFlo</p>
+<p style="margin-top: 24px;">Jeremy<br>ReviewFlo</p>
+</div>
+</div>
 </body>
 </html>`;
 
       await resend.emails.send({
         from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
         to: emailTrim,
-        subject: 'Your ReviewFlo Account - Login Details',
+        subject: 'Your ReviewFlo account is ready',
         text: emailText,
         html: emailHtml,
       });
