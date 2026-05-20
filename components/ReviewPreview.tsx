@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import ReviewFloFooter from './ReviewFloFooter'
 import { REVIEW_TEMPLATES_ENABLED } from '@/lib/feature-flags'
+import type { ResolvedReviewPageFollowup } from '@/lib/review-page-followup'
 
 interface ReviewTemplate {
   id: string
@@ -24,9 +25,13 @@ interface ReviewPreviewProps {
   whiteLabelEnabled?: boolean
   whiteLabelBrandName?: string | null
   whiteLabelBrandColor?: string | null
+  reviewPageHeadline?: string
+  reviewPageSubtext?: string
+  /** When set, star tap shows the follow-up step before feedback / 5-star flow. */
+  followUpPreview?: ResolvedReviewPageFollowup | null
 }
 
-type Screen = 'rating' | 'five_star' | 'feedback' | 'thanks'
+type Screen = 'rating' | 'follow_up' | 'five_star' | 'feedback' | 'thanks'
 type ReviewPath = null | 'write_own' | 'use_template'
 
 const StarPath = () => (
@@ -52,6 +57,9 @@ export default function ReviewPreview({
   whiteLabelEnabled = false,
   whiteLabelBrandName = null,
   whiteLabelBrandColor = null,
+  reviewPageHeadline = 'How was your experience?',
+  reviewPageSubtext = 'Tap a star to rate',
+  followUpPreview = null,
 }: ReviewPreviewProps) {
   const [screen, setScreen] = useState<Screen>('rating')
   const [selectedRating, setSelectedRating] = useState<number | null>(null)
@@ -64,6 +72,7 @@ export default function ReviewPreview({
   const [contactEmail, setContactEmail] = useState('')
   const [contactPhone, setContactPhone] = useState('')
   const [contactError, setContactError] = useState('')
+  const [followUpAnswer, setFollowUpAnswer] = useState('')
 
   const platforms = [
     { name: 'Google', url: googleReviewUrl },
@@ -91,16 +100,23 @@ export default function ReviewPreview({
     : null
   const showRfFooter = !footerWhiteLabel && showReviewfloBranding
 
-  const handleStarClick = (star: number) => {
-    setSelectedRating(star)
-    // Mirrors production /[slug].tsx: 1-4 -> private feedback (Google link
-    // still surfaced on that screen); 5 only -> prominent Google CTA.
+  const routeAfterFollowupPreview = (star: number) => {
     if (star <= 4) {
       setScreen('feedback')
     } else {
       setReviewPath(effectiveSkipTemplateChoice && hasPlatformLinks ? 'write_own' : null)
       setScreen('five_star')
     }
+  }
+
+  const handleStarClick = (star: number) => {
+    setSelectedRating(star)
+    setFollowUpAnswer('')
+    if (followUpPreview) {
+      setScreen('follow_up')
+      return
+    }
+    routeAfterFollowupPreview(star)
   }
 
   const reset = () => {
@@ -115,6 +131,7 @@ export default function ReviewPreview({
     setContactEmail('')
     setContactPhone('')
     setContactError('')
+    setFollowUpAnswer('')
   }
 
   const submitFeedbackPreview = () => {
@@ -163,7 +180,7 @@ export default function ReviewPreview({
                 {displayName}
               </h3>
             )}
-            <p className="text-gray-400 text-sm mb-8">How was your experience?</p>
+            <p className="text-gray-400 text-sm mb-8">{reviewPageHeadline}</p>
             <div className="flex justify-center items-center gap-2 mb-5 max-w-full overflow-hidden">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -187,9 +204,31 @@ export default function ReviewPreview({
                 </button>
               ))}
             </div>
-            <p className="text-gray-400 text-sm">Tap a star to rate</p>
+            <p className="text-gray-400 text-sm">{reviewPageSubtext}</p>
           </div>
         )}
+
+        {screen === 'follow_up' && followUpPreview && selectedRating != null && (
+          <div className="w-[85%] max-w-[360px] mx-auto bg-white rounded-[20px] border border-gray-100 px-8 py-10 text-center shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+            <p className="text-sm font-semibold text-gray-800 mb-4">{followUpPreview.question}</p>
+            <textarea
+              value={followUpAnswer}
+              onChange={(e) => setFollowUpAnswer(e.target.value)}
+              placeholder={followUpPreview.placeholder || 'Your answer (optional)'}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C9A961] focus:border-transparent resize-none"
+            />
+            <button
+              type="button"
+              onClick={() => routeAfterFollowupPreview(selectedRating)}
+              className="mt-4 w-full py-2.5 rounded-lg text-sm font-semibold text-white cursor-pointer"
+              style={{ backgroundColor: accentColor }}
+            >
+              Continue
+            </button>
+          </div>
+        )}
+
         {screen === 'rating' && (
           <div className="w-[85%] max-w-[360px] mx-auto mt-6 flex flex-col items-center gap-2">
             <div className="flex items-center gap-1.5 text-xs text-gray-300">

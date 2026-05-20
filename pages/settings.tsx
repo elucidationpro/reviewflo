@@ -4,7 +4,26 @@ import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 import OnboardingProgress from '../components/OnboardingProgress'
 import { trackEvent } from '../lib/posthog-provider'
-import { canAccessMultiPlatform, canRemoveBranding, getTemplateSlots, canAccessGoogleStats, canUseWhiteLabel } from '../lib/tier-permissions'
+import {
+  canAccessMultiPlatform,
+  canCustomizeReviewPageCopy,
+  canRemoveBranding,
+  getTemplateSlots,
+  canAccessGoogleStats,
+  canUseWhiteLabel,
+} from '../lib/tier-permissions'
+import {
+  DEFAULT_REVIEW_PAGE_HEADLINE,
+  DEFAULT_REVIEW_PAGE_SUBTEXT,
+  MAX_REVIEW_PAGE_HEADLINE,
+  MAX_REVIEW_PAGE_SUBTEXT,
+  resolveReviewPageCopy,
+} from '../lib/review-page-copy'
+import {
+  MAX_REVIEW_PAGE_FOLLOWUP_PLACEHOLDER,
+  MAX_REVIEW_PAGE_FOLLOWUP_QUESTION,
+  resolveReviewPageFollowup,
+} from '../lib/review-page-followup'
 import AppLayout from '@/components/AppLayout'
 import ReviewPreview from '@/components/ReviewPreview'
 import AITemplateGenerator from '../components/AITemplateGenerator'
@@ -35,6 +54,11 @@ interface Business {
   custom_logo_url?: string | null
   custom_brand_name?: string | null
   custom_brand_color?: string | null
+  review_page_headline?: string | null
+  review_page_subtext?: string | null
+  review_page_followup_enabled?: boolean
+  review_page_followup_question?: string | null
+  review_page_followup_placeholder?: string | null
 }
 
 interface ReviewTemplate {
@@ -355,7 +379,14 @@ export default function SettingsPage() {
     custom_logo_url: '',
     custom_brand_name: '',
     custom_brand_color: '',
+    review_page_headline: null,
+    review_page_subtext: null,
+    review_page_followup_enabled: false,
+    review_page_followup_question: null,
+    review_page_followup_placeholder: null,
   })
+
+  const [proReviewPageOpen, setProReviewPageOpen] = useState(false)
 
   const [templates, setTemplates] = useState<ReviewTemplate[]>([
     { id: '', template_text: '', platform: 'google' },
@@ -402,7 +433,10 @@ export default function SettingsPage() {
           headers: { Authorization: `Bearer ${session.access_token}` },
         })
         const myBusinessPayload = await myBusinessRes.json().catch(() => ({})) as {
-          business?: { id: string } | null
+          business?: {
+            id: string
+            tier?: 'free' | 'pro' | 'ai'
+          } | null
         }
 
         if (!myBusinessRes.ok || !myBusinessPayload.business?.id) {
@@ -441,7 +475,10 @@ export default function SettingsPage() {
           facebook_review_url: business.facebook_review_url || '',
           yelp_review_url: business.yelp_review_url || '',
           nextdoor_review_url: business.nextdoor_review_url || '',
-          tier: (business.tier as 'free' | 'pro' | 'ai') || 'free',
+          tier:
+            myBusinessPayload.business?.tier ||
+            (business.tier as 'free' | 'pro' | 'ai') ||
+            'free',
           interested_in_tier: (business.interested_in_tier as 'pro' | 'ai' | null) ?? null,
           notify_on_launch: business.notify_on_launch ?? false,
           launch_discount_eligible: business.launch_discount_eligible ?? true,
@@ -453,6 +490,13 @@ export default function SettingsPage() {
           custom_logo_url: business.custom_logo_url || '',
           custom_brand_name: business.custom_brand_name || '',
           custom_brand_color: business.custom_brand_color || '',
+          review_page_headline: (business.review_page_headline as string | null) ?? null,
+          review_page_subtext: (business.review_page_subtext as string | null) ?? null,
+          review_page_followup_enabled: Boolean(business.review_page_followup_enabled),
+          review_page_followup_question:
+            (business.review_page_followup_question as string | null) ?? null,
+          review_page_followup_placeholder:
+            (business.review_page_followup_placeholder as string | null) ?? null,
         })
 
         if (business.google_review_url) setShowManualGoogle(true)
@@ -673,6 +717,16 @@ export default function SettingsPage() {
           whiteLabelEnabled: businessData.white_label_enabled,
           customBrandName: businessData.custom_brand_name || null,
           customBrandColor: businessData.custom_brand_color?.trim() || null,
+          ...(canCustomizeReviewPageCopy(businessData.tier)
+            ? {
+                reviewPageHeadline: businessData.review_page_headline ?? null,
+                reviewPageSubtext: businessData.review_page_subtext ?? null,
+                reviewPageFollowupEnabled: businessData.review_page_followup_enabled ?? false,
+                reviewPageFollowupQuestion: businessData.review_page_followup_question ?? null,
+                reviewPageFollowupPlaceholder:
+                  businessData.review_page_followup_placeholder ?? null,
+              }
+            : {}),
         }),
       })
 
@@ -1127,6 +1181,127 @@ export default function SettingsPage() {
                             </div>
                           </Field>
                         </>
+                      )}
+                    </div>
+                  </Card>
+
+                  <Card title="Review page copy">
+                    <div className="space-y-4">
+                      {canCustomizeReviewPageCopy(businessData.tier) ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => setProReviewPageOpen((v) => !v)}
+                            className="w-full flex items-center justify-between text-left text-sm font-semibold text-gray-800 py-1 cursor-pointer"
+                          >
+                            <span>Pro settings — headline, subtext &amp; follow-up</span>
+                            <span className="text-gray-400 text-xs">{proReviewPageOpen ? '▲' : '▼'}</span>
+                          </button>
+                          {proReviewPageOpen && (
+                            <div className="space-y-4 pt-1 border-t border-gray-100">
+                              <Field
+                                label="Headline"
+                                htmlFor="reviewPageHeadline"
+                                help={`Shown above the stars on your public review link. Max ${MAX_REVIEW_PAGE_HEADLINE} characters. Leave blank for the default.`}
+                              >
+                                <input
+                                  type="text"
+                                  id="reviewPageHeadline"
+                                  value={businessData.review_page_headline ?? ''}
+                                  maxLength={MAX_REVIEW_PAGE_HEADLINE}
+                                  onChange={(e) =>
+                                    setBusinessData({
+                                      ...businessData,
+                                      review_page_headline: e.target.value || null,
+                                    })
+                                  }
+                                  className={inputCls}
+                                  placeholder={DEFAULT_REVIEW_PAGE_HEADLINE}
+                                />
+                              </Field>
+                              <Field
+                                label="Subtext"
+                                htmlFor="reviewPageSubtext"
+                                help={`Shown below the stars. Max ${MAX_REVIEW_PAGE_SUBTEXT} characters.`}
+                              >
+                                <input
+                                  type="text"
+                                  id="reviewPageSubtext"
+                                  value={businessData.review_page_subtext ?? ''}
+                                  maxLength={MAX_REVIEW_PAGE_SUBTEXT}
+                                  onChange={(e) =>
+                                    setBusinessData({
+                                      ...businessData,
+                                      review_page_subtext: e.target.value || null,
+                                    })
+                                  }
+                                  className={inputCls}
+                                  placeholder={DEFAULT_REVIEW_PAGE_SUBTEXT}
+                                />
+                              </Field>
+                              <Toggle
+                                id="reviewPageFollowup"
+                                checked={businessData.review_page_followup_enabled ?? false}
+                                onChange={() =>
+                                  setBusinessData({
+                                    ...businessData,
+                                    review_page_followup_enabled: !businessData.review_page_followup_enabled,
+                                  })
+                                }
+                                label="Ask a follow-up question after they tap a star"
+                                description="Customers see one short question before feedback or review links."
+                              />
+                              {(businessData.review_page_followup_enabled ?? false) && (
+                                <>
+                                  <Field label="Follow-up question" htmlFor="reviewPageFollowupQuestion">
+                                    <input
+                                      type="text"
+                                      id="reviewPageFollowupQuestion"
+                                      value={businessData.review_page_followup_question ?? ''}
+                                      maxLength={MAX_REVIEW_PAGE_FOLLOWUP_QUESTION}
+                                      onChange={(e) =>
+                                        setBusinessData({
+                                          ...businessData,
+                                          review_page_followup_question: e.target.value || null,
+                                        })
+                                      }
+                                      className={inputCls}
+                                      placeholder="What could we improve?"
+                                      required
+                                    />
+                                  </Field>
+                                  <Field
+                                    label="Answer placeholder (optional)"
+                                    htmlFor="reviewPageFollowupPlaceholder"
+                                  >
+                                    <input
+                                      type="text"
+                                      id="reviewPageFollowupPlaceholder"
+                                      value={businessData.review_page_followup_placeholder ?? ''}
+                                      maxLength={MAX_REVIEW_PAGE_FOLLOWUP_PLACEHOLDER}
+                                      onChange={(e) =>
+                                        setBusinessData({
+                                          ...businessData,
+                                          review_page_followup_placeholder: e.target.value || null,
+                                        })
+                                      }
+                                      className={inputCls}
+                                      placeholder="One quick sentence is perfect…"
+                                    />
+                                  </Field>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <p className="text-sm text-gray-600">
+                          Upgrade to Pro to customize the headline, subtext, and optional follow-up question on your
+                          public review page.{' '}
+                          <Link href="/settings?section=plan" className="font-semibold text-[#4A3428] hover:underline">
+                            Open Plan &amp; Billing →
+                          </Link>
+                        </p>
                       )}
                     </div>
                   </Card>
@@ -1821,6 +1996,11 @@ export default function SettingsPage() {
               whiteLabelBrandName={businessData.custom_brand_name || null}
               whiteLabelBrandColor={businessData.custom_brand_color || null}
               templates={templates}
+              reviewPageHeadline={resolveReviewPageCopy(businessData).headline}
+              reviewPageSubtext={resolveReviewPageCopy(businessData).subtext}
+              followUpPreview={resolveReviewPageFollowup(businessData, {
+                accountTier: businessData.tier,
+              })}
             />
           </div>
 
