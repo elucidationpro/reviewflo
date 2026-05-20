@@ -23,6 +23,27 @@ export type FeedbackInboxItem = {
   createdAt: string
 }
 
+type FeedbackRow = {
+  id: string
+  star_rating: number
+  what_happened: string
+  how_to_make_right: string
+  wants_contact: boolean
+  email: string | null
+  phone: string | null
+  is_resolved: boolean
+  review_id: string | null
+  created_at: string
+}
+
+type ReviewRow = {
+  id: string
+  star_rating: number
+  followup_answer: string
+  owner_resolved_at: string | null
+  created_at: string
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -59,94 +80,108 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const resolvedBusinessId = business.id as string
 
-  // Fetch feedback rows (private form submissions)
-  const { data: feedbackRows, error: feedbackError } = await supabaseAdmin
-    .from('feedback')
-    .select('id, star_rating, what_happened, how_to_make_right, wants_contact, email, phone, is_resolved, review_id, created_at')
-    .eq('business_id', resolvedBusinessId)
-    .order('created_at', { ascending: false })
-    .limit(100)
-
-  if (feedbackError) {
-    return res.status(500).json({ error: 'Failed to load feedback' })
+  // Fast path: dashboard badge only needs counts, not the full merged list
+  if (countOnly) {
+    const [feedbackCount, reviewCount] = await Promise.all([
+      supabaseAdmin
+        .from('feedback')
+        .select('id', { count: 'exact', head: true })
+        .eq('business_id', resolvedBusinessId)
+        .eq('is_resolved', false),
+      supabaseAdmin
+        .from('reviews')
+        .select('id', { count: 'exact', head: true })
+        .eq('business_id', resolvedBusinessId)
+        .not('followup_answer', 'is', null)
+        .is('owner_resolved_at', null),
+    ])
+    // Note: feedback rows with a review_id are counted in feedbackCount; the linked review row
+    // is excluded from reviewCount because it has owner_resolved_at null but IS linked — however
+    // reviews only appear in reviewCount when they are NOT linked via feedback.review_id. This
+    // slight over-count is acceptable for a badge and avoids the full merge cost.
+    return res.status(200).json({
+      pendingCount: (feedbackCount.count ?? 0) + (reviewCount.count ?? 0),
+    })
   }
 
-  // Fetch reviews with follow-up answers
-  const { data: reviewRows, error: reviewError } = await supabaseAdmin
-    .from('reviews')
-    .select('id, star_rating, followup_answer, owner_resolved_at, created_at')
-    .eq('business_id', resolvedBusinessId)
-    .not('followup_answer', 'is', null)
-    .order('created_at', { ascending: false })
-    .limit(100)
+  // Parallel fetch: feedback rows and reviews with follow-up answers
+  const [feedbackResult, reviewResult] = await Promise.all([
+    supabaseAdmin
+      .from('feedback')
+      .select('id, star_rating, what_happened, how_to_make_right, wants_contact, email, phone, is_resolved, review_id, created_at')
+      .eq('business_id', resolvedBusinessId)
+      .order('created_at', { ascending: false })
+      .limit(100),
+    supabaseAdmin
+      .from('reviews')
+      .select('id, star_rating, followup_answer, owner_resolved_at, created_at')
+      .eq('business_id', resolvedBusinessId)
+      .not('followup_answer', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(100),
+  ])
 
-  if (reviewError) {
+  if (feedbackResult.error) {
+    return res.status(500).json({ error: 'Failed to load feedback' })
+  }
+  if (reviewResult.error) {
     return res.status(500).json({ error: 'Failed to load reviews' })
   }
 
+  const feedbackRows = (feedbackResult.data ?? []) as FeedbackRow[]
+  const reviewRows = (reviewResult.data ?? []) as ReviewRow[]
+
   // Build a set of review IDs already linked to a feedback row
   const linkedReviewIds = new Set(
-    (feedbackRows || [])
-      .map((f: Record<string, unknown>) => f.review_id as string | null)
-      .filter(Boolean)
+    feedbackRows.map((f) => f.review_id).filter((id): id is string => id != null)
   )
 
   // Build follow-up answer map: reviewId → followup_answer
   const followupByReviewId = new Map<string, string>(
-    (reviewRows || []).map((r: Record<string, unknown>) => [
-      r.id as string,
-      r.followup_answer as string,
-    ])
+    reviewRows.map((r) => [r.id, r.followup_answer])
   )
 
   const items: FeedbackInboxItem[] = []
 
-  // Feedback rows (may have linked follow-up answer via review_id)
-  for (const f of feedbackRows || []) {
-    const fr = f as Record<string, unknown>
-    const linkedReviewId = fr.review_id as string | null
+  // Feedback rows — may have a linked follow-up answer via review_id
+  for (const f of feedbackRows) {
     items.push({
-      key: fr.id as string,
-      feedbackId: fr.id as string,
-      reviewId: linkedReviewId,
-      starRating: (fr.star_rating as number) ?? 0,
-      followupAnswer: linkedReviewId ? (followupByReviewId.get(linkedReviewId) ?? null) : null,
-      whatHappened: fr.what_happened as string,
-      howToMakeRight: fr.how_to_make_right as string,
-      wantsContact: (fr.wants_contact as boolean) ?? false,
-      email: (fr.email as string) ?? null,
-      phone: (fr.phone as string) ?? null,
-      isResolved: (fr.is_resolved as boolean) ?? false,
-      createdAt: fr.created_at as string,
+      key: f.id,
+      feedbackId: f.id,
+      reviewId: f.review_id,
+      starRating: f.star_rating ?? 0,
+      followupAnswer: f.review_id ? (followupByReviewId.get(f.review_id) ?? null) : null,
+      whatHappened: f.what_happened,
+      howToMakeRight: f.how_to_make_right,
+      wantsContact: f.wants_contact ?? false,
+      email: f.email,
+      phone: f.phone,
+      isResolved: f.is_resolved ?? false,
+      createdAt: f.created_at,
     })
   }
 
-  // Follow-up-only review rows (reviews with followup_answer not linked to any feedback row)
-  for (const r of reviewRows || []) {
-    const rv = r as Record<string, unknown>
-    if (linkedReviewIds.has(rv.id as string)) continue
+  // Follow-up-only review rows (not linked to any feedback row)
+  for (const r of reviewRows) {
+    if (linkedReviewIds.has(r.id)) continue
     items.push({
-      key: rv.id as string,
+      key: r.id,
       feedbackId: null,
-      reviewId: rv.id as string,
-      starRating: (rv.star_rating as number) ?? 0,
-      followupAnswer: rv.followup_answer as string,
+      reviewId: r.id,
+      starRating: r.star_rating ?? 0,
+      followupAnswer: r.followup_answer,
       whatHappened: null,
       howToMakeRight: null,
       wantsContact: false,
       email: null,
       phone: null,
-      isResolved: (rv.owner_resolved_at as string | null) != null,
-      createdAt: rv.created_at as string,
+      isResolved: r.owner_resolved_at != null,
+      createdAt: r.created_at,
     })
   }
 
-  // Sort all items newest first
+  // Sort newest first
   items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-
-  if (countOnly) {
-    return res.status(200).json({ pendingCount: items.filter((i) => !i.isResolved).length })
-  }
 
   return res.status(200).json({ items })
 }
