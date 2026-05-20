@@ -3,10 +3,14 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { resolveAccountBillingTier } from '../lib/account-billing-tier'
 import { supabase } from '../lib/supabase'
 import ReviewFloFooter from '../components/ReviewFloFooter'
 import { trackEvent } from '../lib/posthog-provider'
 import { getReviewAccentColor, resolvePublicReviewFooter } from '../lib/review-page-branding'
+import { resolveReviewPageCopy } from '../lib/review-page-copy'
+import { shouldShowReviewPageFollowup } from '../lib/review-page-followup'
+import type { Tier } from '../lib/tier-permissions'
 
 interface Business {
   id: string
@@ -20,20 +24,28 @@ interface Business {
   white_label_enabled?: boolean
   custom_brand_name?: string | null
   custom_brand_color?: string | null
+  review_page_headline?: string | null
+  review_page_subtext?: string | null
+  review_page_followup_enabled?: boolean | null
+  review_page_followup_question?: string | null
+  review_page_followup_placeholder?: string | null
 }
 
 interface PageProps {
   business: Business
+  /** Account-level Pro/AI tier (child location rows may store `free` in DB). */
+  accountTierForReview: Tier
 }
 
 function getDisplayLogoUrl(b: Business): string | null {
   return b.logo_url || null
 }
 
-export default function ReviewPage({ business }: PageProps) {
+export default function ReviewPage({ business, accountTierForReview }: PageProps) {
   const router = useRouter()
   const accentColor = getReviewAccentColor(business)
   const footer = resolvePublicReviewFooter(business)
+  const reviewCopy = resolveReviewPageCopy(business)
   const displayLogoUrl = getDisplayLogoUrl(business)
   const [selectedRating, setSelectedRating] = useState<number | null>(null)
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
@@ -51,16 +63,24 @@ export default function ReviewPage({ business }: PageProps) {
     const startTime = Date.now()
 
     try {
-      const { error } = await supabase
-        .from('reviews')
-        .insert({
-          business_id: business.id,
-          star_rating: rating,
-          created_at: new Date().toISOString()
-        })
+      // Writes use the API route: anonymous Supabase clients cannot SELECT inserted rows under RLS,
+      // so direct .insert().select('id') always fails for guests even when the insert succeeds.
+      const saveReviewRes = await fetch('/api/save-customer-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessId: business.id,
+          starRating: rating,
+        }),
+      })
+      const savePayload = (await saveReviewRes.json().catch(() => null)) as {
+        reviewId?: string
+        error?: string
+      } | null
+      const reviewId = typeof savePayload?.reviewId === 'string' ? savePayload.reviewId : null
 
-      if (error) {
-        console.error('Error saving review:', error)
+      if (!saveReviewRes.ok || !reviewId) {
+        console.error('Error saving review:', savePayload ?? saveReviewRes.status)
         setIsSubmitting(false)
         return
       }
@@ -82,8 +102,34 @@ export default function ReviewPage({ business }: PageProps) {
         }).catch(() => {})
       }
 
-      // Carry the tracking token forward so templates page can record completion
       const tokenParam = trackingToken ? `&t=${trackingToken}` : ''
+      const reviewIdParam = `reviewId=${reviewId}`
+
+      // Re-fetch follow-up flags from DB before routing — page props may be stale if the
+      // owner enabled follow-up in Settings after this page was initially loaded (SSR/cache).
+      const { data: latestBiz } = await supabase
+        .from('businesses')
+        .select(
+          'tier, review_page_followup_enabled, review_page_followup_question, review_page_followup_placeholder'
+        )
+        .eq('id', business.id)
+        .single()
+
+      const routingBusiness: Business =
+        latestBiz && typeof latestBiz === 'object'
+          ? { ...business, ...(latestBiz as Partial<Business>) }
+          : business
+
+      if (
+        shouldShowReviewPageFollowup(routingBusiness, {
+          accountTier: accountTierForReview,
+        })
+      ) {
+        router.push(
+          `/${business.slug}/follow-up?rating=${rating}&${reviewIdParam}${tokenParam}`
+        )
+        return
+      }
 
       // FTC Consumer Review Rule compliance: the Google link is surfaced on BOTH
       // paths (templates + feedback), so rating-based routing is purely UX, not
@@ -147,7 +193,7 @@ export default function ReviewPage({ business }: PageProps) {
               </h1>
             )}
             <p className="text-gray-400 text-sm md:text-base lg:text-xl xl:text-2xl text-center mb-8 md:mb-10 lg:mb-12 xl:mb-14">
-              How was your experience?
+              {reviewCopy.headline}
             </p>
 
             {/* Star Rating */}
@@ -191,7 +237,7 @@ export default function ReviewPage({ business }: PageProps) {
               </div>
             ) : (
               <p className="text-center text-gray-400 text-xs md:text-sm lg:text-base h-8 flex items-center justify-center">
-                Tap a star to rate
+                {reviewCopy.subtext}
               </p>
             )}
           </div>
@@ -232,5 +278,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { notFound: true }
   }
 
-  return { props: { business } }
+  const accountTierForReview = await resolveAccountBillingTier(supabase, business)
+
+  return {
+    props: {
+      business,
+      accountTierForReview,
+    },
+  }
 }

@@ -1,5 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
+import { getBusinessForRequest } from '@/lib/business-account'
+import { resolveAccountBillingTier } from '@/lib/account-billing-tier'
+import { canCustomizeReviewPageCopy } from '@/lib/tier-permissions'
+import { sanitizeReviewPageCopyInput } from '@/lib/review-page-copy'
+import { sanitizeReviewPageFollowupSettingsInput } from '@/lib/review-page-followup'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -34,6 +39,11 @@ interface UpdateBusinessSettingsRequest {
   customLogoUrl?: string | null
   customBrandName?: string | null
   customBrandColor?: string | null
+  reviewPageHeadline?: string | null
+  reviewPageSubtext?: string | null
+  reviewPageFollowupEnabled?: boolean
+  reviewPageFollowupQuestion?: string | null
+  reviewPageFollowupPlaceholder?: string | null
 }
 
 export default async function handler(
@@ -64,19 +74,93 @@ export default async function handler(
       return res.status(400).json({ error: 'Business ID is required' })
     }
 
-    // Verify user owns this business
-    const { data: business, error: fetchError } = await supabaseAdmin
-      .from('businesses')
-      .select('id')
-      .eq('id', businessId)
-      .eq('user_id', user.id)
-      .single()
+    const {
+      row: business,
+      error: lookupErr,
+    } = await getBusinessForRequest(
+      supabaseAdmin,
+      user.id,
+      businessId,
+      'id, tier, review_page_headline, review_page_subtext, review_page_followup_enabled, review_page_followup_question, review_page_followup_placeholder'
+    )
 
-    if (fetchError || !business) {
+    if (lookupErr || !business) {
       return res.status(403).json({ error: 'You do not have permission to update this business' })
     }
 
+    const accountTier = await resolveAccountBillingTier(supabaseAdmin, business)
+
     const updateData: Record<string, string | boolean | null> = {}
+
+    if (body.reviewPageHeadline !== undefined || body.reviewPageSubtext !== undefined) {
+      if (!canCustomizeReviewPageCopy(accountTier)) {
+        return res.status(403).json({ error: 'Pro tier required to customize review page copy' })
+      }
+      const headlineForSanitize =
+        body.reviewPageHeadline !== undefined
+          ? body.reviewPageHeadline
+          : (business.review_page_headline as string | null | undefined) ?? null
+      const subtextForSanitize =
+        body.reviewPageSubtext !== undefined
+          ? body.reviewPageSubtext
+          : (business.review_page_subtext as string | null | undefined) ?? null
+      const { values, error: copyError } = sanitizeReviewPageCopyInput(
+        headlineForSanitize,
+        subtextForSanitize
+      )
+      if (copyError) {
+        return res.status(400).json({ error: copyError })
+      }
+      if (body.reviewPageHeadline !== undefined) {
+        updateData.review_page_headline = values.headline
+      }
+      if (body.reviewPageSubtext !== undefined) {
+        updateData.review_page_subtext = values.subtext
+      }
+    }
+
+    const followupFieldsProvided =
+      body.reviewPageFollowupEnabled !== undefined ||
+      body.reviewPageFollowupQuestion !== undefined ||
+      body.reviewPageFollowupPlaceholder !== undefined
+
+    if (followupFieldsProvided) {
+      if (!canCustomizeReviewPageCopy(accountTier)) {
+        return res.status(403).json({ error: 'Pro tier required to customize review page follow-up' })
+      }
+      const enabledForSanitize =
+        body.reviewPageFollowupEnabled !== undefined
+          ? body.reviewPageFollowupEnabled
+          : Boolean(business.review_page_followup_enabled)
+      const questionForSanitize =
+        body.reviewPageFollowupQuestion !== undefined
+          ? body.reviewPageFollowupQuestion
+          : (business.review_page_followup_question as string | null | undefined) ?? null
+      const placeholderForSanitize =
+        body.reviewPageFollowupPlaceholder !== undefined
+          ? body.reviewPageFollowupPlaceholder
+          : (business.review_page_followup_placeholder as string | null | undefined) ?? null
+
+      const { values: followupValues, error: followupError } =
+        sanitizeReviewPageFollowupSettingsInput({
+          enabled: enabledForSanitize,
+          question: questionForSanitize,
+          placeholder: placeholderForSanitize,
+        })
+      if (followupError) {
+        return res.status(400).json({ error: followupError })
+      }
+      if (body.reviewPageFollowupEnabled !== undefined) {
+        updateData.review_page_followup_enabled = followupValues.enabled
+      }
+      if (body.reviewPageFollowupQuestion !== undefined) {
+        updateData.review_page_followup_question = followupValues.question
+      }
+      if (body.reviewPageFollowupPlaceholder !== undefined) {
+        updateData.review_page_followup_placeholder = followupValues.placeholder
+      }
+    }
+
     if (body.disconnectGoogle) {
       updateData.google_oauth_refresh_token = null
       updateData.google_oauth_access_token = null

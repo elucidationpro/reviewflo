@@ -12,6 +12,11 @@ export const supabaseAdmin = createClient(
 
 export function parseTier(raw: unknown): Tier {
   if (raw === 'pro' || raw === 'ai') return raw
+  if (typeof raw === 'string') {
+    const normalized = raw.trim().toLowerCase()
+    if (normalized === 'pro') return 'pro'
+    if (normalized === 'ai') return 'ai'
+  }
   return 'free'
 }
 
