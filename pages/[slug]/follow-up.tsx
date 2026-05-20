@@ -46,11 +46,13 @@ function routeAfterFollowup(
   router: ReturnType<typeof useRouter>,
   business: Business,
   rating: number,
+  reviewId: string,
   trackingToken: string | null
 ) {
   const tokenParam = trackingToken ? `&t=${trackingToken}` : ''
+  const reviewParam = reviewId ? `&reviewId=${encodeURIComponent(reviewId)}` : ''
   if (rating >= 1 && rating <= 4) {
-    router.push(`/${business.slug}/feedback?rating=${rating}${tokenParam}`)
+    router.push(`/${business.slug}/feedback?rating=${rating}${reviewParam}${tokenParam}`)
   } else {
     router.push(`/${business.slug}/templates?${trackingToken ? `t=${trackingToken}` : ''}`)
   }
@@ -114,7 +116,7 @@ export default function FollowUpPage({
         answerLength: trimmed.length,
       })
 
-      routeAfterFollowup(router, business, rating, trackingToken)
+      routeAfterFollowup(router, business, rating, reviewId, trackingToken)
     } catch (err) {
       console.error('Error saving follow-up answer:', err)
       setFormError('Something went wrong. Please try again.')
@@ -123,7 +125,7 @@ export default function FollowUpPage({
   }
 
   const handleSkip = () => {
-    routeAfterFollowup(router, business, rating, trackingToken)
+    routeAfterFollowup(router, business, rating, reviewId, trackingToken)
   }
 
   if (!followup) {
