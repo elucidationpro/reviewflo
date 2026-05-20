@@ -157,14 +157,17 @@ export default function DashboardPage() {
                 onboardingDate: new Date().toISOString(),
               })
 
-              const feedbackCountResult = await supabase
-                .from('feedback')
-                .select('*', { count: 'exact', head: true })
-                .eq('business_id', businessData.id)
-                .eq('is_resolved', false)
-
-              if (!feedbackCountResult.error) {
-                setPendingFeedbackCount(feedbackCountResult.count ?? 0)
+              try {
+                const countRes = await fetch(
+                  `/api/feedback-inbox?businessId=${encodeURIComponent(businessData.id)}&countOnly=true`,
+                  { headers: { Authorization: `Bearer ${session.access_token}` } }
+                )
+                if (countRes.ok) {
+                  const countData = await countRes.json() as { pendingCount: number }
+                  setPendingFeedbackCount(countData.pendingCount ?? 0)
+                }
+              } catch {
+                // Non-fatal: badge stays at 0
               }
 
               setIsLoading(false)
@@ -202,14 +205,17 @@ export default function DashboardPage() {
         onboardingDate: new Date().toISOString(),
       })
 
-      const feedbackCountResult = await supabase
-        .from('feedback')
-        .select('*', { count: 'exact', head: true })
-        .eq('business_id', businessData.id)
-        .eq('is_resolved', false)
-
-      if (!feedbackCountResult.error) {
-        setPendingFeedbackCount(feedbackCountResult.count ?? 0)
+      try {
+        const countRes = await fetch(
+          `/api/feedback-inbox?businessId=${encodeURIComponent(businessData.id)}&countOnly=true`,
+          { headers: { Authorization: `Bearer ${session.access_token}` } }
+        )
+        if (countRes.ok) {
+          const countData = await countRes.json() as { pendingCount: number }
+          setPendingFeedbackCount(countData.pendingCount ?? 0)
+        }
+      } catch {
+        // Non-fatal: badge stays at 0
       }
 
       setIsLoading(false)
