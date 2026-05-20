@@ -21,6 +21,7 @@ export default function FeedbackPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
   const [feedbackList, setFeedbackList] = useState<FeedbackInboxItem[]>([])
+  const [followupQuestion, setFollowupQuestion] = useState<string | null>(null)
   const [resolvingId, setResolvingId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -65,8 +66,9 @@ export default function FeedbackPage() {
         { headers: { Authorization: `Bearer ${session.access_token}` } }
       )
       if (inboxRes.ok) {
-        const inboxData = await inboxRes.json() as { items: FeedbackInboxItem[] }
+        const inboxData = await inboxRes.json() as { items: FeedbackInboxItem[], followupQuestion: string | null }
         setFeedbackList(inboxData.items)
+        setFollowupQuestion(inboxData.followupQuestion ?? null)
       }
 
       setIsLoading(false)
@@ -192,7 +194,9 @@ export default function FeedbackPage() {
                 {/* Follow-up answer (if present) */}
                 {item.followupAnswer && (
                   <div className="mb-3 space-y-0.5 text-sm">
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Follow-up answer</p>
+                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+                      {followupQuestion || 'Follow-up answer'}
+                    </p>
                     <p className="text-gray-900 font-medium">{item.followupAnswer}</p>
                   </div>
                 )}
@@ -201,13 +205,13 @@ export default function FeedbackPage() {
                 {item.whatHappened && (
                   <div className={`space-y-2 text-sm ${item.followupAnswer ? 'pt-3 border-t border-gray-100' : ''}`}>
                     <div>
-                      <p className="text-xs font-semibold text-gray-500 mb-0.5">What happened</p>
-                      <p className="text-gray-800">{item.whatHappened}</p>
+                      <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">What happened</p>
+                      <p className="text-gray-900 font-medium">{item.whatHappened}</p>
                     </div>
                     {item.howToMakeRight && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 mb-0.5">How to make it right</p>
-                        <p className="text-gray-800">{item.howToMakeRight}</p>
+                        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">How to make it right</p>
+                        <p className="text-gray-900 font-medium">{item.howToMakeRight}</p>
                       </div>
                     )}
                   </div>

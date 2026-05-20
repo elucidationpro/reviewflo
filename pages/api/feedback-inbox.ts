@@ -72,13 +72,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     supabaseAdmin,
     user.id,
     businessId,
-    'id'
+    'id, review_page_followup_question'
   )
   if (bizError || !business) {
     return res.status(404).json({ error: 'Business not found' })
   }
 
   const resolvedBusinessId = business.id as string
+  const followupQuestion = (business.review_page_followup_question as string | null) ?? null
 
   // Fast path: dashboard badge only needs counts, not the full merged list
   if (countOnly) {
@@ -183,5 +184,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Sort newest first
   items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
-  return res.status(200).json({ items })
+  return res.status(200).json({ items, followupQuestion })
 }
