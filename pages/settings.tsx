@@ -386,8 +386,6 @@ export default function SettingsPage() {
     review_page_followup_placeholder: null,
   })
 
-  const [proReviewPageOpen, setProReviewPageOpen] = useState(false)
-
   const [templates, setTemplates] = useState<ReviewTemplate[]>([
     { id: '', template_text: '', platform: 'google' },
     { id: '', template_text: '', platform: 'facebook' },
@@ -1102,7 +1100,7 @@ export default function SettingsPage() {
                     </div>
                   </Card>
 
-                  <Card title="ReviewFlo Branding">
+                  <Card title="Pro settings">
                     <div className="space-y-4">
                       <Toggle
                         id="showBranding"
@@ -1182,23 +1180,9 @@ export default function SettingsPage() {
                           </Field>
                         </>
                       )}
-                    </div>
-                  </Card>
 
-                  <Card title="Review page copy">
-                    <div className="space-y-4">
                       {canCustomizeReviewPageCopy(businessData.tier) ? (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => setProReviewPageOpen((v) => !v)}
-                            className="w-full flex items-center justify-between text-left text-sm font-semibold text-gray-800 py-1 cursor-pointer"
-                          >
-                            <span>Pro settings — headline, subtext &amp; follow-up</span>
-                            <span className="text-gray-400 text-xs">{proReviewPageOpen ? '▲' : '▼'}</span>
-                          </button>
-                          {proReviewPageOpen && (
-                            <div className="space-y-4 pt-1 border-t border-gray-100">
+                        <div className="space-y-4 pt-4 border-t border-gray-100">
                               <Field
                                 label="Headline"
                                 htmlFor="reviewPageHeadline"
@@ -1291,11 +1275,9 @@ export default function SettingsPage() {
                                   </Field>
                                 </>
                               )}
-                            </div>
-                          )}
-                        </>
+                        </div>
                       ) : (
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 pt-4 border-t border-gray-100">
                           Upgrade to Pro to customize the headline, subtext, and optional follow-up question on your
                           public review page.{' '}
                           <Link href="/settings?section=plan" className="font-semibold text-[#4A3428] hover:underline">

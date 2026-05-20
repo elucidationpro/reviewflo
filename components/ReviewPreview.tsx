@@ -210,6 +210,12 @@ export default function ReviewPreview({
 
         {screen === 'follow_up' && followUpPreview && selectedRating != null && (
           <div className="w-[85%] max-w-[360px] mx-auto bg-white rounded-[20px] border border-gray-100 px-8 py-10 text-center shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+            {logoUrl && (
+              <div className="flex justify-center mb-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoUrl} alt={displayName} className="max-h-16 w-auto object-contain" />
+              </div>
+            )}
             <p className="text-sm font-semibold text-gray-800 mb-4">{followUpPreview.question}</p>
             <textarea
               value={followUpAnswer}
@@ -225,6 +231,13 @@ export default function ReviewPreview({
               style={{ backgroundColor: accentColor }}
             >
               Continue
+            </button>
+            <button
+              type="button"
+              onClick={() => routeAfterFollowupPreview(selectedRating)}
+              className="w-full py-2 mt-1 text-sm text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+            >
+              Skip
             </button>
           </div>
         )}
