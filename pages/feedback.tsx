@@ -170,7 +170,7 @@ export default function FeedbackPage() {
                       {item.isResolved ? 'Resolved' : 'Pending'}
                     </span>
                     <span className="text-xs text-yellow-500 tracking-tighter" aria-label={`${item.starRating} stars`}>
-                      {'★'.repeat(item.starRating)}{'☆'.repeat(5 - item.starRating)}
+                      {(() => { const s = Math.min(5, Math.max(0, item.starRating)); return '★'.repeat(s) + '☆'.repeat(5 - s) })()}
                     </span>
                     <span className="text-xs text-gray-400">
                       {new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
