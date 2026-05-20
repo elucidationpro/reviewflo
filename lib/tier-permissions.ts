@@ -25,6 +25,11 @@ export function canRemoveBranding(tier: Tier | undefined): boolean {
   return tier === 'pro' || tier === 'ai'
 }
 
+/** Can customize review page headline/subtext and follow-up on /{slug} (Pro/AI only). */
+export function canCustomizeReviewPageCopy(tier: Tier | undefined): boolean {
+  return tier === 'pro' || tier === 'ai'
+}
+
 /** Can access expanded Google Business Stats (Pro/AI only) */
 export function canAccessGoogleStats(tier: Tier | undefined): boolean {
   return tier === 'pro' || tier === 'ai'
