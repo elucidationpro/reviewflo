@@ -191,9 +191,9 @@ export default function FeedbackPage() {
 
                 {/* Follow-up answer (if present) */}
                 {item.followupAnswer && (
-                  <div className="mb-3 space-y-1 text-sm">
-                    <p className="text-xs font-semibold text-gray-500">Follow-up answer</p>
-                    <p className="text-gray-800">{item.followupAnswer}</p>
+                  <div className="mb-3 space-y-0.5 text-sm">
+                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Follow-up answer</p>
+                    <p className="text-gray-900 font-medium">{item.followupAnswer}</p>
                   </div>
                 )}
 
