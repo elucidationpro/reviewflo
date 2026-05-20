@@ -164,7 +164,7 @@ export default function DashboardPage() {
                 )
                 if (countRes.ok) {
                   const countData = await countRes.json() as { pendingCount: number }
-                  setPendingFeedbackCount(countData.pendingCount)
+                  setPendingFeedbackCount(countData.pendingCount ?? 0)
                 }
               } catch {
                 // Non-fatal: badge stays at 0
@@ -212,7 +212,7 @@ export default function DashboardPage() {
         )
         if (countRes.ok) {
           const countData = await countRes.json() as { pendingCount: number }
-          setPendingFeedbackCount(countData.pendingCount)
+          setPendingFeedbackCount(countData.pendingCount ?? 0)
         }
       } catch {
         // Non-fatal: badge stays at 0
