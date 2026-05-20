@@ -1,6 +1,7 @@
 import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import Link from 'next/link'
+import { createClient } from '@supabase/supabase-js'
 import { supabase } from '../../lib/supabase'
 import ReviewFloFooter from '../../components/ReviewFloFooter'
 import { trackEvent } from '../../lib/posthog-provider'
@@ -393,10 +394,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { notFound: true }
   }
 
-  // Validate that the reviewId belongs to this business to prevent cross-business FK injection
+  // Validate reviewId belongs to this business. Uses service role because reviews table
+  // is not readable by the anon key (RLS restricts it to authenticated owners).
   let reviewId: string | null = null
   if (rawReviewId) {
-    const { data: rev } = await supabase
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    )
+    const { data: rev } = await supabaseAdmin
       .from('reviews')
       .select('id')
       .eq('id', rawReviewId)
