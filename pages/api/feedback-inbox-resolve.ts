@@ -39,6 +39,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'feedbackId or reviewId required' })
   }
 
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+  if (feedbackId && !UUID_RE.test(feedbackId)) {
+    return res.status(400).json({ error: 'Invalid feedbackId' })
+  }
+  if (reviewId && !UUID_RE.test(reviewId)) {
+    return res.status(400).json({ error: 'Invalid reviewId' })
+  }
+
   const { row: business, error: bizError } = await getBusinessForRequest(
     supabaseAdmin,
     user.id,
