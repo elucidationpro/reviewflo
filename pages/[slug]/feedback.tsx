@@ -66,7 +66,7 @@ export default function FeedbackPage({ business, rating, reviewId }: PageProps) 
         .insert({
           business_id: business.id,
           star_rating: rating,
-          review_id: reviewId ?? null,
+          review_id: reviewId,
           what_happened: whatHappened.trim(),
           how_to_make_right: howToMakeRight.trim(),
           wants_contact: wantsContact,
@@ -381,7 +381,7 @@ export default function FeedbackPage({ business, rating, reviewId }: PageProps) 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.params as { slug: string }
   const rating = parseInt(context.query.rating as string) || 3
-  const reviewId = typeof context.query.reviewId === 'string' ? context.query.reviewId : null
+  const rawReviewId = typeof context.query.reviewId === 'string' ? context.query.reviewId : null
 
   const { data: business, error } = await supabase
     .from('businesses')
@@ -391,6 +391,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (error || !business) {
     return { notFound: true }
+  }
+
+  // Validate that the reviewId belongs to this business to prevent cross-business FK injection
+  let reviewId: string | null = null
+  if (rawReviewId) {
+    const { data: rev } = await supabase
+      .from('reviews')
+      .select('id')
+      .eq('id', rawReviewId)
+      .eq('business_id', business.id)
+      .maybeSingle()
+    if (rev) reviewId = rev.id as string
   }
 
   return { props: { business, rating, reviewId } }
