@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { trackEvent } from '../lib/posthog-provider'
 import AppLayout from '@/components/AppLayout'
 import { useBusiness } from '@/contexts/BusinessContext'
+import type { FeedbackInboxItem } from './api/feedback-inbox'
 
 interface Business {
   id: string
@@ -14,23 +15,12 @@ interface Business {
   tier: 'free' | 'pro' | 'ai'
 }
 
-interface Feedback {
-  id: string
-  what_happened: string
-  how_to_make_right: string
-  wants_contact: boolean
-  email: string | null
-  phone: string | null
-  is_resolved: boolean
-  created_at: string
-}
-
 export default function FeedbackPage() {
   const router = useRouter()
   const { selectedBusinessId } = useBusiness()
   const [isLoading, setIsLoading] = useState(true)
   const [business, setBusiness] = useState<Business | null>(null)
-  const [feedbackList, setFeedbackList] = useState<Feedback[]>([])
+  const [feedbackList, setFeedbackList] = useState<FeedbackInboxItem[]>([])
   const [resolvingId, setResolvingId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -70,15 +60,13 @@ export default function FeedbackPage() {
 
       trackEvent('feedback_page_viewed', { businessId: businessData.id })
 
-      const { data: feedbackData, error: feedbackError } = await supabase
-        .from('feedback')
-        .select('*')
-        .eq('business_id', businessData.id)
-        .order('created_at', { ascending: false })
-        .limit(50)
-
-      if (!feedbackError && feedbackData) {
-        setFeedbackList(feedbackData as Feedback[])
+      const inboxRes = await fetch(
+        `/api/feedback-inbox?businessId=${encodeURIComponent(businessData.id)}`,
+        { headers: { Authorization: `Bearer ${session.access_token}` } }
+      )
+      if (inboxRes.ok) {
+        const inboxData = await inboxRes.json() as { items: FeedbackInboxItem[] }
+        setFeedbackList(inboxData.items)
       }
 
       setIsLoading(false)
@@ -87,19 +75,32 @@ export default function FeedbackPage() {
     }
   }
 
-  const handleResolveFeedback = useCallback(async (feedbackId: string) => {
-    setResolvingId(feedbackId)
-    const { error } = await supabase
-      .from('feedback')
-      .update({ is_resolved: true })
-      .eq('id', feedbackId)
-    if (!error) {
-      setFeedbackList(prev => prev.map(f =>
-        f.id === feedbackId ? { ...f, is_resolved: true } : f
-      ))
+  const handleResolve = useCallback(async (item: FeedbackInboxItem) => {
+    setResolvingId(item.key)
+
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { setResolvingId(null); return }
+
+    const res = await fetch('/api/feedback-inbox-resolve', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        feedbackId: item.feedbackId,
+        reviewId: item.reviewId,
+        businessId: business?.id,
+      }),
+    })
+
+    if (res.ok) {
+      setFeedbackList(prev =>
+        prev.map(f => f.key === item.key ? { ...f, isResolved: true } : f)
+      )
     }
     setResolvingId(null)
-  }, [])
+  }, [business])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -122,7 +123,7 @@ export default function FeedbackPage() {
     )
   }
 
-  const pendingCount = feedbackList.filter(f => !f.is_resolved).length
+  const pendingCount = feedbackList.filter(f => !f.isResolved).length
 
   return (
     <AppLayout
@@ -138,82 +139,97 @@ export default function FeedbackPage() {
       <div className="px-6 py-8 max-w-2xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Feedback</h1>
-          <p className="text-sm text-gray-500 mt-1">Private feedback from customers who rated 1–4 stars.</p>
+          <p className="text-sm text-gray-500 mt-1">Private feedback and follow-up answers from customers who rated your review page.</p>
         </div>
 
         {feedbackList.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-sm text-gray-400">No feedback yet — it shows up here when customers leave 1–4 star ratings.</p>
+            <p className="text-sm text-gray-400">No responses yet — customer follow-up answers and private feedback show up here.</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {feedbackList.map((feedback) => (
+            {feedbackList.map((item) => (
               <div
-                key={feedback.id}
+                key={item.key}
                 className={`rounded-xl border p-4 transition-colors ${
-                  feedback.is_resolved
+                  item.isResolved
                     ? 'border-emerald-100 bg-emerald-50/50'
                     : 'border-gray-100 bg-white hover:border-gray-200'
                 }`}
               >
-                {/* Top row: status + timestamp + resolve */}
+                {/* Top row: status + stars + timestamp + resolve */}
                 <div className="flex items-center justify-between gap-3 mb-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span
                       className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
-                        feedback.is_resolved
+                        item.isResolved
                           ? 'bg-emerald-100 text-emerald-700'
                           : 'bg-amber-100 text-amber-700'
                       }`}
                     >
-                      {feedback.is_resolved ? 'Resolved' : 'Pending'}
+                      {item.isResolved ? 'Resolved' : 'Pending'}
+                    </span>
+                    <span className="text-xs text-yellow-500 tracking-tighter" aria-label={`${item.starRating} stars`}>
+                      {'★'.repeat(item.starRating)}{'☆'.repeat(5 - item.starRating)}
                     </span>
                     <span className="text-xs text-gray-400">
-                      {new Date(feedback.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                      {new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       {' · '}
-                      {new Date(feedback.created_at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
+                      {new Date(item.createdAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
                     </span>
                   </div>
-                  {!feedback.is_resolved && (
+                  {!item.isResolved && (
                     <button
-                      onClick={() => handleResolveFeedback(feedback.id)}
-                      disabled={resolvingId === feedback.id}
+                      onClick={() => handleResolve(item)}
+                      disabled={resolvingId === item.key}
                       className="shrink-0 px-3 py-1.5 text-xs font-semibold bg-[#4A3428] text-white rounded-lg hover:bg-[#4A3428]/90 transition-colors disabled:opacity-50 cursor-pointer"
                     >
-                      {resolvingId === feedback.id ? 'Saving…' : 'Mark Resolved'}
+                      {resolvingId === item.key ? 'Saving…' : 'Mark Resolved'}
                     </button>
                   )}
                 </div>
 
-                {/* Feedback content */}
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <p className="text-xs font-semibold text-gray-500 mb-0.5">What happened</p>
-                    <p className="text-gray-800">{feedback.what_happened}</p>
+                {/* Follow-up answer (if present) */}
+                {item.followupAnswer && (
+                  <div className="mb-3 space-y-1 text-sm">
+                    <p className="text-xs font-semibold text-gray-500">Follow-up answer</p>
+                    <p className="text-gray-800">{item.followupAnswer}</p>
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold text-gray-500 mb-0.5">How to make it right</p>
-                    <p className="text-gray-800">{feedback.how_to_make_right}</p>
+                )}
+
+                {/* Private feedback (if present) */}
+                {item.whatHappened && (
+                  <div className={`space-y-2 text-sm ${item.followupAnswer ? 'pt-3 border-t border-gray-100' : ''}`}>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 mb-0.5">What happened</p>
+                      <p className="text-gray-800">{item.whatHappened}</p>
+                    </div>
+                    {item.howToMakeRight && (
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 mb-0.5">How to make it right</p>
+                        <p className="text-gray-800">{item.howToMakeRight}</p>
+                      </div>
+                    )}
                   </div>
-                </div>
+                )}
 
                 {/* Contact info */}
-                {feedback.wants_contact && (feedback.email || feedback.phone) && (
+                {item.wantsContact && (item.email || item.phone) && (
                   <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-gray-100">
-                    {feedback.email && (
-                      <a href={`mailto:${feedback.email}`} className="flex items-center gap-1.5 text-xs text-[#4A3428] hover:underline">
+                    {item.email && (
+                      <a href={`mailto:${item.email}`} className="flex items-center gap-1.5 text-xs text-[#4A3428] hover:underline">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
-                        {feedback.email}
+                        {item.email}
                       </a>
                     )}
-                    {feedback.phone && (
-                      <a href={`tel:${feedback.phone}`} className="flex items-center gap-1.5 text-xs text-[#4A3428] hover:underline">
+                    {item.phone && (
+                      <a href={`tel:${item.phone}`} className="flex items-center gap-1.5 text-xs text-[#4A3428] hover:underline">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                         </svg>
-                        {feedback.phone}
+                        {item.phone}
                       </a>
                     )}
                   </div>
