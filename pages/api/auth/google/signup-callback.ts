@@ -117,6 +117,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .eq('user_id', existing.id)
         .single();
       let business: BusinessLite | null = (fetchedBusiness as BusinessLite | null) ?? null;
+      const createdNewBusinessForExistingUser = !business?.id;
 
       if (!business?.id) {
         let baseSlug = generateSlugFromBusinessName(businessName) || 'my-business';
@@ -189,12 +190,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .eq('id', business.id);
       }
 
-      setMagicNextCookie(res, 'dashboard');
+      // A brand new business for an already-existing auth user still needs to go through
+      // the same forced name/slug confirmation as a fresh signup — otherwise it lands in
+      // the dashboard with a blank name and a placeholder slug (my-business, my-business-2, ...).
+      const nextStep = createdNewBusinessForExistingUser ? 'google-confirm' : 'dashboard';
+      setMagicNextCookie(res, nextStep);
       const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
         type: 'magiclink',
         email,
         options: {
-          redirectTo: magicLandingRedirectTo(appBase, 'dashboard'),
+          redirectTo: magicLandingRedirectTo(appBase, nextStep),
         },
       });
       if (linkError || !linkData?.properties?.action_link) {

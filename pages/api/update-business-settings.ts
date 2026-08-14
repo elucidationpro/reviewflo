@@ -167,7 +167,13 @@ export default async function handler(
       updateData.google_oauth_expires_at = null
       updateData.google_business_name = null
     }
-    if (body.businessName !== undefined) updateData.business_name = body.businessName
+    if (body.businessName !== undefined) {
+      const trimmedBusinessName = body.businessName.trim()
+      if (!trimmedBusinessName) {
+        return res.status(400).json({ error: 'Business name is required' })
+      }
+      updateData.business_name = trimmedBusinessName
+    }
     if (body.ownerName !== undefined) updateData.owner_name = body.ownerName?.trim() || null
     if (body.primaryColor !== undefined) updateData.primary_color = body.primaryColor
     if (body.logoUrl !== undefined) updateData.logo_url = body.logoUrl
