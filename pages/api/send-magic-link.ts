@@ -3,6 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { generateSlugFromBusinessName, normalizeSlugForValidation } from '@/lib/slug-utils';
 import { wrapAuthLink } from '@/lib/auth-link-utils';
+import { getAppBaseUrl } from '@/lib/app-base-url';
+import { magicLandingRedirectTo } from '@/lib/magic-link-landing';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -69,8 +71,76 @@ export default async function handler(
     const userExists = existingUser?.users?.some(u => u.email === emailTrim);
 
     if (userExists) {
-      return res.status(400).json({
-        error: 'An account with this email already exists. Check your email for the login link, or contact support.'
+      // They already have an account (made via Google, password, or a prior magic
+      // link) — sign them back in instead of dead-ending on an error. Cross-check
+      // by email so the same person never ends up with two accounts no matter
+      // which signup method they use on a given visit.
+      if (!process.env.RESEND_API_KEY) {
+        console.error('[send-magic-link] RESEND_API_KEY is not set');
+        return res.status(500).json({
+          error: 'Email service is not configured. Please try again later or contact support.'
+        });
+      }
+
+      const { data: loginLinkData, error: loginLinkError } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email: emailTrim,
+        options: {
+          redirectTo: magicLandingRedirectTo(getAppBaseUrl(req), 'dashboard'),
+        },
+      });
+
+      if (loginLinkError || !loginLinkData?.properties?.action_link) {
+        console.error('[send-magic-link] Login link generation failed:', loginLinkError);
+        return res.status(500).json({
+          error: 'Failed to send login link. Please try again or contact support.'
+        });
+      }
+
+      const loginLink = wrapAuthLink(loginLinkData.properties.action_link);
+
+      const { error: loginEmailError } = await resend.emails.send({
+        from: 'Jeremy at ReviewFlo <jeremy@usereviewflo.com>',
+        to: emailTrim,
+        subject: 'Your ReviewFlo sign-in link',
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+          <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 24px; background: #f9fafb;">
+            <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+              <div style="background: #4A3428; color: #ffffff; padding: 24px;">
+                <h1 style="margin: 0; font-size: 22px;">Welcome back</h1>
+              </div>
+              <div style="padding: 24px;">
+                <p>Hi there,</p>
+                <p>Looks like you already have a ReviewFlo account for this email. Here's your sign-in link:</p>
+                <p style="margin: 24px 0;">
+                  <a href="${loginLink}" style="display: inline-block; background: #4A3428; color: #ffffff; text-decoration: none; padding: 12px 22px; border-radius: 8px; font-weight: 600;">Sign in to ReviewFlo</a>
+                </p>
+                <p style="color: #6b7280; font-size: 14px;">This link expires in 1 hour. If you didn't request this, you can ignore this email.</p>
+                <p style="margin-top: 24px;">Jeremy<br>ReviewFlo</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+      });
+
+      if (loginEmailError) {
+        console.error('[send-magic-link] Login email send failed:', loginEmailError);
+        return res.status(500).json({
+          error: 'Failed to send login link. Please try again or contact support.'
+        });
+      }
+
+      console.log('[send-magic-link] Existing account — login link sent to:', emailTrim);
+
+      return res.status(200).json({
+        success: true,
+        email: emailTrim,
+        existingAccount: true,
+        message: 'Login link sent successfully',
       });
     }
 
