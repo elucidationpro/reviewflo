@@ -1,9 +1,6 @@
-import Link from 'next/link'
-import ReviewFloFooter from '../ReviewFloFooter'
+import CustomerReviewFooterLinks from './CustomerReviewFooterLinks'
+import { STAR_PATH } from './star-path'
 import type { ResolvedReviewFooter } from '@/lib/review-page-branding'
-
-const STAR_PATH =
-  'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z'
 
 export type CustomerRatingPanelProps = {
   businessName: string
@@ -103,31 +100,11 @@ export default function CustomerRatingPanel({
         )}
       </div>
 
-      <div className="mt-5 text-center">
-        <div className="flex items-center justify-center gap-3 text-xs text-gray-300 mb-1">
-          {termsAsSpan ? (
-            <span>Terms</span>
-          ) : (
-            <Link href="/terms" className="hover:text-gray-500 transition-colors">
-              Terms
-            </Link>
-          )}
-          <span>·</span>
-          {termsAsSpan ? (
-            <span>Privacy</span>
-          ) : (
-            <Link href="/terms#privacy" className="hover:text-gray-500 transition-colors">
-              Privacy
-            </Link>
-          )}
-        </div>
-        <ReviewFloFooter
-          whiteLabel={footer.whiteLabel}
-          showBranding={footer.showReviewFloBranding}
-          compact={compactFooter}
-          previewOnly={compactFooter}
-        />
-      </div>
+      <CustomerReviewFooterLinks
+        footer={footer}
+        compactFooter={compactFooter}
+        termsAsSpan={termsAsSpan}
+      />
     </>
   )
 }

@@ -2,9 +2,10 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { getBusinessForRequest } from '@/lib/business-account'
 import { resolveAccountBillingTier } from '@/lib/account-billing-tier'
-import { canCustomizeReviewPageCopy } from '@/lib/tier-permissions'
+import { canCustomizeReviewPageCopy, canUseQuickRating } from '@/lib/tier-permissions'
 import { sanitizeReviewPageCopyInput } from '@/lib/review-page-copy'
 import { sanitizeReviewPageFollowupSettingsInput } from '@/lib/review-page-followup'
+import { sanitizeQuickRatingSettingsInput } from '@/lib/review-page-quick-rating'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -44,6 +45,8 @@ interface UpdateBusinessSettingsRequest {
   reviewPageFollowupEnabled?: boolean
   reviewPageFollowupQuestion?: string | null
   reviewPageFollowupPlaceholder?: string | null
+  reviewPageQuickRatingEnabled?: boolean
+  reviewPageQuickRatingDestination?: string | null
 }
 
 export default async function handler(
@@ -158,6 +161,31 @@ export default async function handler(
       }
       if (body.reviewPageFollowupPlaceholder !== undefined) {
         updateData.review_page_followup_placeholder = followupValues.placeholder
+      }
+    }
+
+    // Quick rating fields are independent of each other, so a partial update needs no
+    // read-back of the stored values.
+    const quickRatingFieldsProvided =
+      body.reviewPageQuickRatingEnabled !== undefined ||
+      body.reviewPageQuickRatingDestination !== undefined
+
+    if (quickRatingFieldsProvided) {
+      if (!canUseQuickRating(accountTier)) {
+        return res.status(403).json({ error: 'Pro tier required to use the one-tap rating step' })
+      }
+      const { values: quickValues, error: quickError } = sanitizeQuickRatingSettingsInput({
+        enabled: body.reviewPageQuickRatingEnabled,
+        destination: body.reviewPageQuickRatingDestination,
+      })
+      if (quickError) {
+        return res.status(400).json({ error: quickError })
+      }
+      if (body.reviewPageQuickRatingEnabled !== undefined) {
+        updateData.review_page_quick_rating_enabled = quickValues.enabled
+      }
+      if (body.reviewPageQuickRatingDestination !== undefined) {
+        updateData.review_page_quick_rating_destination = quickValues.destination
       }
     }
 

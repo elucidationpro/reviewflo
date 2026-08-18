@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
+import { isRatingSource } from '@/lib/review-page-quick-rating'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -19,13 +20,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { businessId, starRating } = req.body as {
+    const { businessId, starRating, ratingSource } = req.body as {
       businessId?: string
       starRating?: unknown
+      ratingSource?: unknown
     }
 
     if (!businessId || typeof businessId !== 'string') {
       return res.status(400).json({ error: 'businessId is required' })
+    }
+
+    if (ratingSource !== undefined && ratingSource !== null && !isRatingSource(ratingSource)) {
+      return res.status(400).json({ error: 'ratingSource is not a known value' })
     }
 
     const rating =
@@ -45,17 +51,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const createdAt = new Date().toISOString()
+    const baseRow: Record<string, string | number> = {
+      business_id: businessId,
+      star_rating: rating,
+      created_at: createdAt,
+    }
+    const rowToInsert: Record<string, string | number> = isRatingSource(ratingSource)
+      ? { ...baseRow, rating_source: ratingSource }
+      : baseRow
+
     const { data: row, error: insertErr } = await supabaseAdmin
       .from('reviews')
-      .insert({
-        business_id: businessId,
-        star_rating: rating,
-        created_at: createdAt,
-      })
+      .insert(rowToInsert)
       .select('id')
       .single()
 
     if (insertErr || !row?.id) {
+      // Never block a customer rating because rating_source has not been migrated yet.
+      const errMsg = (insertErr as { message?: string } | null)?.message || String(insertErr)
+      const isColumnError = /does not exist|undefined column|column.*not found|schema cache/i.test(errMsg)
+      if (isColumnError && isRatingSource(ratingSource)) {
+        const { data: retryRow, error: retryErr } = await supabaseAdmin
+          .from('reviews')
+          .insert(baseRow)
+          .select('id')
+          .single()
+        if (!retryErr && retryRow?.id) {
+          return res.status(200).json({ reviewId: retryRow.id })
+        }
+        console.error('save-customer-review retry insert:', retryErr)
+      }
       console.error('save-customer-review insert:', insertErr)
       return res.status(500).json({ error: 'Failed to save review' })
     }

@@ -7,6 +7,11 @@ import SiteFooter from '@/components/SiteFooter'
 import ReviewPreview from '@/components/ReviewPreview'
 import { getDefaultReviewTemplates } from '@/lib/default-review-templates'
 import { REVIEW_TEMPLATES_ENABLED } from '@/lib/feature-flags'
+import {
+  DEFAULT_QUICK_RATING_SUBTEXT,
+  DEFAULT_REVIEW_PAGE_SUBTEXT,
+} from '@/lib/review-page-copy'
+import type { QuickRatingDestination } from '@/lib/review-page-quick-rating'
 
 const DEMO_PLACEHOLDER_URLS = {
   google: 'https://www.google.com/maps',
@@ -22,6 +27,9 @@ export default function DemoPage() {
   const [whiteLabelDemo, setWhiteLabelDemo] = useState(false)
   const [whiteLabelBrandName, setWhiteLabelBrandName] = useState('')
   const [whiteLabelBrandColor, setWhiteLabelBrandColor] = useState('#C9A961')
+  const [quickRatingDemo, setQuickRatingDemo] = useState(false)
+  const [quickRatingDestination, setQuickRatingDestination] =
+    useState<QuickRatingDestination>('platform_choice')
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const logoObjectUrlRef = useRef<string | null>(null)
 
@@ -41,6 +49,8 @@ export default function DemoPage() {
         whiteLabelDemo,
         whiteLabelBrandName,
         whiteLabelBrandColor,
+        quickRatingDemo,
+        quickRatingDestination,
       ].join('|'),
     [
       businessName,
@@ -51,6 +61,8 @@ export default function DemoPage() {
       whiteLabelDemo,
       whiteLabelBrandName,
       whiteLabelBrandColor,
+      quickRatingDemo,
+      quickRatingDestination,
     ]
   )
 
@@ -191,6 +203,49 @@ export default function DemoPage() {
                     </button>
                   </label>
 
+                  <label className="flex items-center justify-between gap-4 cursor-pointer">
+                    <div>
+                      <span className="text-sm font-medium text-gray-800 block">One-tap rating</span>
+                      <span className="text-xs text-gray-500">
+                        Happy customers tap once instead of picking a star (Pro tier on real pages)
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={quickRatingDemo}
+                      onClick={() => setQuickRatingDemo((v) => !v)}
+                      className={`relative inline-flex h-7 w-12 shrink-0 rounded-full transition-colors ${
+                        quickRatingDemo ? 'bg-[#4A3428]' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform mt-1 ${
+                          quickRatingDemo ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </label>
+
+                  {quickRatingDemo && (
+                    <div>
+                      <label htmlFor="demo-quick-destination" className="block text-xs font-medium text-gray-600 mb-1">
+                        After a customer taps “Great”
+                      </label>
+                      <select
+                        id="demo-quick-destination"
+                        value={quickRatingDestination}
+                        onChange={(e) =>
+                          setQuickRatingDestination(e.target.value as QuickRatingDestination)
+                        }
+                        className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900"
+                      >
+                        <option value="platform_choice">Show the review platform list</option>
+                        <option value="google">Go straight to Google</option>
+                      </select>
+                    </div>
+                  )}
+
                   {REVIEW_TEMPLATES_ENABLED && (
                     <label className="flex items-center justify-between gap-4 cursor-pointer">
                       <div>
@@ -304,6 +359,11 @@ export default function DemoPage() {
                 nextdoorReviewUrl={null}
                 skipTemplateChoice
                 templates={templates}
+                quickRatingEnabled={quickRatingDemo}
+                quickRatingDestination={quickRatingDestination}
+                reviewPageSubtext={
+                  quickRatingDemo ? DEFAULT_QUICK_RATING_SUBTEXT : DEFAULT_REVIEW_PAGE_SUBTEXT
+                }
               />
             </section>
           </div>

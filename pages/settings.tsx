@@ -10,9 +10,11 @@ import {
   canRemoveBranding,
   getTemplateSlots,
   canAccessGoogleStats,
+  canUseQuickRating,
   canUseWhiteLabel,
 } from '../lib/tier-permissions'
 import {
+  DEFAULT_QUICK_RATING_SUBTEXT,
   DEFAULT_REVIEW_PAGE_HEADLINE,
   DEFAULT_REVIEW_PAGE_SUBTEXT,
   MAX_REVIEW_PAGE_HEADLINE,
@@ -24,6 +26,10 @@ import {
   MAX_REVIEW_PAGE_FOLLOWUP_QUESTION,
   resolveReviewPageFollowup,
 } from '../lib/review-page-followup'
+import {
+  resolveQuickRatingDestination,
+  shouldUseQuickRating,
+} from '../lib/review-page-quick-rating'
 import AppLayout from '@/components/AppLayout'
 import ReviewPreview from '@/components/ReviewPreview'
 import AITemplateGenerator from '../components/AITemplateGenerator'
@@ -59,6 +65,8 @@ interface Business {
   review_page_followup_enabled?: boolean
   review_page_followup_question?: string | null
   review_page_followup_placeholder?: string | null
+  review_page_quick_rating_enabled?: boolean
+  review_page_quick_rating_destination?: string | null
 }
 
 interface ReviewTemplate {
@@ -384,6 +392,8 @@ export default function SettingsPage() {
     review_page_followup_enabled: false,
     review_page_followup_question: null,
     review_page_followup_placeholder: null,
+    review_page_quick_rating_enabled: false,
+    review_page_quick_rating_destination: 'platform_choice',
   })
 
   const [templates, setTemplates] = useState<ReviewTemplate[]>([
@@ -495,6 +505,11 @@ export default function SettingsPage() {
             (business.review_page_followup_question as string | null) ?? null,
           review_page_followup_placeholder:
             (business.review_page_followup_placeholder as string | null) ?? null,
+          review_page_quick_rating_enabled: Boolean(business.review_page_quick_rating_enabled),
+          review_page_quick_rating_destination:
+            business.review_page_quick_rating_destination === 'google'
+              ? 'google'
+              : 'platform_choice',
         })
 
         if (business.google_review_url) setShowManualGoogle(true)
@@ -723,6 +738,14 @@ export default function SettingsPage() {
                 reviewPageFollowupQuestion: businessData.review_page_followup_question ?? null,
                 reviewPageFollowupPlaceholder:
                   businessData.review_page_followup_placeholder ?? null,
+              }
+            : {}),
+          ...(canUseQuickRating(businessData.tier)
+            ? {
+                reviewPageQuickRatingEnabled:
+                  businessData.review_page_quick_rating_enabled ?? false,
+                reviewPageQuickRatingDestination:
+                  businessData.review_page_quick_rating_destination ?? 'platform_choice',
               }
             : {}),
         }),
@@ -1206,23 +1229,76 @@ export default function SettingsPage() {
                               <Field
                                 label="Subtext"
                                 htmlFor="reviewPageSubtext"
-                                help={`Shown below the stars. Max ${MAX_REVIEW_PAGE_SUBTEXT} characters.`}
+                                help={
+                                  businessData.review_page_quick_rating_enabled
+                                    ? `Replaced by “${DEFAULT_QUICK_RATING_SUBTEXT}” while one-tap rating is on, since there are no stars to caption. Turn one-tap off to edit it.`
+                                    : `Shown below the stars. Max ${MAX_REVIEW_PAGE_SUBTEXT} characters.`
+                                }
                               >
                                 <input
                                   type="text"
                                   id="reviewPageSubtext"
-                                  value={businessData.review_page_subtext ?? ''}
+                                  value={
+                                    businessData.review_page_quick_rating_enabled
+                                      ? DEFAULT_QUICK_RATING_SUBTEXT
+                                      : businessData.review_page_subtext ?? ''
+                                  }
                                   maxLength={MAX_REVIEW_PAGE_SUBTEXT}
+                                  disabled={businessData.review_page_quick_rating_enabled ?? false}
                                   onChange={(e) =>
                                     setBusinessData({
                                       ...businessData,
                                       review_page_subtext: e.target.value || null,
                                     })
                                   }
-                                  className={inputCls}
+                                  className={`${inputCls} disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed`}
                                   placeholder={DEFAULT_REVIEW_PAGE_SUBTEXT}
                                 />
                               </Field>
+                              {canUseQuickRating(businessData.tier) && (
+                                <>
+                                  <Toggle
+                                    id="reviewPageQuickRating"
+                                    checked={businessData.review_page_quick_rating_enabled ?? false}
+                                    onChange={() =>
+                                      setBusinessData({
+                                        ...businessData,
+                                        review_page_quick_rating_enabled:
+                                          !businessData.review_page_quick_rating_enabled,
+                                      })
+                                    }
+                                    label="One-tap rating instead of the 5-star picker"
+                                    description="Happy customers tap “Great” once and go straight to leaving a review. Anyone who taps “Not great” picks a star, then lands on the private feedback form and triggers your alert exactly like today."
+                                  />
+                                  {(businessData.review_page_quick_rating_enabled ?? false) && (
+                                    <Field
+                                      label="After a customer taps “Great”"
+                                      htmlFor="reviewPageQuickRatingDestination"
+                                      help="Send them straight to Google to skip a screen, or show your review platform list first. Needs a Google review link saved under Review Links."
+                                    >
+                                      <select
+                                        id="reviewPageQuickRatingDestination"
+                                        value={
+                                          businessData.review_page_quick_rating_destination ??
+                                          'platform_choice'
+                                        }
+                                        onChange={(e) =>
+                                          setBusinessData({
+                                            ...businessData,
+                                            review_page_quick_rating_destination: e.target.value,
+                                          })
+                                        }
+                                        className={inputCls}
+                                      >
+                                        <option value="platform_choice">
+                                          Show the review platform list (current behavior)
+                                        </option>
+                                        <option value="google">Go straight to Google</option>
+                                      </select>
+                                    </Field>
+                                  )}
+                                </>
+                              )}
                               <Toggle
                                 id="reviewPageFollowup"
                                 checked={businessData.review_page_followup_enabled ?? false}
@@ -1978,11 +2054,21 @@ export default function SettingsPage() {
               whiteLabelBrandName={businessData.custom_brand_name || null}
               whiteLabelBrandColor={businessData.custom_brand_color || null}
               templates={templates}
-              reviewPageHeadline={resolveReviewPageCopy(businessData).headline}
-              reviewPageSubtext={resolveReviewPageCopy(businessData).subtext}
+              reviewPageHeadline={
+                resolveReviewPageCopy(businessData, {
+                  quickRating: shouldUseQuickRating(businessData),
+                }).headline
+              }
+              reviewPageSubtext={
+                resolveReviewPageCopy(businessData, {
+                  quickRating: shouldUseQuickRating(businessData),
+                }).subtext
+              }
               followUpPreview={resolveReviewPageFollowup(businessData, {
                 accountTier: businessData.tier,
               })}
+              quickRatingEnabled={shouldUseQuickRating(businessData)}
+              quickRatingDestination={resolveQuickRatingDestination(businessData)}
             />
           </div>
 

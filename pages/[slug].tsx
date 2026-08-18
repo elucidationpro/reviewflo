@@ -5,10 +5,18 @@ import { useRouter } from 'next/router'
 import { resolveAccountBillingTier } from '../lib/account-billing-tier'
 import { supabase } from '../lib/supabase'
 import CustomerRatingPanel from '../components/customer-review/CustomerRatingPanel'
+import CustomerQuickRatingPanel from '../components/customer-review/CustomerQuickRatingPanel'
 import { trackEvent } from '../lib/posthog-provider'
 import { getReviewAccentColor, resolvePublicReviewFooter } from '../lib/review-page-branding'
 import { resolveReviewPageCopy } from '../lib/review-page-copy'
 import { shouldShowReviewPageFollowup } from '../lib/review-page-followup'
+import {
+  QUICK_RATING_POSITIVE_VALUE,
+  resolvePositiveRatingExit,
+  resolveQuickRatingDestination,
+  shouldUseQuickRating,
+  type RatingSource,
+} from '../lib/review-page-quick-rating'
 import type { Tier } from '../lib/tier-permissions'
 
 interface Business {
@@ -28,6 +36,9 @@ interface Business {
   review_page_followup_enabled?: boolean | null
   review_page_followup_question?: string | null
   review_page_followup_placeholder?: string | null
+  review_page_quick_rating_enabled?: boolean | null
+  review_page_quick_rating_destination?: string | null
+  google_review_url?: string | null
 }
 
 interface PageProps {
@@ -44,7 +55,10 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
   const router = useRouter()
   const accentColor = getReviewAccentColor(business)
   const footer = resolvePublicReviewFooter(business)
-  const reviewCopy = resolveReviewPageCopy(business)
+  const quickRatingEnabled = shouldUseQuickRating(business, {
+    accountTier: accountTierForReview,
+  })
+  const reviewCopy = resolveReviewPageCopy(business, { quickRating: quickRatingEnabled })
   const displayLogoUrl = getDisplayLogoUrl(business)
   const [selectedRating, setSelectedRating] = useState<number | null>(null)
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
@@ -53,7 +67,7 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
   // Tracking token passed via URL from the email click redirect
   const trackingToken = typeof router.query.t === 'string' ? router.query.t : null
 
-  const handleStarClick = async (rating: number) => {
+  const submitRating = async (rating: number, ratingSource: RatingSource) => {
     if (isSubmitting) return
 
     setSelectedRating(rating)
@@ -70,6 +84,7 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
         body: JSON.stringify({
           businessId: business.id,
           starRating: rating,
+          ratingSource,
         }),
       })
       const savePayload = (await saveReviewRes.json().catch(() => null)) as {
@@ -87,6 +102,7 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
       const responseTime = Date.now() - startTime
       trackEvent('customer_responded', {
         rating,
+        ratingSource,
         businessId: business.id,
         businessName: business.business_name,
         responseTime,
@@ -106,13 +122,26 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
 
       // Re-fetch follow-up flags from DB before routing — page props may be stale if the
       // owner enabled follow-up in Settings after this page was initially loaded (SSR/cache).
-      const { data: latestBiz } = await supabase
+      const FOLLOWUP_COLUMNS =
+        'tier, review_page_followup_enabled, review_page_followup_question, review_page_followup_placeholder'
+      const { data: withQuickRating } = await supabase
         .from('businesses')
         .select(
-          'tier, review_page_followup_enabled, review_page_followup_question, review_page_followup_placeholder'
+          `${FOLLOWUP_COLUMNS}, review_page_quick_rating_enabled, review_page_quick_rating_destination, google_review_url`
         )
         .eq('id', business.id)
         .single()
+
+      // Quick-rating columns may not be migrated yet — don't lose the follow-up re-check over it.
+      let latestBiz: Partial<Business> | null = withQuickRating
+      if (!latestBiz) {
+        const { data: followupOnly } = await supabase
+          .from('businesses')
+          .select(FOLLOWUP_COLUMNS)
+          .eq('id', business.id)
+          .single()
+        latestBiz = followupOnly
+      }
 
       const routingBusiness: Business =
         latestBiz && typeof latestBiz === 'object'
@@ -135,14 +164,50 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
       // gating. 1-4 stars get a private feedback form with a secondary Google
       // link; 5 stars only go straight to the prominent Google CTA.
       if (rating >= 1 && rating <= 4) {
-        router.push(`/${business.slug}/feedback?rating=${rating}${tokenParam}`)
-      } else {
-        router.push(`/${business.slug}/templates?${tokenParam ? `t=${trackingToken}` : ''}`)
+        router.push(`/${business.slug}/feedback?rating=${rating}&${reviewIdParam}${tokenParam}`)
+        return
       }
+
+      const exit = resolvePositiveRatingExit({
+        slug: business.slug,
+        googleReviewUrl: routingBusiness.google_review_url,
+        quickRatingEnabled: shouldUseQuickRating(routingBusiness, {
+          accountTier: accountTierForReview,
+        }),
+        destination: resolveQuickRatingDestination(routingBusiness),
+        trackingToken,
+      })
+
+      if (exit.kind === 'external') {
+        // Skipping the platform screen means nothing else records the conversion.
+        if (trackingToken) {
+          fetch('/api/track/complete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: trackingToken, platform: 'google' }),
+          }).catch(() => {})
+        }
+        trackEvent('five_star_to_google', {
+          businessId: business.id,
+          businessName: business.business_name,
+        })
+        window.location.href = exit.url
+        return
+      }
+
+      router.push(exit.href)
     } catch (err) {
       console.error('Error submitting rating:', err)
       setIsSubmitting(false)
     }
+  }
+
+  const handleStarClick = (rating: number) =>
+    submitRating(rating, quickRatingEnabled ? 'quick_stars' : 'stars')
+
+  const handleQuickPositive = () => {
+    setHoveredRating(null)
+    submitRating(QUICK_RATING_POSITIVE_VALUE, 'quick_positive')
   }
 
   const displayRating = hoveredRating || selectedRating || 0
@@ -169,21 +234,47 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
       <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 px-4 py-10">
         <div className="w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-xl xl:max-w-2xl">
 
-          <CustomerRatingPanel
-            businessName={business.business_name}
-            logoUrl={displayLogoUrl}
-            showBusinessName={business.show_business_name !== false}
-            accentColor={accentColor}
-            headline={reviewCopy.headline}
-            subtext={reviewCopy.subtext}
-            displayRating={displayRating}
-            isSubmitting={isSubmitting}
-            onStarClick={handleStarClick}
-            onStarHover={(star) => {
-              if (!isSubmitting) setHoveredRating(star)
-            }}
-            footer={footer}
-          />
+          {quickRatingEnabled ? (
+            <CustomerQuickRatingPanel
+              businessName={business.business_name}
+              logoUrl={displayLogoUrl}
+              showBusinessName={business.show_business_name !== false}
+              accentColor={accentColor}
+              headline={reviewCopy.headline}
+              subtext={reviewCopy.subtext}
+              displayRating={displayRating}
+              isSubmitting={isSubmitting}
+              onPositive={handleQuickPositive}
+              onStarClick={handleStarClick}
+              onStarHover={(star) => {
+                if (!isSubmitting) setHoveredRating(star)
+              }}
+              onNegative={() =>
+                trackEvent('quick_rating_negative_selected', {
+                  businessId: business.id,
+                  businessName: business.business_name,
+                })
+              }
+              googleReviewUrl={business.google_review_url ?? null}
+              footer={footer}
+            />
+          ) : (
+            <CustomerRatingPanel
+              businessName={business.business_name}
+              logoUrl={displayLogoUrl}
+              showBusinessName={business.show_business_name !== false}
+              accentColor={accentColor}
+              headline={reviewCopy.headline}
+              subtext={reviewCopy.subtext}
+              displayRating={displayRating}
+              isSubmitting={isSubmitting}
+              onStarClick={handleStarClick}
+              onStarHover={(star) => {
+                if (!isSubmitting) setHoveredRating(star)
+              }}
+              footer={footer}
+            />
+          )}
 
         </div>
       </div>

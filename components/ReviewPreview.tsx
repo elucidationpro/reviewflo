@@ -1,7 +1,13 @@
 import { useState } from 'react'
+import { Smile, Frown } from 'lucide-react'
 import ReviewFloFooter from './ReviewFloFooter'
+import { QUICK_RATING_NEGATIVE_PROMPT } from './customer-review/CustomerQuickRatingPanel'
 import { REVIEW_TEMPLATES_ENABLED } from '@/lib/feature-flags'
 import type { ResolvedReviewPageFollowup } from '@/lib/review-page-followup'
+import {
+  QUICK_RATING_POSITIVE_VALUE,
+  type QuickRatingDestination,
+} from '@/lib/review-page-quick-rating'
 
 interface ReviewTemplate {
   id: string
@@ -29,9 +35,12 @@ interface ReviewPreviewProps {
   reviewPageSubtext?: string
   /** When set, star tap shows the follow-up step before feedback / 5-star flow. */
   followUpPreview?: ResolvedReviewPageFollowup | null
+  /** Pro/AI: replace the 5-star picker with the one-tap Great / Not great step. */
+  quickRatingEnabled?: boolean
+  quickRatingDestination?: QuickRatingDestination
 }
 
-type Screen = 'rating' | 'follow_up' | 'five_star' | 'feedback' | 'thanks'
+type Screen = 'rating' | 'follow_up' | 'five_star' | 'feedback' | 'thanks' | 'google_direct'
 type ReviewPath = null | 'write_own' | 'use_template'
 
 const StarPath = () => (
@@ -60,8 +69,11 @@ export default function ReviewPreview({
   reviewPageHeadline = 'How was your experience?',
   reviewPageSubtext = 'Tap a star to rate',
   followUpPreview = null,
+  quickRatingEnabled = false,
+  quickRatingDestination = 'platform_choice',
 }: ReviewPreviewProps) {
   const [screen, setScreen] = useState<Screen>('rating')
+  const [showQuickStars, setShowQuickStars] = useState(false)
   const [selectedRating, setSelectedRating] = useState<number | null>(null)
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
   const [reviewPath, setReviewPath] = useState<ReviewPath>(null)
@@ -103,10 +115,14 @@ export default function ReviewPreview({
   const routeAfterFollowupPreview = (star: number) => {
     if (star <= 4) {
       setScreen('feedback')
-    } else {
-      setReviewPath(effectiveSkipTemplateChoice && hasPlatformLinks ? 'write_own' : null)
-      setScreen('five_star')
+      return
     }
+    if (quickRatingEnabled && quickRatingDestination === 'google' && googleReviewUrl) {
+      setScreen('google_direct')
+      return
+    }
+    setReviewPath(effectiveSkipTemplateChoice && hasPlatformLinks ? 'write_own' : null)
+    setScreen('five_star')
   }
 
   const handleStarClick = (star: number) => {
@@ -123,6 +139,7 @@ export default function ReviewPreview({
     setScreen('rating')
     setSelectedRating(null)
     setHoveredRating(null)
+    setShowQuickStars(false)
     setReviewPath(null)
     setSelectedTemplate(null)
     setWhatHappened('')
@@ -168,7 +185,19 @@ export default function ReviewPreview({
 
         {/* ── Rating screen ── */}
         {screen === 'rating' && (
-          <div className="w-[85%] max-w-[360px] mx-auto bg-white rounded-[20px] border border-gray-100 px-8 py-12 text-center shadow-[0_2px_16px_rgba(0,0,0,0.06)] min-h-[340px] overflow-hidden">
+          <div className="relative w-[85%] max-w-[360px] mx-auto bg-white rounded-[20px] border border-gray-100 px-8 py-12 text-center shadow-[0_2px_16px_rgba(0,0,0,0.06)] min-h-[340px] overflow-hidden">
+            {quickRatingEnabled && showQuickStars && (
+              <button
+                type="button"
+                onClick={() => setShowQuickStars(false)}
+                className="absolute top-4 left-4 flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+              </button>
+            )}
             {logoUrl && (
               <div className="flex justify-center mb-6">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -180,31 +209,77 @@ export default function ReviewPreview({
                 {displayName}
               </h3>
             )}
-            <p className="text-gray-400 text-sm mb-8">{reviewPageHeadline}</p>
-            <div className="flex justify-center items-center gap-2 mb-5 max-w-full overflow-hidden">
-              {[1, 2, 3, 4, 5].map((star) => (
+            <p className="text-gray-400 text-sm mb-8">
+              {quickRatingEnabled && showQuickStars ? QUICK_RATING_NEGATIVE_PROMPT : reviewPageHeadline}
+            </p>
+            {quickRatingEnabled && !showQuickStars ? (
+              <div className="flex flex-col gap-3 mb-5">
                 <button
-                  key={star}
                   type="button"
-                  onClick={() => handleStarClick(star)}
-                  onMouseEnter={() => setHoveredRating(star)}
-                  onMouseLeave={() => setHoveredRating(null)}
-                  className="flex-shrink-0 transition-transform active:scale-95 cursor-pointer p-0.5 rounded focus:outline-none"
-                  aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
+                  onClick={() => handleStarClick(QUICK_RATING_POSITIVE_VALUE)}
+                  className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-gray-100 px-4 py-5 hover:border-gray-200 hover:bg-gray-50 transition-all cursor-pointer"
                 >
-                  <svg
-                    className="w-10 h-10 min-w-0 transition-colors duration-150"
-                    fill={star <= displayRating ? accentColor : 'none'}
-                    stroke={star <= displayRating ? accentColor : '#CBD5E1'}
-                    strokeWidth="1.5"
-                    viewBox="0 0 24 24"
-                  >
-                    <StarPath />
-                  </svg>
+                  <Smile className="w-9 h-9" style={{ color: accentColor }} strokeWidth={1.5} aria-hidden />
+                  <span className="text-sm font-semibold text-gray-800">Great</span>
                 </button>
-              ))}
-            </div>
+                <button
+                  type="button"
+                  onClick={() => setShowQuickStars(true)}
+                  className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-gray-100 px-4 py-5 hover:border-gray-200 hover:bg-gray-50 transition-all cursor-pointer"
+                >
+                  <Frown className="w-9 h-9 text-gray-400" strokeWidth={1.5} aria-hidden />
+                  <span className="text-sm font-semibold text-gray-800">Not great</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex justify-center items-center gap-2 mb-5 max-w-full overflow-hidden">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => handleStarClick(star)}
+                    onMouseEnter={() => setHoveredRating(star)}
+                    onMouseLeave={() => setHoveredRating(null)}
+                    className="flex-shrink-0 transition-transform active:scale-95 cursor-pointer p-0.5 rounded focus:outline-none"
+                    aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
+                  >
+                    <svg
+                      className="w-10 h-10 min-w-0 transition-colors duration-150"
+                      fill={star <= displayRating ? accentColor : 'none'}
+                      stroke={star <= displayRating ? accentColor : '#CBD5E1'}
+                      strokeWidth="1.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <StarPath />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+            )}
             <p className="text-gray-400 text-sm">{reviewPageSubtext}</p>
+            {quickRatingEnabled && googleReviewUrl && (
+              <p className="text-xs text-gray-400 mt-5 pt-4 border-t border-gray-100">
+                Or{' '}
+                <span className="underline decoration-gray-300">leave a Google review</span> directly.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ── Straight to Google (quick rating, destination = google) ── */}
+        {screen === 'google_direct' && (
+          <div className="w-[85%] max-w-[360px] mx-auto bg-white rounded-[20px] border border-gray-100 px-8 py-12 text-center shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+            <p className="font-semibold text-gray-900 text-sm mb-2">Opens your Google review page</p>
+            <p className="text-gray-400 text-sm mb-6">
+              No ReviewFlo screen in between — the customer lands on Google&apos;s own star form.
+            </p>
+            <button
+              type="button"
+              onClick={reset}
+              className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer"
+            >
+              ← Back to rating
+            </button>
           </div>
         )}
 

@@ -30,6 +30,11 @@ export function canCustomizeReviewPageCopy(tier: Tier | undefined): boolean {
   return tier === 'pro' || tier === 'ai'
 }
 
+/** Can use the one-tap Great/Not great first step on /{slug} (Pro/AI only). */
+export function canUseQuickRating(tier: Tier | undefined): boolean {
+  return tier === 'pro' || tier === 'ai'
+}
+
 /** Can access expanded Google Business Stats (Pro/AI only) */
 export function canAccessGoogleStats(tier: Tier | undefined): boolean {
   return tier === 'pro' || tier === 'ai'
