@@ -5,6 +5,7 @@ import {
   isReservedSlug,
   normalizeSlugForValidation,
 } from '../../../../lib/slug-utils'
+import { sendAdminNotification } from '@/lib/email-service'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -63,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { data: business } = await supabaseAdmin
       .from('businesses')
-      .select('id')
+      .select('id, business_name')
       .eq('user_id', user.id)
       .single()
 
@@ -92,6 +93,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (updateError) {
       return res.status(500).json({ error: 'Failed to save business profile' })
+    }
+
+    // Google signups notify here rather than in the OAuth callback: this is the first
+    // point where the business name and final slug exist. Guarded on the row having had
+    // no name before, so re-saving the profile later never re-notifies.
+    const isFirstConfirm = !String(business.business_name || '').trim()
+    if (isFirstConfirm) {
+      try {
+        await sendAdminNotification('signup', {
+          email: user.email || '',
+          name:
+            (ownerNameSent ? ownerName : null) ||
+            (user.user_metadata?.owner_name as string | undefined) ||
+            (user.user_metadata?.full_name as string | undefined) ||
+            '',
+          businessName,
+          slug,
+          signupMethod: 'Google',
+        })
+      } catch (adminErr) {
+        console.error('[google-confirm-profile] Admin notification failed:', adminErr)
+      }
     }
 
     return res.status(200).json({ success: true, slug })

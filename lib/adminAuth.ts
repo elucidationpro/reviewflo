@@ -1,7 +1,28 @@
 import { supabase } from './supabase'
 
-// Admin email for backward compatibility - will be phased out in favor of role-based system
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'jeremy.elucidation@gmail.com'
+// Admin emails for backward compatibility - will be phased out in favor of role-based system.
+// Reads ADMIN_EMAILS (comma-separated), the same var lib/email-service.ts uses to decide who
+// receives admin notifications, so the two admin concepts cannot drift apart. ADMIN_EMAIL
+// (singular) is still honored as a legacy fallback.
+//
+// NOTE: neither var is NEXT_PUBLIC_, so in the browser this resolves to the hardcoded default
+// only. Server-side checks see the full list. To add an admin who works on both sides, set
+// role: 'admin' in their user metadata — hasAdminRole() is the supported path everywhere.
+const DEFAULT_ADMIN_EMAIL = 'jeremy.elucidation@gmail.com'
+
+const ADMIN_EMAIL_LIST: string[] = (
+  process.env.ADMIN_EMAILS ||
+  process.env.ADMIN_EMAIL ||
+  DEFAULT_ADMIN_EMAIL
+)
+  .split(',')
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean)
+
+function matchesAdminEmail(email: string | undefined | null): boolean {
+  if (!email) return false
+  return ADMIN_EMAIL_LIST.includes(email.trim().toLowerCase())
+}
 
 /**
  * Check if a user has admin role
@@ -23,7 +44,7 @@ function hasAdminRole(user: { app_metadata?: Record<string, unknown>; user_metad
  * Checks in order:
  * 1. app_metadata.role === 'admin'
  * 2. user_metadata.role === 'admin'
- * 3. email matches ADMIN_EMAIL (backward compatibility)
+ * 3. email is in ADMIN_EMAILS (backward compatibility)
  */
 export async function checkIsAdmin() {
   console.log('[adminAuth] checkIsAdmin called')
@@ -44,7 +65,7 @@ export async function checkIsAdmin() {
     }
 
     // Fallback to email check for backward compatibility
-    if (user.email === ADMIN_EMAIL) {
+    if (matchesAdminEmail(user.email)) {
       console.log('[adminAuth] User IS admin (email-based), returning user object')
       return user
     }
@@ -70,7 +91,7 @@ export function isAdminUser(user: { app_metadata?: Record<string, unknown>; user
   }
   
   // Fallback to email check for backward compatibility
-  return user.email === ADMIN_EMAIL
+  return matchesAdminEmail(user.email)
 }
 
 /**
@@ -78,5 +99,5 @@ export function isAdminUser(user: { app_metadata?: Record<string, unknown>; user
  * Kept for backward compatibility with existing API routes
  */
 export function isAdminEmail(email: string | undefined): boolean {
-  return email === ADMIN_EMAIL
+  return matchesAdminEmail(email)
 }

@@ -14,7 +14,7 @@ import {
   isReservedSlug,
   normalizeSlugForValidation,
 } from '../../../../lib/slug-utils';
-import { sendAdminNotification } from '@/lib/email-service';
+import { isAdminEmail } from '@/lib/adminAuth';
 import {
   magicLandingRedirectTo,
   setMagicNextCookie,
@@ -96,6 +96,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Check if account already exists (perPage 1000 to handle growing user base)
     const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
     const existing = existingUser?.users?.find((u) => u.email === email);
+
+    // Admin login — internal admin access is email-gated and has nothing to do with
+    // being a ReviewFlo customer. Skip business creation entirely; just authenticate
+    // and send them to /admin.
+    if (isAdminEmail(email)) {
+      let adminUser = existing;
+      if (!adminUser) {
+        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: { owner_name: name },
+        });
+        if (authError || !authData.user) {
+          console.error('[Google Signup] Failed to create admin account:', authError);
+          return res.redirect(`/join?error=${encodeURIComponent('Failed to create your account. Please try again.')}`);
+        }
+        adminUser = authData.user;
+      }
+      setMagicNextCookie(res, 'admin');
+      const { data: adminLinkData, error: adminLinkError } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+        options: { redirectTo: magicLandingRedirectTo(appBase, 'admin') },
+      });
+      if (adminLinkError || !adminLinkData?.properties?.action_link) {
+        return res.redirect(`/login?error=${encodeURIComponent('Unable to sign you in. Please try again.')}`);
+      }
+      return res.redirect(adminLinkData.properties.action_link);
+    }
 
     // Fetch GBP data (business name + Place ID)
     const gbpData = await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken);
@@ -314,18 +343,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     ]);
 
-    // Send admin notification for new signup
-    try {
-      await sendAdminNotification('signup', {
-        email,
-        name,
-        businessName,
-        slug,
-        signupMethod: 'Google',
-      });
-    } catch (adminErr) {
-      console.error('[Google Signup] Admin notification failed:', adminErr);
-    }
+    // Admin notification is intentionally NOT sent here. At this point businessName is
+    // often '' and slug is a placeholder (my-business-N), because the GBP lookup found
+    // nothing and the confirm page is about to collect the real name and re-slug the row.
+    // Notifying now produces a blank Business and a review link that 404s once the slug
+    // changes, so the send lives in confirm-profile.ts, after the name actually exists.
 
     setMagicNextCookie(res, 'google-confirm');
     // Generate a magic link to sign the user in and send them to the confirm page

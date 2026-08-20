@@ -18,6 +18,7 @@ import {
   magicLandingRedirectTo,
   setMagicNextCookie,
 } from '@/lib/magic-link-landing';
+import { isAdminEmail } from '@/lib/adminAuth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -84,6 +85,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const email: string = profile.email.toLowerCase();
     const ownerName: string = profile.name || profile.given_name || '';
+
+    // Admin login — internal admin access is email-gated and has nothing to do with
+    // being a ReviewFlo customer. Skip business creation entirely; just authenticate
+    // and send them to /admin.
+    if (isAdminEmail(email)) {
+      const { data: adminUsersData } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      let adminUser = adminUsersData?.users?.find((u) => u.email === email);
+      if (!adminUser) {
+        const { data: authData, error: createError } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: { owner_name: ownerName },
+        });
+        if (createError || !authData.user) {
+          return res.redirect(`/login?error=${encodeURIComponent('Failed to create account from Google sign-in.')}`);
+        }
+        adminUser = authData.user;
+      }
+      setMagicNextCookie(res, 'admin');
+      const { data: adminLinkData, error: adminLinkError } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+        options: { redirectTo: magicLandingRedirectTo(appBase, 'admin') },
+      });
+      if (adminLinkError || !adminLinkData?.properties?.action_link) {
+        return res.redirect(`/login?error=${encodeURIComponent('Failed to sign you in. Please try again.')}`);
+      }
+      return res.redirect(adminLinkData.properties.action_link);
+    }
 
     // Try to fetch GBP data, but don't block auth if this fails.
     let gbpData: Awaited<ReturnType<typeof getPlaceIdFromGoogleBusinessProfile>> = null;
