@@ -191,6 +191,16 @@ export default function DashboardPage() {
       }
       const businessData = data.business as Business
 
+      // A business with no real name is an unfinished signup — the confirm step was
+      // abandoned, or an older account was created before the name was required. Send them
+      // back to finish it rather than letting them run on a blank/placeholder name, which
+      // is what produces the my-business-N review links.
+      const currentName = String(businessData.business_name || '').trim()
+      if (!currentName || currentName === 'My Business') {
+        router.replace('/join/google-confirm')
+        return
+      }
+
       setBusiness(businessData)
 
       identifyUser(user.id, {

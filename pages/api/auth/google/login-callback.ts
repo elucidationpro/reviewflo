@@ -147,7 +147,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
     // When GBP fails: use placeholder; owner name stored separately for client emails
-    const inferredBusinessName = gbpData?.businessName || 'My Business';
+    // Only a name Google actually returned is a real name. Anything else stays blank so the
+    // confirm step is forced to collect one, rather than silently shipping 'My Business'.
+    const realBusinessName = gbpData?.businessName || '';
+    const inferredBusinessName = realBusinessName || 'My Business';
     const inferredPlaceId = gbpData?.placeId || null;
 
     const buildUniqueSlug = async (businessName: string) => {
@@ -199,7 +202,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             google_oauth_access_token: accessToken,
             ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
             google_oauth_expires_at: expiresAt,
-            google_business_name: inferredBusinessName,
+            google_business_name: realBusinessName || null,
           })
           .eq('id', business.id);
         return;
@@ -210,7 +213,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .from('businesses')
         .insert({
           user_id: userId,
-          business_name: inferredBusinessName,
+          business_name: realBusinessName,
           owner_email: email,
           owner_name: ownerName || null,
           slug,
@@ -222,7 +225,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           google_oauth_access_token: accessToken,
           ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
           google_oauth_expires_at: expiresAt,
-          google_business_name: inferredBusinessName,
+          google_business_name: realBusinessName || null,
           facebook_review_url: null,
           yelp_review_url: null,
           nextdoor_review_url: null,
@@ -263,28 +266,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Find existing user by email (perPage 1000 to handle growing user base)
     const { data: usersData } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
     let user = usersData?.users?.find((u) => u.email === email);
-    let createdNow = false;
 
+    // Log in must never create an account. Silently provisioning one here is how a user who
+    // picks the wrong Google account in the chooser ends up with a second, empty business
+    // ('My Business' / my-business-N) while their real one still exists under another email.
+    // Send them to signup with the address they actually used, so the choice is explicit.
     if (!user) {
-      const { data: authData, error: createError } = await supabaseAdmin.auth.admin.createUser({
-        email,
-        email_confirm: true,
-        user_metadata: {
-          owner_name: ownerName,
-          business_name: inferredBusinessName,
-          signup_method: 'google',
-        },
-      });
-      if (createError || !authData.user) {
-        return res.redirect(`/login?error=${encodeURIComponent('Failed to create account from Google sign-in.')}`);
-      }
-      user = authData.user;
-      createdNow = true;
+      return res.redirect(
+        `/join?error=${encodeURIComponent(
+          `No ReviewFlo account found for ${email}. If you already have an account, sign in with the Google account you signed up with. Otherwise you can create one below.`
+        )}`
+      );
     }
 
     await ensureBusinessAndLinkGoogle(user.id);
 
-    const magicNext = (createdNow || businessNeedsConfirm) ? 'google-confirm' : 'dashboard';
+    const magicNext = businessNeedsConfirm ? 'google-confirm' : 'dashboard';
     setMagicNextCookie(res, magicNext);
 
     // Generate a magic link to sign the user in
