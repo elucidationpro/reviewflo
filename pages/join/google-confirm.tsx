@@ -29,6 +29,9 @@ export default function GoogleConfirmPage() {
   const [businessName, setBusinessName] = useState('');
   const [googleReviewUrl, setGoogleReviewUrl] = useState<string | null>(null);
   const [hasPlaceId, setHasPlaceId] = useState(false);
+  const [businessId, setBusinessId] = useState<string | null>(null);
+  const [gbpConnected, setGbpConnected] = useState(false);
+  const [connecting, setConnecting] = useState(false);
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -49,7 +52,7 @@ export default function GoogleConfirmPage() {
 
       const { data: business, error: bizError } = await supabase
         .from('businesses')
-        .select('id, business_name, slug, google_review_url, google_place_id, owner_name')
+        .select('id, business_name, slug, google_review_url, google_place_id, owner_name, google_business_name')
         .eq('user_id', session.user.id)
         .single();
 
@@ -60,9 +63,13 @@ export default function GoogleConfirmPage() {
       }
 
       setOwnerName(business.owner_name || '');
-      // Don't pre-fill the fallback placeholder name — force the user to type their real business name
+      setBusinessId(business.id);
+      // Don't pre-fill the fallback placeholder name — force the user to type their real business name.
+      // If Business Profile has since been connected, prefer the name it returned.
       const loadedName = business.business_name || '';
-      setBusinessName(loadedName === 'My Business' ? '' : loadedName);
+      const realName = loadedName === 'My Business' ? '' : loadedName;
+      setBusinessName(realName || business.google_business_name || '');
+      setGbpConnected(!!business.google_business_name);
       setGoogleReviewUrl(business.google_review_url || null);
       setHasPlaceId(!!business.google_place_id);
       setLoading(false);
@@ -70,6 +77,36 @@ export default function GoogleConfirmPage() {
 
     loadBusiness();
   }, [router]);
+
+  const handleConnectGbp = async () => {
+    if (!businessId) return;
+    setConnecting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID;
+      if (!session || !clientId) {
+        setError('Google is not configured. You can add your review link later in Settings.');
+        setConnecting(false);
+        return;
+      }
+      // business.manage is requested ALONE here. Bundled with sign-in scopes Google shows it
+      // as an optional checkbox that users click past, producing a sign-in-only token.
+      const scope = 'https://www.googleapis.com/auth/business.manage';
+      const redirectUri = `${window.location.origin}/api/auth/google/callback`;
+      const state = `${session.access_token}|${businessId}|onboarding`;
+      window.location.href =
+        'https://accounts.google.com/o/oauth2/v2/auth' +
+        `?client_id=${clientId}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+        '&response_type=code' +
+        `&scope=${encodeURIComponent(scope)}` +
+        `&state=${encodeURIComponent(state)}` +
+        '&access_type=offline&prompt=consent';
+    } catch {
+      setError('Could not open Google. You can connect later in Settings.');
+      setConnecting(false);
+    }
+  };
 
   const previewSlug = generateSlugFromBusinessName(businessName.trim()) || 'my-business';
 
@@ -199,6 +236,34 @@ export default function GoogleConfirmPage() {
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961] text-gray-900 outline-none transition-colors"
                     required
                   />
+                </div>
+
+                {/* Optional: connect Google Business Profile to auto-fill the name and pull reviews */}
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                  {gbpConnected ? (
+                    <p className="text-sm text-gray-700 flex items-center gap-2">
+                      <span className="text-emerald-600">&#10003;</span>
+                      Google Business Profile connected. You can still edit the name above.
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-sm font-semibold text-gray-800 mb-1">
+                        Connect your Google Business Profile <span className="font-normal text-gray-400">(optional)</span>
+                      </p>
+                      <p className="text-xs text-gray-500 mb-3">
+                        Fills in your business name and lets us pull your Google reviews into your
+                        dashboard. You can skip this and do it later in Settings.
+                      </p>
+                      <button
+                        type="button"
+                        disabled={connecting || !businessId}
+                        onClick={handleConnectGbp}
+                        className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-800 hover:bg-gray-50 disabled:opacity-50 cursor-pointer transition-colors"
+                      >
+                        {connecting ? 'Opening Google…' : 'Connect Google Business Profile'}
+                      </button>
+                    </>
+                  )}
                 </div>
 
                 {/* Review Page Slug (read-only) */}

@@ -8,6 +8,7 @@ import {
 import {
   exchangeCodeForTokens,
   getPlaceIdFromGoogleBusinessProfile,
+  grantIncludesGbpScope,
 } from '../../../../lib/google-business-profile';
 import {
   generateSlugFromBusinessName,
@@ -45,6 +46,25 @@ type BusinessLite = {
  * 7. Create Supabase user + business record
  * 8. Generate magic link → redirect user through it to /join/google-confirm
  */
+/**
+ * Admins who also own a business (e.g. the founder's own test account) must still be able
+ * to reach /dashboard. Only short-circuit to /admin when the email has no business row —
+ * otherwise signing in would permanently strand them on the admin surface.
+ */
+async function adminShouldSkipBusiness(
+  db: { from: (t: string) => any },
+  email: string
+): Promise<boolean> {
+  if (!isAdminEmail(email)) return false;
+  const { data } = await db
+    .from('businesses')
+    .select('id')
+    .eq('owner_email', email)
+    .limit(1)
+    .maybeSingle();
+  return !data;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -100,7 +120,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Admin login — internal admin access is email-gated and has nothing to do with
     // being a ReviewFlo customer. Skip business creation entirely; just authenticate
     // and send them to /admin.
-    if (isAdminEmail(email)) {
+    if (await adminShouldSkipBusiness(supabaseAdmin, email)) {
       let adminUser = existing;
       if (!adminUser) {
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
@@ -126,8 +146,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.redirect(adminLinkData.properties.action_link);
     }
 
-    // Fetch GBP data (business name + Place ID)
-    const gbpData = await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken);
+    // Only attempt the GBP lookup when the grant actually carries business.manage.
+    // Sign-in no longer requests it, so this is normally skipped and the confirm step
+    // collects the name instead. Kept scope-driven rather than removed so the lookup
+    // starts working again automatically if a grant ever does include it.
+    const gbpData = grantIncludesGbpScope(tokens.scope)
+      ? await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken)
+      : null;
     // When GBP fails: leave blank so the confirm page forces the user to enter their real name
     const businessName = gbpData?.businessName || '';
     const placeId = gbpData?.placeId || null;

@@ -96,10 +96,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Google signups notify here rather than in the OAuth callback: this is the first
-    // point where the business name and final slug exist. Guarded on the row having had
-    // no name before, so re-saving the profile later never re-notifies.
-    const isFirstConfirm = !String(business.business_name || '').trim()
-    if (isFirstConfirm) {
+    // point where the real business name and final slug exist.
+    //
+    // Exactly-once is keyed on an explicit user_metadata marker, NOT on the row's previous
+    // business_name. Inferring "first confirm" from a blank name silently skipped the
+    // notification whenever the row already had a name — a GBP-prefilled signup, or the
+    // 'My Business' placeholder login-callback writes — which is most real signups.
+    const alreadyNotified = Boolean(user.user_metadata?.signup_notified_at)
+    if (!alreadyNotified) {
       try {
         await sendAdminNotification('signup', {
           email: user.email || '',
@@ -111,6 +115,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           businessName,
           slug,
           signupMethod: 'Google',
+        })
+        // Mark only after a successful send so a transient email failure can retry
+        // on the user's next save instead of being permanently swallowed.
+        await supabaseAdmin.auth.admin.updateUserById(user.id, {
+          user_metadata: {
+            ...user.user_metadata,
+            ...(ownerNameSent ? { full_name: ownerName ?? null } : {}),
+            signup_notified_at: new Date().toISOString(),
+          },
         })
       } catch (adminErr) {
         console.error('[google-confirm-profile] Admin notification failed:', adminErr)

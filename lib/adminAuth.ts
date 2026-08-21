@@ -64,10 +64,27 @@ export async function checkIsAdmin() {
       return user
     }
 
-    // Fallback to email check for backward compatibility
-    if (matchesAdminEmail(user.email)) {
-      console.log('[adminAuth] User IS admin (email-based), returning user object')
-      return user
+    // Email-based fallback must be resolved SERVER-side. ADMIN_EMAILS is not NEXT_PUBLIC_,
+    // so in the browser it is stripped from the bundle and matchesAdminEmail() would only
+    // ever recognize the hardcoded default — locking out every other configured admin
+    // (they authenticate, land on /admin, get bounced back to /login, and loop).
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.access_token) {
+        const res = await fetch('/api/admin/check-admin', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        if (res.ok) {
+          const { isAdmin } = await res.json()
+          if (isAdmin) {
+            console.log('[adminAuth] User IS admin (server-verified email), returning user object')
+            return user
+          }
+        }
+      }
+    } catch (e) {
+      console.error('[adminAuth] Server admin check failed:', e)
     }
 
     console.log('[adminAuth] User is NOT admin, returning null')

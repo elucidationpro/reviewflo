@@ -41,6 +41,21 @@ function getGoogleOAuthClientId(): string | undefined {
   );
 }
 
+export const GBP_SCOPE = 'https://www.googleapis.com/auth/business.manage';
+
+/**
+ * True when a token grant actually includes Business Profile access.
+ *
+ * Google applies granular consent to business.manage: when it is requested alongside
+ * sign-in scopes it renders as an optional checkbox, and a user who clicks straight
+ * through gets a sign-in-only token. Every GBP call then 403s. Callers must check this
+ * rather than assume the scope they requested is the scope they received.
+ */
+export function grantIncludesGbpScope(scope: string | undefined | null): boolean {
+  if (!scope) return false;
+  return scope.split(/\s+/).includes(GBP_SCOPE);
+}
+
 export async function exchangeCodeForTokens(
   code: string,
   mode: 'settings' | 'signup' | 'login' = 'settings',

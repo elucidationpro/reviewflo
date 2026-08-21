@@ -51,16 +51,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.redirect(`/settings?error=${encodeURIComponent('Invalid session')}`);
     }
 
-    const pipeIdx = state.indexOf('|');
-    const sessionToken = pipeIdx === -1 ? state : state.slice(0, pipeIdx);
-    const targetBusinessId = pipeIdx === -1 ? null : state.slice(pipeIdx + 1) || null;
+    // state is `sessionToken|businessId|origin`. `origin` marks the onboarding connect so we
+    // return the user to the confirm step instead of Settings.
+    const stateParts = state.split('|');
+    const sessionToken = stateParts[0];
+    const targetBusinessId = stateParts[1] || null;
+    const fromOnboarding = stateParts[2] === 'onboarding';
+    const returnPath = fromOnboarding ? '/join/google-confirm' : '/settings';
 
     // Verify the session token and get the user
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(sessionToken);
 
     if (authError || !user) {
       console.error('[Google OAuth] Invalid session:', authError);
-      return res.redirect(`/settings?error=${encodeURIComponent('Invalid session')}`);
+      return res.redirect(`${returnPath}?error=${encodeURIComponent('Invalid session')}`);
     }
 
     // Resolve the target business row. If a businessId is supplied, validate
@@ -74,7 +78,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .single();
       if (lookupErr || !data || data.user_id !== user.id) {
         console.error('[Google OAuth] Invalid businessId in state:', targetBusinessId);
-        return res.redirect(`/settings?error=${encodeURIComponent('Invalid location')}`);
+        return res.redirect(`${returnPath}?error=${encodeURIComponent('Invalid location')}`);
       }
       targetBusiness = {
         id: data.id,
@@ -93,7 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (!targetBusiness) {
-      return res.redirect(`/settings?error=${encodeURIComponent('No business found for this account')}`);
+      return res.redirect(`${returnPath}?error=${encodeURIComponent('No business found for this account')}`);
     }
 
     // Exchange authorization code for tokens
@@ -131,7 +135,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (updateError) {
       console.error('[Google OAuth] Failed to update business:', updateError);
       return res.redirect(
-        `/settings?error=${encodeURIComponent('Failed to save Google Business Profile data')}`
+        `${returnPath}?error=${encodeURIComponent('Failed to save Google Business Profile data')}`
       );
     }
 
@@ -144,7 +148,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       : 'Google connected. We saved your account access, but could not auto-detect a GBP location yet. You can still add your Google review URL manually in Settings.';
 
     return res.redirect(
-      `/settings?success=${encodeURIComponent(successMsg)}`
+      `${returnPath}?success=${encodeURIComponent(successMsg)}`
     );
   } catch (error) {
     console.error('[Google OAuth] Callback error:', error);
