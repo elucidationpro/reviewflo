@@ -43,7 +43,7 @@ export default function App({ Component, pageProps }: AppProps) {
       ) {
         const match = document.cookie.match(/(?:^|; )rf_magic_next=([^;]+)/);
         const raw = match?.[1]?.trim();
-        const next = raw === 'google-confirm' ? 'google-confirm' : 'dashboard';
+        const next = raw === 'google-confirm' || raw === 'admin' ? raw : 'dashboard';
         document.cookie = 'rf_magic_next=; Path=/; Max-Age=0';
         window.location.replace(
           `${window.location.origin}/auth/magic-landing?next=${next}${window.location.hash}`

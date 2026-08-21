@@ -7,6 +7,7 @@ import {
 import {
   exchangeCodeForTokens,
   getPlaceIdFromGoogleBusinessProfile,
+  grantIncludesGbpScope,
 } from '../../../../lib/google-business-profile';
 import { getAppBaseUrl } from '@/lib/app-base-url';
 import {
@@ -18,6 +19,7 @@ import {
   magicLandingRedirectTo,
   setMagicNextCookie,
 } from '@/lib/magic-link-landing';
+import { isAdminEmail } from '@/lib/adminAuth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -38,6 +40,25 @@ const supabaseAdmin = createClient(
  * 7. If we have business.manage, fetch GBP data and link/update the business (place ID, review URL, tokens)
  * 8. Generate magic link → redirect user through it to /dashboard
  */
+/**
+ * Admins who also own a business (e.g. the founder's own test account) must still be able
+ * to reach /dashboard. Only short-circuit to /admin when the email has no business row —
+ * otherwise signing in would permanently strand them on the admin surface.
+ */
+async function adminShouldSkipBusiness(
+  db: { from: (t: string) => any },
+  email: string
+): Promise<boolean> {
+  if (!isAdminEmail(email)) return false;
+  const { data } = await db
+    .from('businesses')
+    .select('id')
+    .eq('owner_email', email)
+    .limit(1)
+    .maybeSingle();
+  return !data;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -85,15 +106,51 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const email: string = profile.email.toLowerCase();
     const ownerName: string = profile.name || profile.given_name || '';
 
-    // Try to fetch GBP data, but don't block auth if this fails.
+    // Admin login — internal admin access is email-gated and has nothing to do with
+    // being a ReviewFlo customer. Skip business creation entirely; just authenticate
+    // and send them to /admin.
+    if (await adminShouldSkipBusiness(supabaseAdmin, email)) {
+      const { data: adminUsersData } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      let adminUser = adminUsersData?.users?.find((u) => u.email === email);
+      if (!adminUser) {
+        const { data: authData, error: createError } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: { owner_name: ownerName },
+        });
+        if (createError || !authData.user) {
+          return res.redirect(`/login?error=${encodeURIComponent('Failed to create account from Google sign-in.')}`);
+        }
+        adminUser = authData.user;
+      }
+      setMagicNextCookie(res, 'admin');
+      const { data: adminLinkData, error: adminLinkError } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+        options: { redirectTo: magicLandingRedirectTo(appBase, 'admin') },
+      });
+      if (adminLinkError || !adminLinkData?.properties?.action_link) {
+        return res.redirect(`/login?error=${encodeURIComponent('Failed to sign you in. Please try again.')}`);
+      }
+      return res.redirect(adminLinkData.properties.action_link);
+    }
+
+    // Try to fetch GBP data, but don't block auth if this fails. Only attempted when the
+    // grant actually carries business.manage — sign-in no longer requests it, so this is
+    // normally skipped and the confirm step collects the name instead.
     let gbpData: Awaited<ReturnType<typeof getPlaceIdFromGoogleBusinessProfile>> = null;
-    try {
-      gbpData = await getPlaceIdFromGoogleBusinessProfile(accessToken);
-    } catch (e) {
-      console.warn('[Google Login] GBP lookup failed (non-blocking):', e);
+    if (grantIncludesGbpScope(tokens.scope)) {
+      try {
+        gbpData = await getPlaceIdFromGoogleBusinessProfile(accessToken);
+      } catch (e) {
+        console.warn('[Google Login] GBP lookup failed (non-blocking):', e);
+      }
     }
     // When GBP fails: use placeholder; owner name stored separately for client emails
-    const inferredBusinessName = gbpData?.businessName || 'My Business';
+    // Only a name Google actually returned is a real name. Anything else stays blank so the
+    // confirm step is forced to collect one, rather than silently shipping 'My Business'.
+    const realBusinessName = gbpData?.businessName || '';
+    const inferredBusinessName = realBusinessName || 'My Business';
     const inferredPlaceId = gbpData?.placeId || null;
 
     const buildUniqueSlug = async (businessName: string) => {
@@ -145,7 +202,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             google_oauth_access_token: accessToken,
             ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
             google_oauth_expires_at: expiresAt,
-            google_business_name: inferredBusinessName,
+            google_business_name: realBusinessName || null,
           })
           .eq('id', business.id);
         return;
@@ -156,7 +213,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .from('businesses')
         .insert({
           user_id: userId,
-          business_name: inferredBusinessName,
+          business_name: realBusinessName,
           owner_email: email,
           owner_name: ownerName || null,
           slug,
@@ -168,7 +225,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           google_oauth_access_token: accessToken,
           ...(tokens.refreshToken ? { google_oauth_refresh_token: tokens.refreshToken } : {}),
           google_oauth_expires_at: expiresAt,
-          google_business_name: inferredBusinessName,
+          google_business_name: realBusinessName || null,
           facebook_review_url: null,
           yelp_review_url: null,
           nextdoor_review_url: null,
@@ -209,28 +266,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Find existing user by email (perPage 1000 to handle growing user base)
     const { data: usersData } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
     let user = usersData?.users?.find((u) => u.email === email);
-    let createdNow = false;
 
+    // Log in must never create an account. Silently provisioning one here is how a user who
+    // picks the wrong Google account in the chooser ends up with a second, empty business
+    // ('My Business' / my-business-N) while their real one still exists under another email.
+    // Send them to signup with the address they actually used, so the choice is explicit.
     if (!user) {
-      const { data: authData, error: createError } = await supabaseAdmin.auth.admin.createUser({
-        email,
-        email_confirm: true,
-        user_metadata: {
-          owner_name: ownerName,
-          business_name: inferredBusinessName,
-          signup_method: 'google',
-        },
-      });
-      if (createError || !authData.user) {
-        return res.redirect(`/login?error=${encodeURIComponent('Failed to create account from Google sign-in.')}`);
-      }
-      user = authData.user;
-      createdNow = true;
+      return res.redirect(
+        `/join?error=${encodeURIComponent(
+          `No ReviewFlo account found for ${email}. If you already have an account, sign in with the Google account you signed up with. Otherwise you can create one below.`
+        )}`
+      );
     }
 
     await ensureBusinessAndLinkGoogle(user.id);
 
-    const magicNext = (createdNow || businessNeedsConfirm) ? 'google-confirm' : 'dashboard';
+    const magicNext = businessNeedsConfirm ? 'google-confirm' : 'dashboard';
     setMagicNextCookie(res, magicNext);
 
     // Generate a magic link to sign the user in

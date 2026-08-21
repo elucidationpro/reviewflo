@@ -30,8 +30,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       ? '/api/auth/google/login-callback'
       : '/api/auth/google/signup-callback';
   const redirectUri = `${baseUrl}${callbackPath}`;
-  const scope =
-    'openid profile email https://www.googleapis.com/auth/business.manage';
+  // Sign-in requests identity scopes only. Business Profile access is a sensitive scope,
+  // and Google's granular consent renders it as an optional checkbox when bundled with
+  // sign-in — users click through without ticking it, so the token comes back sign-in-only
+  // and every GBP call 403s. It is requested separately, on its own, from the onboarding
+  // confirm step and from Settings, where granting it is the whole point of the click.
+  const scope = 'openid profile email';
 
   const state = createOAuthState();
   setOAuthStateCookie(res, state);
@@ -42,8 +46,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   authUrl.searchParams.set('response_type', 'code');
   authUrl.searchParams.set('scope', scope);
   authUrl.searchParams.set('state', state);
-  authUrl.searchParams.set('access_type', 'offline');
-  authUrl.searchParams.set('prompt', 'consent');
+  // No offline access or forced consent on sign-in: identity scopes need no refresh token,
+  // and prompt=consent re-showed the full permission screen on every single sign-in.
+  // Offline access lives on the Business Profile connect flow, where it is actually used.
 
   return res.redirect(302, authUrl.toString());
 }

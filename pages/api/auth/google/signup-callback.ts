@@ -8,13 +8,14 @@ import {
 import {
   exchangeCodeForTokens,
   getPlaceIdFromGoogleBusinessProfile,
+  grantIncludesGbpScope,
 } from '../../../../lib/google-business-profile';
 import {
   generateSlugFromBusinessName,
   isReservedSlug,
   normalizeSlugForValidation,
 } from '../../../../lib/slug-utils';
-import { sendAdminNotification } from '@/lib/email-service';
+import { isAdminEmail } from '@/lib/adminAuth';
 import {
   magicLandingRedirectTo,
   setMagicNextCookie,
@@ -45,6 +46,25 @@ type BusinessLite = {
  * 7. Create Supabase user + business record
  * 8. Generate magic link → redirect user through it to /join/google-confirm
  */
+/**
+ * Admins who also own a business (e.g. the founder's own test account) must still be able
+ * to reach /dashboard. Only short-circuit to /admin when the email has no business row —
+ * otherwise signing in would permanently strand them on the admin surface.
+ */
+async function adminShouldSkipBusiness(
+  db: { from: (t: string) => any },
+  email: string
+): Promise<boolean> {
+  if (!isAdminEmail(email)) return false;
+  const { data } = await db
+    .from('businesses')
+    .select('id')
+    .eq('owner_email', email)
+    .limit(1)
+    .maybeSingle();
+  return !data;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -97,8 +117,42 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
     const existing = existingUser?.users?.find((u) => u.email === email);
 
-    // Fetch GBP data (business name + Place ID)
-    const gbpData = await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken);
+    // Admin login — internal admin access is email-gated and has nothing to do with
+    // being a ReviewFlo customer. Skip business creation entirely; just authenticate
+    // and send them to /admin.
+    if (await adminShouldSkipBusiness(supabaseAdmin, email)) {
+      let adminUser = existing;
+      if (!adminUser) {
+        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: { owner_name: name },
+        });
+        if (authError || !authData.user) {
+          console.error('[Google Signup] Failed to create admin account:', authError);
+          return res.redirect(`/join?error=${encodeURIComponent('Failed to create your account. Please try again.')}`);
+        }
+        adminUser = authData.user;
+      }
+      setMagicNextCookie(res, 'admin');
+      const { data: adminLinkData, error: adminLinkError } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+        options: { redirectTo: magicLandingRedirectTo(appBase, 'admin') },
+      });
+      if (adminLinkError || !adminLinkData?.properties?.action_link) {
+        return res.redirect(`/login?error=${encodeURIComponent('Unable to sign you in. Please try again.')}`);
+      }
+      return res.redirect(adminLinkData.properties.action_link);
+    }
+
+    // Only attempt the GBP lookup when the grant actually carries business.manage.
+    // Sign-in no longer requests it, so this is normally skipped and the confirm step
+    // collects the name instead. Kept scope-driven rather than removed so the lookup
+    // starts working again automatically if a grant ever does include it.
+    const gbpData = grantIncludesGbpScope(tokens.scope)
+      ? await getPlaceIdFromGoogleBusinessProfile(tokens.accessToken)
+      : null;
     // When GBP fails: leave blank so the confirm page forces the user to enter their real name
     const businessName = gbpData?.businessName || '';
     const placeId = gbpData?.placeId || null;
@@ -314,18 +368,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     ]);
 
-    // Send admin notification for new signup
-    try {
-      await sendAdminNotification('signup', {
-        email,
-        name,
-        businessName,
-        slug,
-        signupMethod: 'Google',
-      });
-    } catch (adminErr) {
-      console.error('[Google Signup] Admin notification failed:', adminErr);
-    }
+    // Admin notification is intentionally NOT sent here. At this point businessName is
+    // often '' and slug is a placeholder (my-business-N), because the GBP lookup found
+    // nothing and the confirm page is about to collect the real name and re-slug the row.
+    // Notifying now produces a blank Business and a review link that 404s once the slug
+    // changes, so the send lives in confirm-profile.ts, after the name actually exists.
 
     setMagicNextCookie(res, 'google-confirm');
     // Generate a magic link to sign the user in and send them to the confirm page

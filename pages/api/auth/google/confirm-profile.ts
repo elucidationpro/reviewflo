@@ -5,6 +5,7 @@ import {
   isReservedSlug,
   normalizeSlugForValidation,
 } from '../../../../lib/slug-utils'
+import { sendAdminNotification } from '@/lib/email-service'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -63,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { data: business } = await supabaseAdmin
       .from('businesses')
-      .select('id')
+      .select('id, business_name')
       .eq('user_id', user.id)
       .single()
 
@@ -92,6 +93,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (updateError) {
       return res.status(500).json({ error: 'Failed to save business profile' })
+    }
+
+    // Google signups notify here rather than in the OAuth callback: this is the first
+    // point where the real business name and final slug exist.
+    //
+    // Exactly-once is keyed on an explicit user_metadata marker, NOT on the row's previous
+    // business_name. Inferring "first confirm" from a blank name silently skipped the
+    // notification whenever the row already had a name — a GBP-prefilled signup, or the
+    // 'My Business' placeholder login-callback writes — which is most real signups.
+    const alreadyNotified = Boolean(user.user_metadata?.signup_notified_at)
+    if (!alreadyNotified) {
+      try {
+        await sendAdminNotification('signup', {
+          email: user.email || '',
+          name:
+            (ownerNameSent ? ownerName : null) ||
+            (user.user_metadata?.owner_name as string | undefined) ||
+            (user.user_metadata?.full_name as string | undefined) ||
+            '',
+          businessName,
+          slug,
+          signupMethod: 'Google',
+        })
+        // Mark only after a successful send so a transient email failure can retry
+        // on the user's next save instead of being permanently swallowed.
+        await supabaseAdmin.auth.admin.updateUserById(user.id, {
+          user_metadata: {
+            ...user.user_metadata,
+            ...(ownerNameSent ? { full_name: ownerName ?? null } : {}),
+            signup_notified_at: new Date().toISOString(),
+          },
+        })
+      } catch (adminErr) {
+        console.error('[google-confirm-profile] Admin notification failed:', adminErr)
+      }
     }
 
     return res.status(200).json({ success: true, slug })

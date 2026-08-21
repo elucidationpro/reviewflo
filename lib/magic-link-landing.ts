@@ -1,6 +1,6 @@
 import type { NextApiResponse } from 'next';
 
-export type MagicLandingNext = 'dashboard' | 'google-confirm';
+export type MagicLandingNext = 'dashboard' | 'google-confirm' | 'admin';
 
 export function setMagicNextCookie(res: NextApiResponse, next: MagicLandingNext) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
@@ -16,7 +16,7 @@ export function magicLandingRedirectTo(appBase: string, next: MagicLandingNext):
 }
 
 export function parseMagicLandingNext(value: unknown): MagicLandingNext | null {
-  if (value === 'google-confirm' || value === 'dashboard') return value;
+  if (value === 'google-confirm' || value === 'dashboard' || value === 'admin') return value;
   if (Array.isArray(value) && value[0]) {
     return parseMagicLandingNext(value[0]);
   }

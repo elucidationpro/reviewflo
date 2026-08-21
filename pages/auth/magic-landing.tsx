@@ -65,7 +65,9 @@ export default function AuthMagicLandingPage() {
       const dest =
         next === 'google-confirm'
           ? '/join/google-confirm?new_signup=1'
-          : '/dashboard';
+          : next === 'admin'
+            ? '/admin'
+            : '/dashboard';
       router.replace(dest);
     };
 
