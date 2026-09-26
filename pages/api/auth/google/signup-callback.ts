@@ -15,7 +15,7 @@ import {
   isReservedSlug,
   normalizeSlugForValidation,
 } from '../../../../lib/slug-utils';
-import { isAdminEmail } from '@/lib/adminAuth';
+import { isAdminEmail } from '@/lib/admin-policy';
 import {
   magicLandingRedirectTo,
   setMagicNextCookie,
@@ -46,25 +46,6 @@ type BusinessLite = {
  * 7. Create Supabase user + business record
  * 8. Generate magic link → redirect user through it to /join/google-confirm
  */
-/**
- * Admins who also own a business (e.g. the founder's own test account) must still be able
- * to reach /dashboard. Only short-circuit to /admin when the email has no business row —
- * otherwise signing in would permanently strand them on the admin surface.
- */
-async function adminShouldSkipBusiness(
-  db: { from: (t: string) => any },
-  email: string
-): Promise<boolean> {
-  if (!isAdminEmail(email)) return false;
-  const { data } = await db
-    .from('businesses')
-    .select('id')
-    .eq('owner_email', email)
-    .limit(1)
-    .maybeSingle();
-  return !data;
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -106,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     const profile = await profileRes.json();
 
-    if (!profile.email) {
+    if (!profileRes.ok || !profile.email || profile.verified_email !== true) {
       return res.redirect(`/join?error=${encodeURIComponent('Could not retrieve your Google account email.')}`);
     }
 
@@ -120,7 +101,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Admin login — internal admin access is email-gated and has nothing to do with
     // being a ReviewFlo customer. Skip business creation entirely; just authenticate
     // and send them to /admin.
-    if (await adminShouldSkipBusiness(supabaseAdmin, email)) {
+    if (isAdminEmail(email)) {
       let adminUser = existing;
       if (!adminUser) {
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
@@ -169,7 +150,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .from('businesses')
         .select('id, google_place_id, google_review_url')
         .eq('user_id', existing.id)
-        .single();
+        .is('parent_business_id', null)
+        .maybeSingle();
       let business: BusinessLite | null = (fetchedBusiness as BusinessLite | null) ?? null;
       const createdNewBusinessForExistingUser = !business?.id;
 
@@ -231,7 +213,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const mergedReviewUrl = placeId
           ? `https://search.google.com/local/writereview?placeid=${placeId}`
           : business.google_review_url;
-        await supabaseAdmin
+        if (grantIncludesGbpScope(tokens.scope)) await supabaseAdmin
           .from('businesses')
           .update({
             google_place_id: mergedPlaceId,

@@ -79,6 +79,12 @@ export default function JoinCallbackPage() {
           return;
         }
 
+        const result = await res.json();
+        if (result.admin) {
+          router.replace('/admin');
+          return;
+        }
+
         // Google Ads conversion: successful signup completed
         fireGoogleAdsSignupConversion();
 

@@ -1,120 +1,17 @@
 import { supabase } from './supabase'
+import { isAdminUser, isAdminEmail } from './admin-policy'
+export { isAdminUser, isAdminEmail }
 
-// Admin emails for backward compatibility - will be phased out in favor of role-based system.
-// Reads ADMIN_EMAILS (comma-separated), the same var lib/email-service.ts uses to decide who
-// receives admin notifications, so the two admin concepts cannot drift apart. ADMIN_EMAIL
-// (singular) is still honored as a legacy fallback.
-//
-// NOTE: neither var is NEXT_PUBLIC_, so in the browser this resolves to the hardcoded default
-// only. Server-side checks see the full list. To add an admin who works on both sides, set
-// role: 'admin' in their user metadata — hasAdminRole() is the supported path everywhere.
-const DEFAULT_ADMIN_EMAIL = 'jeremy.elucidation@gmail.com'
-
-const ADMIN_EMAIL_LIST: string[] = (
-  process.env.ADMIN_EMAILS ||
-  process.env.ADMIN_EMAIL ||
-  DEFAULT_ADMIN_EMAIL
-)
-  .split(',')
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean)
-
-function matchesAdminEmail(email: string | undefined | null): boolean {
-  if (!email) return false
-  return ADMIN_EMAIL_LIST.includes(email.trim().toLowerCase())
-}
-
-/**
- * Check if a user has admin role
- * Checks both app_metadata.role and user_metadata.role for flexibility
- */
-function hasAdminRole(user: { app_metadata?: Record<string, unknown>; user_metadata?: Record<string, unknown> } | null): boolean {
-  if (!user) return false
-  
-  const appRole = user.app_metadata?.role
-  const userRole = user.user_metadata?.role
-  
-  return appRole === 'admin' || userRole === 'admin'
-}
-
-/**
- * Check if the current logged-in user is an admin
- * Returns the user if admin, null otherwise
- * 
- * Checks in order:
- * 1. app_metadata.role === 'admin'
- * 2. user_metadata.role === 'admin'
- * 3. email is in ADMIN_EMAILS (backward compatibility)
- */
+/** Always resolve authorization on the server; user_metadata is user-editable. */
 export async function checkIsAdmin() {
-  console.log('[adminAuth] checkIsAdmin called')
-  try {
-    console.log('[adminAuth] Calling supabase.auth.getUser()')
-    const { data: { user } } = await supabase.auth.getUser()
-    console.log('[adminAuth] User result:', user)
-
-    if (!user) {
-      console.log('[adminAuth] No user found, returning null')
-      return null
-    }
-
-    // Check role-based admin first (preferred method)
-    if (hasAdminRole(user)) {
-      console.log('[adminAuth] User IS admin (role-based), returning user object')
-      return user
-    }
-
-    // Email-based fallback must be resolved SERVER-side. ADMIN_EMAILS is not NEXT_PUBLIC_,
-    // so in the browser it is stripped from the bundle and matchesAdminEmail() would only
-    // ever recognize the hardcoded default — locking out every other configured admin
-    // (they authenticate, land on /admin, get bounced back to /login, and loop).
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.access_token) {
-        const res = await fetch('/api/admin/check-admin', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        })
-        if (res.ok) {
-          const { isAdmin } = await res.json()
-          if (isAdmin) {
-            console.log('[adminAuth] User IS admin (server-verified email), returning user object')
-            return user
-          }
-        }
-      }
-    } catch (e) {
-      console.error('[adminAuth] Server admin check failed:', e)
-    }
-
-    console.log('[adminAuth] User is NOT admin, returning null')
-    return null
-  } catch (error) {
-    console.error('[adminAuth] Error checking admin status:', error)
-    return null
-  }
-}
-
-/**
- * Server-side admin check for API routes
- * Checks role first, then falls back to email for backward compatibility
- */
-export function isAdminUser(user: { app_metadata?: Record<string, unknown>; user_metadata?: Record<string, unknown>; email?: string } | null): boolean {
-  if (!user) return false
-  
-  // Check role-based admin first
-  if (hasAdminRole(user)) {
-    return true
-  }
-  
-  // Fallback to email check for backward compatibility
-  return matchesAdminEmail(user.email)
-}
-
-/**
- * @deprecated Use isAdminUser instead
- * Kept for backward compatibility with existing API routes
- */
-export function isAdminEmail(email: string | undefined): boolean {
-  return matchesAdminEmail(email)
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) return null
+  const res = await fetch('/api/admin/check-admin', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${session.access_token}` },
+    cache: 'no-store',
+  })
+  if (!res.ok) throw new Error('Unable to verify account access. Please try signing in again.')
+  const { isAdmin } = await res.json()
+  return isAdmin === true ? session.user : null
 }

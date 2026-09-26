@@ -8,7 +8,7 @@
  */
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { isAdminUser } from '../../../lib/adminAuth'
+import { isAdminUser } from '../../../lib/admin-policy'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',

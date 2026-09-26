@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -9,20 +9,11 @@ export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
+  const [loginError, setError] = useState('')
+  const successMessage = router.query.signup === 'success' ? 'Account created successfully! Please log in with your credentials.' : ''
+  const error = loginError || (typeof router.query.error === 'string' ? router.query.error : '')
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    // Check for success message from signup
-    if (router.query.signup === 'success') {
-      setSuccessMessage('Account created successfully! Please log in with your credentials.')
-    }
-    // Check for error from Google login callback
-    if (router.query.error) {
-      setError(decodeURIComponent(router.query.error as string))
-    }
-  }, [router.query])
 
   const handleGoogleLogin = () => {
     // Relative URL keeps OAuth on the same host as the tab (localhost, preview, prod).
@@ -53,15 +44,12 @@ export default function LoginPage() {
         // Check if user is admin
         const adminUser = await checkIsAdmin()
 
-        if (adminUser) {
-          // Admin users go to admin dashboard
-          const redirectPath = router.query.redirect as string || '/admin'
-          router.push(redirectPath)
-        } else {
-          // Regular users go to business dashboard
-          const redirectPath = router.query.redirect as string || '/dashboard'
-          router.push(redirectPath)
-        }
+        // An old client redirect must never override an administrator's destination.
+        const redirect = router.query.redirect
+        const safeClientRedirect = typeof redirect === 'string' &&
+          /^\/(dashboard(?:\/|\?|$)|settings(?:\?|$)|account(?:\?|$)|feedback(?:\?|$))/.test(redirect) &&
+          !redirect.includes('\\') ? redirect : '/dashboard'
+        router.push(adminUser ? '/admin' : safeClientRedirect)
       }
     } catch (err) {
       console.error('Login error:', err)

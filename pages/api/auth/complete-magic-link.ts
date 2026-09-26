@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { sendCompleteRegistration } from '@/lib/meta-conversions';
-import { isAdminEmail } from '@/lib/adminAuth';
+import { isAdminUser } from '@/lib/admin-policy';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -39,7 +39,7 @@ export default async function handler(
 
     // Admin login — internal admin access has nothing to do with being a ReviewFlo
     // customer. Never create a business record for it.
-    if (email && isAdminEmail(email)) {
+    if (isAdminUser(user)) {
       return res.status(200).json({ success: true, admin: true });
     }
 

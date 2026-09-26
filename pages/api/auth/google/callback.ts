@@ -1,3 +1,5 @@
+import { readConnectState } from '@/lib/google-connect-state';
+import { verifyGoogleOAuthState } from '@/lib/google-oauth-csrf';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { getAppBaseUrl } from '@/lib/app-base-url';
@@ -45,22 +47,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.redirect(`/settings?error=${encodeURIComponent('Missing authorization code')}`);
     }
 
-    // State contains the user's session token, optionally followed by
-    // `|<businessId>` to target a specific location (multi-location flow).
-    if (!state || typeof state !== 'string') {
-      return res.redirect(`/settings?error=${encodeURIComponent('Invalid session')}`);
+    if (typeof state !== 'string' || !verifyGoogleOAuthState(req, res, state)) {
+      return res.redirect('/settings?error=Invalid%20connection%20session');
     }
-
-    // state is `sessionToken|businessId|origin`. `origin` marks the onboarding connect so we
-    // return the user to the confirm step instead of Settings.
-    const stateParts = state.split('|');
-    const sessionToken = stateParts[0];
-    const targetBusinessId = stateParts[1] || null;
-    const fromOnboarding = stateParts[2] === 'onboarding';
-    const returnPath = fromOnboarding ? '/join/google-confirm' : '/settings';
-
-    // Verify the session token and get the user
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(sessionToken);
+    const connection = readConnectState(state);
+    if (!connection) return res.redirect('/settings?error=Expired%20connection%20session');
+    const targetBusinessId = connection.businessId;
+    const returnPath = connection.onboarding ? '/join/google-confirm' : '/settings';
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.admin.getUserById(connection.userId);
 
     if (authError || !user) {
       console.error('[Google OAuth] Invalid session:', authError);

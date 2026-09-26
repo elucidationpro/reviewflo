@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { isAdminEmail } from '@/lib/adminAuth'
+import { isAdminUser } from '@/lib/admin-policy'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -70,7 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Without this, an admin who was previously a customer would still have business_name
     // and slug in user_metadata, and landing on /dashboard would silently recreate the row
     // the admin bypass exists to prevent.
-    if (email && isAdminEmail(email)) {
+    if (isAdminUser(user)) {
       return res.status(200).json({ exists: false, admin: true })
     }
 

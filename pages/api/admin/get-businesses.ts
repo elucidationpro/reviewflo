@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { isAdminUser } from '../../../lib/adminAuth'
+import { isAdminUser } from '../../../lib/admin-policy'
 
 /** Columns from `businesses` used by this route; `select('*')` returns the full row including these */
 export interface Business {

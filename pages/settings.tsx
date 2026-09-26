@@ -1,3 +1,4 @@
+import { connectGoogle } from '@/lib/connect-google'
 import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -1301,18 +1302,8 @@ export default function SettingsPage() {
                           onClick={async () => {
                             const { data: { session } } = await supabase.auth.getSession()
                             if (!session) return
-                            const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID
-                            if (!clientId) {
-                              alert('Google sign-in is not configured (missing NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID).')
-                              return
-                            }
-                            const redirectUri = `${window.location.origin}/api/auth/google/callback`
-                            const scope = 'https://www.googleapis.com/auth/business.manage'
-                            // Encode businessId into state so the callback writes tokens only to the
-                            // currently-selected location, not every row for the user.
-                            const stateValue = `${session.access_token}|${businessData.id}`
-                            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(stateValue)}&access_type=offline&prompt=consent`
-                            window.location.href = authUrl
+                            try { await connectGoogle(session.access_token, businessData.id) }
+                            catch (error) { alert(error instanceof Error ? error.message : 'Unable to connect Google') }
                           }}
                           className="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-800 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm cursor-pointer"
                         >

@@ -111,6 +111,14 @@ export async function getBusinessForRequest(
 
     const owns = await rowOwnedByUser(client, match, userId)
     if (!owns) return { row: null, error: 'not found' }
+    if ('tier' in match && typeof match.parent_business_id === 'string') {
+      const { data: root, error: tierError } = await client.from('businesses')
+        .select('tier, user_id').eq('id', match.parent_business_id).maybeSingle()
+      if (tierError || !root || normId(root.user_id) !== normId(userId)) {
+        return { row: null, error: 'not found' }
+      }
+      match.tier = root.tier
+    }
     return { row: match, error: null }
   }
 

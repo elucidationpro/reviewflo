@@ -42,7 +42,7 @@ export default async function handler(
 
   // Verify cron secret
   const authHeader = req.headers.authorization
-  if (CRON_SECRET && (!authHeader || authHeader !== `Bearer ${CRON_SECRET}`)) {
+  if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
     console.warn('[fetch-google-stats] Unauthorized cron attempt')
     return res.status(401).json({ error: 'Unauthorized' })
   }

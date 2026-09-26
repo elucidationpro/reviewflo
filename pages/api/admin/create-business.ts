@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { isAdminUser } from '../../../lib/adminAuth'
+import { isAdminUser } from '../../../lib/admin-policy'
 import { Resend } from 'resend'
 import { wrapAuthLink } from '@/lib/auth-link-utils'
 

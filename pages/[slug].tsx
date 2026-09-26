@@ -1,8 +1,8 @@
+import { getPublicBusiness } from '@/lib/public-business'
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import { resolveAccountBillingTier } from '../lib/account-billing-tier'
 import { supabase } from '../lib/supabase'
 import CustomerRatingPanel from '../components/customer-review/CustomerRatingPanel'
 import { trackEvent } from '../lib/posthog-provider'
@@ -106,13 +106,8 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
 
       // Re-fetch follow-up flags from DB before routing — page props may be stale if the
       // owner enabled follow-up in Settings after this page was initially loaded (SSR/cache).
-      const { data: latestBiz } = await supabase
-        .from('businesses')
-        .select(
-          'tier, review_page_followup_enabled, review_page_followup_question, review_page_followup_placeholder'
-        )
-        .eq('id', business.id)
-        .single()
+      const refreshed = await fetch(`/api/public/business?slug=${encodeURIComponent(business.slug)}`)
+      const latestBiz = refreshed.ok ? (await refreshed.json()).business : null
 
       const routingBusiness: Business =
         latestBiz && typeof latestBiz === 'object'
@@ -121,7 +116,7 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
 
       if (
         shouldShowReviewPageFollowup(routingBusiness, {
-          accountTier: accountTierForReview,
+          accountTier: routingBusiness.tier ?? accountTierForReview,
         })
       ) {
         router.push(
@@ -135,7 +130,7 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
       // gating. 1-4 stars get a private feedback form with a secondary Google
       // link; 5 stars only go straight to the prominent Google CTA.
       if (rating >= 1 && rating <= 4) {
-        router.push(`/${business.slug}/feedback?rating=${rating}${tokenParam}`)
+        router.push(`/${business.slug}/feedback?rating=${rating}&${reviewIdParam}${tokenParam}`)
       } else {
         router.push(`/${business.slug}/templates?${tokenParam ? `t=${trackingToken}` : ''}`)
       }
@@ -194,17 +189,13 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.params as { slug: string }
 
-  const { data: business, error } = await supabase
-    .from('businesses')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  const business = await getPublicBusiness(slug)
 
-  if (error || !business) {
+  if (!business) {
     return { notFound: true }
   }
 
-  const accountTierForReview = await resolveAccountBillingTier(supabase, business)
+  const accountTierForReview = business.tier || 'free'
 
   return {
     props: {

@@ -1,3 +1,4 @@
+import { getPublicBusiness } from '@/lib/public-business'
 import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -384,13 +385,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const rating = parseInt(context.query.rating as string) || 3
   const rawReviewId = typeof context.query.reviewId === 'string' ? context.query.reviewId : null
 
-  const { data: business, error } = await supabase
-    .from('businesses')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  const business = await getPublicBusiness(slug)
 
-  if (error || !business) {
+  if (!business) {
     return { notFound: true }
   }
 

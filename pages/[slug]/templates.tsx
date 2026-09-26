@@ -1,3 +1,4 @@
+import { getPublicBusiness } from '@/lib/public-business'
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useState } from 'react'
@@ -443,13 +444,9 @@ export default function TemplatesPage({ business, templates }: PageProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.params as { slug: string }
 
-  const { data: business, error: businessError } = await supabase
-    .from('businesses')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  const business = await getPublicBusiness(slug)
 
-  if (businessError || !business) {
+  if (!business) {
     return { notFound: true }
   }
 

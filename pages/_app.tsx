@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { PostHogProvider } from "@/lib/posthog-provider";
 import { BusinessProvider } from "@/contexts/BusinessContext";
-import LaunchBanner from "@/components/LaunchBanner";
+import AccountRouteGuard from "@/components/AccountRouteGuard";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Script from "next/script";
@@ -74,9 +74,11 @@ export default function App({ Component, pageProps }: AppProps) {
           </Script>
         </>
       ) : null}
+      <AccountRouteGuard key={router.pathname}>
       <BusinessProvider>
         <Component {...pageProps} />
       </BusinessProvider>
+      </AccountRouteGuard>
     </PostHogProvider>
   );
 }

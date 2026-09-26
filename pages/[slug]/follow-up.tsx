@@ -1,8 +1,8 @@
+import { getPublicBusiness } from '@/lib/public-business'
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import { resolveAccountBillingTier } from '../../lib/account-billing-tier'
 import { supabase } from '../../lib/supabase'
 import CustomerFollowUpPanel from '../../components/customer-review/CustomerFollowUpPanel'
 import { trackEvent } from '../../lib/posthog-provider'
@@ -66,7 +66,7 @@ export default function FollowUpPage({
   const router = useRouter()
   const accentColor = getReviewAccentColor(business)
   const footer = resolvePublicReviewFooter(business)
-  const followup = resolveReviewPageFollowup(business, { accountTier: accountTierForReview })
+  const followup = resolveReviewPageFollowup(business, { accountTier: accountTierForReview as Tier })
   const displayLogoUrl = getDisplayLogoUrl(business)
   const [answer, setAnswer] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -170,19 +170,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { notFound: true }
   }
 
-  const { data: business, error } = await supabase
-    .from('businesses')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  const business = await getPublicBusiness(slug)
 
-  if (error || !business) {
+  if (!business) {
     return { notFound: true }
   }
 
-  const accountTierForReview = await resolveAccountBillingTier(supabase, business)
+  const accountTierForReview = business.tier || 'free'
 
-  if (!shouldShowReviewPageFollowup(business, { accountTier: accountTierForReview })) {
+  if (!shouldShowReviewPageFollowup(business, { accountTier: accountTierForReview as Tier })) {
     return { notFound: true }
   }
 

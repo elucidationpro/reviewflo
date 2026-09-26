@@ -29,7 +29,7 @@ type BusinessRow = import('../../lib/business-account').BusinessRowWithParent & 
 
 /**
  * Returns the primary business for the logged-in user and all locations in the account.
- * If user_id lookup fails, finds by owner_email and auto-updates user_id.
+ * Ownership is derived exclusively from user_id, never editable contact fields.
  */
 export default async function handler(
   req: NextApiRequest,
@@ -75,41 +75,6 @@ export default async function handler(
 
     rows = (rowsByUser || []) as unknown as BusinessRow[]
 
-    if (!rows.length && user.email) {
-      const emailTrimmed = user.email.trim().toLowerCase()
-      const emailFetch = await supabaseAdmin
-        .from('businesses')
-        .select(BUSINESS_SELECT)
-        .ilike('owner_email', emailTrimmed)
-      let byEmail = emailFetch.data as unknown as BusinessRow[] | null
-      let emailError = emailFetch.error
-      if (emailError && /parent_business_id|column|does not exist/i.test(String(emailError.message || ''))) {
-        const leg = await supabaseAdmin
-          .from('businesses')
-          .select(BUSINESS_SELECT_LEGACY)
-          .ilike('owner_email', emailTrimmed)
-        byEmail = leg.data as unknown as BusinessRow[] | null
-        emailError = leg.error
-      }
-
-      if (emailError) {
-        console.error('[my-business] owner_email lookup error:', emailError)
-      }
-      if (byEmail?.length) {
-        await supabaseAdmin
-          .from('businesses')
-          .update({ user_id: user.id })
-          .ilike('owner_email', emailTrimmed)
-        let healed = (await supabaseAdmin.from('businesses').select(BUSINESS_SELECT).eq('user_id', user.id))
-          .data as unknown as BusinessRow[] | null
-        if (!healed) {
-          healed = (await supabaseAdmin.from('businesses').select(BUSINESS_SELECT_LEGACY).eq('user_id', user.id))
-            .data as unknown as BusinessRow[] | null
-        }
-        rows = healed || []
-      }
-    }
-
     if (!rows.length) {
       return res.status(200).json({ business: null, locations: [], maxLocations: 1 })
     }
@@ -127,6 +92,9 @@ export default async function handler(
     // instead of the primary. Falls back to primary when absent or unowned.
     const requestedBusinessId =
       typeof req.query.businessId === 'string' ? req.query.businessId : null
+    if (requestedBusinessId && !rows.some(r => r.id === requestedBusinessId)) {
+      return res.status(403).json({ error: 'Business not found' })
+    }
     const target =
       (requestedBusinessId && rows.find((r) => r.id === requestedBusinessId)) || primary
 

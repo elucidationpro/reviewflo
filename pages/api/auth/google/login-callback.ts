@@ -19,7 +19,7 @@ import {
   magicLandingRedirectTo,
   setMagicNextCookie,
 } from '@/lib/magic-link-landing';
-import { isAdminEmail } from '@/lib/adminAuth';
+import { isAdminEmail } from '@/lib/admin-policy';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -40,25 +40,6 @@ const supabaseAdmin = createClient(
  * 7. If we have business.manage, fetch GBP data and link/update the business (place ID, review URL, tokens)
  * 8. Generate magic link → redirect user through it to /dashboard
  */
-/**
- * Admins who also own a business (e.g. the founder's own test account) must still be able
- * to reach /dashboard. Only short-circuit to /admin when the email has no business row —
- * otherwise signing in would permanently strand them on the admin surface.
- */
-async function adminShouldSkipBusiness(
-  db: { from: (t: string) => any },
-  email: string
-): Promise<boolean> {
-  if (!isAdminEmail(email)) return false;
-  const { data } = await db
-    .from('businesses')
-    .select('id')
-    .eq('owner_email', email)
-    .limit(1)
-    .maybeSingle();
-  return !data;
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -99,7 +80,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     const profile = await profileRes.json();
 
-    if (!profile.email) {
+    if (!profileRes.ok || !profile.email || profile.verified_email !== true) {
       return res.redirect(`/login?error=${encodeURIComponent('Could not retrieve your Google account email.')}`);
     }
 
@@ -109,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Admin login — internal admin access is email-gated and has nothing to do with
     // being a ReviewFlo customer. Skip business creation entirely; just authenticate
     // and send them to /admin.
-    if (await adminShouldSkipBusiness(supabaseAdmin, email)) {
+    if (isAdminEmail(email)) {
       const { data: adminUsersData } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
       let adminUser = adminUsersData?.users?.find((u) => u.email === email);
       if (!adminUser) {
@@ -181,7 +162,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .from('businesses')
         .select('id, google_place_id, google_review_url, business_name')
         .eq('user_id', userId)
-        .single();
+        .is('parent_business_id', null)
+        .maybeSingle();
 
       const expiresAt = new Date(Date.now() + tokens.expiresIn * 1000).toISOString();
       const mergedPlaceId = inferredPlaceId ?? business?.google_place_id ?? null;
@@ -194,7 +176,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const name = business.business_name || '';
         if (!name || name === 'My Business') businessNeedsConfirm = true;
 
-        await supabaseAdmin
+        if (grantIncludesGbpScope(tokens.scope)) await supabaseAdmin
           .from('businesses')
           .update({
             google_place_id: mergedPlaceId,

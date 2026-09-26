@@ -1,4 +1,5 @@
 'use client';
+import { connectGoogle } from '@/lib/connect-google';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -83,25 +84,8 @@ export default function GoogleConfirmPage() {
     setConnecting(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID;
-      if (!session || !clientId) {
-        setError('Google is not configured. You can add your review link later in Settings.');
-        setConnecting(false);
-        return;
-      }
-      // business.manage is requested ALONE here. Bundled with sign-in scopes Google shows it
-      // as an optional checkbox that users click past, producing a sign-in-only token.
-      const scope = 'https://www.googleapis.com/auth/business.manage';
-      const redirectUri = `${window.location.origin}/api/auth/google/callback`;
-      const state = `${session.access_token}|${businessId}|onboarding`;
-      window.location.href =
-        'https://accounts.google.com/o/oauth2/v2/auth' +
-        `?client_id=${clientId}` +
-        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-        '&response_type=code' +
-        `&scope=${encodeURIComponent(scope)}` +
-        `&state=${encodeURIComponent(state)}` +
-        '&access_type=offline&prompt=consent';
+      if (!session || !businessId) throw new Error('Please sign in again.');
+      await connectGoogle(session.access_token, businessId, true);
     } catch {
       setError('Could not open Google. You can connect later in Settings.');
       setConnecting(false);
