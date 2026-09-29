@@ -12,7 +12,7 @@ export default function Industries({ industries }: { industries: Industry[] }) {
       <title>Review Management by Industry | ReviewFlo</title>
       <meta name="description" content="Find review management tools for your local service business, from plumbers and mechanics to salons and cleaners." />
     </Head>
-    <SiteNav />
+    <SiteNav variant="marketing" />
     <main className={`${SITE_NAV_SPACER_CLASS} max-w-6xl mx-auto px-4 pb-16`}>
       <h1 className="text-4xl font-bold text-[#4A3428] pt-12 mb-6">Review management for your industry</h1>
       <p className="text-gray-600 mb-8">Explore how ReviewFlo helps local service businesses collect customer feedback and get more Google reviews. Choose your industry to see the features and workflow for your business.</p>
