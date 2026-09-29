@@ -2,8 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  trailingSlash: false,
+  // Normalize marketing aliases before removing a trailing slash (one redirect).
+  skipTrailingSlashRedirect: true,
   async redirects() {
-    return [
+    const redirects = [
       {
         source: "/for/lash-studios",
         destination: "/for/eyebrow-lash-studios",
@@ -78,6 +81,12 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
     ];
+    return [
+      ...redirects.flatMap((rule) => rule.source === '/obsidianauto'
+        ? [rule] // Keep the existing business redirect untouched.
+        : [{ ...rule, source: `${rule.source}/` }, rule]),
+      { source: '/:path+/', destination: '/:path+', permanent: true },
+    ];
   },
   // Do not redirect www ↔ apex here. Vercel’s “primary domain” already canonicalizes
   // hostnames; a second redirect in Next.js can fight it and cause redirect loops.
@@ -126,6 +135,7 @@ const nextConfig: NextConfig = {
 
     return [
       { source: '/:path*', headers: securityHeaders },
+      { source: '/api/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
     ];
   },
 };

@@ -1,0 +1,102 @@
+[
+  {
+    "url": "http://usereviewflo.com/",
+    "chain": [
+      {
+        "url": "http://usereviewflo.com/",
+        "status": 308,
+        "location": "https://usereviewflo.com/"
+      },
+      {
+        "url": "https://usereviewflo.com/",
+        "status": 307,
+        "location": "https://www.usereviewflo.com/"
+      },
+      {
+        "url": "https://www.usereviewflo.com/",
+        "status": 200,
+        "location": null
+      }
+    ]
+  },
+  {
+    "url": "http://www.usereviewflo.com/",
+    "chain": [
+      {
+        "url": "http://www.usereviewflo.com/",
+        "status": 308,
+        "location": "https://www.usereviewflo.com/"
+      },
+      {
+        "url": "https://www.usereviewflo.com/",
+        "status": 200,
+        "location": null
+      }
+    ]
+  },
+  {
+    "url": "https://usereviewflo.com/privacy",
+    "chain": [
+      {
+        "url": "https://usereviewflo.com/privacy",
+        "status": 307,
+        "location": "https://www.usereviewflo.com/privacy"
+      },
+      {
+        "url": "https://www.usereviewflo.com/privacy",
+        "status": 308,
+        "location": "/privacy-policy"
+      },
+      {
+        "url": "https://www.usereviewflo.com/privacy-policy",
+        "status": 200,
+        "location": null
+      }
+    ]
+  },
+  {
+    "url": "https://www.usereviewflo.com/privacy/",
+    "chain": [
+      {
+        "url": "https://www.usereviewflo.com/privacy/",
+        "status": 308,
+        "location": "/privacy"
+      },
+      {
+        "url": "https://www.usereviewflo.com/privacy",
+        "status": 308,
+        "location": "/privacy-policy"
+      },
+      {
+        "url": "https://www.usereviewflo.com/privacy-policy",
+        "status": 200,
+        "location": null
+      }
+    ]
+  },
+  {
+    "url": "https://usereviewflo.com/for-barbers/",
+    "chain": [
+      {
+        "url": "https://usereviewflo.com/for-barbers/",
+        "status": 307,
+        "location": "https://www.usereviewflo.com/for-barbers/"
+      },
+      {
+        "url": "https://www.usereviewflo.com/for-barbers/",
+        "status": 308,
+        "location": "/for-barbers"
+      },
+      {
+        "url": "https://www.usereviewflo.com/for-barbers",
+        "status": 308,
+        "location": "/for/barber-shops"
+      },
+      {
+        "url": "https://www.usereviewflo.com/for/barber-shops",
+        "status": 200,
+        "location": null
+      }
+    ]
+  }
+]

@@ -18,7 +18,6 @@ export default function Document() {
         <meta name="description" content="Intercept negative reviews before they go public. Make getting 5-star reviews effortless." />
         <meta name="keywords" content="review management, customer reviews, business reviews, google reviews, online reputation, feedback management, service business, local business, review collection, bad reviews, 5-star reviews" />
         <meta name="author" content="ReviewFlo" />
-        <meta name="robots" content="index, follow" />
 
         {/* Open Graph / Twitter are set per-page so business pages can use neutral images */}
 

@@ -149,15 +149,15 @@ export default function ReviewPage({ business, accountTierForReview }: PageProps
         <meta name="description" content="How was your recent experience? We'd love to hear your feedback." />
         <meta property="og:title" content={`${business.business_name} - Share Your Experience`} />
         <meta property="og:description" content="How was your recent experience? We'd love to hear your feedback." />
-        <meta property="og:url" content={`https://usereviewflo.com/${business.slug}`} />
-        <meta property="og:image" content={`https://usereviewflo.com/api/og-business?name=${encodeURIComponent(business.business_name)}${displayLogoUrl ? `&logo=${encodeURIComponent(displayLogoUrl)}` : ''}`} />
+        <meta property="og:url" content={`https://www.usereviewflo.com/${business.slug}`} />
+        <meta property="og:image" content={`https://www.usereviewflo.com/api/og-business?name=${encodeURIComponent(business.business_name)}${displayLogoUrl ? `&logo=${encodeURIComponent(displayLogoUrl)}` : ''}`} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:type" content="image/png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${business.business_name} - Share Your Experience`} />
         <meta name="twitter:description" content="How was your recent experience? We'd love to hear your feedback." />
-        <meta name="twitter:image" content={`https://usereviewflo.com/api/og-business?name=${encodeURIComponent(business.business_name)}${displayLogoUrl ? `&logo=${encodeURIComponent(displayLogoUrl)}` : ''}`} />
+        <meta name="twitter:image" content={`https://www.usereviewflo.com/api/og-business?name=${encodeURIComponent(business.business_name)}${displayLogoUrl ? `&logo=${encodeURIComponent(displayLogoUrl)}` : ''}`} />
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 

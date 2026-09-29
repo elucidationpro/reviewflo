@@ -1,0 +1,146 @@
+[
+  {
+    "path": "/for/lash-studios",
+    "chain": [
+      {
+        "url": "http://localhost:3107/for/lash-studios",
+        "status": 308,
+        "location": "/for/eyebrow-lash-studios"
+      },
+      {
+        "url": "http://localhost:3107/for/eyebrow-lash-studios",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "hops": 1
+  },
+  {
+    "path": "/for/lash-studios/",
+    "chain": [
+      {
+        "url": "http://localhost:3107/for/lash-studios/",
+        "status": 308,
+        "location": "/for/eyebrow-lash-studios"
+      },
+      {
+        "url": "http://localhost:3107/for/eyebrow-lash-studios",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "hops": 1
+  },
+  {
+    "path": "/for-barbers",
+    "chain": [
+      {
+        "url": "http://localhost:3107/for-barbers",
+        "status": 308,
+        "location": "/for/barber-shops"
+      },
+      {
+        "url": "http://localhost:3107/for/barber-shops",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "hops": 1
+  },
+  {
+    "path": "/for-barbers/",
+    "chain": [
+      {
+        "url": "http://localhost:3107/for-barbers/",
+        "status": 308,
+        "location": "/for/barber-shops"
+      },
+      {
+        "url": "http://localhost:3107/for/barber-shops",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "hops": 1
+  },
+  {
+    "path": "/privacy",
+    "chain": [
+      {
+        "url": "http://localhost:3107/privacy",
+        "status": 308,
+        "location": "/privacy-policy"
+      },
+      {
+        "url": "http://localhost:3107/privacy-policy",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "hops": 1
+  },
+  {
+    "path": "/privacy/",
+    "chain": [
+      {
+        "url": "http://localhost:3107/privacy/",
+        "status": 308,
+        "location": "/privacy-policy"
+      },
+      {
+        "url": "http://localhost:3107/privacy-policy",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "hops": 1
+  },
+  {
+    "path": "/pricing/",
+    "chain": [
+      {
+        "url": "http://localhost:3107/pricing/",
+        "status": 308,
+        "location": "/pricing"
+      },
+      {
+        "url": "http://localhost:3107/pricing",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "hops": 1
+  },
+  {
+    "path": "/obsidianauto",
+    "chain": [
+      {
+        "url": "http://localhost:3107/obsidianauto",
+        "status": 308,
+        "location": "/obsidian-auto"
+      },
+      {
+        "url": "http://localhost:3107/obsidian-auto",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "hops": 1
+  },
+  {
+    "path": "/obsidianauto/",
+    "chain": [
+      {
+        "url": "http://localhost:3107/obsidianauto/",
+        "status": 308,
+        "location": "/obsidian-auto"
+      },
+      {
+        "url": "http://localhost:3107/obsidian-auto",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "hops": 1
+  }
+]

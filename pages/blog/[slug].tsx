@@ -17,7 +17,7 @@ export default function BlogPostPage({ slug, title, description, publishedAt, ke
   const post = getBlogPost(slug)
   if (!post) return null
   const Content = post.Content
-  const url = `https://usereviewflo.com/blog/${slug}`
+  const url = `https://www.usereviewflo.com/blog/${slug}`
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -28,12 +28,12 @@ export default function BlogPostPage({ slug, title, description, publishedAt, ke
     author: {
       '@type': 'Organization',
       name: 'ReviewFlo',
-      url: 'https://usereviewflo.com',
+      url: 'https://www.usereviewflo.com/',
     },
     publisher: {
       '@type': 'Organization',
       name: 'ReviewFlo',
-      url: 'https://usereviewflo.com',
+      url: 'https://www.usereviewflo.com/',
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -48,7 +48,6 @@ export default function BlogPostPage({ slug, title, description, publishedAt, ke
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords.join(', ')} />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href={url} />
       </Head>
       <Script
         id="blog-jsonld"

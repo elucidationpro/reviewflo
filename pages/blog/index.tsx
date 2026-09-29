@@ -25,7 +25,6 @@ export default function BlogIndexPage({ posts }: BlogIndexPageProps) {
           content="Tips and guides for small businesses on getting more Google reviews, preventing bad reviews, and managing your reputation."
         />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://usereviewflo.com/blog" />
       </Head>
       <BlogPostLayout>
         {/* Hero */}

@@ -69,7 +69,7 @@ export default function ReviewFloFooter({
 
   return (
     <a
-      href="https://usereviewflo.com"
+      href="https://www.usereviewflo.com"
       target="_blank"
       rel="noopener noreferrer"
       className={outerClass}

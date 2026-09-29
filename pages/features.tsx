@@ -218,10 +218,8 @@ export default function FeaturesPage() {
         />
         <meta name="author" content="ReviewFlo" />
 
-        <link rel="canonical" href="https://usereviewflo.com/features" />
 
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://usereviewflo.com/features" />
         <meta
           property="og:title"
           content="ReviewFlo Features — Review Management, Outreach & Automation"

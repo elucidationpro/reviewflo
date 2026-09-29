@@ -7,15 +7,12 @@ import AccountRouteGuard from "@/components/AccountRouteGuard";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Script from "next/script";
+import { canonicalUrl, isPublicPage } from "@/lib/seo";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  // Canonical always uses the Vercel primary domain (www). Do NOT pull from NEXT_PUBLIC_APP_URL
-  // here — if that env var is set to the non-www domain it creates a canonical/redirect loop
-  // because Vercel redirects usereviewflo.com → www.usereviewflo.com.
-  const CANONICAL_ORIGIN = "https://www.usereviewflo.com";
-  const canonicalPath = (router.asPath || "/").split("?")[0] || "/";
-  const canonicalUrl = `${CANONICAL_ORIGIN}${canonicalPath === "/" ? "" : canonicalPath}`;
+  const publicPage = isPublicPage(router.pathname);
+  const pageUrl = canonicalUrl(router.asPath || "/");
   const googleAdsConversionId = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID?.trim();
 
   useEffect(() => {
@@ -56,7 +53,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <PostHogProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href={canonicalUrl} />
+        {publicPage ? <link key="canonical" rel="canonical" href={pageUrl} /> : null}
+        {publicPage ? <meta key="og-url" property="og:url" content={pageUrl} /> : null}
+        {!publicPage ? <meta name="robots" content="noindex, nofollow" /> : null}
       </Head>
       {googleAdsConversionId ? (
         <>
