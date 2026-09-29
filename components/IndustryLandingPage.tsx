@@ -139,26 +139,26 @@ export default function IndustryLandingPage({ industry }: { industry: IndustryDa
         <meta property="og:type" content="website" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta property="og:image" content="https://reviewflo.com/images/reviewflo-og-image.png" />
+        <meta property="og:image" content="https://www.usereviewflo.com/images/reviewflo-og-image.png" />
         <meta property="og:site_name" content="ReviewFlo" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={url} />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content="https://reviewflo.com/images/reviewflo-twitter-image.png" />
+        <meta name="twitter:image" content="https://www.usereviewflo.com/images/reviewflo-twitter-image.png" />
       </Head>
 
       <Script
         id={`industry-faq-jsonld-${industry.slug}`}
         type="application/ld+json"
-        strategy="afterInteractive"
+        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <Script
         id={`industry-softwareapp-jsonld-${industry.slug}`}
         type="application/ld+json"
-        strategy="afterInteractive"
+        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }}
       />
 
