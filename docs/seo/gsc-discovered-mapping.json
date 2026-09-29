@@ -1,0 +1,1864 @@
+{
+  "canonical_host": "https://www.usereviewflo.com",
+  "source": "docs/seo/gsc-discovered.csv",
+  "after_fixes": [
+    {
+      "url": "https://www.usereviewflo.com/blog",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/blog"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/blog"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 278,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/blog/how-to-get-more-google-reviews",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/blog/how-to-get-more-google-reviews"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/blog/how-to-get-more-google-reviews"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 1353,
+      "lastmod": "2026-03-05",
+      "json_ld_types": [
+        "Article"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/blog/how-to-get-more-google-reviews-barbershop",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/blog/how-to-get-more-google-reviews-barbershop"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/blog/how-to-get-more-google-reviews-barbershop"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 1064,
+      "lastmod": "2026-03-05",
+      "json_ld_types": [
+        "Article"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/blog/how-to-prevent-bad-google-reviews",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/blog/how-to-prevent-bad-google-reviews"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/blog/how-to-prevent-bad-google-reviews"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 990,
+      "lastmod": "2026-03-05",
+      "json_ld_types": [
+        "Article"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/blog/how-to-respond-to-negative-google-reviews",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/blog/how-to-respond-to-negative-google-reviews"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/blog/how-to-respond-to-negative-google-reviews"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 1457,
+      "lastmod": "2026-03-05",
+      "json_ld_types": [
+        "Article"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/blog/podium-alternative-small-business",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/blog/podium-alternative-small-business"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/blog/podium-alternative-small-business"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 858,
+      "lastmod": "2026-03-05",
+      "json_ld_types": [
+        "Article"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/demo",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/demo"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/demo"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 183,
+      "lastmod": "2026-04-23",
+      "json_ld_types": [],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/acupuncture",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/acupuncture"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/acupuncture"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 410,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/appliance-repair",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/appliance-repair"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/appliance-repair"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 421,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/auto-detailing-shops",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/auto-detailing-shops"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/auto-detailing-shops"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 409,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/auto-repair-shops",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/auto-repair-shops"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/auto-repair-shops"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 477,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/barber-shops",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/barber-shops"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/barber-shops"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 487,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/bed-and-breakfasts",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/bed-and-breakfasts"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/bed-and-breakfasts"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 437,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/carpet-cleaning",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/carpet-cleaning"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/carpet-cleaning"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 431,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/chiropractors",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/chiropractors"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/chiropractors"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 444,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/collision-repair",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/collision-repair"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/collision-repair"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 416,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/cosmetic-dentistry",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/cosmetic-dentistry"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/cosmetic-dentistry"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 439,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/dance-studios",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/dance-studios"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/dance-studios"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 401,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/day-spas",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/day-spas"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/day-spas"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 435,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/dental-practices",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/dental-practices"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/dental-practices"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 495,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/dermatology-clinics",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/dermatology-clinics"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/dermatology-clinics"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 443,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/dog-grooming",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/dog-grooming"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/dog-grooming"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 473,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/dog-walking",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/dog-walking"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/dog-walking"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 399,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/dry-cleaning",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/dry-cleaning"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/dry-cleaning"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 402,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/estheticians",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/estheticians"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/estheticians"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 404,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/event-venues",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/event-venues"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/event-venues"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 414,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/eyebrow-lash-studios",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/eyebrow-lash-studios"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/eyebrow-lash-studios"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 445,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/flooring-installation",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/flooring-installation"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/flooring-installation"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 428,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/garage-door-repair",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/garage-door-repair"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/garage-door-repair"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 435,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/gutter-cleaning",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/gutter-cleaning"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/gutter-cleaning"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 414,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/hair-salons",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/hair-salons"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/hair-salons"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 463,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/handyman-services",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/handyman-services"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/handyman-services"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 426,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/lawn-care",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/lawn-care"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/lawn-care"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 453,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/makeup-artists",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/makeup-artists"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/makeup-artists"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 416,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/martial-arts-schools",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/martial-arts-schools"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/martial-arts-schools"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 411,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/massage-therapy",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/massage-therapy"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/massage-therapy"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 432,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/medical-spas",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/medical-spas"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/medical-spas"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 495,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/mobile-car-wash",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/mobile-car-wash"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/mobile-car-wash"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 447,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/mobile-dog-grooming",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/mobile-dog-grooming"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/mobile-dog-grooming"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 469,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/mobile-mechanics",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/mobile-mechanics"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/mobile-mechanics"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 427,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/mobile-vet-services",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/mobile-vet-services"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/mobile-vet-services"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 414,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/motels",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/motels"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/motels"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 447,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/moving-companies",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/moving-companies"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/moving-companies"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 445,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/music-lessons",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/music-lessons"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/music-lessons"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 403,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/nail-salons",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/nail-salons"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/nail-salons"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 466,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/nutrition-coaching",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/nutrition-coaching"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/nutrition-coaching"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 415,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/oil-change-services",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/oil-change-services"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/oil-change-services"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 417,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/orthodontists",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/orthodontists"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/orthodontists"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 415,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/personal-training",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/personal-training"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/personal-training"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 460,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/pest-control",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/pest-control"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/pest-control"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 436,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/pet-boarding",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/pet-boarding"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/pet-boarding"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 420,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/pet-sitting",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/pet-sitting"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/pet-sitting"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 416,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/phone-repair",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/phone-repair"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/phone-repair"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 418,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/photography-studios",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/photography-studios"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/photography-studios"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 426,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/pilates-studios",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/pilates-studios"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/pilates-studios"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 426,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/plumbing-services",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/plumbing-services"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/plumbing-services"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 467,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/pool-cleaning",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/pool-cleaning"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/pool-cleaning"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 419,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/pressure-washing",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/pressure-washing"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/pressure-washing"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 472,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/real-estate-agents",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/real-estate-agents"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/real-estate-agents"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 418,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/roofing-contractors",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/roofing-contractors"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/roofing-contractors"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 434,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/rv-parks-campgrounds",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/rv-parks-campgrounds"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/rv-parks-campgrounds"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 424,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/tailoring-alterations",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/tailoring-alterations"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/tailoring-alterations"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 400,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/tanning-salons",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/tanning-salons"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/tanning-salons"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 424,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/tattoo-studios",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/tattoo-studios"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/tattoo-studios"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 436,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/tax-preparation",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/tax-preparation"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/tax-preparation"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 418,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/tire-shops",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/tire-shops"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/tire-shops"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 424,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/transmission-repair",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/transmission-repair"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/transmission-repair"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 408,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/tree-trimming-arborists",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/tree-trimming-arborists"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/tree-trimming-arborists"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 438,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/tutoring-services",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/tutoring-services"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/tutoring-services"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 401,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/wedding-venues",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/wedding-venues"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/wedding-venues"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 461,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/window-cleaning",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/window-cleaning"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/window-cleaning"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 429,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/windshield-repair",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/windshield-repair"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/windshield-repair"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 412,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/for/yoga-studios",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/for/yoga-studios"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/for/yoga-studios"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 433,
+      "lastmod": "2026-09-28",
+      "json_ld_types": [
+        "FAQPage",
+        "SoftwareApplication"
+      ],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/pricing",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/pricing"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/pricing"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 432,
+      "lastmod": "2026-05-12",
+      "json_ld_types": [],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    },
+    {
+      "url": "https://www.usereviewflo.com/privacy-policy",
+      "in_sitemap": true,
+      "status": 200,
+      "canonical": [
+        "https://www.usereviewflo.com/privacy-policy"
+      ],
+      "og_url": [
+        "https://www.usereviewflo.com/privacy-policy"
+      ],
+      "robots": [
+        "index, follow"
+      ],
+      "x_robots_tag": null,
+      "h1_count": 1,
+      "initial_html_words": 518,
+      "lastmod": "2026-03-17",
+      "json_ld_types": [],
+      "redirects": [],
+      "canonical_matches_url": true,
+      "og_matches_url": true
+    }
+  ]
+}
