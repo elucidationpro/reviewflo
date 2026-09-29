@@ -55,6 +55,9 @@ export default function SiteFooter() {
           <div>
             <h4 className="text-sm font-semibold text-gray-900">Product</h4>
             <ul className="mt-3 space-y-2 text-sm text-gray-600">
+              <li><Link href="/features">Features</Link></li>
+              <li><Link href="/demo">Demo</Link></li>
+              <li><Link href="/for">Industries</Link></li>
               <li>
                 <Link
                   href="/#how-it-works"
@@ -123,7 +126,7 @@ export default function SiteFooter() {
               </li>
               <li>
                 <Link
-                  href="/privacy"
+                  href="/privacy-policy"
                   onClick={handleFooterClick('privacy')}
                   className="hover:text-[#4A3428] transition-colors"
                 >
