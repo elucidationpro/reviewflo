@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import Head from 'next/head';
-import Script from 'next/script';
 import Link from 'next/link';
 import { ArrowRight, ChevronDown, Star } from 'lucide-react';
 import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav';
@@ -149,17 +148,18 @@ export default function IndustryLandingPage({ industry }: { industry: IndustryDa
         <meta name="twitter:image" content="https://www.usereviewflo.com/images/reviewflo-twitter-image.png" />
       </Head>
 
-      <Script
+      {/* Plain script tags render in the initial SSR HTML with no next/script
+          lifecycle. Escape "<" to avoid a stray "</script>" in the payload
+          breaking out of the tag. */}
+      <script
         id={`industry-faq-jsonld-${industry.slug}`}
         type="application/ld+json"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }}
       />
-      <Script
+      <script
         id={`industry-softwareapp-jsonld-${industry.slug}`}
         type="application/ld+json"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd).replace(/</g, '\\u003c') }}
       />
 
       <div className="min-h-screen bg-white">
