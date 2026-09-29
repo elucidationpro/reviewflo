@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Private HTML routes (dashboard, admin, auth, join, business pages) must
+# remain crawlable so crawlers can read their noindex metadata.
+Sitemap: https://www.usereviewflo.com/sitemap.xml

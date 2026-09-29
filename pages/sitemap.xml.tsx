@@ -3,24 +3,9 @@ import { getBlogPost } from '@/lib/blog-posts'
 import { getPublishedSlugs } from '@/lib/blog-schedule'
 import { getIndustrySlugs } from '@/lib/industries'
 
-// IMPORTANT: this must match the Vercel primary domain (www is primary; non-www redirects to www).
-const SITE = 'https://www.usereviewflo.com'
-
-/**
- * Public, fixed routes (Pages Router) — excludes dynamic [slug], admin, dashboard, and API routes.
- * Do NOT include pages that have noindex meta tags — they contradict being in a sitemap.
- * Excluded: /qualify, /survey, /feedback, /join, /early-access, /early-access/join (all noindex).
- * Excluded: /privacy (re-export of /privacy-policy; 301 redirect handles old links).
- */
-const STATIC_PATHS: string[] = [
-  '/',
-  '/about',
-  '/pricing',
-  '/terms',
-  '/privacy-policy',
-  '/demo',
-  '/blog',
-]
+import { PUBLIC_PATHS, canonicalUrl } from '@/lib/seo'
+import lastModified from '@/data/seo-lastmod.json'
+import { getScheduleEntry } from '@/lib/blog-schedule'
 
 function escapeXml(unsafe: string): string {
   return unsafe
@@ -31,9 +16,15 @@ function escapeXml(unsafe: string): string {
     .replace(/'/g, '&apos;')
 }
 
-function buildSitemapXml(urls: string[]): string {
-  const body = urls
-    .map((loc) => `  <url><loc>${escapeXml(loc)}</loc></url>`)
+function buildSitemapXml(paths: string[]): string {
+  const body = paths
+    .map((route) => {
+      const contentDate = (lastModified as Record<string, string>)[route]
+      const publishedDate = route.startsWith('/blog/') ? getScheduleEntry(route.slice(6))?.publishDate : undefined
+      // A scheduled article cannot be last modified before it became public.
+      const date = [contentDate, publishedDate].filter(Boolean).sort().at(-1)
+      return `  <url><loc>${escapeXml(canonicalUrl(route))}</loc>${date ? `<lastmod>${date}</lastmod>` : ''}</url>`
+    })
     .join('\n')
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -42,14 +33,14 @@ ${body}
 }
 
 function collectUrls(): string[] {
-  const staticUrls = STATIC_PATHS.map((p) => (p === '/' ? SITE : `${SITE}${p}`))
+  const staticUrls = PUBLIC_PATHS
 
-  const industryUrls = getIndustrySlugs().map((slug) => `${SITE}/for/${encodeURIComponent(slug)}`)
+  const industryUrls = getIndustrySlugs().map((slug) => `/for/${encodeURIComponent(slug)}`)
 
   const published = getPublishedSlugs()
   const blogUrls = [...published]
     .filter((slug) => getBlogPost(slug))
-    .map((slug) => `${SITE}/blog/${encodeURIComponent(slug)}`)
+    .map((slug) => `/blog/${encodeURIComponent(slug)}`)
 
   return Array.from(new Set([...staticUrls, ...industryUrls, ...blogUrls])).sort()
 }
