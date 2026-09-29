@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { canonicalUrl } from './seo'
 
 export interface IndustryFaqItem {
   q: string
@@ -68,6 +69,7 @@ export function getIndustryData(slug: string): IndustryData | null {
   const filePath = path.join(INDUSTRIES_DIR, `${slug}.json`)
   if (!fs.existsSync(filePath)) return null
   const raw = fs.readFileSync(filePath, 'utf8')
-  return JSON.parse(raw) as IndustryData
+  const industry = JSON.parse(raw) as IndustryData
+  return { ...industry, seo: { ...industry.seo, canonicalUrl: canonicalUrl(`/for/${slug}`) } }
 }
 

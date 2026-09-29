@@ -162,15 +162,13 @@ export default function LandingPage() {
         <meta name="author" content="ReviewFlo" />
 
         {/* Canonical URL */}
-        <link rel="canonical" href="https://usereviewflo.com" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://usereviewflo.com" />
         <meta property="og:title" content="ReviewFlo — Review Management for Local Service Businesses" />
         <meta property="og:description" content="ReviewFlo helps local service businesses get more Google reviews automatically — and handle unhappy customers before they post publicly. Free to start. No contracts." />
-        <meta property="og:image" content="https://usereviewflo.com/api/og-homepage" />
-        <meta property="og:image:secure_url" content="https://usereviewflo.com/api/og-homepage" />
+        <meta property="og:image" content="https://www.usereviewflo.com/api/og-homepage" />
+        <meta property="og:image:secure_url" content="https://www.usereviewflo.com/api/og-homepage" />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -179,10 +177,10 @@ export default function LandingPage() {
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://usereviewflo.com" />
+        <meta name="twitter:url" content="https://www.usereviewflo.com/" />
         <meta name="twitter:title" content="ReviewFlo — Review Management for Local Service Businesses" />
         <meta name="twitter:description" content="ReviewFlo helps local service businesses get more Google reviews automatically — and handle unhappy customers before they post publicly. Free to start. No contracts." />
-        <meta name="twitter:image" content="https://usereviewflo.com/api/og-homepage" />
+        <meta name="twitter:image" content="https://www.usereviewflo.com/api/og-homepage" />
         <meta name="twitter:image:alt" content="ReviewFlo - Get more 5-star Google reviews automatically" />
 
         {/* Viewport and Mobile */}
@@ -742,12 +740,12 @@ export default function LandingPage() {
             {[
               { label: 'Barbers', href: '/for/barber-shops' },
               { label: 'Auto Detailers', href: '/for/mobile-auto-detailing' },
-              { label: 'Plumbers' }, // No exact /for/plumbers page (we have plumbing-services)
+              { label: 'Plumbers', href: '/for/plumbing-services' },
               { label: 'Electricians', href: '/for/electricians' },
               { label: 'Cleaners', href: '/for/house-cleaning' },
-              { label: 'HVAC Pros' }, // No exact /for/hvac page (we have hvac-repair)
-              { label: 'Mechanics' }, // No exact /for/auto-repair page (we have auto-repair-shops)
-              { label: 'Landscapers' }, // No exact /for/landscaping page (we have lawn-care)
+              { label: 'HVAC Pros', href: '/for/hvac-repair' },
+              { label: 'Mechanics', href: '/for/auto-repair-shops' },
+              { label: 'Landscapers', href: '/for/lawn-care' },
             ].map((biz) =>
               biz.href ? (
                 <Link

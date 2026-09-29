@@ -1010,7 +1010,7 @@ export default function PitchPage() {
               </div>
             </a>
             <a
-              href="https://usereviewflo.com"
+              href="https://www.usereviewflo.com"
               className="group flex items-center gap-4 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 hover:border-[#C9A961]/60 transition-all p-5"
             >
               <div className="shrink-0 w-10 h-10 rounded-full bg-[#C9A961] flex items-center justify-center">
