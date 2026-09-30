@@ -364,7 +364,7 @@ export default function QualifyPage() {
     <>
       <Head>
         <title>Stop Bad Reviews Before They Go Public | ReviewFlo Free Beta</title>
-        <meta name="description" content="Get 10x more 5-star Google reviews automatically. Free beta until April 2026. Built for plumbers, electricians, detailers & service businesses. No credit card required." />
+        <meta name="description" content="Get 10x more 5-star Google reviews automatically. Free plan available now. Built for plumbers, electricians, detailers & service businesses. No credit card required." />
         <meta name="robots" content="noindex, nofollow" />
         <noscript>
           <img
@@ -422,7 +422,9 @@ fbq('track', 'PageView');`,
                 <p className="text-lg text-gray-600 mb-6">
                   {selectedTier === 'free'
                     ? "You're signed in. Go to your dashboard to start collecting reviews."
-                    : `Your free account is ready! We'll email you when ${selectedTier === 'pro' ? 'Pro' : 'AI'} launches in May 2026. You'll get 50% off for the first 3 months.`}
+                    : selectedTier === 'pro'
+                    ? "Your free account is ready! You can upgrade to Pro anytime in Plan and Billing."
+                    : "Your free account is ready! We'll email you when AI is available."}
                 </p>
                 <button
                   onClick={handleGoToDashboard}
@@ -440,7 +442,7 @@ fbq('track', 'PageView');`,
                   Choose Your Plan
                 </h1>
                 <p className="text-center text-gray-600 mb-6">
-                  You can start with Free today and upgrade when Pro & AI launch in May 2026.
+                  You can start with Free today and upgrade to Pro anytime.
                 </p>
 
                 <div className="space-y-4 mb-8">
@@ -492,11 +494,10 @@ fbq('track', 'PageView');`,
                         ) : null}
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900">PRO – $19/mo</p>
-                        <p className="text-sm text-gray-500">Coming May 2026</p>
-                        <p className="text-sm text-[#4A3428] font-medium">50% off first 3 months ($9.50/mo)</p>
+                        <p className="font-bold text-gray-900">PRO – $29/mo</p>
+                        <p className="text-sm text-gray-500">or $290/year</p>
                         <p className="text-sm text-gray-600 mt-2">
-                          Get notified when Pro launches
+                          Upgrade to Pro anytime
                         </p>
                         <ul className="text-sm text-gray-600 mt-1 space-y-0.5">
                           <li>• Dashboard email sending</li>
@@ -525,8 +526,7 @@ fbq('track', 'PageView');`,
                       </div>
                       <div>
                         <p className="font-bold text-gray-900">AI – $49/mo</p>
-                        <p className="text-sm text-gray-500">Coming May 2026</p>
-                        <p className="text-sm text-[#4A3428] font-medium">50% off first 3 months ($24.50/mo)</p>
+                        <p className="text-sm text-gray-500">Coming soon</p>
                         <p className="text-sm text-gray-600 mt-2">
                           Get notified when AI launches
                         </p>
@@ -697,12 +697,8 @@ fbq('track', 'PageView');`,
                       <p className="text-lg text-gray-800 mb-3 leading-relaxed">
                         Use ReviewFlo <strong>completely free</strong> while we test and fix bugs.
                       </p>
-                      <p className="text-base text-gray-700 mb-3">
-                        <strong>Official launch:</strong> April 2026
-                      </p>
                       <p className="text-base text-gray-700">
-                        Beta testers get <strong>50% off first 3 months</strong> when we launch<br />
-                        <span className="text-sm text-gray-600">($9.50 or $24.50/month vs $19-49/month)</span>
+                        Upgrade to Pro anytime for <strong>$29/month</strong> or <strong>$290/year</strong>.
                       </p>
                     </div>
 
@@ -946,7 +942,7 @@ fbq('track', 'PageView');`,
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
                     <div className="flex flex-col items-center">
                       <CheckCircle className="w-6 h-6 text-[#C9A961] mb-1" />
-                      <p className="text-xs font-bold text-[#4A3428]">Free Until April 2026</p>
+                      <p className="text-xs font-bold text-[#4A3428]">Free Plan Available</p>
                     </div>
                     <div className="flex flex-col items-center">
                       <CheckCircle className="w-5 h-5 text-[#C9A961] mb-1" />
@@ -977,37 +973,33 @@ fbq('track', 'PageView');`,
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <details className="mb-6">
                   <summary className="cursor-pointer text-center text-base font-semibold text-[#4A3428] hover:text-[#C9A961] transition-colors py-2">
-                    See pricing after beta ends (April 2026) ▼
+                    See pricing ▼
                   </summary>
 
                   <div className="mt-6 bg-gradient-to-br from-[#F5F5DC] to-white border-2 border-[#C9A961]/30 rounded-xl p-6 sm:p-8">
                     <h3 className="text-center text-lg font-bold text-gray-900 mb-6">
-                      After Beta Ends (April 2026):
+                      Pricing:
                     </h3>
 
                     <div className="grid md:grid-cols-2 gap-6 mb-6">
                       {/* Basic Plan */}
                       <div className="bg-white rounded-lg p-6 border-2 border-gray-200">
                         <div className="text-center mb-4">
-                          <h4 className="text-2xl font-bold text-gray-900">BASIC</h4>
-                          <p className="text-3xl font-bold text-[#4A3428] mt-2">$19<span className="text-lg font-normal text-gray-600">/month</span></p>
+                          <h4 className="text-2xl font-bold text-gray-900">FREE</h4>
+                          <p className="text-3xl font-bold text-[#4A3428] mt-2">$0<span className="text-lg font-normal text-gray-600">/month</span></p>
                         </div>
                         <ul className="space-y-2 text-sm text-gray-700">
                           <li className="flex items-start">
                             <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>Review automation</span>
+                            <span>Stop bad reviews</span>
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>Negative interception</span>
+                            <span>Google Reviews</span>
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>Email notifications</span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>Templates</span>
+                            <span>Manual sending</span>
                           </li>
                         </ul>
                       </div>
@@ -1019,24 +1011,25 @@ fbq('track', 'PageView');`,
                         </div>
                         <div className="text-center mb-4">
                           <h4 className="text-2xl font-bold text-gray-900">PRO</h4>
-                          <p className="text-3xl font-bold text-[#4A3428] mt-2">$49<span className="text-lg font-normal text-gray-600">/month</span></p>
+                          <p className="text-3xl font-bold text-[#4A3428] mt-2">$29<span className="text-lg font-normal text-gray-600">/month</span></p>
+                          <p className="text-sm text-gray-600">or $290/year</p>
                         </div>
                         <ul className="space-y-2 text-sm text-gray-700">
                           <li className="flex items-start">
                             <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>Everything in Basic</span>
+                            <span>Everything in Free</span>
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>AI review drafts</span>
+                            <span>Dashboard email sending</span>
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>Reply management</span>
+                            <span>Auto follow-ups</span>
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>Priority support</span>
+                            <span>Multi-platform</span>
                           </li>
                         </ul>
                       </div>
@@ -1049,15 +1042,6 @@ fbq('track', 'PageView');`,
                       </p>
                     </div>
 
-                    {/* Beta Discount Reminder */}
-                    <div className="bg-[#C9A961]/20 border border-[#C9A961] rounded-lg p-4 text-center">
-                      <p className="font-bold text-gray-900">
-                        Beta testers get <span className="text-[#4A3428]">50% off first 3 months</span>
-                      </p>
-                      <p className="text-sm text-gray-700 mt-1">
-                        ($9.50 or $24.50/mo instead of $19-49/mo)
-                      </p>
-                    </div>
                   </div>
                 </details>
               </div>

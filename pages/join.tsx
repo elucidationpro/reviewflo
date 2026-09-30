@@ -166,7 +166,7 @@ export default function JoinPage() {
     <>
       <Head>
         <title>Stop Bad Reviews Before They Go Public | ReviewFlo</title>
-        <meta name="description" content="Get 10x more 5-star Google reviews automatically. Free forever. Pro & AI tiers coming May 2026. Built for plumbers, electricians, detailers & service businesses. No credit card required." />
+        <meta name="description" content="Get 10x more 5-star Google reviews automatically. Free forever. Pro available now. Built for plumbers, electricians, detailers & service businesses. No credit card required." />
         <meta name="robots" content="noindex, nofollow" />
         <noscript>
           <img
@@ -466,7 +466,7 @@ fbq('track', 'PageView');`,
                       </form>
 
                       <p className="mt-6 text-center text-sm text-gray-500">
-                        Want more features? Pro ($19/mo) and AI ($49/mo) tiers launching May 2026. Early signups get 50% off first 3 months.
+                        Want more features? Pro is $29/mo or $290/year. AI ($49/mo) coming soon.
                       </p>
                       <p className="mt-2 text-center">
                         <Link

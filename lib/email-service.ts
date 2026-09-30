@@ -663,9 +663,9 @@ export async function sendProLaunchEmail(data: ProLaunchEmailData) {
         '<strong>Multi-location support</strong> - Pro supports up to 3 locations from a single account.',
       ]) +
       `<div style="background:#fef3c7;border-left:4px solid #C9A961;border-radius:8px;padding:18px 20px;margin:8px 0 14px;">
-        <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4A3428;opacity:0.7;">Launch pricing</p>
-        <p style="margin:0 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:32px;font-weight:700;color:#4A3428;line-height:1;">$9.50<span style="font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:500;color:#6b5d52;">/mo</span> <span style="font-size:17px;color:#6b5d52;text-decoration:line-through;margin-left:8px;">$19/mo</span></p>
-        <p style="margin:0;font-size:14px;line-height:1.6;color:#4A3428;">$9.50/mo for your first 3 months. Then $19/mo. <strong>Lock in the rate before it ends.</strong></p>
+        <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4A3428;opacity:0.7;">Pro pricing</p>
+        <p style="margin:0 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:32px;font-weight:700;color:#4A3428;line-height:1;">$29<span style="font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:500;color:#6b5d52;">/mo</span></p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#4A3428;">$29/mo, or save with $290/year.</p>
       </div>` +
       toParagraph('No credit card surprises. Cancel anytime.')
 
@@ -677,7 +677,7 @@ export async function sendProLaunchEmail(data: ProLaunchEmailData) {
         title: 'ReviewFlo Pro is here.',
         eyebrow: 'Now available - Pro',
         bodyHtml,
-        ctaLabel: 'Start Pro for $9.50',
+        ctaLabel: 'Start Pro for $29/mo',
         ctaUrl,
         unsubscribeUrl: unsubUrl,
       }),
