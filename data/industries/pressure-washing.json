@@ -21,7 +21,7 @@
         "label": "free plan available"
       },
       {
-        "value": "$19/mo",
+        "value": "$29/mo",
         "label": "ReviewFlo Pro"
       },
       {
@@ -29,7 +29,7 @@
         "label": "Podium"
       }
     ],
-    "callout": "$270/month cheaper than Podium."
+    "callout": "$260/month cheaper than Podium."
   },
   "socialProof": {
     "text": "Built for pressure and soft washing crews"
@@ -84,8 +84,8 @@
         "body": "No extra setup per neighborhood."
       },
       {
-        "heading": "$270/month cheaper than Podium",
-        "body": "Podium is $289/month. ReviewFlo Pro is $19/month, and there’s a free plan."
+        "heading": "$260/month cheaper than Podium",
+        "body": "Podium is $289/month. ReviewFlo Pro is $29/month (or $290/year), and there’s a free plan."
       }
     ]
   },
