@@ -346,6 +346,7 @@ export default function SettingsPage() {
   const [proCheckoutLoading, setProCheckoutLoading] = useState(false)
   const [proCheckoutError, setProCheckoutError] = useState('')
   const [proCheckoutRequestId, setProCheckoutRequestId] = useState('')
+  const [proBillingInterval, setProBillingInterval] = useState<'month' | 'year'>('month')
   const [showManualGoogle, setShowManualGoogle] = useState(false)
   const [activeSection, setActiveSection] = useState<
     'profile' | 'branding' | 'links' | 'flow' | 'plan' | 'sms' | 'crm' | 'ai-features' | 'locations'
@@ -602,7 +603,7 @@ export default function SettingsPage() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${session.access_token}`,
           },
-          body: JSON.stringify({ businessId: businessData.id }),
+          body: JSON.stringify({ businessId: businessData.id, plan: 'pro', interval: proBillingInterval }),
           signal: timeoutController.signal,
         })
       } catch (fetchErr) {
@@ -1830,11 +1831,6 @@ export default function SettingsPage() {
                         {currentPlanLabel}
                       </span>
                     </div>
-                    {businessData.launch_discount_eligible && (
-                      <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
-                        You qualify for <span className="font-semibold">50% off</span> the first 3 months when you subscribe to Pro or AI (eligibility is applied at checkout).
-                      </p>
-                    )}
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="rounded-xl border border-[#4A3428]/15 bg-white p-4 space-y-3">
                         <div className="flex items-start justify-between gap-2">
@@ -1854,24 +1850,61 @@ export default function SettingsPage() {
                           )}
                         </div>
                         {businessData.tier === 'free' && (
-                          <button
-                            type="button"
-                            onClick={() => { void handleProCheckout() }}
-                            disabled={proCheckoutLoading || planSaving}
-                            className="w-full px-3.5 py-2.5 bg-[#4A3428] text-white rounded-lg text-xs font-semibold hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer inline-flex items-center justify-center gap-2"
-                          >
-                            {proCheckoutLoading ? (
-                              <>
-                                <svg className="animate-spin h-4 w-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" aria-hidden>
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                </svg>
-                                Starting checkout…
-                              </>
-                            ) : (
-                              'Upgrade to Pro'
+                          <>
+                            <div
+                              role="radiogroup"
+                              aria-label="Pro billing interval"
+                              className="inline-flex rounded-lg border border-[#4A3428]/20 bg-[#F5F5DC]/30 p-0.5 text-xs font-semibold"
+                            >
+                              <button
+                                type="button"
+                                role="radio"
+                                aria-checked={proBillingInterval === 'month'}
+                                onClick={() => setProBillingInterval('month')}
+                                disabled={proCheckoutLoading || planSaving}
+                                className={`px-3 py-1.5 rounded-md transition-colors disabled:opacity-60 cursor-pointer ${
+                                  proBillingInterval === 'month' ? 'bg-[#4A3428] text-white' : 'text-[#4A3428]'
+                                }`}
+                              >
+                                Monthly — $29/mo
+                              </button>
+                              <button
+                                type="button"
+                                role="radio"
+                                aria-checked={proBillingInterval === 'year'}
+                                onClick={() => setProBillingInterval('year')}
+                                disabled={proCheckoutLoading || planSaving}
+                                className={`px-3 py-1.5 rounded-md transition-colors disabled:opacity-60 cursor-pointer ${
+                                  proBillingInterval === 'year' ? 'bg-[#4A3428] text-white' : 'text-[#4A3428]'
+                                }`}
+                              >
+                                Annual — $290/yr
+                              </button>
+                            </div>
+                            {proBillingInterval === 'year' && (
+                              <p className="text-[11px] text-gray-500">Billed once per year at $290. Equivalent to $24.17/mo.</p>
                             )}
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => { void handleProCheckout() }}
+                              disabled={proCheckoutLoading || planSaving}
+                              className="w-full px-3.5 py-2.5 bg-[#4A3428] text-white rounded-lg text-xs font-semibold hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer inline-flex items-center justify-center gap-2"
+                            >
+                              {proCheckoutLoading ? (
+                                <>
+                                  <svg className="animate-spin h-4 w-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" aria-hidden>
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                  </svg>
+                                  Starting checkout…
+                                </>
+                              ) : proBillingInterval === 'year' ? (
+                                'Upgrade to Pro — billed annually'
+                              ) : (
+                                'Upgrade to Pro'
+                              )}
+                            </button>
+                          </>
                         )}
                         {businessData.tier === 'ai' && (
                           <p className="text-xs text-gray-500">Everything in Pro is included on the AI tier.</p>

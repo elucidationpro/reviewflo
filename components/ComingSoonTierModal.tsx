@@ -13,8 +13,7 @@ interface ComingSoonTierModalProps {
 }
 
 const TIER_LABELS: Record<ComingSoonTier, string> = { pro: 'Pro', ai: 'AI' };
-const DISCOUNT_PRICE: Record<ComingSoonTier, string> = { pro: '$9.50/mo', ai: '$24.50/mo' };
-const REGULAR_PRICE: Record<ComingSoonTier, string> = { pro: '$19', ai: '$49' };
+const REGULAR_PRICE: Record<ComingSoonTier, string> = { pro: '$29/mo (or $290/yr)', ai: '$49/mo' };
 
 export default function ComingSoonTierModal({
   open,
@@ -47,7 +46,6 @@ export default function ComingSoonTierModal({
   if (!open) return null;
 
   const label = TIER_LABELS[tier];
-  const discountPrice = DISCOUNT_PRICE[tier];
   const regularPrice = REGULAR_PRICE[tier];
   const isPro = tier === 'pro';
 
@@ -102,14 +100,12 @@ export default function ComingSoonTierModal({
             ) : (
               <li>We&apos;ll email you when {label} launches</li>
             )}
-            <li>Eligible signups: 50% off for the first 3 months at checkout</li>
           </ol>
 
-          <p className="font-semibold text-gray-900 text-sm mb-2">Launch pricing (when you subscribe):</p>
-          <p className="text-gray-600 text-sm mb-1">
-            {label}: {discountPrice} for first 3 months
+          <p className="font-semibold text-gray-900 text-sm mb-2">Pricing:</p>
+          <p className="text-gray-600 text-sm mb-4">
+            {label}: {regularPrice}
           </p>
-          <p className="text-gray-500 text-xs mb-4">(Regular price: {regularPrice}/mo after discount)</p>
 
           <label className="flex items-start gap-3 cursor-pointer mb-6">
             <input

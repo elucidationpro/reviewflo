@@ -5,6 +5,14 @@ import { firstNonLatin1Index } from '../../lib/stripe-env-ascii'
 import { isPaidTier } from '../../lib/tier-permissions'
 import { resolveCheckoutBaseUrl } from '../../lib/stripe-checkout-config'
 import {
+  parseBillingInterval,
+  parsePlan,
+  proPriceEnvVar,
+  resolveProPriceId,
+  validateProPrice,
+  type BillingInterval,
+} from '../../lib/billing-plans'
+import {
   billingError,
   classifyCheckoutError,
   getBillingSupabaseAdmin,
@@ -20,72 +28,6 @@ function resolveAccountRootId(row: Record<string, unknown>): string {
 
 function subscriptionGrantsPaid(status: Stripe.Subscription.Status): boolean {
   return status === 'active' || status === 'trialing' || status === 'past_due'
-}
-
-/**
- * Stripe Checkout reliably applies server-side discounts via `discounts: [{ coupon }]`
- * (see https://docs.stripe.com/payments/checkout/discounts ). Promotion code objects
- * (`promo_…`) sometimes do not change the subscription line item until restrictions
- * match; we resolve unrestricted promos to their underlying coupon for Checkout.
- *
- * Use `STRIPE_LAUNCH_COUPON_ID` with the Dashboard **ID** (e.g. `cRmgHIfI` or `coupon_…`) to skip lookup.
- */
-async function buildLaunchDiscounts(stripe: Stripe): Promise<Stripe.Checkout.SessionCreateParams.Discount[]> {
-  const couponEnv = process.env.STRIPE_LAUNCH_COUPON_ID?.trim()
-  if (couponEnv) {
-    try {
-      // Validate early so we can return a clear, actionable error.
-      const c = await stripe.coupons.retrieve(couponEnv)
-      return [{ coupon: c.id }]
-    } catch (err: unknown) {
-      // Common operator issue: mixed-case custom coupon IDs copied with wrong case.
-      const stripeErr = err as Stripe.errors.StripeError & { code?: string }
-      if (stripeErr?.code === 'resource_missing') {
-        try {
-          const page = await stripe.coupons.list({ limit: 100 })
-          const caseInsensitiveMatch = page.data.find((c) => c.id.toLowerCase() === couponEnv.toLowerCase())
-          if (caseInsensitiveMatch) {
-            return [{ coupon: caseInsensitiveMatch.id }]
-          }
-        } catch {
-          // If listing fails, preserve original error path below.
-        }
-      }
-      throw err
-    }
-  }
-
-  const promoOrCoupon = process.env.STRIPE_LAUNCH_PROMO_ID?.trim()
-  if (!promoOrCoupon) {
-    throw new Error('Set STRIPE_LAUNCH_COUPON_ID or STRIPE_LAUNCH_PROMO_ID for the launch discount.')
-  }
-
-  if (promoOrCoupon.startsWith('coupon_')) {
-    return [{ coupon: promoOrCoupon }]
-  }
-
-  if (!promoOrCoupon.startsWith('promo_')) {
-    throw new Error('STRIPE_LAUNCH_PROMO_ID must be a promotion code id (promo_…) or coupon id (coupon_).')
-  }
-
-  const pc = await stripe.promotionCodes.retrieve(promoOrCoupon)
-
-  if (!pc.active) {
-    throw new Error(`Promotion code ${promoOrCoupon} is not active in Stripe (expired, max redemptions, or disabled).`)
-  }
-
-  const restrictedToCustomer = pc.customer != null
-  const firstTimeOnly = pc.restrictions?.first_time_transaction === true
-  if (restrictedToCustomer || firstTimeOnly) {
-    return [{ promotion_code: promoOrCoupon }]
-  }
-
-  const c = pc.promotion?.coupon
-  if (pc.promotion?.type !== 'coupon' || !c) {
-    throw new Error('Promotion code is not linked to a coupon (unexpected promotion type).')
-  }
-  const couponId = typeof c === 'string' ? c : (c as Stripe.Coupon).id
-  return [{ coupon: couponId }]
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -125,29 +67,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json(billingError('config_error', requestId))
   }
 
-  const priceId = process.env.STRIPE_PRO_PRICE_ID
-  if (!priceId) {
-    logBillingError('create-checkout-session.config', requestId, undefined, { missing: 'STRIPE_PRO_PRICE_ID' })
-    return res.status(500).json(billingError('config_error', requestId))
+  const plan = parsePlan(req.body?.plan)
+  if (!plan) {
+    return res.status(400).json(billingError('invalid_request', requestId))
   }
 
-  const launchCouponId = process.env.STRIPE_LAUNCH_COUPON_ID?.trim()
-  const launchPromoId = process.env.STRIPE_LAUNCH_PROMO_ID?.trim()
-  if (!launchCouponId && !launchPromoId) {
-    logBillingError('create-checkout-session.config', requestId, undefined, {
-      missing: 'STRIPE_LAUNCH_COUPON_ID_OR_PROMO_ID',
-    })
+  const interval = parseBillingInterval(req.body?.interval) as BillingInterval | null
+  if (!interval) {
+    return res.status(400).json(billingError('invalid_request', requestId))
+  }
+
+  const priceEnvVar = proPriceEnvVar(interval)
+  const priceId = resolveProPriceId(interval)
+  if (!priceId) {
+    logBillingError('create-checkout-session.config', requestId, undefined, { missing: priceEnvVar })
     return res.status(500).json(billingError('config_error', requestId))
   }
 
   const trimmedSecret = secretKey.trim()
-  const trimmedPrice = priceId.trim()
+  const trimmedPrice = priceId
 
   const asciiChecks: Array<[string, string | null]> = [
     ['STRIPE_SECRET_KEY', trimmedSecret],
-    ['STRIPE_PRO_PRICE_ID', trimmedPrice],
-    ['STRIPE_LAUNCH_COUPON_ID', launchCouponId ?? null],
-    ['STRIPE_LAUNCH_PROMO_ID', launchPromoId ?? null],
+    [priceEnvVar, trimmedPrice],
   ]
   for (const [name, value] of asciiChecks) {
     if (!value) continue
@@ -243,7 +185,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
 
     // Safety net: if DB tier is stale but Stripe already has an active/trialing/past_due
-    // subscription for this customer, heal DB and block creating a duplicate checkout.
+    // subscription for this customer, block creating a duplicate checkout. Do NOT write
+    // to the DB here — an unauthenticated-by-webhook, unconditional tier write from this
+    // route would bypass the race/admin-override protections the webhook sync applies.
+    // The webhook (or a verified confirmation flow) is the only safe place to reconcile tier.
     if (stripeCustomerId) {
       const existingSubs = await stripe.subscriptions.list({
         customer: stripeCustomerId,
@@ -252,18 +197,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
       const paidSub = existingSubs.data.find((sub) => subscriptionGrantsPaid(sub.status))
       if (paidSub) {
-        const { error: healErr } = await supabaseAdmin
-          .from('businesses')
-          .update({
-            tier: 'pro',
-            stripe_customer_id: stripeCustomerId,
-            stripe_subscription_id: paidSub.id,
-          })
-          .eq('id', String(rootRow.id))
-        if (healErr) {
-          logBillingError('create-checkout-session.heal-tier', requestId, healErr, { reason: 'db_error' })
-        }
-
         return res.status(403).json(billingError('already_subscribed', requestId))
       }
     }
@@ -275,17 +208,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (knownSubId) {
       const sub = await stripe.subscriptions.retrieve(knownSubId)
       if (subscriptionGrantsPaid(sub.status)) {
-        const { error: healErr } = await supabaseAdmin
-          .from('businesses')
-          .update({
-            tier: 'pro',
-            ...(stripeCustomerId ? { stripe_customer_id: stripeCustomerId } : {}),
-            stripe_subscription_id: sub.id,
-          })
-          .eq('id', String(rootRow.id))
-        if (healErr) {
-          logBillingError('create-checkout-session.heal-tier', requestId, healErr, { reason: 'db_error' })
-        }
         return res.status(403).json(billingError('already_subscribed', requestId))
       }
     }
@@ -308,25 +230,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    let discounts: Stripe.Checkout.SessionCreateParams.Discount[]
-    try {
-      discounts = await buildLaunchDiscounts(stripe)
-    } catch (discountErr) {
-      logBillingError(
-        'create-checkout-session.discounts',
-        requestId,
-        discountErr,
-        discountErr instanceof Stripe.errors.StripeError
-          ? undefined
-          : { detail: discountErr instanceof Error ? discountErr.message : undefined }
-      )
+    const isLiveKey = trimmedSecret.startsWith('sk_live_') || trimmedSecret.startsWith('rk_live_')
+    const price = await stripe.prices.retrieve(trimmedPrice)
+    const priceMismatch = validateProPrice(price, interval, isLiveKey)
+    if (priceMismatch) {
+      logBillingError('create-checkout-session.price-validation', requestId, undefined, {
+        reason: priceMismatch,
+        priceEnvVar,
+      })
       return res.status(500).json(billingError('config_error', requestId))
     }
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       line_items: [{ price: trimmedPrice, quantity: 1 }],
-      discounts,
+      allow_promotion_codes: true,
       success_url: `${baseUrl}/dashboard?checkout=success`,
       cancel_url: `${baseUrl}/settings?section=plan`,
       client_reference_id: user.id,
@@ -342,12 +260,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           source: 'pro_subscription',
           business_id: String(rootRow.id),
           supabase_user_id: user.id,
+          plan,
+          billing_interval: interval,
         },
       },
       metadata: {
         source: 'pro_subscription',
         business_id: String(rootRow.id),
         supabase_user_id: user.id,
+        plan,
+        billing_interval: interval,
       },
     })
 

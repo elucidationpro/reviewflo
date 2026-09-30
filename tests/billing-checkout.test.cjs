@@ -25,6 +25,14 @@ class FakeStripeInvalidRequestError extends FakeStripeError {}
 class FakeStripeRateLimitError extends FakeStripeError {}
 class FakeStripeAPIError extends FakeStripeError {}
 
+const VALID_PRO_MONTHLY_PRICE = {
+  active: true,
+  currency: 'usd',
+  unit_amount: 2900,
+  recurring: { interval: 'month', interval_count: 1 },
+  livemode: false,
+}
+
 let stripeImpl = null
 function FakeStripeCtor(secretKey, opts) {
   if (!stripeImpl) throw new Error('test bug: stripeImpl not configured before constructing Stripe client')
@@ -64,6 +72,14 @@ function makeStripeInstance(overrides = {}) {
         (async () => {
           throw new Error('test bug: promotionCodes.retrieve not stubbed for this test')
         }),
+    },
+    prices: {
+      retrieve:
+        overrides.pricesRetrieve ||
+        (async (id) =>
+          id === 'price_pro_annual'
+            ? { ...VALID_PRO_MONTHLY_PRICE, id, unit_amount: 29000, recurring: { interval: 'year', interval_count: 1 } }
+            : { ...VALID_PRO_MONTHLY_PRICE, id }),
     },
     checkout: {
       sessions: {
@@ -189,10 +205,12 @@ require('ts-node').register({ transpileOnly: true, compilerOptions: { module: 'C
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.test'
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'unit-test-key'
 process.env.STRIPE_SECRET_KEY = 'sk_test_default1234567890'
-process.env.STRIPE_PRO_PRICE_ID = 'price_default'
-process.env.STRIPE_LAUNCH_COUPON_ID = 'coupon_launch'
+process.env.STRIPE_PRO_MONTHLY_PRICE_ID = 'price_pro_monthly'
+process.env.STRIPE_PRO_ANNUAL_PRICE_ID = 'price_pro_annual'
+delete process.env.STRIPE_PRO_PRICE_ID
 delete process.env.VERCEL_ENV
 delete process.env.CHECKOUT_BASE_URL
+delete process.env.STRIPE_LAUNCH_COUPON_ID
 delete process.env.STRIPE_LAUNCH_PROMO_ID
 
 // ---------------------------------------------------------------------------
@@ -411,6 +429,38 @@ test('create-checkout-session returns config_error when STRIPE_SECRET_KEY is mis
   })
 })
 
+test('create-checkout-session returns config_error when the monthly price env var is missing', async () => {
+  resetScenario()
+  await withEnv({ STRIPE_PRO_MONTHLY_PRICE_ID: undefined }, async () => {
+    const handler = loadCreateCheckoutSession()
+    const req = makeReq({ authorization: 'Bearer token' })
+    const res = makeRes()
+    await handler(req, res)
+    assert.equal(res.statusCode, 500)
+    assert.equal(res.body.reason, 'config_error')
+  })
+})
+
+test('create-checkout-session rejects an unsupported plan', async () => {
+  resetScenario()
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token', body: { plan: 'ai' } })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 400)
+  assert.equal(res.body.reason, 'invalid_request')
+})
+
+test('create-checkout-session rejects an unsupported billing interval', async () => {
+  resetScenario()
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token', body: { interval: 'week' } })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 400)
+  assert.equal(res.body.reason, 'invalid_request')
+})
+
 test('create-checkout-session blocks access to a business owned by another user', async () => {
   resetScenario()
   scenario.rows = [
@@ -451,7 +501,7 @@ test('create-checkout-session surfaces a business-lookup DB error safely, withou
   assert.ok(!logged.includes('permission denied'))
 })
 
-test('create-checkout-session swallows a heal-tier DB update error without leaking the raw message', async () => {
+test('create-checkout-session blocks checkout without mutating tier when Stripe already has an active subscription', async () => {
   resetScenario()
   scenario.rows = [
     {
@@ -472,6 +522,7 @@ test('create-checkout-session swallows a heal-tier DB update error without leaki
   const { calls } = await withCapturedConsoleError(() => handler(req, res))
   assert.equal(res.statusCode, 403)
   assert.equal(res.body.reason, 'already_subscribed')
+  assert.equal(scenario.rows[0].tier, 'free')
   const logged = JSON.stringify(calls)
   assert.ok(!logged.includes('permission denied'))
 })
@@ -509,6 +560,7 @@ test('create-checkout-session ignores a spoofed Origin header and a malicious CH
   ]
   let capturedParams = null
   setStripeImpl({
+    pricesRetrieve: async (id) => ({ ...VALID_PRO_MONTHLY_PRICE, id, livemode: true }),
     sessionsCreate: async (params) => {
       capturedParams = params
       return { url: 'https://checkout.stripe.com/test-session' }
@@ -546,6 +598,136 @@ test('create-checkout-session happy path returns a Stripe checkout url for a fre
   assert.equal(res.body.url, 'https://checkout.stripe.com/happy-path-session')
   assert.equal(capturedParams.success_url, 'https://www.usereviewflo.com/dashboard?checkout=success')
   assert.equal(capturedParams.cancel_url, 'https://www.usereviewflo.com/settings?section=plan')
+  assert.equal(capturedParams.allow_promotion_codes, true)
+  assert.equal(capturedParams.discounts, undefined)
+  assert.equal(capturedParams.line_items[0].price, 'price_pro_monthly')
+  assert.equal(capturedParams.metadata.plan, 'pro')
+  assert.equal(capturedParams.metadata.billing_interval, 'month')
+  assert.equal(capturedParams.subscription_data.metadata.plan, 'pro')
+  assert.equal(capturedParams.subscription_data.metadata.billing_interval, 'month')
+})
+
+test('create-checkout-session supports the annual interval and charges the annual price', async () => {
+  resetScenario()
+  scenario.rows = [
+    { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+  ]
+  let capturedParams = null
+  setStripeImpl({
+    sessionsCreate: async (params) => {
+      capturedParams = params
+      return { url: 'https://checkout.stripe.com/annual-session' }
+    },
+  })
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token', body: { interval: 'year' } })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 200)
+  assert.equal(capturedParams.line_items[0].price, 'price_pro_annual')
+  assert.equal(capturedParams.metadata.billing_interval, 'year')
+})
+
+test('create-checkout-session returns config_error when the configured price amount does not match', async () => {
+  resetScenario()
+  scenario.rows = [
+    { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+  ]
+  setStripeImpl({ pricesRetrieve: async (id) => ({ ...VALID_PRO_MONTHLY_PRICE, id, unit_amount: 1900 }) })
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token' })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 500)
+  assert.equal(res.body.reason, 'config_error')
+})
+
+test('create-checkout-session returns config_error when the configured price is archived', async () => {
+  resetScenario()
+  scenario.rows = [
+    { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+  ]
+  setStripeImpl({ pricesRetrieve: async (id) => ({ ...VALID_PRO_MONTHLY_PRICE, id, active: false }) })
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token' })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 500)
+  assert.equal(res.body.reason, 'config_error')
+})
+
+test('create-checkout-session returns config_error when the configured price is one-time (not recurring)', async () => {
+  resetScenario()
+  scenario.rows = [
+    { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+  ]
+  setStripeImpl({ pricesRetrieve: async (id) => ({ ...VALID_PRO_MONTHLY_PRICE, id, recurring: null }) })
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token' })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 500)
+  assert.equal(res.body.reason, 'config_error')
+})
+
+test('create-checkout-session returns config_error when the configured price currency is not usd', async () => {
+  resetScenario()
+  scenario.rows = [
+    { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+  ]
+  setStripeImpl({ pricesRetrieve: async (id) => ({ ...VALID_PRO_MONTHLY_PRICE, id, currency: 'eur' }) })
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token' })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 500)
+  assert.equal(res.body.reason, 'config_error')
+})
+
+test('create-checkout-session returns config_error when a test-mode price is fetched with a live secret key', async () => {
+  resetScenario()
+  scenario.rows = [
+    { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+  ]
+  setStripeImpl({ pricesRetrieve: async (id) => ({ ...VALID_PRO_MONTHLY_PRICE, id, livemode: false }) })
+  await withEnv({ STRIPE_SECRET_KEY: 'sk_live_realkey' }, async () => {
+    const handler = loadCreateCheckoutSession()
+    const req = makeReq({ authorization: 'Bearer token' })
+    const res = makeRes()
+    await handler(req, res)
+    assert.equal(res.statusCode, 500)
+    assert.equal(res.body.reason, 'config_error')
+  })
+})
+
+test('create-checkout-session returns config_error when a live-mode price is fetched with a test secret key', async () => {
+  resetScenario()
+  scenario.rows = [
+    { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+  ]
+  setStripeImpl({ pricesRetrieve: async (id) => ({ ...VALID_PRO_MONTHLY_PRICE, id, livemode: true }) })
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token' })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 500)
+  assert.equal(res.body.reason, 'config_error')
+})
+
+test('create-checkout-session returns config_error when the configured monthly price is actually annual', async () => {
+  resetScenario()
+  scenario.rows = [
+    { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+  ]
+  setStripeImpl({
+    pricesRetrieve: async (id) => ({ ...VALID_PRO_MONTHLY_PRICE, id, recurring: { interval: 'year', interval_count: 1 } }),
+  })
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token' })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 500)
+  assert.equal(res.body.reason, 'config_error')
 })
 
 // ===========================================================================
