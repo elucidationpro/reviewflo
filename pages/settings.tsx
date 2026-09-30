@@ -345,6 +345,7 @@ export default function SettingsPage() {
   const [planError, setPlanError] = useState('')
   const [proCheckoutLoading, setProCheckoutLoading] = useState(false)
   const [proCheckoutError, setProCheckoutError] = useState('')
+  const [proCheckoutRequestId, setProCheckoutRequestId] = useState('')
   const [showManualGoogle, setShowManualGoogle] = useState(false)
   const [activeSection, setActiveSection] = useState<
     'profile' | 'branding' | 'links' | 'flow' | 'plan' | 'sms' | 'crm' | 'ai-features' | 'locations'
@@ -580,30 +581,55 @@ export default function SettingsPage() {
   const handleProCheckout = async () => {
     if (businessData.tier !== 'free' || !businessData.id) return
     setProCheckoutError('')
+    setProCheckoutRequestId('')
     setPlanMessage('')
     setPlanError('')
     setProCheckoutLoading(true)
+    const timeoutController = new AbortController()
+    const timeoutId = setTimeout(() => timeoutController.abort(), 20000)
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) {
         setProCheckoutError('Session expired. Please log in again.')
         return
       }
-      const res = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ businessId: businessData.id }),
-      })
-      const data = (await res.json().catch(() => ({}))) as { error?: string; url?: string }
+
+      let res: Response
+      try {
+        res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ businessId: businessData.id }),
+          signal: timeoutController.signal,
+        })
+      } catch (fetchErr) {
+        if (fetchErr instanceof DOMException && fetchErr.name === 'AbortError') {
+          setProCheckoutError('Checkout is taking longer than expected. Please try again.')
+        } else {
+          setProCheckoutError('Network error. Check your connection and try again.')
+        }
+        return
+      }
+
+      let data: { error?: string; url?: string; requestId?: string } = {}
+      try {
+        data = await res.json()
+      } catch {
+        setProCheckoutError('Received an invalid response from the server. Please try again.')
+        return
+      }
+
       if (!res.ok) {
         setProCheckoutError(data.error || 'Could not start checkout. Please try again.')
+        setProCheckoutRequestId(data.requestId || '')
         return
       }
       if (!data.url) {
         setProCheckoutError('Invalid response from server.')
+        setProCheckoutRequestId(data.requestId || '')
         return
       }
       trackEvent('upgrade_to_pro_checkout_started', { businessId: businessData.id, source: 'settings' })
@@ -612,6 +638,7 @@ export default function SettingsPage() {
       console.error('[Settings] Pro checkout error:', err)
       setProCheckoutError('Something went wrong. Please try again.')
     } finally {
+      clearTimeout(timeoutId)
       setProCheckoutLoading(false)
     }
   }
@@ -1891,7 +1918,22 @@ export default function SettingsPage() {
                     </div>
                     {planMessage && <p className="text-xs text-emerald-700 font-medium">{planMessage}</p>}
                     {planError && <p className="text-xs text-red-600 font-medium">{planError}</p>}
-                    {proCheckoutError && <p className="text-xs text-red-600 font-medium" role="alert">{proCheckoutError}</p>}
+                    {proCheckoutError && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-red-600 font-medium" role="alert">{proCheckoutError}</p>
+                        {proCheckoutRequestId && (
+                          <p className="text-[10px] text-gray-400">Reference: {proCheckoutRequestId}</p>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => { void handleProCheckout() }}
+                          disabled={proCheckoutLoading}
+                          className="text-xs font-semibold text-[#4A3428] hover:underline disabled:opacity-60 cursor-pointer"
+                        >
+                          Retry checkout
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </Card>
               )}

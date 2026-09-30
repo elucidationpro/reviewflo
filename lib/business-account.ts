@@ -105,7 +105,7 @@ export async function getBusinessForRequest(
       error = second.error
     }
 
-    if (error) return { row: null, error: error.message || 'lookup failed' }
+    if (error) return { row: null, error: 'db_error' }
     const match = data as Record<string, unknown> | null
     if (!match) return { row: null, error: 'not found' }
 
@@ -130,7 +130,7 @@ export async function getBusinessForRequest(
     error = second.error
   }
 
-  if (error) return { row: null, error: error.message || 'lookup failed' }
+  if (error) return { row: null, error: 'db_error' }
   const rows = (data as (Record<string, unknown> & BusinessRowWithParent)[] | null) || []
   const primary = pickPrimaryBusinessRow(rows)
   if (!primary) return { row: null, error: 'no business' }
