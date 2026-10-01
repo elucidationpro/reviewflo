@@ -245,8 +245,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       mode: 'subscription',
       line_items: [{ price: trimmedPrice, quantity: 1 }],
       allow_promotion_codes: true,
-      success_url: `${baseUrl}/dashboard?checkout=success`,
-      cancel_url: `${baseUrl}/settings?section=plan`,
+      success_url: `${baseUrl}/dashboard/checkout?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/settings?section=plan&checkout=canceled&billing_interval=${interval}`,
       client_reference_id: user.id,
       ...(stripeCustomerId
         ? { customer: stripeCustomerId }
@@ -278,7 +278,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json(billingError('stripe_error', requestId))
     }
 
-    return res.status(200).json({ url: session.url, requestId })
+    return res.status(200).json({ url: session.url, sessionId: session.id, requestId })
   } catch (error: unknown) {
     const reason = classifyCheckoutError(error)
     logBillingError('create-checkout-session', requestId, error)

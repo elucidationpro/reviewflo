@@ -596,8 +596,14 @@ test('create-checkout-session happy path returns a Stripe checkout url for a fre
   await handler(req, res)
   assert.equal(res.statusCode, 200)
   assert.equal(res.body.url, 'https://checkout.stripe.com/happy-path-session')
-  assert.equal(capturedParams.success_url, 'https://www.usereviewflo.com/dashboard?checkout=success')
-  assert.equal(capturedParams.cancel_url, 'https://www.usereviewflo.com/settings?section=plan')
+  assert.equal(
+    capturedParams.success_url,
+    'https://www.usereviewflo.com/dashboard/checkout?session_id={CHECKOUT_SESSION_ID}'
+  )
+  assert.equal(
+    capturedParams.cancel_url,
+    'https://www.usereviewflo.com/settings?section=plan&checkout=canceled&billing_interval=month'
+  )
   assert.equal(capturedParams.allow_promotion_codes, true)
   assert.equal(capturedParams.discounts, undefined)
   assert.equal(capturedParams.line_items[0].price, 'price_pro_monthly')
