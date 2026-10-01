@@ -72,7 +72,7 @@ export default function PodiumAlternativeSmallBusinessContent() {
             <Link href="/" className="text-[#4A3428] font-medium underline hover:no-underline">ReviewFlo</Link> is built for solo operators and small teams. It does one thing really well: gets you more reviews and stops bad ones from going public. You send customers a feedback link after each job. They rate 1–5 stars. Happy customers (5 stars) get sent to your Google review link. Unhappy ones (1–3 stars) get routed to you privately. You reach out, fix the issue, and the bad review never happens.
           </p>
           <p className="mb-4">
-            Free tier forever. No credit card. Pro and AI tiers launch in May 2026 at $19 and $49/month — still well under $100. No contracts. Cancel anytime. Set up in minutes, not days.
+            Free tier forever. No credit card. Pro is $29/month (or $290/year), and the AI tier is coming soon at $49/month — still well under $100. No contracts. Cancel anytime. Set up in minutes, not days.
           </p>
           <p>
             Think of it as the anti-Podium. Fewer features, lower price, built for businesses that don&apos;t need a whole marketing suite — just more 5-star reviews and fewer 1-stars.
@@ -96,7 +96,7 @@ export default function PodiumAlternativeSmallBusinessContent() {
                 <tr className="border-b border-[#E8DCC8]/60">
                   <td className="py-3 px-4 font-medium">Price</td>
                   <td className="py-3 px-4">$289–$500+/mo</td>
-                  <td className="py-3 px-4">Free tier; Pro $19/mo, AI $49/mo</td>
+                  <td className="py-3 px-4">Free tier; Pro $29/mo, AI $49/mo (coming soon)</td>
                 </tr>
                 <tr className="border-b border-[#E8DCC8]/60">
                   <td className="py-3 px-4 font-medium">Contract</td>

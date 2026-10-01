@@ -323,7 +323,7 @@ export default function LandingPage() {
         <SiteNav variant="marketing" />
         <div className={SITE_NAV_SPACER_CLASS}></div>
         <div className="w-full bg-[#4A3428] text-white text-xs sm:text-sm text-center py-2 px-4">
-          ✨ Pro is now live — launch pricing from $9.50/mo{' '}
+          ✨ Pro is now live — from $29/mo{' '}
           <Link
             href="/pricing"
             className="text-[#C9A961] font-semibold hover:underline"

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
+import { captureFirstTouch, sanitizeAnalyticsProperties } from './checkout-analytics';
 
 // Initialize PostHog only on client side
 if (typeof window !== 'undefined') {
@@ -18,13 +19,42 @@ if (typeof window !== 'undefined') {
       },
       // Capture pageviews automatically
       capture_pageview: false, // We'll handle this manually for better control
+      // Sanitize sensitive URL fragments (e.g. magic-link tokens) out of every automatic
+      // event before it leaves the browser.
+      before_send: (event) => {
+        if (!event) return event;
+        try {
+          if (event.properties) {
+            event.properties = sanitizeAnalyticsProperties(event.properties) as Record<string, any>;
+          }
+        } catch {
+          return null;
+        }
+        return event;
+      },
       // Disable in development to avoid polluting analytics
-      loaded: (posthog) => {
+      loaded: (posthogInstance) => {
         if (process.env.NODE_ENV === 'development') {
-          posthog.opt_out_capturing();
+          posthogInstance.opt_out_capturing();
+        }
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const historicalUtmSource = posthogInstance.get_property('$initial_utm_source');
+          captureFirstTouch(params.get('utm_source'), { historicalUtmSource });
+        } catch {
+          // best effort only
         }
       },
     });
+  } else {
+    // PostHog isn't configured (e.g. missing env vars); still capture first-touch
+    // attribution from the current URL so it's available once analytics comes online.
+    try {
+      const params = new URLSearchParams(window.location.search);
+      captureFirstTouch(params.get('utm_source'));
+    } catch {
+      // best effort only
+    }
   }
 }
 
@@ -74,11 +104,14 @@ export function trackEvent(
 ) {
   try {
     if (typeof window !== 'undefined' && posthog) {
-      posthog.capture(eventName, properties);
+      const sanitizedProperties = properties
+        ? (sanitizeAnalyticsProperties(properties) as Record<string, any>)
+        : properties;
+      posthog.capture(eventName, sanitizedProperties);
     }
-  } catch (error) {
-    // Log error but don't break the app
-    console.error('PostHog tracking error:', error);
+  } catch {
+    // Log a generic message only; never log raw event/property contents.
+    console.error('PostHog tracking error');
   }
 }
 
@@ -94,8 +127,8 @@ export function identifyUser(
     if (typeof window !== 'undefined' && posthog) {
       posthog.identify(userId, properties);
     }
-  } catch (error) {
-    console.error('PostHog identify error:', error);
+  } catch {
+    console.error('PostHog identify error');
   }
 }
 
@@ -108,7 +141,7 @@ export function resetUser() {
     if (typeof window !== 'undefined' && posthog) {
       posthog.reset();
     }
-  } catch (error) {
-    console.error('PostHog reset error:', error);
+  } catch {
+    console.error('PostHog reset error');
   }
 }

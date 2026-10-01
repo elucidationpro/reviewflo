@@ -6,6 +6,14 @@ import { supabase } from '../lib/supabase'
 import OnboardingProgress from '../components/OnboardingProgress'
 import { trackEvent } from '../lib/posthog-provider'
 import {
+  buildCheckoutEventProperties,
+  captureFirstTouch,
+  getCheckoutAttempt,
+  getFirstTouch,
+  shouldEmitCheckoutEvent,
+  startCheckoutAttempt,
+} from '../lib/checkout-analytics'
+import {
   canAccessMultiPlatform,
   canCustomizeReviewPageCopy,
   canRemoveBranding,
@@ -328,6 +336,26 @@ function Toggle({
   )
 }
 
+// Mirrors lib/billing-errors.ts's BillingErrorReason — kept as a literal allowlist (rather than an
+// import) so an unrecognized/forged response value can never flow into analytics as a free-form reason.
+const API_SAFE_FAILURE_REASONS = new Set([
+  'auth_required',
+  'auth_invalid',
+  'not_found',
+  'forbidden',
+  'already_subscribed',
+  'missing_email',
+  'config_error',
+  'invalid_request',
+  'stripe_error',
+  'upstream_timeout',
+  'internal_error',
+])
+
+function parseReturnedBillingInterval(value: unknown): 'month' | 'year' | null {
+  return value === 'month' || value === 'year' ? value : null
+}
+
 // ── Input ────────────────────────────────────────────────────────────────────
 const inputCls =
   'w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C9A961] focus:border-transparent transition'
@@ -345,6 +373,8 @@ export default function SettingsPage() {
   const [planError, setPlanError] = useState('')
   const [proCheckoutLoading, setProCheckoutLoading] = useState(false)
   const [proCheckoutError, setProCheckoutError] = useState('')
+  const [proCheckoutRequestId, setProCheckoutRequestId] = useState('')
+  const [proBillingInterval, setProBillingInterval] = useState<'month' | 'year'>('month')
   const [showManualGoogle, setShowManualGoogle] = useState(false)
   const [activeSection, setActiveSection] = useState<
     'profile' | 'branding' | 'links' | 'flow' | 'plan' | 'sms' | 'crm' | 'ai-features' | 'locations'
@@ -415,6 +445,28 @@ export default function SettingsPage() {
       router.replace('/settings', undefined, { shallow: true })
     }
   }, [router, router.query.error, router.query.success])
+
+  // Only an explicit `checkout=canceled` return, matched against the stored in-flight
+  // attempt, is ever reported as a cancellation — never inferred, and never labeled a failure.
+  useEffect(() => {
+    if (!router.isReady) return
+    if (router.query.checkout !== 'canceled') return
+
+    const attempt = getCheckoutAttempt()
+    // A return URL that names a billing interval must agree with the stored attempt before this
+    // is trusted as that attempt's cancellation — guards against a stale/unrelated attempt in
+    // storage being mislabeled as the cancellation of a different in-flight checkout.
+    const rawInterval = router.query.billing_interval
+    const returnedInterval = parseReturnedBillingInterval(rawInterval)
+    const intervalMatches = rawInterval === undefined || returnedInterval === attempt?.billing_interval
+    if (attempt && intervalMatches && shouldEmitCheckoutEvent(attempt.attemptId, 'checkout_canceled')) {
+      trackEvent('checkout_canceled', buildCheckoutEventProperties(attempt.billing_interval, attempt.utm_source))
+    }
+
+    // Clean the query so a later, new checkout attempt is never mislabeled as canceled on reload.
+    const { checkout: _checkout, ...rest } = router.query
+    router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true })
+  }, [router, router.isReady, router.query.checkout])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -580,38 +632,94 @@ export default function SettingsPage() {
   const handleProCheckout = async () => {
     if (businessData.tier !== 'free' || !businessData.id) return
     setProCheckoutError('')
+    setProCheckoutRequestId('')
     setPlanMessage('')
     setPlanError('')
     setProCheckoutLoading(true)
+
+    // Attribution must be resolved and the attempt persisted before auth/fetch, so a
+    // canceled/interrupted return can still be matched back to this attempt.
+    const firstTouch = getFirstTouch() ?? captureFirstTouch(null)
+    const attempt = startCheckoutAttempt(proBillingInterval, firstTouch.utm_source)
+    const eventProperties = buildCheckoutEventProperties(proBillingInterval, firstTouch.utm_source)
+    const emitCheckoutFailed = (reason: string) => {
+      if (shouldEmitCheckoutEvent(attempt.attemptId, 'checkout_failed')) {
+        trackEvent('checkout_failed', { ...eventProperties, reason })
+      }
+    }
+
+    const timeoutController = new AbortController()
+    const timeoutId = setTimeout(() => timeoutController.abort(), 20000)
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) {
         setProCheckoutError('Session expired. Please log in again.')
+        emitCheckoutFailed('auth')
         return
       }
-      const res = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ businessId: businessData.id }),
-      })
-      const data = (await res.json().catch(() => ({}))) as { error?: string; url?: string }
+
+      let res: Response
+      try {
+        res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            businessId: businessData.id,
+            plan: 'pro',
+            interval: proBillingInterval,
+            utmSource: firstTouch.utm_source,
+          }),
+          signal: timeoutController.signal,
+        })
+      } catch (fetchErr) {
+        if (fetchErr instanceof DOMException && fetchErr.name === 'AbortError') {
+          setProCheckoutError('Checkout is taking longer than expected. Please try again.')
+          emitCheckoutFailed('timeout')
+        } else {
+          setProCheckoutError('Network error. Check your connection and try again.')
+          emitCheckoutFailed('network')
+        }
+        return
+      }
+
+      let data: { error?: string; url?: string; requestId?: string; reason?: string } = {}
+      try {
+        data = await res.json()
+      } catch {
+        setProCheckoutError('Received an invalid response from the server. Please try again.')
+        emitCheckoutFailed('nonJSON')
+        return
+      }
+
       if (!res.ok) {
         setProCheckoutError(data.error || 'Could not start checkout. Please try again.')
+        setProCheckoutRequestId(data.requestId || '')
+        // Prefer the route's own stable, non-leaking reason code when it's one of the known
+        // values; fall back to a generic bucket rather than ever forwarding an arbitrary string.
+        emitCheckoutFailed(API_SAFE_FAILURE_REASONS.has(data.reason || '') ? (data.reason as string) : 'API')
         return
       }
       if (!data.url) {
         setProCheckoutError('Invalid response from server.')
+        setProCheckoutRequestId(data.requestId || '')
+        emitCheckoutFailed('noURL')
         return
       }
+
       trackEvent('upgrade_to_pro_checkout_started', { businessId: businessData.id, source: 'settings' })
+      if (shouldEmitCheckoutEvent(attempt.attemptId, 'checkout_session_created')) {
+        trackEvent('checkout_session_created', eventProperties)
+      }
       window.location.assign(data.url)
     } catch (err) {
       console.error('[Settings] Pro checkout error:', err)
       setProCheckoutError('Something went wrong. Please try again.')
+      emitCheckoutFailed('unexpected')
     } finally {
+      clearTimeout(timeoutId)
       setProCheckoutLoading(false)
     }
   }
@@ -1803,11 +1911,6 @@ export default function SettingsPage() {
                         {currentPlanLabel}
                       </span>
                     </div>
-                    {businessData.launch_discount_eligible && (
-                      <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
-                        You qualify for <span className="font-semibold">50% off</span> the first 3 months when you subscribe to Pro or AI (eligibility is applied at checkout).
-                      </p>
-                    )}
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="rounded-xl border border-[#4A3428]/15 bg-white p-4 space-y-3">
                         <div className="flex items-start justify-between gap-2">
@@ -1827,24 +1930,61 @@ export default function SettingsPage() {
                           )}
                         </div>
                         {businessData.tier === 'free' && (
-                          <button
-                            type="button"
-                            onClick={() => { void handleProCheckout() }}
-                            disabled={proCheckoutLoading || planSaving}
-                            className="w-full px-3.5 py-2.5 bg-[#4A3428] text-white rounded-lg text-xs font-semibold hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer inline-flex items-center justify-center gap-2"
-                          >
-                            {proCheckoutLoading ? (
-                              <>
-                                <svg className="animate-spin h-4 w-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" aria-hidden>
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                </svg>
-                                Starting checkout…
-                              </>
-                            ) : (
-                              'Upgrade to Pro'
+                          <>
+                            <div
+                              role="radiogroup"
+                              aria-label="Pro billing interval"
+                              className="inline-flex rounded-lg border border-[#4A3428]/20 bg-[#F5F5DC]/30 p-0.5 text-xs font-semibold"
+                            >
+                              <button
+                                type="button"
+                                role="radio"
+                                aria-checked={proBillingInterval === 'month'}
+                                onClick={() => setProBillingInterval('month')}
+                                disabled={proCheckoutLoading || planSaving}
+                                className={`px-3 py-1.5 rounded-md transition-colors disabled:opacity-60 cursor-pointer ${
+                                  proBillingInterval === 'month' ? 'bg-[#4A3428] text-white' : 'text-[#4A3428]'
+                                }`}
+                              >
+                                Monthly — $29/mo
+                              </button>
+                              <button
+                                type="button"
+                                role="radio"
+                                aria-checked={proBillingInterval === 'year'}
+                                onClick={() => setProBillingInterval('year')}
+                                disabled={proCheckoutLoading || planSaving}
+                                className={`px-3 py-1.5 rounded-md transition-colors disabled:opacity-60 cursor-pointer ${
+                                  proBillingInterval === 'year' ? 'bg-[#4A3428] text-white' : 'text-[#4A3428]'
+                                }`}
+                              >
+                                Annual — $290/yr
+                              </button>
+                            </div>
+                            {proBillingInterval === 'year' && (
+                              <p className="text-[11px] text-gray-500">Billed once per year at $290. Equivalent to $24.17/mo.</p>
                             )}
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => { void handleProCheckout() }}
+                              disabled={proCheckoutLoading || planSaving}
+                              className="w-full px-3.5 py-2.5 bg-[#4A3428] text-white rounded-lg text-xs font-semibold hover:bg-[#4A3428]/90 transition-colors disabled:opacity-60 cursor-pointer inline-flex items-center justify-center gap-2"
+                            >
+                              {proCheckoutLoading ? (
+                                <>
+                                  <svg className="animate-spin h-4 w-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" aria-hidden>
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                  </svg>
+                                  Starting checkout…
+                                </>
+                              ) : proBillingInterval === 'year' ? (
+                                'Upgrade to Pro — billed annually'
+                              ) : (
+                                'Upgrade to Pro'
+                              )}
+                            </button>
+                          </>
                         )}
                         {businessData.tier === 'ai' && (
                           <p className="text-xs text-gray-500">Everything in Pro is included on the AI tier.</p>
@@ -1891,7 +2031,22 @@ export default function SettingsPage() {
                     </div>
                     {planMessage && <p className="text-xs text-emerald-700 font-medium">{planMessage}</p>}
                     {planError && <p className="text-xs text-red-600 font-medium">{planError}</p>}
-                    {proCheckoutError && <p className="text-xs text-red-600 font-medium" role="alert">{proCheckoutError}</p>}
+                    {proCheckoutError && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-red-600 font-medium" role="alert">{proCheckoutError}</p>
+                        {proCheckoutRequestId && (
+                          <p className="text-[10px] text-gray-400">Reference: {proCheckoutRequestId}</p>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => { void handleProCheckout() }}
+                          disabled={proCheckoutLoading}
+                          className="text-xs font-semibold text-[#4A3428] hover:underline disabled:opacity-60 cursor-pointer"
+                        >
+                          Retry checkout
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </Card>
               )}

@@ -97,8 +97,7 @@ export default function LaunchBanner() {
             </>
           ) : (
             <>
-              Launch Special: Sign up now, get 50% off Pro & AI tiers for first
-              3 months (May 2026) →{' '}
+              Pro is live — dashboard sending, follow-ups, and more →{' '}
               <button
                 type="button"
                 onClick={handleCtaClick}
@@ -124,7 +123,7 @@ export default function LaunchBanner() {
             </>
           ) : (
             <>
-              50% off Pro & AI at launch (May 2026){' '}
+              Pro is live now{' '}
               <button
                 type="button"
                 onClick={handleCtaClick}

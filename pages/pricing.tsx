@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { trackEvent } from '@/lib/posthog-provider';
 import { SiteNav, SITE_NAV_SPACER_CLASS } from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
+import { supabase } from '@/lib/supabase';
 
 function useFadeInOnScroll() {
   const ref = useRef<HTMLElement>(null);
@@ -32,32 +33,32 @@ const FAQ_ITEMS = [
     a: 'Yes. No credit card required, no time limit, no catch. You get core review management features forever at no cost.',
   },
   {
-    q: 'When do Pro and AI tiers launch?',
-    a: "They're available now. Start free and upgrade anytime — no contracts.",
+    q: 'Is Pro available now?',
+    a: "Yes. Start free and upgrade to Pro anytime — no contracts. AI is coming soon; join the waitlist to get notified.",
   },
   {
-    q: "What's included in the 50% launch discount?",
-    a: "Early signups (before May 2026) get 50% off Pro ($9.50/mo) or AI ($24.50/mo) for their first 3 months. After 3 months, regular pricing applies ($19/$49).",
+    q: 'Can I pay for Pro annually?',
+    a: 'Yes. Pro is $29/month or $290/year (billed once annually) — both available from Settings → Plan & Billing.',
   },
   {
     q: 'Can I upgrade or downgrade anytime?',
-    a: 'Yes. No contracts. Switch between tiers or cancel anytime when paid tiers launch.',
+    a: 'Yes. No contracts. Cancel anytime from Settings → Plan & Billing.',
   },
   {
     q: 'Do you offer refunds?',
-    a: 'Yes. 30-day money-back guarantee on paid tiers (Pro & AI) when they launch.',
+    a: 'Yes. 30-day money-back guarantee on Pro.',
   },
   {
     q: 'How does Free tier compare to paid tiers?',
-    a: 'Free gives you core features: stop bad reviews, get Google reviews. Pro adds dashboard sending and automation. AI adds SMS automation and AI-powered features.',
+    a: 'Free gives you core features: stop bad reviews, get Google reviews. Pro adds dashboard sending and automation. AI (coming soon) adds SMS automation and AI-powered features.',
   },
   {
     q: 'What payment methods do you accept?',
-    a: 'Credit card, debit card (via Stripe) for paid tiers when they launch. Free tier requires no payment.',
+    a: 'Credit card or debit card (via Stripe) for Pro. Free tier requires no payment.',
   },
   {
-    q: 'Can I try Pro or AI before paying?',
-    a: 'Start with Free tier now. When Pro/AI launch, you can upgrade and cancel within 30 days for full refund.',
+    q: 'Can I try Pro before paying?',
+    a: 'Start with Free tier now. When you upgrade to Pro, you can cancel within 30 days for a full refund.',
   },
 ];
 
@@ -67,6 +68,7 @@ export default function PricingPage() {
   const faqSection = useFadeInOnScroll();
   const ctaSection = useFadeInOnScroll();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const hasTrackedPageView = useRef(false);
   const hasTrackedComparison = useRef(false);
 
@@ -76,6 +78,14 @@ export default function PricingPage() {
       hasTrackedPageView.current = true;
     }
   }, []);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsLoggedIn(!!user);
+    });
+  }, []);
+
+  const proHref = isLoggedIn ? '/settings?section=plan' : '/join?plan=pro';
 
   useEffect(() => {
     const el = comparisonSection.ref.current;
@@ -111,7 +121,7 @@ export default function PricingPage() {
     <>
       <Head>
         <title>ReviewFlo Pricing - Simple, Transparent Pricing for Review Management</title>
-        <meta name="description" content="ReviewFlo pricing: Start free. Pro $19/mo, AI $49/mo. No contracts. 50% off for early signups for the first 3 months. Compare to Podium, BirdEye, NiceJob." />
+        <meta name="description" content="ReviewFlo pricing: Start free. Pro $29/mo ($290/yr), AI $49/mo coming soon. No contracts. Compare to Podium, BirdEye, NiceJob." />
         <meta name="robots" content="index, follow" />
       </Head>
 
@@ -190,11 +200,14 @@ export default function PricingPage() {
               <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 sm:p-8 flex flex-col relative">
                 <div className="mb-4">
                   <h3 className="text-lg font-bold text-gray-900">PRO</h3>
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-[#4A3428] text-white text-xs font-medium rounded">
+                    Available Now
+                  </span>
                 </div>
                 <div className="mb-4">
-                  <span className="text-3xl font-bold text-gray-900">$19</span>
+                  <span className="text-3xl font-bold text-gray-900">$29</span>
                   <span className="text-gray-600">/month</span>
-                  <p className="text-[#4A3428] text-sm font-medium mt-1">Launch: $9.50/mo*</p>
+                  <p className="text-gray-500 text-sm font-medium mt-1">or $290/year</p>
                 </div>
                 <p className="text-gray-600 text-sm mb-6">For busy operators</p>
                 <div className="mb-6 flex-1">
@@ -219,11 +232,11 @@ export default function PricingPage() {
                   </ul>
                 </div>
                 <Link
-                  href="/join?plan=pro"
+                  href={proHref}
                   onClick={() => handleCtaClick('pro')}
                   className="block w-full text-center px-6 py-3 bg-white text-[#4A3428] border-2 border-[#4A3428] rounded-lg font-semibold hover:bg-[#E8DCC8]/20 transition-all"
                 >
-                  Start with Pro — $19/mo
+                  {isLoggedIn ? 'Upgrade to Pro' : 'Start with Pro — $29/mo'}
                 </Link>
               </div>
 
@@ -234,11 +247,13 @@ export default function PricingPage() {
                 </span>
                 <div className="mb-4 mt-2">
                   <h3 className="text-lg font-bold text-gray-900">AI</h3>
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded">
+                    Coming Soon
+                  </span>
                 </div>
                 <div className="mb-4">
                   <span className="text-3xl font-bold text-gray-900">$49</span>
                   <span className="text-gray-600">/month</span>
-                  <p className="text-[#4A3428] text-sm font-medium mt-1">Launch: $24.50/mo*</p>
                 </div>
                 <p className="text-gray-600 text-sm mb-6">Completely automated</p>
                 <div className="mb-6 flex-1">
@@ -267,23 +282,6 @@ export default function PricingPage() {
                   Coming soon
                 </Link>
               </div>
-            </div>
-
-            <p className="text-center text-gray-500 text-sm mt-6">*50% off first 3 months for early signups</p>
-          </div>
-        </section>
-
-        {/* Launch Discount Callout */}
-        <section className="py-8 sm:py-12 px-4">
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-gradient-to-br from-[#E8DCC8]/50 to-[#C9A961]/20 rounded-xl border-2 border-[#C9A961]/40 p-6 sm:p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Early Signup Bonus</h3>
-              <p className="text-gray-700 mb-4">
-                Sign up now (free) and lock in 50% off Pro or AI tier for the first 3 months.
-              </p>
-              <p className="text-gray-700 mb-2">
-                Free users who upgrade: <strong>$9.50</strong> or <strong>$24.50/mo</strong> for first 3 months (vs $19/$49 regular).
-              </p>
             </div>
           </div>
         </section>
@@ -320,7 +318,7 @@ export default function PricingPage() {
                     const CROSS = '__CROSS__';
                     const rows: [string, string, string, string, string][] = [
                       ['Starting Price', 'FREE', '$289/mo', '$299/mo', '$75/mo'],
-                      ['Starting Paid Price', '$19/mo', 'N/A', 'N/A', 'N/A'],
+                      ['Starting Paid Price', '$29/mo', 'N/A', 'N/A', 'N/A'],
                       ['Contract Required', 'No', '12 mo', '12 mo', 'No'],
                       ['Private Feedback Intercept', CHECK, CROSS, CROSS, CROSS],
                       ['Past customer campaigns (Pro & AI)', CHECK, CROSS, CROSS, CROSS],

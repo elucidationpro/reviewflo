@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
+import { useRouter } from 'next/router'
 import { supabase } from '@/lib/supabase'
+import { readPendingCheckoutSessionId } from '@/lib/pending-checkout'
 
 export interface LocationSummary {
   id: string
@@ -28,6 +30,11 @@ interface BusinessContextValue {
   setViewMode: (mode: 'single' | 'all') => void
   loading: boolean
   refresh: () => Promise<void>
+  /** Same as `refresh`, but reports whether the refetch actually succeeded — callers that need
+   * to distinguish "refetch failed" from "refetch ran and tier is still not updated yet" (e.g.
+   * checkout confirmation) should use this instead of inferring success from the absence of a
+   * thrown exception, which `refresh`/`fetchBusiness` never throw. */
+  refreshWithResult: () => Promise<boolean>
 }
 
 const BusinessContext = createContext<BusinessContextValue | null>(null)
@@ -36,6 +43,7 @@ const STORAGE_KEY = 'reviewflo.selectedBusinessId'
 const VIEW_MODE_KEY = 'reviewflo.viewMode'
 
 export function BusinessProvider({ children }: { children: ReactNode }) {
+  const router = useRouter()
   const [primary, setPrimary] = useState<PrimaryBusiness | null>(null)
   const [locations, setLocations] = useState<LocationSummary[]>([])
   const [maxLocations, setMaxLocations] = useState<number>(1)
@@ -43,7 +51,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   const [viewMode, setViewModeState] = useState<'single' | 'all'>('single')
   const [loading, setLoading] = useState(true)
 
-  const fetchBusiness = useCallback(async (businessIdOverride?: string | null) => {
+  const fetchBusiness = useCallback(async (businessIdOverride?: string | null): Promise<boolean> => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
@@ -52,7 +60,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
         setMaxLocations(1)
         setSelectedBusinessIdState(null)
         setLoading(false)
-        return
+        return false
       }
 
       const url = businessIdOverride
@@ -68,7 +76,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
         setMaxLocations(1)
         setSelectedBusinessIdState(null)
         setLoading(false)
-        return
+        return false
       }
 
       const data = await res.json() as {
@@ -97,11 +105,27 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
             ? 'all'
             : 'single'
         setViewModeState(resolvedMode)
+
+        // Resume a checkout confirmation interrupted by a sign-in that dropped the original
+        // `?redirect=` (Google login / magic link always land on a fixed destination). Only
+        // fires from the ordinary dashboard/settings landing spots, never mid auth-callback.
+        const pendingSessionId = readPendingCheckoutSessionId()
+        if (pendingSessionId && (router.pathname === '/dashboard' || router.pathname === '/settings')) {
+          router.replace(`/dashboard/checkout?session_id=${encodeURIComponent(pendingSessionId)}`)
+        }
       }
+      return true
+    } catch {
+      console.error('fetchBusiness failed')
+      setPrimary(null)
+      setLocations([])
+      setMaxLocations(1)
+      setSelectedBusinessIdState(null)
+      return false
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [router])
 
   useEffect(() => {
     fetchBusiness()
@@ -135,6 +159,12 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const refresh = useCallback(async () => {
+    await fetchBusiness()
+  }, [fetchBusiness])
+
+  const refreshWithResult = useCallback(() => fetchBusiness(), [fetchBusiness])
+
   const value: BusinessContextValue = {
     primary,
     locations,
@@ -144,7 +174,8 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     viewMode,
     setViewMode,
     loading,
-    refresh: fetchBusiness,
+    refresh,
+    refreshWithResult,
   }
 
   return <BusinessContext.Provider value={value}>{children}</BusinessContext.Provider>

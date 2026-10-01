@@ -721,7 +721,7 @@ export default function DashboardPage() {
                   <div className="space-y-1.5 text-xs text-gray-600">
                     <p><span className="font-semibold text-gray-800">Pro</span> — dashboard sending, follow-ups, multi-platform links, Google stats, and more.</p>
                     <p><span className="font-semibold text-gray-800">AI</span> — higher limits, SMS automation, and AI-powered tools (rolling out after Pro).</p>
-                    <p className="text-emerald-700 font-medium">Eligible accounts: 50% off the first 3 months at checkout.</p>
+                    <p className="text-gray-600">Pro is $29/mo or $290/year.</p>
                   </div>
                 </div>
                 <div className="flex sm:flex-col gap-2 sm:w-40">
@@ -777,13 +777,11 @@ export default function DashboardPage() {
                     <>
                       Manage billing and checkout in{' '}
                       <span className="font-medium text-gray-700">Settings → Plan</span>.
-                      Eligible accounts still get{' '}
-                      <span className="text-emerald-700 font-semibold">50% off the first 3 months</span> at checkout.
+                      Pro is $29/mo or $290/year.
                     </>
                   ) : (
                     <>
-                      We&apos;ll email you when the AI tier opens up. Eligible accounts:{' '}
-                      <span className="text-emerald-700 font-semibold">50% off the first 3 months</span>.
+                      We&apos;ll email you when the AI tier opens up.
                     </>
                   )}
                 </p>
