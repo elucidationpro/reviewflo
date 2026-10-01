@@ -6,7 +6,127 @@ import {
   extractSessionSubscriptionId,
   syncSubscriptionById,
   type SupabaseLike,
+  type SyncResult,
 } from '../../../lib/stripe-subscription-sync';
+import { sanitizeUtmValue, type BillingInterval } from '../../../lib/checkout-analytics';
+import { captureCheckoutCompletedFromSession, captureCheckoutFailedEvent } from '../../../lib/billing-analytics';
+
+function metaBillingInterval(v: unknown): BillingInterval {
+  return v === 'year' ? 'year' : 'month';
+}
+
+function metaStr(v: unknown): string | null {
+  return typeof v === 'string' && v.trim() ? v.trim() : null;
+}
+
+/**
+ * Best-effort authoritative `checkout_completed` capture for a Pro subscription checkout.
+ *
+ * `granted`/`attached` mean this very sync call just produced the paid mapping — always safe to
+ * treat as a conversion. `no_change` is trickier: it's also returned when an admin override was
+ * preserved, AND when `customer.subscription.created` (which commonly arrives and syncs before
+ * `checkout.session.completed`) already attached this subscription moments earlier. The former
+ * must never be counted as a checkout conversion; the latter must. Since the result alone can't
+ * tell them apart, `no_change` is only trusted after an independent re-read of the business row
+ * confirms it's actually paid, mapped to *this* subscription, not admin-overridden, and owned by
+ * the same user/business the checkout session itself names — never a Stripe-replayed webhook
+ * payload. `ignored`/`downgraded` are never conversions.
+ *
+ * Wrapped end-to-end in a catch: analytics prep, the verification query, and the capture call
+ * must never turn a successful webhook/sync into a failure.
+ */
+async function emitCheckoutCompletedAnalytics(
+  session: Stripe.Checkout.Session,
+  syncResult: Extract<SyncResult, { ok: true }>,
+  deps: { supabase: SupabaseLike }
+): Promise<void> {
+  try {
+    const { action, businessId } = syncResult;
+    if (action !== 'granted' && action !== 'attached' && action !== 'no_change') return;
+    if (session.metadata?.source !== 'pro_subscription') return;
+    if (session.mode !== 'subscription') return;
+    if (session.payment_status !== 'paid' && session.payment_status !== 'no_payment_required') return;
+
+    const distinctId = metaStr(session.metadata?.supabase_user_id);
+    const businessIdMeta = metaStr(session.metadata?.business_id);
+    const subId = extractSessionSubscriptionId(session);
+    if (!distinctId || !businessIdMeta || !subId || typeof session.created !== 'number') return;
+
+    if (action === 'no_change') {
+      if (!businessId || businessId !== businessIdMeta) return;
+      const { data: row } = await deps.supabase
+        .from('businesses')
+        .select('id, user_id, tier, admin_override, stripe_subscription_id')
+        .eq('id', businessId)
+        .maybeSingle();
+      if (!row) return;
+      if (row.admin_override !== false) return;
+      if (row.tier !== 'pro') return;
+      if (String(row.stripe_subscription_id || '') !== subId) return;
+      if (String(row.user_id || '').trim().toLowerCase() !== distinctId.trim().toLowerCase()) return;
+    } else if (businessId && businessId !== businessIdMeta) {
+      // Defensive: the sync's own resolved business should always match the session's metadata.
+      return;
+    }
+
+    await captureCheckoutCompletedFromSession({
+      sessionId: session.id,
+      created: session.created,
+      distinctId,
+      billingInterval: metaBillingInterval(session.metadata?.billing_interval),
+      utmSource: sanitizeUtmValue(session.metadata?.utm_source),
+    });
+  } catch {
+    // Best effort only — analytics must never affect webhook processing/sync behavior.
+  }
+}
+
+/**
+ * Best-effort `checkout_failed` (reason: payment_failed) capture for `invoice.payment_failed`.
+ * Re-retrieves the subscription for reliable metadata/source and validates the metadata's
+ * supabase_user_id against the root business row before using it as the analytics identity —
+ * mirrors the ownership check `syncSubscriptionById` performs, so spoofed metadata can't attribute
+ * an event to an unrelated user. Never throws and never alters sync behavior.
+ */
+async function emitInvoicePaymentFailedAnalytics(
+  deps: { supabase: SupabaseLike; stripe: Stripe },
+  subscriptionId: string,
+  eventId: string,
+  eventCreated: number
+): Promise<void> {
+  try {
+    // Bounded, non-retrying: this is a best-effort analytics-only lookup, separate from the
+    // correctness-critical sync retrieve, and must never add webhook latency/retry amplification.
+    const subscription = await deps.stripe.subscriptions.retrieve(subscriptionId, {}, {
+      timeout: 5000,
+      maxNetworkRetries: 0,
+    });
+    if (metaStr(subscription.metadata?.source) !== 'pro_subscription') return;
+    const businessIdMeta = metaStr(subscription.metadata?.business_id);
+    const userIdMeta = metaStr(subscription.metadata?.supabase_user_id);
+    if (!businessIdMeta || !userIdMeta) return;
+
+    const { data: row } = await deps.supabase
+      .from('businesses')
+      .select('id, user_id, parent_business_id')
+      .eq('id', businessIdMeta)
+      .maybeSingle();
+    if (!row) return;
+    if (typeof row.parent_business_id === 'string' && row.parent_business_id.trim()) return;
+    if (String(row.user_id || '').trim().toLowerCase() !== userIdMeta.trim().toLowerCase()) return;
+
+    await captureCheckoutFailedEvent({
+      stripeEventId: eventId,
+      eventCreated,
+      distinctId: userIdMeta,
+      billingInterval: metaBillingInterval(subscription.metadata?.billing_interval),
+      utmSource: sanitizeUtmValue(subscription.metadata?.utm_source),
+      reason: 'payment_failed',
+    });
+  } catch {
+    // Best effort only — analytics must never affect webhook processing.
+  }
+}
 
 function isLiveSecretKey(secretKey: string): boolean {
   return secretKey.startsWith('sk_live_') || secretKey.startsWith('rk_live_');
@@ -292,6 +412,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             return res.status(500).json({ error: 'Sync failed' });
           }
+          await emitCheckoutCompletedAnalytics(session, result, syncDeps);
         }
         break;
       }
@@ -338,6 +459,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             return res.status(500).json({ error: 'Sync failed' });
           }
+          await emitInvoicePaymentFailedAnalytics(syncDeps, subId, event.id, event.created);
         }
         break;
       }

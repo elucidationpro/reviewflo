@@ -613,6 +613,55 @@ test('create-checkout-session happy path returns a Stripe checkout url for a fre
   assert.equal(capturedParams.subscription_data.metadata.billing_interval, 'month')
 })
 
+test('create-checkout-session propagates a sanitized utm_source to session and subscription metadata for both intervals', async () => {
+  for (const interval of ['month', 'year']) {
+    resetScenario()
+    scenario.rows = [
+      { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+    ]
+    let capturedParams = null
+    setStripeImpl({
+      sessionsCreate: async (params) => {
+        capturedParams = params
+        return { url: 'https://checkout.stripe.com/utm-session' }
+      },
+    })
+    const handler = loadCreateCheckoutSession()
+    const req = makeReq({
+      authorization: 'Bearer token',
+      body: { interval, utmSource: '  google \r\n' },
+    })
+    const res = makeRes()
+    await handler(req, res)
+    assert.equal(res.statusCode, 200)
+    assert.equal(capturedParams.metadata.utm_source, 'google')
+    assert.equal(capturedParams.subscription_data.metadata.utm_source, 'google')
+    assert.equal(capturedParams.metadata.billing_interval, interval)
+    assert.equal(capturedParams.subscription_data.metadata.billing_interval, interval)
+  }
+})
+
+test('create-checkout-session omits utm_source metadata entirely for a direct (no-UTM) checkout', async () => {
+  resetScenario()
+  scenario.rows = [
+    { id: 'biz-1', user_id: 'user-1', parent_business_id: null, tier: 'free', created_at: '2025-01-01' },
+  ]
+  let capturedParams = null
+  setStripeImpl({
+    sessionsCreate: async (params) => {
+      capturedParams = params
+      return { url: 'https://checkout.stripe.com/direct-session' }
+    },
+  })
+  const handler = loadCreateCheckoutSession()
+  const req = makeReq({ authorization: 'Bearer token', body: { utmSource: null } })
+  const res = makeRes()
+  await handler(req, res)
+  assert.equal(res.statusCode, 200)
+  assert.equal('utm_source' in capturedParams.metadata, false)
+  assert.equal('utm_source' in capturedParams.subscription_data.metadata, false)
+})
+
 test('create-checkout-session supports the annual interval and charges the annual price', async () => {
   resetScenario()
   scenario.rows = [

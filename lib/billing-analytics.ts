@@ -58,6 +58,62 @@ export function deterministicEventTimestamp(seedIso: string): string {
   return date.toISOString()
 }
 
+export interface CheckoutCompletedFromSession {
+  /** Stripe Checkout Session id — combined with `created` for replay-safe dedupe. */
+  sessionId: string
+  /** Session's own `created` (unix seconds), NOT the webhook event timestamp or current time. */
+  created: number
+  distinctId: string
+  billingInterval: BillingInterval
+  utmSource: string | null
+}
+
+/**
+ * Reusable authoritative `checkout_completed` capture, shared by the webhook and the (separately
+ * owned) confirmation-refresh verification endpoint. Callers must only invoke this after a
+ * successful, non-ignored/non-downgraded Pro sync — this helper does not itself check sync state.
+ */
+export async function captureCheckoutCompletedFromSession(data: CheckoutCompletedFromSession): Promise<void> {
+  const timestamp = deterministicEventTimestamp(new Date(data.created * 1000).toISOString())
+  const eventId = deterministicEventId(['checkout_completed', data.sessionId])
+  await captureServerCheckoutEvent({
+    eventName: 'checkout_completed',
+    distinctId: data.distinctId,
+    eventId,
+    timestamp,
+    properties: { plan: 'pro', billing_interval: data.billingInterval, utm_source: data.utmSource },
+  })
+}
+
+export interface CheckoutFailedFromStripeEvent {
+  /** Stripe event id — combined with a fixed prefix for replay-safe dedupe. */
+  stripeEventId: string
+  /** The webhook event's own `created` (unix seconds), for a stable replay timestamp. */
+  eventCreated: number
+  distinctId: string
+  billingInterval: BillingInterval
+  utmSource: string | null
+  reason: string
+}
+
+/** Reusable `checkout_failed` capture for server-detected failures (e.g. invoice.payment_failed). */
+export async function captureCheckoutFailedEvent(data: CheckoutFailedFromStripeEvent): Promise<void> {
+  const timestamp = deterministicEventTimestamp(new Date(data.eventCreated * 1000).toISOString())
+  const eventId = deterministicEventId(['checkout_failed', data.stripeEventId])
+  await captureServerCheckoutEvent({
+    eventName: 'checkout_failed',
+    distinctId: data.distinctId,
+    eventId,
+    timestamp,
+    properties: {
+      plan: 'pro',
+      billing_interval: data.billingInterval,
+      utm_source: data.utmSource,
+      reason: data.reason,
+    },
+  })
+}
+
 /** Fires a server-side PostHog capture event. Best effort: never throws, bounded by a timeout. */
 export async function captureServerCheckoutEvent(event: ServerCheckoutEvent): Promise<void> {
   const apiKey = process.env.NEXT_PUBLIC_POSTHOG_KEY

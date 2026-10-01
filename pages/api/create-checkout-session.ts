@@ -4,6 +4,7 @@ import { getBusinessForRequest } from '../../lib/business-account'
 import { firstNonLatin1Index } from '../../lib/stripe-env-ascii'
 import { isPaidTier } from '../../lib/tier-permissions'
 import { resolveCheckoutBaseUrl } from '../../lib/stripe-checkout-config'
+import { sanitizeUtmValue } from '../../lib/checkout-analytics'
 import {
   parseBillingInterval,
   parsePlan,
@@ -76,6 +77,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!interval) {
     return res.status(400).json(billingError('invalid_request', requestId))
   }
+
+  const utmSource = sanitizeUtmValue(req.body?.utmSource)
 
   const priceEnvVar = proPriceEnvVar(interval)
   const priceId = resolveProPriceId(interval)
@@ -262,6 +265,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           supabase_user_id: user.id,
           plan,
           billing_interval: interval,
+          ...(utmSource ? { utm_source: utmSource } : {}),
         },
       },
       metadata: {
@@ -270,6 +274,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         supabase_user_id: user.id,
         plan,
         billing_interval: interval,
+        ...(utmSource ? { utm_source: utmSource } : {}),
       },
     })
 

@@ -238,8 +238,8 @@ function makeRes() {
   }
   return res
 }
-function makeEvent(type, dataObject, { id = 'evt_1', livemode = false } = {}) {
-  return { id, type, livemode, data: { object: dataObject } }
+function makeEvent(type, dataObject, { id = 'evt_1', livemode = false, created = 1690000000 } = {}) {
+  return { id, type, livemode, created, data: { object: dataObject } }
 }
 function eventReq(event, { signature = 'valid-signature' } = {}) {
   return makeReq({ signature, rawBody: JSON.stringify(event) })
@@ -1005,6 +1005,422 @@ test('webhook returns a controlled 400 (not a crash) when the raw request body c
   const res = makeRes()
   await handler(req, res)
   assert.equal(res.statusCode, 400)
+})
+
+// ===========================================================================
+// Server-side analytics: checkout_completed (checkout.session.completed) and
+// checkout_failed (invoice.payment_failed), captured via lib/billing-analytics.ts
+// ===========================================================================
+async function withPostHogFetch(fn) {
+  return withEnv({ NEXT_PUBLIC_POSTHOG_KEY: 'phc_test', NEXT_PUBLIC_POSTHOG_HOST: 'https://us.posthog.com' }, async () => {
+    const calls = []
+    const originalFetch = global.fetch
+    global.fetch = async (url, init) => {
+      calls.push({ url, init })
+      return { ok: true, status: 200 }
+    }
+    try {
+      return await fn(calls)
+    } finally {
+      global.fetch = originalFetch
+    }
+  })
+}
+
+test('checkout.session.completed emits authoritative checkout_completed after a successful paid sync, keyed by session id/created', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-30', user_id: 'user-30', tier: 'free' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'active',
+    customer: 'cus_30',
+    metadata: { source: 'pro_subscription', business_id: 'biz-30', supabase_user_id: 'user-30' },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const session = {
+      id: 'cs_30',
+      subscription: 'sub_30',
+      mode: 'subscription',
+      payment_status: 'paid',
+      created: 1700000000,
+      metadata: {
+        source: 'pro_subscription',
+        business_id: 'biz-30',
+        supabase_user_id: 'user-30',
+        billing_interval: 'year',
+        utm_source: 'google',
+      },
+    }
+    const event = makeEvent('checkout.session.completed', session)
+    const res = makeRes()
+    await handler(eventReq(event), res)
+
+    assert.equal(res.statusCode, 200)
+    assert.equal(getBusiness('biz-30').tier, 'pro')
+    assert.equal(calls.length, 1)
+    const body = JSON.parse(calls[0].init.body)
+    assert.equal(body.event, 'checkout_completed')
+    assert.equal(body.distinct_id, 'user-30')
+    assert.deepEqual(body.properties, { plan: 'pro', billing_interval: 'year', utm_source: 'google' })
+    assert.equal(body.timestamp, new Date(1700000000 * 1000).toISOString())
+  })
+})
+
+test('replaying the same checkout.session.completed event twice produces the same checkout_completed uuid/timestamp', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-31', user_id: 'user-31', tier: 'free' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'active',
+    customer: 'cus_31',
+    metadata: { source: 'pro_subscription', business_id: 'biz-31', supabase_user_id: 'user-31' },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const session = {
+      id: 'cs_31',
+      subscription: 'sub_31',
+      mode: 'subscription',
+      payment_status: 'paid',
+      created: 1700000100,
+      metadata: { source: 'pro_subscription', business_id: 'biz-31', supabase_user_id: 'user-31' },
+    }
+    // Two distinct Stripe event ids (original + a replay/redelivery) wrapping the same session.
+    const event1 = makeEvent('checkout.session.completed', session, { id: 'evt_replay_1' })
+    const event2 = makeEvent('checkout.session.completed', session, { id: 'evt_replay_2' })
+    await handler(eventReq(event1), makeRes())
+    await handler(eventReq(event2), makeRes())
+
+    assert.equal(calls.length, 2)
+    const body1 = JSON.parse(calls[0].init.body)
+    const body2 = JSON.parse(calls[1].init.body)
+    assert.equal(body1.uuid, body2.uuid, 'dedupe key must be derived from the session, not the webhook event id')
+    assert.equal(body1.timestamp, body2.timestamp)
+  })
+})
+
+test('checkout.session.completed still emits checkout_completed when customer.subscription.created already synced it first (no_change), verified against the real DB row', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-40', user_id: 'user-40', tier: 'free' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'active',
+    customer: 'cus_40',
+    metadata: {
+      source: 'pro_subscription',
+      business_id: 'biz-40',
+      supabase_user_id: 'user-40',
+      billing_interval: 'month',
+    },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+
+    // subscription.created arrives first and performs the actual attach.
+    const createdEvent = makeEvent('customer.subscription.created', { id: 'sub_40' }, { id: 'evt_sub_created_40' })
+    const res1 = makeRes()
+    await handler(eventReq(createdEvent), res1)
+    assert.equal(res1.statusCode, 200)
+    assert.equal(getBusiness('biz-40').tier, 'pro')
+    assert.equal(calls.length, 0, 'subscription.created alone must never emit checkout_completed')
+
+    // checkout.session.completed arrives moments later and now only sees `no_change`.
+    const session = {
+      id: 'cs_40',
+      subscription: 'sub_40',
+      mode: 'subscription',
+      payment_status: 'paid',
+      created: 1700000700,
+      metadata: {
+        source: 'pro_subscription',
+        business_id: 'biz-40',
+        supabase_user_id: 'user-40',
+        billing_interval: 'month',
+      },
+    }
+    const completedEvent = makeEvent('checkout.session.completed', session, { id: 'evt_checkout_completed_40' })
+    const res2 = makeRes()
+    await handler(eventReq(completedEvent), res2)
+
+    assert.equal(res2.statusCode, 200)
+    assert.equal(calls.length, 1, 'the real conversion must still be captured once the authoritative session arrives')
+    const body = JSON.parse(calls[0].init.body)
+    assert.equal(body.event, 'checkout_completed')
+    assert.equal(body.distinct_id, 'user-40')
+    assert.equal(body.properties.billing_interval, 'month')
+  })
+})
+
+test('checkout_completed is never emitted for a no_change sync when the session metadata does not match the real DB row', async () => {
+  resetScenario()
+  // The real, paid business — synced earlier by subscription.created under its own identity.
+  addBusiness({ id: 'biz-41', user_id: 'real-owner', tier: 'free' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'active',
+    customer: 'cus_41',
+    metadata: { source: 'pro_subscription', business_id: 'biz-41', supabase_user_id: 'real-owner' },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const createdEvent = makeEvent('customer.subscription.created', { id: 'sub_41' }, { id: 'evt_sub_created_41' })
+    await handler(eventReq(createdEvent), makeRes())
+    assert.equal(getBusiness('biz-41').tier, 'pro')
+
+    // A checkout.session.completed replay/forgery claiming a different owner/business for the
+    // same subscription must not piggyback on the real row's paid state.
+    const session = {
+      id: 'cs_41',
+      subscription: 'sub_41',
+      mode: 'subscription',
+      payment_status: 'paid',
+      created: 1700000800,
+      metadata: {
+        source: 'pro_subscription',
+        business_id: 'biz-other-41',
+        supabase_user_id: 'attacker-41',
+        billing_interval: 'month',
+      },
+    }
+    const completedEvent = makeEvent('checkout.session.completed', session, { id: 'evt_checkout_completed_41' })
+    const res = makeRes()
+    await handler(eventReq(completedEvent), res)
+
+    assert.equal(res.statusCode, 200)
+    assert.equal(calls.length, 0, 'mismatched session business/owner metadata must never ride along with an unrelated no_change result')
+  })
+})
+
+test('checkout_completed is never emitted for a no_change sync caused by a preserved admin override', async () => {
+  resetScenario()
+  addBusiness({
+    id: 'biz-42',
+    user_id: 'user-42',
+    tier: 'pro',
+    admin_override: true,
+    stripe_customer_id: 'cus_42',
+    stripe_subscription_id: 'sub_42',
+  })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'active',
+    customer: 'cus_42',
+    metadata: {
+      source: 'pro_subscription',
+      business_id: 'biz-42',
+      supabase_user_id: 'user-42',
+      billing_interval: 'month',
+    },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const session = {
+      id: 'cs_42',
+      subscription: 'sub_42',
+      mode: 'subscription',
+      payment_status: 'paid',
+      created: 1700000900,
+      metadata: {
+        source: 'pro_subscription',
+        business_id: 'biz-42',
+        supabase_user_id: 'user-42',
+        billing_interval: 'month',
+      },
+    }
+    const event = makeEvent('checkout.session.completed', session)
+    const res = makeRes()
+    await handler(eventReq(event), res)
+
+    assert.equal(res.statusCode, 200)
+    assert.equal(getBusiness('biz-42').admin_override, true)
+    assert.equal(calls.length, 0, 'an admin-granted override must never be reported as a paid checkout conversion')
+  })
+})
+
+test('checkout_completed is never emitted for an ignored sync (unrelated/ownership-mismatched subscription)', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-32', user_id: 'owner-real', tier: 'free' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'active',
+    customer: 'cus_32',
+    metadata: { source: 'pro_subscription', business_id: 'biz-32', supabase_user_id: 'attacker-id' },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const session = {
+      id: 'cs_32',
+      subscription: 'sub_32',
+      mode: 'subscription',
+      payment_status: 'paid',
+      created: 1700000200,
+      metadata: { source: 'pro_subscription', business_id: 'biz-32', supabase_user_id: 'attacker-id' },
+    }
+    const event = makeEvent('checkout.session.completed', session)
+    const res = makeRes()
+    await handler(eventReq(event), res)
+
+    assert.equal(res.statusCode, 200)
+    assert.equal(getBusiness('biz-32').tier, 'free')
+    assert.equal(calls.length, 0, 'no checkout_completed for an ignored sync outcome')
+  })
+})
+
+test('checkout_completed is never emitted when the live subscription does not yet grant pro', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-33', user_id: 'user-33', tier: 'free' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'incomplete',
+    customer: 'cus_33',
+    metadata: { source: 'pro_subscription', business_id: 'biz-33', supabase_user_id: 'user-33' },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const session = {
+      id: 'cs_33',
+      subscription: 'sub_33',
+      mode: 'subscription',
+      payment_status: 'paid',
+      created: 1700000300,
+      metadata: { source: 'pro_subscription', business_id: 'biz-33', supabase_user_id: 'user-33' },
+    }
+    const event = makeEvent('checkout.session.completed', session)
+    const res = makeRes()
+    await handler(eventReq(event), res)
+
+    assert.equal(res.statusCode, 200)
+    assert.equal(getBusiness('biz-33').tier, 'free')
+    assert.equal(calls.length, 0)
+  })
+})
+
+test('an analytics fetch rejection during checkout.session.completed never turns a successful sync into a webhook failure', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-34', user_id: 'user-34', tier: 'free' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'active',
+    customer: 'cus_34',
+    metadata: { source: 'pro_subscription', business_id: 'biz-34', supabase_user_id: 'user-34' },
+  }))
+
+  await withEnv({ NEXT_PUBLIC_POSTHOG_KEY: 'phc_test', NEXT_PUBLIC_POSTHOG_HOST: 'https://us.posthog.com' }, async () => {
+    const originalFetch = global.fetch
+    global.fetch = async () => {
+      throw new Error('simulated PostHog outage')
+    }
+    try {
+      const handler = loadHandler()
+      const session = {
+        id: 'cs_34',
+        subscription: 'sub_34',
+        mode: 'subscription',
+        payment_status: 'paid',
+        created: 1700000400,
+        metadata: { source: 'pro_subscription', business_id: 'biz-34', supabase_user_id: 'user-34' },
+      }
+      const event = makeEvent('checkout.session.completed', session)
+      const res = makeRes()
+      await handler(eventReq(event), res)
+      assert.equal(res.statusCode, 200, 'a best-effort analytics failure must still report webhook success')
+      assert.equal(getBusiness('biz-34').tier, 'pro')
+    } finally {
+      global.fetch = originalFetch
+    }
+  })
+})
+
+test('invoice.payment_failed emits checkout_failed with the safe reason payment_failed, using verified subscription metadata', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-35', user_id: 'user-35', tier: 'pro', stripe_subscription_id: 'sub_35' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'past_due',
+    customer: 'cus_35',
+    metadata: {
+      source: 'pro_subscription',
+      business_id: 'biz-35',
+      supabase_user_id: 'user-35',
+      billing_interval: 'month',
+      utm_source: 'newsletter',
+    },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const invoice = { id: 'in_35', parent: { subscription_details: { subscription: 'sub_35' } } }
+    const event = makeEvent('invoice.payment_failed', invoice, { id: 'evt_invoice_35', created: 1700000500 })
+    const res = makeRes()
+    const { calls: consoleCalls } = await withCapturedConsole(() => handler(eventReq(event), res))
+    assert.equal(res.statusCode, 200)
+    assert.equal(calls.length, 1)
+    const body = JSON.parse(calls[0].init.body)
+    assert.equal(body.event, 'checkout_failed')
+    assert.equal(body.distinct_id, 'user-35')
+    assert.deepEqual(body.properties, {
+      plan: 'pro',
+      billing_interval: 'month',
+      utm_source: 'newsletter',
+      reason: 'payment_failed',
+    })
+    assert.equal(body.timestamp, new Date(1700000500 * 1000).toISOString())
+    assert.ok(!JSON.stringify(consoleCalls).includes('newsletter'))
+  })
+})
+
+test('replaying the same invoice.payment_failed event twice produces the same checkout_failed uuid', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-36', user_id: 'user-36', tier: 'pro', stripe_subscription_id: 'sub_36' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'past_due',
+    customer: 'cus_36',
+    metadata: { source: 'pro_subscription', business_id: 'biz-36', supabase_user_id: 'user-36' },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const invoice = { id: 'in_36', parent: { subscription_details: { subscription: 'sub_36' } } }
+    const event = makeEvent('invoice.payment_failed', invoice, { id: 'evt_invoice_36', created: 1700000600 })
+    await handler(eventReq(event), makeRes())
+    await handler(eventReq(event), makeRes())
+
+    assert.equal(calls.length, 2)
+    const body1 = JSON.parse(calls[0].init.body)
+    const body2 = JSON.parse(calls[1].init.body)
+    assert.equal(body1.uuid, body2.uuid)
+    assert.equal(body1.timestamp, body2.timestamp)
+  })
+})
+
+test('invoice.payment_failed never emits checkout_failed when subscription metadata ownership does not match the root business', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-37', user_id: 'owner-real', tier: 'pro', stripe_subscription_id: 'sub_37' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'past_due',
+    customer: 'cus_37',
+    metadata: { source: 'pro_subscription', business_id: 'biz-37', supabase_user_id: 'attacker-id' },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const invoice = { id: 'in_37', parent: { subscription_details: { subscription: 'sub_37' } } }
+    const event = makeEvent('invoice.payment_failed', invoice, { id: 'evt_invoice_37' })
+    const res = makeRes()
+    await withCapturedConsole(() => handler(eventReq(event), res))
+    assert.equal(res.statusCode, 200)
+    assert.equal(calls.length, 0, 'spoofed/mismatched metadata must never drive an analytics identity')
+  })
 })
 
 test('the Pro subscription webhook path succeeds without RESEND_API_KEY, using the real Resend constructor', async () => {
