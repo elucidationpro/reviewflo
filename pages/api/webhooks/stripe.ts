@@ -20,20 +20,10 @@ function metaStr(v: unknown): string | null {
 }
 
 /**
- * Best-effort authoritative `checkout_completed` capture for a Pro subscription checkout.
- *
- * `granted`/`attached` mean this very sync call just produced the paid mapping — always safe to
- * treat as a conversion. `no_change` is trickier: it's also returned when an admin override was
- * preserved, AND when `customer.subscription.created` (which commonly arrives and syncs before
- * `checkout.session.completed`) already attached this subscription moments earlier. The former
- * must never be counted as a checkout conversion; the latter must. Since the result alone can't
- * tell them apart, `no_change` is only trusted after an independent re-read of the business row
- * confirms it's actually paid, mapped to *this* subscription, not admin-overridden, and owned by
- * the same user/business the checkout session itself names — never a Stripe-replayed webhook
- * payload. `ignored`/`downgraded` are never conversions.
- *
- * Wrapped end-to-end in a catch: analytics prep, the verification query, and the capture call
- * must never turn a successful webhook/sync into a failure.
+ * Best-effort checkout conversion capture after subscription sync. A subscription event may
+ * sync first, so granted/attached/no_change all require a fresh paid root mapping and matching
+ * session owner. Ignored, downgraded, and admin-overridden outcomes are excluded. Analytics
+ * lookup/capture failures never change the webhook response or subscription sync behavior.
  */
 async function emitCheckoutCompletedAnalytics(
   session: Stripe.Checkout.Session,
@@ -52,22 +42,21 @@ async function emitCheckoutCompletedAnalytics(
     const subId = extractSessionSubscriptionId(session);
     if (!distinctId || !businessIdMeta || !subId || typeof session.created !== 'number') return;
 
-    if (action === 'no_change') {
-      if (!businessId || businessId !== businessIdMeta) return;
-      const { data: row } = await deps.supabase
-        .from('businesses')
-        .select('id, user_id, tier, admin_override, stripe_subscription_id')
-        .eq('id', businessId)
-        .maybeSingle();
-      if (!row) return;
-      if (row.admin_override !== false) return;
-      if (row.tier !== 'pro') return;
-      if (String(row.stripe_subscription_id || '') !== subId) return;
-      if (String(row.user_id || '').trim().toLowerCase() !== distinctId.trim().toLowerCase()) return;
-    } else if (businessId && businessId !== businessIdMeta) {
-      // Defensive: the sync's own resolved business should always match the session's metadata.
-      return;
-    }
+    if (!businessId || businessId !== businessIdMeta) return;
+    // Re-read the authoritative row for every action (not just `no_change`) — the sync's own
+    // resolved action/businessId could still be stale by the time this best-effort check runs,
+    // and mismatched checkout metadata must never misattribute an event to another user/business.
+    const { data: row } = await deps.supabase
+      .from('businesses')
+      .select('id, user_id, tier, admin_override, stripe_subscription_id, parent_business_id')
+      .eq('id', businessId)
+      .maybeSingle();
+    if (!row) return;
+    if (typeof row.parent_business_id === 'string' && row.parent_business_id.trim()) return;
+    if (row.admin_override !== false) return;
+    if (row.tier !== 'pro') return;
+    if (String(row.stripe_subscription_id || '') !== subId) return;
+    if (String(row.user_id || '').trim().toLowerCase() !== distinctId.trim().toLowerCase()) return;
 
     await captureCheckoutCompletedFromSession({
       sessionId: session.id,

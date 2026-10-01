@@ -14,6 +14,8 @@ import {
   subscriptionGrantsPro,
   syncSubscriptionById,
 } from '../../lib/stripe-subscription-sync'
+import { sanitizeUtmValue, type BillingInterval } from '../../lib/checkout-analytics'
+import { captureCheckoutCompletedFromSession } from '../../lib/billing-analytics'
 
 /**
  * Additional, endpoint-local error reasons layered on top of the shared `BillingErrorReason`
@@ -48,6 +50,10 @@ function isLiveSecretKey(secretKey: string): boolean {
 
 function metaStr(v: unknown): string | null {
   return typeof v === 'string' && v.trim() ? v.trim() : null
+}
+
+function metaBillingInterval(v: unknown): BillingInterval {
+  return v === 'year' ? 'year' : 'month'
 }
 
 /**
@@ -311,6 +317,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ status: 'sync_pending', requestId } satisfies VerifyCheckoutSessionResponse)
   }
   subscription = reverifySubscription
+
+  // Best-effort, authoritative `checkout_completed` capture — shares the same deterministic
+  // id/timestamp (derived from session.id + session.created) as the webhook's own capture, so a
+  // reload that re-confirms the same session uses the same ingestion deduplication key. Must never affect
+  // the already-decided confirmed response. `ignored`/`downgraded` are never conversions.
+  if (syncResult.action === 'granted' || syncResult.action === 'attached' || syncResult.action === 'no_change') {
+    try {
+      await captureCheckoutCompletedFromSession({
+        sessionId: session.id,
+        created: session.created,
+        distinctId: user.id,
+        billingInterval: metaBillingInterval(session.metadata?.billing_interval),
+        utmSource: sanitizeUtmValue(session.metadata?.utm_source),
+      })
+    } catch {
+      // Analytics failures must never change the confirmed response below.
+    }
+  }
 
   return res.status(200).json({
     status: 'confirmed',

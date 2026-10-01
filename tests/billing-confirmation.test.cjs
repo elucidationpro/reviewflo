@@ -200,6 +200,39 @@ function loadHandler() {
   return require('../pages/api/verify-checkout-session.ts').default
 }
 
+async function withEnv(overrides, fn) {
+  const original = {}
+  for (const key of Object.keys(overrides)) {
+    original[key] = process.env[key]
+    if (overrides[key] === undefined) delete process.env[key]
+    else process.env[key] = overrides[key]
+  }
+  try {
+    return await fn()
+  } finally {
+    for (const key of Object.keys(overrides)) {
+      if (original[key] === undefined) delete process.env[key]
+      else process.env[key] = original[key]
+    }
+  }
+}
+
+async function withPostHogFetch(fn) {
+  return withEnv({ NEXT_PUBLIC_POSTHOG_KEY: 'phc_test', NEXT_PUBLIC_POSTHOG_HOST: 'https://us.posthog.com' }, async () => {
+    const calls = []
+    const originalFetch = global.fetch
+    global.fetch = async (url, init) => {
+      calls.push({ url, init })
+      return { ok: true, status: 200 }
+    }
+    try {
+      return await fn(calls)
+    } finally {
+      global.fetch = originalFetch
+    }
+  })
+}
+
 function baseSession(overrides = {}) {
   return {
     id: 'cs_test_1234567890',
@@ -647,4 +680,140 @@ test('verify-checkout-session does not confirm a subscription canceled during sy
   assert.equal(res.statusCode, 200)
   assert.equal(res.body.status, 'sync_pending')
   assert.equal(getBusiness('biz-1').tier, 'ai')
+})
+
+// ===========================================================================
+// Server-side analytics: checkout_completed, captured via lib/billing-analytics.ts
+// ===========================================================================
+test('verify-checkout-session emits checkout_completed on confirm, keyed by session id/created (same shape as the webhook)', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-1', user_id: 'user-1', tier: 'free' })
+  setStripeImpl({
+    sessionsRetrieve: async () => baseSession({ created: 1700000000, metadata: { ...baseSession().metadata, billing_interval: 'year', utm_source: 'google' } }),
+    subscriptionsRetrieve: async (id) => baseSubscription({ id }),
+  })
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const req = makeReq({ authorization: 'Bearer token', body: { sessionId: 'cs_test_1234567890' } })
+    const res = makeRes()
+    await handler(req, res)
+
+    assert.equal(res.statusCode, 200)
+    assert.equal(res.body.status, 'confirmed')
+    assert.equal(calls.length, 1)
+    const body = JSON.parse(calls[0].init.body)
+    assert.equal(body.event, 'checkout_completed')
+    assert.equal(body.distinct_id, 'user-1')
+    assert.deepEqual(body.properties, { plan: 'pro', billing_interval: 'year', utm_source: 'google' })
+    assert.equal(body.timestamp, new Date(1700000000 * 1000).toISOString())
+  })
+})
+
+test('verify-checkout-session emits the same checkout_completed uuid/timestamp as the webhook helper for the same session', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-1', user_id: 'user-1', tier: 'free' })
+  setStripeImpl({
+    sessionsRetrieve: async () => baseSession({ created: 1700000055 }),
+    subscriptionsRetrieve: async (id) => baseSubscription({ id }),
+  })
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const req = makeReq({ authorization: 'Bearer token', body: { sessionId: 'cs_test_1234567890' } })
+    await handler(req, makeRes())
+
+    assert.equal(calls.length, 1)
+    const body = JSON.parse(calls[0].init.body)
+
+    const { deterministicEventId, deterministicEventTimestamp } = require('../lib/billing-analytics.ts')
+    assert.equal(body.uuid, deterministicEventId(['checkout_completed', 'cs_test_1234567890']))
+    assert.equal(body.timestamp, deterministicEventTimestamp(new Date(1700000055 * 1000).toISOString()))
+  })
+})
+
+test('reconfirming the same session on reload produces a stable (duplicate) checkout_completed uuid/timestamp', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-1', user_id: 'user-1', tier: 'free' })
+  setStripeImpl({
+    sessionsRetrieve: async () => baseSession({ created: 1700000066 }),
+    subscriptionsRetrieve: async (id) => baseSubscription({ id }),
+  })
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const req1 = makeReq({ authorization: 'Bearer token', body: { sessionId: 'cs_test_1234567890' } })
+    const req2 = makeReq({ authorization: 'Bearer token', body: { sessionId: 'cs_test_1234567890' } })
+    await handler(req1, makeRes())
+    await handler(req2, makeRes())
+
+    assert.equal(calls.length, 2)
+    const body1 = JSON.parse(calls[0].init.body)
+    const body2 = JSON.parse(calls[1].init.body)
+    assert.equal(body1.uuid, body2.uuid)
+    assert.equal(body1.timestamp, body2.timestamp)
+  })
+})
+
+test('a rejected analytics fetch never changes the confirmed response', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-1', user_id: 'user-1', tier: 'free' })
+  setStripeImpl({
+    sessionsRetrieve: async () => baseSession(),
+    subscriptionsRetrieve: async (id) => baseSubscription({ id }),
+  })
+
+  await withEnv({ NEXT_PUBLIC_POSTHOG_KEY: 'phc_test', NEXT_PUBLIC_POSTHOG_HOST: 'https://us.posthog.com' }, async () => {
+    const originalFetch = global.fetch
+    global.fetch = async () => {
+      throw new Error('simulated PostHog outage')
+    }
+    try {
+      const handler = loadHandler()
+      const req = makeReq({ authorization: 'Bearer token', body: { sessionId: 'cs_test_1234567890' } })
+      const res = makeRes()
+      await handler(req, res)
+      assert.equal(res.statusCode, 200)
+      assert.equal(res.body.status, 'confirmed')
+      assert.equal(getBusiness('biz-1').tier, 'pro')
+    } finally {
+      global.fetch = originalFetch
+    }
+  })
+})
+
+test('no checkout_completed is emitted for a pending (not yet confirmed) session', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-1', user_id: 'user-1', tier: 'free' })
+  setStripeImpl({
+    sessionsRetrieve: async () => baseSession(),
+    subscriptionsRetrieve: async (id) => baseSubscription({ id, status: 'incomplete' }),
+  })
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const req = makeReq({ authorization: 'Bearer token', body: { sessionId: 'cs_test_1234567890' } })
+    const res = makeRes()
+    await handler(req, res)
+    assert.equal(res.body.status, 'sync_pending')
+    assert.equal(calls.length, 0)
+  })
+})
+
+test('no checkout_completed is emitted for an unowned session', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-1', user_id: 'user-1', tier: 'free' })
+  setStripeImpl({
+    sessionsRetrieve: async () =>
+      baseSession({ metadata: { source: 'pro_subscription', business_id: 'biz-1', supabase_user_id: 'attacker' } }),
+  })
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const req = makeReq({ authorization: 'Bearer token', body: { sessionId: 'cs_test_1234567890' } })
+    const res = makeRes()
+    await handler(req, res)
+    assert.equal(res.statusCode, 403)
+    assert.equal(calls.length, 0)
+  })
 })

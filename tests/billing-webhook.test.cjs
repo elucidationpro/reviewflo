@@ -1303,6 +1303,48 @@ test('checkout_completed is never emitted when the live subscription does not ye
   })
 })
 
+test('checkout_completed is never emitted for an attached sync when the session metadata owner does not match the real DB row (forged session metadata on a real subscription)', async () => {
+  resetScenario()
+  addBusiness({ id: 'biz-43', user_id: 'real-owner-43', tier: 'free' })
+  setSubscriptionsRetrieve(async (id) => ({
+    id,
+    status: 'active',
+    customer: 'cus_43',
+    metadata: {
+      source: 'pro_subscription',
+      business_id: 'biz-43',
+      supabase_user_id: 'real-owner-43',
+      billing_interval: 'month',
+    },
+  }))
+
+  await withPostHogFetch(async (calls) => {
+    const handler = loadHandler()
+    const session = {
+      id: 'cs_43',
+      subscription: 'sub_43',
+      mode: 'subscription',
+      payment_status: 'paid',
+      created: 1700000950,
+      // Forged/mismatched owner in the session's own metadata, even though the subscription
+      // itself legitimately belongs to (and attaches) the real business/owner.
+      metadata: {
+        source: 'pro_subscription',
+        business_id: 'biz-43',
+        supabase_user_id: 'attacker-43',
+        billing_interval: 'month',
+      },
+    }
+    const event = makeEvent('checkout.session.completed', session)
+    const res = makeRes()
+    await handler(eventReq(event), res)
+
+    assert.equal(res.statusCode, 200)
+    assert.equal(getBusiness('biz-43').tier, 'pro', 'the real subscription sync must still succeed')
+    assert.equal(calls.length, 0, 'mismatched session owner metadata must never misattribute the conversion event')
+  })
+})
+
 test('an analytics fetch rejection during checkout.session.completed never turns a successful sync into a webhook failure', async () => {
   resetScenario()
   addBusiness({ id: 'biz-34', user_id: 'user-34', tier: 'free' })

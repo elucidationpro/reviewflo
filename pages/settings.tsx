@@ -456,8 +456,9 @@ export default function SettingsPage() {
     // A return URL that names a billing interval must agree with the stored attempt before this
     // is trusted as that attempt's cancellation — guards against a stale/unrelated attempt in
     // storage being mislabeled as the cancellation of a different in-flight checkout.
-    const returnedInterval = parseReturnedBillingInterval(router.query.interval)
-    const intervalMatches = returnedInterval === null || returnedInterval === attempt?.billing_interval
+    const rawInterval = router.query.billing_interval
+    const returnedInterval = parseReturnedBillingInterval(rawInterval)
+    const intervalMatches = rawInterval === undefined || returnedInterval === attempt?.billing_interval
     if (attempt && intervalMatches && shouldEmitCheckoutEvent(attempt.attemptId, 'checkout_canceled')) {
       trackEvent('checkout_canceled', buildCheckoutEventProperties(attempt.billing_interval, attempt.utm_source))
     }
