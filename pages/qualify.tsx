@@ -999,15 +999,7 @@ fbq('track', 'PageView');`,
                           </li>
                           <li className="flex items-start">
                             <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>Negative interception</span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
                             <span>Email notifications</span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircle className="w-4 h-4 text-[#C9A961] flex-shrink-0 mr-2" />
-                            <span>Templates</span>
                           </li>
                         </ul>
                       </div>
